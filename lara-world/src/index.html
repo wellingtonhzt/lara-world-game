@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lara World</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>🌍 Lara World</h1>
+      <p class="subtitle">A aventura de Lara começa!</p>
+    </header>
+
+    <main>
+      <section id="board-section">
+        <div id="track"></div>
+      </section>
+
+      <section id="controls-section">
+        <div id="dice-area">
+          <div id="dice-display">🎲</div>
+          <span id="dice-value">-</span>
+        </div>
+        <div id="status-area">
+          <p id="position-info">Posição: <span id="current-position">0</span> / 20</p>
+        </div>
+        <div id="button-area">
+          <button id="roll-btn" class="btn btn-primary">🎲 Jogar Dado</button>
+          <button id="reset-btn" class="btn btn-secondary">🔄 Reiniciar</button>
+        </div>
+      </section>
+
+      <section id="messages-section">
+        <div id="messages">
+          <p class="msg">Bem-vinda ao Lara World! Clique em "Jogar Dado" para começar.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+# 🌍 Lara World
+
+**Lara World** é um jogo de trilha infantil para navegador, onde a personagem Lara percorre um caminho até a linha de chegada. Feito com HTML, CSS e JavaScript puro — sem frameworks.
+
+## ✨ Objetivo
+
+Levar a Lara da casa inicial até a **casa 20**, vencendo desafios e casas especiais pelo caminho.
+
+## 🏗️ Estrutura do Projeto
+
+```
+lara-world/
+├── README.md
+├── docs/
+│   ├── visao-geral.md
+│   ├── regras-do-jogo.md
+│   ├── arquitetura.md
+│   └── roadmap.md
+├── src/
+│   ├── index.html
+│   ├── style.css
+│   ├── game.js
+│   └── assets/
+│       ├── images/
+│       └── sounds/
+├── docker/
+│   └── nginx.conf
+├── Dockerfile
+└── docker-compose.yml
+```
+
+## 🎮 Como Jogar
+
+1. Abra o jogo no navegador.
+2. Clique em **"Jogar Dado"** para lançar o dado.
+3. Lara avança o número de casas sorteado.
+4. Casas especiais podem fazer Lara avançar, voltar, perder rodadas ou jogar novamente.
+5. Chegue na **casa 20** para vencer!
+
+## 🚀 Como Executar Localmente
+
+### Opção 1 — Direto no navegador
+
+Abra o arquivo `src/index.html` no seu navegador.
+
+### Opção 2 — Servidor local (Node.js)
+
+```bash
+npx serve src/
+```
+
+Acesse: http://localhost:3000
+
+### Opção 3 — Servidor local (Python)
+
+```bash
+cd src && python3 -m http.server 8000
+```
+
+Acesse: http://localhost:8000
+
+## 🐳 Como Executar com Docker
+
+### Pré-requisitos
+
+- Docker
+- Docker Compose
+
+### Passos
+
+```bash
+# Clone o repositório
+git clone https://github.com/seu-usuario/lara-world.git
+cd lara-world
+
+# Build e execução
+docker compose up -d
+```
+
+Acesse: http://localhost:8080
+
+### Parar o container
+
+```bash
+docker compose down
+```
+
+## 🔮 Próximas Evoluções
+
+- Mais fases e mundos temáticos
+- Personagem com imagem própria
+- Animações e efeitos sonoros
+- Multiplayer local
+- Sistema de perguntas educativas
+- Ranking e salvamento de progresso
+
+Veja o [roadmap completo](docs/roadmap.md).
+
+## 📄 Licença
+
+Este projeto é open source e está sob a licença MIT.
