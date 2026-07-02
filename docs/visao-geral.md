@@ -2,35 +2,43 @@
 
 ## O que é?
 
-Lara World é um jogo de trilha infantil para navegador, onde a personagem **Lara** percorre um caminho de 20 casas até a linha de chegada. O jogo é controlado por um dado virtual e possui casas especiais que aceleram ou dificultam o progresso.
+Lara World é um jogo de trilha infantil multiplayer para navegador, onde os jogadores percorrem um caminho de 20 casas até a linha de chegada. Controlado por um dado virtual, o jogo possui casas especiais que aceleram ou dificultam o progresso, e suporta 2 jogadores no mesmo dispositivo com alternância automática de turnos.
 
 ## Público-alvo
 
-Crianças em idade pré-escolar e escolar (3 a 10 anos), mas divertido para todas as idades.
+Crianças em idade pré-escolar e escolar (3 a 10 anos), mas divertido para todas as idades. O modo multiplayer é ideal para irmãos, amigos ou pais e filhos jogarem juntos.
 
 ## Plataforma
 
-Navegador web (Chrome, Firefox, Edge, Safari).
+Navegador web (Chrome, Firefox, Edge, Safari). Sem necessidade de instalação ou cadastro.
 
-## MVP (Versão 1) ✅
+## Conceito do Jogo
 
-- 1 jogador
-- 20 casas na trilha
-- Dado virtual de 1 a 6
-- Casas especiais com efeitos
-- Interface infantil e colorida
-- Mensagens de eventos do jogo
-- Botão de reinício
-- Responsivo para desktop
+O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern (4 linhas × 5 colunas). Um caminho SVG suave conecta as casas, criando uma trilha visual que guia os jogadores do início (canto superior esquerdo) até a chegada (canto inferior esquerdo). Cada casa exibe um ícone temático, seu número e, quando especial, uma descrição do efeito.
 
-## Versão 1.5 — Tabuleiro Visual & Animação ✅
+## Principais Funcionalidades
 
-- Trilha serpentina em grid 5×4 (caminho em zigue-zague)
-- Personagem Lara como elemento visual separado
-- Movimento animado casa por casa (async/await)
-- Painel lateral com dado, status, botões e histórico
-- Animações CSS: dado, movimento, celebração de vitória
-- Bloqueio de clique durante animação
+### v0.2.0 (Atual) — Multiplayer Local ✅
+
+- Tabuleiro visual com trilha serpentina e caminho SVG
+- Movimento animado casa por casa (async/await, 180ms/passo)
+- Sistema de dado virtual 1-6 com animação de rolagem
+- 6 casas especiais com efeitos automáticos
+- Multiplayer local para 2 jogadores
+- Alternância automática de turnos
+- Destaque visual do jogador ativo
+- Personagens lado a lado quando na mesma casa
+- Histórico de jogadas
+- Sistema de vitória (primeiro a chegar na casa 20)
+- Reinício de partida
+- Design responsivo
+
+### v0.1.0 ✅
+
+- MVP para 1 jogador
+- Lógica de dado e movimento
+- Casas especiais básicas
+- Docker + Nginx
 
 ## Próximos Passos
 
