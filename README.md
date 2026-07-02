@@ -33,9 +33,31 @@ lara-world/
 
 1. Abra o jogo no navegador.
 2. Clique em **"Jogar Dado"** para lançar o dado.
-3. Lara avança o número de casas sorteado.
+3. Lara avança o número de casas sorteado — andando **casa por casa** com animação visual.
 4. Casas especiais podem fazer Lara avançar, voltar, perder rodadas ou jogar novamente.
 5. Chegue na **casa 20** para vencer!
+
+## Versão Atual
+
+### v0.2.0 - Multiplayer Local
+
+Funcionalidades implementadas:
+
+- Tabuleiro de trilha com 20 casas
+- Movimento animado da personagem
+- Casas especiais:
+  - Avance 2 casas
+  - Volte 1 casa
+  - Jogue novamente
+  - Perde uma rodada
+  - Volte ao início
+- Histórico de jogadas
+- Sistema de vitória
+- Multiplayer local para 2 jogadores
+- Alternância automática de turnos
+- Destaque visual do jogador ativo
+- Docker + Nginx
+- Estrutura preparada para futuras expansões
 
 ## 🚀 Como Executar Localmente
 
@@ -87,12 +109,13 @@ docker compose down
 
 ## 🔮 Próximas Evoluções
 
-- Mais fases e mundos temáticos
-- Personagem com imagem própria
-- Animações e efeitos sonoros
-- Multiplayer local
-- Sistema de perguntas educativas
-- Ranking e salvamento de progresso
+- Sprites próprios da Lara
+- Sprites do Jogador 2
+- Sons
+- Múltiplos mundos
+- Ranking local
+- Salvamento de progresso
+- Efeitos visuais avançados
 
 Veja o [roadmap completo](docs/roadmap.md).
 

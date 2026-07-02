@@ -28,27 +28,30 @@ lara-world/
 ## Arquitetura do Frontend
 
 ### index.html
-Estrutura semântica com três seções principais:
-- **Board**: Grade com as 20 casas da trilha
-- **Controls**: Área do dado, status e botões
-- **Messages**: Painel de mensagens do jogo
+Estrutura semântica dividida em:
+- **Header**: Título e subtítulo
+- **Board Area** (esquerda): Trilha serpentina em grid 5×4 com 20 casas
+- **Panel Area** (direita): Dado, status, botões e histórico de jogadas
 
 ### style.css
-- Design responsivo com CSS Grid
-- Tema infantil com cores vibrantes
-- Animações CSS para dado e personagem
-- Layout mobile-first com media queries
+- Layout flex com board à esquerda e painel à direita
+- CSS Grid para trilha serpentina (4 linhas × 5 colunas, zigue-zague)
+- Cores vibrantes com gradientes, cantos arredondados
+- Animações: bounce (dado), pulse (Lara), celebrar (vitória)
+- Responsivo: empilha verticalmente em telas menores
 
 ### game.js
 Padrão **Module Pattern** (IIFE) para encapsulamento:
-- **State Object**: Gerencia posição, rodadas perdidas, status do jogo
-- **Casas Especiais**: Mapa de configuração das casas com efeitos
+- **gameState**: Gerencia posição, rodadas perdidas, status, isMoving
+- **Casas Especiais**: Mapa de configuração com cascateamento
 - **Funções Principais**:
-  - `renderizarTrilha()`: Desenha as 20 casas
-  - `jogarDado()`: Lógica principal do turno
-  - `processarCasaAtual()`: Aplica regras das casas especiais
-  - `animarDado()`: Efeito visual de rolagem
-  - `verificarVitoria()`: Checa condição de vitória
+  - `renderizarTrilha()`: Desenha as 20 casas em posições serpentinas
+  - `positionLaraAt(casa)`: Posiciona elemento #lara sobre a casa usando `getBoundingClientRect`
+  - `animateLaraMovement(from, to)`: Move Lara passo a passo (async/await, 180ms por passo)
+  - `animateDice(valor)`: Animação de rolagem do dado (retorna Promise)
+  - `processSpecialCell(pos)`: Aplica efeitos de casa especial com animação
+  - `handleVictory()`: Exibe celebração e encerra jogo
+  - `jogarDado()`: Função principal assíncrona do turno
 
 ## Fluxo do Jogo
 
@@ -56,18 +59,24 @@ Padrão **Module Pattern** (IIFE) para encapsulamento:
 Início
   ↓
 Jogador clica "Jogar Dado"
+  ├── Se isMoving → ignora (bloqueio)
+  ├── Se rodadasPerdidas > 0 → decrementa, encerra turno
+  └── Segue:
   ↓
-Anima dado (1-6)
+Anima dado (1-6) com bounce
   ↓
-Lara avança N casas
+Anima Lara andando casa por casa (180ms/casa)
   ↓
-Verifica casa especial?
-  ├── Sim → Aplica efeito (avançar/voltar/perder rodada/etc)
-  └── Não → Finaliza turno
+Caiu em casa especial?
+  ├── Avançar (3) → anima movimento extra, cascateia
+  ├── Voltar (5) → anima movimento reverso
+  ├── Jogar novamente (8) → mantém turno ativo
+  ├── Perde rodada (10) → incrementa contador
+  ├── Voltar início (15) → anima até casa 0
+  └── Vitória (20) → celebração, fim de jogo
   ↓
-Verifica vitória (casa 20)?
-  ├── Sim → Tela de vitória
-  └── Não → Aguarda próxima jogada
+Caiu em casa normal?
+  └── Finaliza turno, libera botão
 ```
 
 ## Docker

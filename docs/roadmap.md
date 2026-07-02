@@ -1,42 +1,38 @@
-# Roadmap
+# Roadmap Lara World
 
-## Versão 1 (MVP) ✅
-- [x] 1 jogador
-- [x] 20 casas na trilha
-- [x] Dado 1-6
-- [x] Casas especiais
-- [x] Interface infantil
-- [x] Botão reiniciar
-- [x] Docker + Nginx
+## Concluído
 
-## Versão 2 — Diversão & Interatividade
-- [ ] Imagem personalizada da Lara (sprite)
-- [ ] Animações CSS avançadas (transição suave entre casas)
-- [ ] Efeitos sonoros (passos, dado, vitória)
-- [ ] Música de fundo
+### v0.1.0
+- Estrutura inicial
+- Trilha com 20 casas
+- Casas especiais
+- Movimento básico
+- Docker
 
-## Versão 3 — Novas Fases & Mundos
-- [ ] Múltiplas fases com layouts diferentes
-- [ ] Temas visuais (Floresta, Fundo do Mar, Espaço)
-- [ ] Mais casas especiais (troca de posição, ponte, atalho)
+### v0.2.0
+- Trilha visual aprimorada
+- Movimento animado
+- Histórico de jogadas
+- Multiplayer local
+- Alternância de turnos
+- Destaque do jogador ativo
+- Vitória individual
 
-## Versão 4 — Modos de Jogo
-- [ ] Multiplayer local (2 a 4 jogadores no mesmo dispositivo)
-- [ ] Modo contra o relógio
-- [ ] Modo livre (sem casas especiais)
+## Futuro
 
-## Versão 5 — Educativo
-- [ ] Sistema de perguntas educativas (matemática, português, ciências)
-- [ ] Acertar pergunta = bônus de movimento
-- [ ] Errar pergunta = penalidade leve
+### v0.3.0
+- Sprites PNG
+- Sons
+- Melhorias visuais
 
-## Versão 6 — Progresso & Ranking
-- [ ] Salvamento de progresso (localStorage)
-- [ ] Ranking de partidas
-- [ ] Estatísticas do jogador
-- [ ] Conquistas / medalhas
+### v0.4.0
+- Escolha de personagens
+- Telas de vitória
 
-## Versão 7 — Social & Publicação
-- [ ] Compartilhamento de resultado
-- [ ] Temas customizáveis pelo usuário
-- [ ] Publicação via Docker no servidor Debian
+### v0.5.0
+- Mundo da Floresta
+- Mundo Espacial
+- Mundo dos Dinossauros
+
+### v1.0.0
+- Lançamento oficial

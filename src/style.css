@@ -6,7 +6,7 @@
 
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #fce4ec, #e8f5e9, #fff3e0);
+  background: linear-gradient(160deg, #a8edea 0%, #fed6e3 100%);
   min-height: 100vh;
   display: flex;
   justify-content: center;
@@ -15,174 +15,356 @@ body {
 }
 
 #app {
-  max-width: 800px;
+  max-width: 1100px;
   width: 100%;
-  background: white;
-  border-radius: 24px;
-  padding: 30px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  background: #fff8f0;
+  border-radius: 28px;
+  padding: 20px 28px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
 }
 
+/* ── Header ── */
 header {
   text-align: center;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 header h1 {
-  font-size: 2.2rem;
+  font-size: 2rem;
   color: #e91e63;
   text-shadow: 2px 2px 0 #f8bbd0;
 }
 
-.subtitle {
-  color: #666;
-  font-size: 1rem;
-  margin-top: 4px;
+/* ── Game Layout ── */
+.game-layout {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
 }
 
-/* Track / Board */
-#board-section {
-  margin-bottom: 24px;
-  overflow-x: auto;
+.board-area {
+  flex: 1;
+  min-width: 0;
 }
 
-#track {
-  display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  gap: 6px;
-  padding: 16px;
-  background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
-  border-radius: 16px;
-  min-width: 600px;
-}
-
-.casa {
-  aspect-ratio: 1;
-  border-radius: 12px;
+.panel-area {
+  width: 240px;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: #333;
-  background: white;
-  border: 2px solid #ddd;
+  gap: 12px;
+}
+
+/* ═══════════════════════════════════════
+   TRACK CONTAINER — Scene Background
+   ═══════════════════════════════════════ */
+#track-container {
   position: relative;
-  transition: all 0.3s ease;
-  min-height: 60px;
-  text-align: center;
-  padding: 2px;
+  min-height: 520px;
+  background: linear-gradient(
+    to bottom,
+    #87ceeb 0%,
+    #b5dffa 25%,
+    #b5e8b5 55%,
+    #7ec850 75%,
+    #5daa3a 100%
+  );
+  border-radius: 24px;
+  padding: 22px;
+  overflow: hidden;
+  box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.06);
 }
 
-.casa .casa-numero {
-  font-size: 0.65rem;
-  color: #999;
+/* ── SVG Path Line ── */
+.path-line {
   position: absolute;
-  top: 3px;
-  left: 5px;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
 }
 
-.casa .cara-metade {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  line-height: 1.2;
+#trail-path {
+  stroke: #a8845a;
+  stroke-width: 10;
+  opacity: 0.6;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.08));
 }
 
-.casa-especial {
-  border-color: #ff9800;
-  background: #fff8e1;
-}
-
-.casa-especial .casa-tipo {
-  font-size: 0.55rem;
-  color: #e65100;
-  font-weight: 600;
-}
-
-.casa-vitoria {
-  border-color: #4caf50;
-  background: #e8f5e9;
-}
-
-.casa-vitoria .casa-tipo {
-  font-size: 0.55rem;
-  color: #2e7d32;
-  font-weight: 600;
-}
-
-.casa-lara {
-  border-color: #e91e63;
-  background: #fce4ec;
-  box-shadow: 0 0 12px rgba(233, 30, 99, 0.4);
-  transform: scale(1.05);
-}
-
-.casa-icone {
-  font-size: 1.5rem;
+/* ── Decorative Elements ── */
+.deco {
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
   line-height: 1;
 }
 
-/* Controls */
-#controls-section {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  margin-bottom: 20px;
+.deco-cloud-1 { top: 6px; left: 10%; font-size: 2.2rem; opacity: 0.8; }
+.deco-cloud-2 { top: 14px; left: 55%; font-size: 1.8rem; opacity: 0.7; }
+.deco-cloud-3 { top: 4px; left: 78%; font-size: 2.6rem; opacity: 0.65; }
+.deco-sun { top: 8px; right: 12%; font-size: 1.8rem; }
+
+.deco-tree-1 { bottom: 4%; left: 2%; font-size: 2.8rem; }
+.deco-tree-2 { bottom: 8%; right: 3%; font-size: 2.4rem; }
+
+.deco-flower-1 { bottom: 16%; left: 14%; font-size: 1.4rem; transform: rotate(-10deg); }
+.deco-flower-2 { bottom: 22%; right: 16%; font-size: 1.3rem; transform: rotate(15deg); }
+.deco-flower-3 { bottom: 10%; left: 8%; font-size: 1.2rem; }
+.deco-flower-4 { bottom: 28%; right: 8%; font-size: 1.5rem; transform: rotate(-5deg); }
+
+/* ═══════════════════════════════════════
+   TRACK — Absolute-positioned cells
+   ═══════════════════════════════════════ */
+#track {
+  position: static;
 }
 
-#dice-area {
+/* ── Cells ── */
+.casa {
+  position: absolute;
+  width: 88px;
+  height: 56px;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #fef7e6;
+  border: 3px solid #b8956a;
+  text-align: center;
+  padding: 3px 2px;
+  box-shadow: 0 3px 0 #8d6e4a, 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  z-index: 3;
+  transform: translate(-50%, -50%);
+}
+
+.casa .casa-numero {
+  font-size: 0.6rem;
+  color: #8d6e4a;
+  font-weight: 700;
+  position: absolute;
+  top: 2px;
+  left: 5px;
+}
+
+.casa .casa-icone {
+  font-size: 1.3rem;
+  line-height: 1;
+  margin-top: 1px;
+}
+
+.casa .casa-tipo {
+  font-size: 0.5rem;
+  color: #6d4c2a;
+  font-weight: 700;
+  line-height: 1.15;
+  max-width: 100%;
+  margin-top: 2px;
+  background: rgba(255, 255, 255, 0.55);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+/* ── Special Cells by Type ── */
+
+/* casa 3 — avancar */
+.casa[data-position="3"] {
+  background: #fff8e1;
+  border-color: #f9a825;
+  box-shadow: 0 3px 0 #c7900a, 0 5px 12px rgba(0, 0, 0, 0.12);
+}
+.casa[data-position="3"] .casa-tipo { color: #c7900a; background: rgba(255, 255, 255, 0.6); }
+
+/* casa 5 — voltar */
+.casa[data-position="5"] {
+  background: #fce4ec;
+  border-color: #e91e63;
+  box-shadow: 0 3px 0 #ad1457, 0 5px 12px rgba(0, 0, 0, 0.12);
+}
+.casa[data-position="5"] .casa-tipo { color: #ad1457; background: rgba(255, 255, 255, 0.6); }
+
+/* casa 8 — jogue novamente */
+.casa[data-position="8"] {
+  background: #fff3e0;
+  border-color: #ff8f00;
+  box-shadow: 0 3px 0 #c77600, 0 5px 12px rgba(0, 0, 0, 0.12);
+}
+.casa[data-position="8"] .casa-tipo { color: #c77600; background: rgba(255, 255, 255, 0.6); }
+
+/* casa 10 — perde rodada */
+.casa[data-position="10"] {
+  background: #f3e5f5;
+  border-color: #8e24aa;
+  box-shadow: 0 3px 0 #6a1b9a, 0 5px 12px rgba(0, 0, 0, 0.12);
+}
+.casa[data-position="10"] .casa-tipo { color: #6a1b9a; background: rgba(255, 255, 255, 0.6); }
+
+/* casa 15 — voltar inicio */
+.casa[data-position="15"] {
+  background: #ffebee;
+  border-color: #c62828;
+  box-shadow: 0 3px 0 #b71c1c, 0 5px 12px rgba(0, 0, 0, 0.12);
+}
+.casa[data-position="15"] .casa-tipo { color: #b71c1c; background: rgba(255, 255, 255, 0.6); }
+
+/* casa 20 — vitoria */
+.casa[data-position="20"] {
+  background: #e8f5e9;
+  border-color: #2e7d32;
+  box-shadow: 0 3px 0 #1b5e20, 0 5px 12px rgba(0, 0, 0, 0.12), 0 0 0 4px rgba(46, 125, 50, 0.15);
+  width: 92px;
+  height: 64px;
+}
+.casa[data-position="20"] .casa-tipo { color: #1b5e20; font-size: 0.6rem; background: rgba(255, 255, 255, 0.65); font-weight: 800; }
+.casa[data-position="20"] .casa-numero { color: #1b5e20; font-size: 0.65rem; font-weight: 800; }
+.casa[data-position="20"] .casa-icone { font-size: 1.5rem; }
+
+.casa-ativada {
+  border-color: #e91e63 !important;
+  box-shadow: 0 0 0 4px rgba(233, 30, 99, 0.3), 0 3px 0 #8d6e4a, 0 5px 12px rgba(0, 0, 0, 0.12) !important;
+  transform: translate(-50%, -50%) scale(1.08) !important;
+  z-index: 5;
+}
+
+/* ═══════════════════════════════════════
+   LARA
+   ═══════════════════════════════════════ */
+#lara {
+  position: absolute;
+  font-size: 2.4rem;
+  width: 58px;
+  height: 58px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  pointer-events: none;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 50%;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  transition: none;
+  border: 3px solid rgba(233, 30, 99, 0.35);
+}
+
+#lara.visivel {
+  display: flex;
+}
+
+#lara-p2 {
+  position: absolute;
+  font-size: 2.4rem;
+  width: 58px;
+  height: 58px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  pointer-events: none;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 50%;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  transition: none;
+  border: 3px solid rgba(33, 150, 243, 0.35);
+}
+
+#lara-p2.visivel {
+  display: flex;
+}
+
+/* ═══════════════════════════════════════
+   PANEL CARDS
+   ═══════════════════════════════════════ */
+.panel-card {
+  background: #fefefe;
+  border-radius: 16px;
+  padding: 14px 16px;
+  border: 1px solid #f0e8e0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.panel-card h2 {
+  font-size: 0.8rem;
+  color: #b8956a;
+  margin-bottom: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ── Dice ── */
+.dice-area {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 1.2rem;
-  font-weight: 700;
-  background: #f5f5f5;
-  padding: 8px 16px;
-  border-radius: 12px;
+  gap: 12px;
 }
 
 #dice-display {
-  font-size: 2rem;
+  font-size: 2.4rem;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fef7e6;
+  border-radius: 12px;
+  box-shadow: inset 0 -2px 0 #ddd, 0 2px 6px rgba(0, 0, 0, 0.06);
 }
 
 #dice-value {
-  font-size: 1.5rem;
+  font-size: 1.6rem;
+  font-weight: 800;
   color: #e91e63;
-  min-width: 24px;
+  min-width: 28px;
   text-align: center;
 }
 
-#status-area {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #555;
+/* ── Status ── */
+.status-text {
+  font-size: 0.95rem;
+  color: #6d4c2a;
 }
 
-#button-area {
+.status-text strong {
+  color: #e91e63;
+  font-size: 1.1rem;
+}
+
+.turn-indicator {
+  background: #fff3e0;
+  border-radius: 8px;
+  padding: 4px 10px;
+  margin-bottom: 4px;
+}
+
+.pos-p1 strong { color: #e91e63; }
+.pos-p2 strong { color: #2196f3; }
+
+/* ── Buttons ── */
+.buttons-card {
   display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .btn {
-  padding: 12px 28px;
+  padding: 12px 0;
   border: none;
   border-radius: 50px;
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
+  width: 100%;
+  text-align: center;
 }
 
 .btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
 }
 
 .btn:active {
@@ -195,56 +377,49 @@ header h1 {
 }
 
 .btn-primary:disabled {
-  background: #ccc;
+  background: #d6ccc4;
+  color: #aaa;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
 }
 
 .btn-secondary {
-  background: linear-gradient(135deg, #78909c, #90a4ae);
+  background: linear-gradient(135deg, #a8845a, #c9a87c);
   color: white;
 }
 
-/* Messages */
-#messages-section {
-  background: #fafafa;
-  border-radius: 12px;
-  padding: 12px 16px;
-  max-height: 120px;
+/* ── History ── */
+.history-card {
+  flex: 1;
+  min-height: 0;
+}
+
+#history {
+  max-height: 180px;
   overflow-y: auto;
+  font-size: 0.8rem;
+  line-height: 1.5;
 }
 
-#messages {
-  font-size: 0.9rem;
+.hist-item {
+  padding: 3px 0;
+  border-bottom: 1px solid #f5f0eb;
+  color: #6d4c2a;
 }
 
-.msg {
-  padding: 4px 0;
-  color: #444;
-  border-bottom: 1px solid #eee;
-}
-
-.msg:last-child {
+.hist-item:last-child {
   border-bottom: none;
 }
 
-.msg-destaque {
-  color: #e91e63;
-  font-weight: 700;
-}
+.hist-item .hist-dado { font-weight: 700; color: #e91e63; }
+.hist-item .hist-especial { color: #e65100; font-weight: 600; }
+.hist-item .hist-vitoria { color: #2e7d32; font-weight: 700; }
+.hist-item .hist-info { color: #a8845a; }
 
-.msg-sucesso {
-  color: #2e7d32;
-  font-weight: 700;
-}
-
-.msg-evento {
-  color: #e65100;
-  font-weight: 600;
-}
-
-/* Animations */
+/* ═══════════════════════════════════════
+   ANIMATIONS
+   ═══════════════════════════════════════ */
 @keyframes pulse {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.15); }
@@ -252,55 +427,88 @@ header h1 {
 
 @keyframes bounce {
   0%, 100% { transform: translateY(0); }
-  30% { transform: translateY(-10px); }
+  25% { transform: translateY(-14px); }
   50% { transform: translateY(0); }
-  70% { transform: translateY(-5px); }
+  75% { transform: translateY(-7px); }
 }
 
-.animar-dado {
-  animation: bounce 0.5s ease;
+@keyframes celebrar {
+  0% { transform: scale(1) rotate(0deg); }
+  20% { transform: scale(1.25) rotate(-8deg); }
+  40% { transform: scale(1.25) rotate(8deg); }
+  60% { transform: scale(1.25) rotate(-8deg); }
+  80% { transform: scale(1.25) rotate(8deg); }
+  100% { transform: scale(1) rotate(0deg); }
 }
 
-.animar-lara {
-  animation: pulse 0.4s ease;
+.animar-dado { animation: bounce 0.5s ease; }
+.animar-lara { animation: pulse 0.35s ease; }
+
+.animar-vitoria {
+  animation: celebrar 0.6s ease 3;
+  border-color: #ffd700 !important;
+  box-shadow: 0 4px 20px rgba(255, 215, 0, 0.5), 0 4px 16px rgba(0, 0, 0, 0.25) !important;
 }
 
-/* Responsive */
-@media (max-width: 640px) {
-  #app {
-    padding: 16px;
-  }
+#lara.animar-lara-pos,
+#lara-p2.animar-lara-pos {
+  animation: pulse 0.35s ease;
+}
 
-  header h1 {
-    font-size: 1.5rem;
-  }
+/* ═══════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════ */
+@media (max-width: 840px) {
+  #app { padding: 14px; }
 
-  .casa {
-    min-height: 44px;
-    font-size: 0.6rem;
-  }
+  .game-layout { flex-direction: column; }
 
-  .casa .casa-numero {
-    font-size: 0.5rem;
-  }
-
-  .casa-icone {
-    font-size: 1rem;
-  }
-
-  #track {
-    gap: 4px;
-    padding: 10px;
-    min-width: unset;
-  }
-
-  #controls-section {
-    flex-direction: column;
+  .panel-area {
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
     gap: 10px;
   }
 
-  .btn {
-    padding: 10px 20px;
-    font-size: 0.9rem;
+  .panel-card { flex: 1; min-width: 130px; }
+  .history-card { flex-basis: 100%; }
+  #history { max-height: 100px; }
+
+  header h1 { font-size: 1.5rem; }
+
+  #track-container { min-height: 380px; padding: 14px; }
+
+  .casa {
+    width: 64px;
+    height: 46px;
+    border-radius: 10px;
   }
+
+  .casa[data-position="20"] {
+    width: 70px;
+    height: 50px;
+  }
+
+  .casa .casa-icone { font-size: 1rem; }
+  .casa .casa-numero { font-size: 0.5rem; }
+  .casa .casa-tipo { font-size: 0.45rem; }
+
+  #lara, #lara-p2 {
+    width: 44px;
+    height: 44px;
+    font-size: 1.8rem;
+  }
+
+  #trail-path { stroke-width: 7; }
+
+  .deco-cloud-1 { font-size: 1.4rem; }
+  .deco-cloud-2 { font-size: 1.2rem; }
+  .deco-cloud-3 { font-size: 1.6rem; }
+  .deco-tree-1 { font-size: 2rem; }
+  .deco-tree-2 { font-size: 1.6rem; }
+  .deco-flower-1 { font-size: 1rem; }
+  .deco-flower-2 { font-size: 0.9rem; }
+  .deco-flower-3 { font-size: 0.9rem; }
+  .deco-flower-4 { font-size: 1rem; }
+  .deco-sun { font-size: 1.2rem; }
 }

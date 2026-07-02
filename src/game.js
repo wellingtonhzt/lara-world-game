@@ -1,5 +1,19 @@
 (function () {
   const TOTAL_CASAS = 20;
+  const PLAYER_COUNT = 2;
+
+  /* ── Players ── */
+  const players = [
+    { id: 1, name: 'Lara', emoji: '🧒', posicao: 0, rodadasPerdidas: 0, element: null },
+    { id: 2, name: 'Amigo', emoji: '🧑', posicao: 0, rodadasPerdidas: 0, element: null },
+  ];
+
+  const gameState = {
+    currentPlayerIndex: 0,
+    jogoAtivo: true,
+    jogoFinalizado: false,
+    isMoving: false,
+  };
 
   const casasEspeciais = {
     3: { tipo: "avancar", valor: 2, descricao: "Avance 2 casas!" },
@@ -7,7 +21,7 @@
     8: { tipo: "jogar-novamente", valor: 0, descricao: "Jogue novamente!" },
     10: { tipo: "perde-rodada", valor: 0, descricao: "Perdeu uma rodada!" },
     15: { tipo: "voltar-inicio", valor: 0, descricao: "Volte para o início!" },
-    20: { tipo: "vitoria", valor: 0, descricao: "Vitória! 🎉" },
+    20: { tipo: "vitoria", valor: 0, descricao: "🏆 Chegada!" },
   };
 
   const icons = [
@@ -17,51 +31,129 @@
     "🐼", "🍉", "🐶", "🎠", "👑",
   ];
 
-  let state = {
-    posicao: 0,
-    rodadasPerdidas: 0,
-    jogoAtivo: true,
-    jogoFinalizado: false,
-    aguardandoJogada: false,
+  const boardPositions = {
+    1:  { x: 10, y: 10 },
+    2:  { x: 26, y: 10 },
+    3:  { x: 42, y: 10 },
+    4:  { x: 58, y: 10 },
+    5:  { x: 74, y: 10 },
+    6:  { x: 74, y: 28 },
+    7:  { x: 58, y: 28 },
+    8:  { x: 42, y: 28 },
+    9:  { x: 26, y: 28 },
+    10: { x: 10, y: 28 },
+    11: { x: 10, y: 46 },
+    12: { x: 26, y: 46 },
+    13: { x: 42, y: 46 },
+    14: { x: 58, y: 46 },
+    15: { x: 74, y: 46 },
+    16: { x: 74, y: 64 },
+    17: { x: 58, y: 64 },
+    18: { x: 42, y: 64 },
+    19: { x: 26, y: 64 },
+    20: { x: 10, y: 82 },
   };
+
+  /* ── Player Helpers ── */
+
+  function getCurrentPlayer() {
+    return players[gameState.currentPlayerIndex];
+  }
+
+  function getPlayerElement(player) {
+    return player.element;
+  }
+
+  function switchTurn() {
+    if (PLAYER_COUNT < 2) return;
+    gameState.currentPlayerIndex = (gameState.currentPlayerIndex + 1) % PLAYER_COUNT;
+  }
+
+  function updateUI() {
+    const p = getCurrentPlayer();
+    if (elements.currentPlayerName) {
+      elements.currentPlayerName.textContent = `${p.emoji} ${p.name}`;
+    }
+    if (elements.p1Pos) elements.p1Pos.textContent = players[0].posicao;
+    if (elements.p2Pos) elements.p2Pos.textContent = players[1].posicao;
+  }
 
   const elements = {
     track: document.getElementById("track"),
+    lara: document.getElementById("lara"),
+    laraP2: document.getElementById("lara-p2"),
+    trailPath: document.getElementById("trail-path"),
     diceDisplay: document.getElementById("dice-display"),
     diceValue: document.getElementById("dice-value"),
-    currentPosition: document.getElementById("current-position"),
-    messages: document.getElementById("messages"),
+    history: document.getElementById("history"),
     rollBtn: document.getElementById("roll-btn"),
     resetBtn: document.getElementById("reset-btn"),
+    currentPlayerName: document.getElementById("current-player-name"),
+    p1Pos: document.getElementById("p1-pos"),
+    p2Pos: document.getElementById("p2-pos"),
   };
 
-  function init() {
-    renderizarTrilha();
-    atualizarPosicaoLara();
-    elements.rollBtn.addEventListener("click", jogarDado);
-    elements.resetBtn.addEventListener("click", reiniciarJogo);
+  players[0].element = elements.lara;
+  players[1].element = elements.laraP2;
+
+  /* ── Helpers ── */
+
+  function delay(ms) {
+    return new Promise((r) => setTimeout(r, ms));
   }
+
+  /* ── SVG Path ── */
+
+  function renderSvgPath() {
+    const sorted = Object.keys(boardPositions)
+      .sort((a, b) => a - b)
+      .map((k) => boardPositions[k]);
+
+    const n = sorted.length;
+    if (n < 2) return;
+
+    let d = `M ${sorted[0].x},${sorted[0].y}`;
+
+    for (let i = 0; i < n - 1; i++) {
+      const p0 = sorted[Math.max(0, i - 1)];
+      const p1 = sorted[i];
+      const p2 = sorted[i + 1];
+      const p3 = sorted[Math.min(n - 1, i + 2)];
+
+      const cp1x = p1.x + (p2.x - p0.x) / 6;
+      const cp1y = p1.y + (p2.y - p0.y) / 6;
+      const cp2x = p2.x - (p3.x - p1.x) / 6;
+      const cp2y = p2.y - (p3.y - p1.y) / 6;
+
+      d += ` C ${cp1x},${cp1y} ${cp2x},${cp2y} ${p2.x},${p2.y}`;
+    }
+
+    if (elements.trailPath) {
+      elements.trailPath.setAttribute("d", d);
+    }
+  }
+
+  /* ── Board ── */
 
   function renderizarTrilha() {
     elements.track.innerHTML = "";
     for (let i = 1; i <= TOTAL_CASAS; i++) {
+      const pos = boardPositions[i];
+
       const casa = document.createElement("div");
       casa.className = "casa";
-      casa.dataset.casa = i;
       casa.id = `casa-${i}`;
+      casa.dataset.position = i;
+      casa.style.left = pos.x + "%";
+      casa.style.top = pos.y + "%";
 
       if (casasEspeciais[i]) {
-        casa.classList.add(
-          i === 20 ? "casa-vitoria" : "casa-especial"
-        );
+        casa.classList.add(i === 20 ? "casa-vitoria" : "casa-especial");
       }
 
       const icone = document.createElement("span");
       icone.className = "casa-icone";
       icone.textContent = icons[i - 1] || "⬜";
-
-      const info = document.createElement("div");
-      info.className = "cara-metade";
 
       const numero = document.createElement("span");
       numero.className = "casa-numero";
@@ -69,247 +161,312 @@
 
       const tipo = document.createElement("span");
       tipo.className = "casa-tipo";
-
       if (casasEspeciais[i]) {
         tipo.textContent = casasEspeciais[i].descricao;
       }
 
-      info.appendChild(numero);
-      info.appendChild(tipo);
       casa.appendChild(icone);
-      casa.appendChild(info);
+      casa.appendChild(numero);
+      casa.appendChild(tipo);
       elements.track.appendChild(casa);
     }
   }
 
-  function atualizarPosicaoLara() {
-    document.querySelectorAll(".casa-lara").forEach((el) => {
-      el.classList.remove("casa-lara");
+  /* ── Player Positioning ── */
+
+  function positionPlayerAt(casaNumero, player) {
+    const p = player || getCurrentPlayer();
+    const el = getPlayerElement(p);
+    if (!el) return;
+
+    if (casaNumero < 1 || casaNumero > TOTAL_CASAS) {
+      el.classList.remove("visivel");
+      return;
+    }
+
+    const cell = document.getElementById(`casa-${casaNumero}`);
+    if (!cell) return;
+
+    const container = document.getElementById("track-container");
+    const cRect = container.getBoundingClientRect();
+    const cellRect = cell.getBoundingClientRect();
+
+    const laraW = 58;
+    const laraH = 58;
+
+    let offsetX = 0;
+    let offsetY = 0;
+
+    players.forEach(other => {
+      if (other.id !== p.id && other.posicao === casaNumero) {
+        offsetX = p.id === 1 ? -12 : 12;
+        offsetY = p.id === 1 ? -8 : 8;
+      }
     });
 
-    const posAtual = state.posicao;
-    if (posAtual >= 1 && posAtual <= TOTAL_CASAS) {
-      const casaEl = document.getElementById(`casa-${posAtual}`);
-      if (casaEl) {
-        casaEl.classList.add("casa-lara");
-        casaEl.querySelector(".casa-icone").textContent = "🧒";
-      }
-    }
-
-    elements.currentPosition.textContent = posAtual;
-
-    for (let i = 1; i <= TOTAL_CASAS; i++) {
-      const casaEl = document.getElementById(`casa-${i}`);
-      if (casaEl && i !== posAtual) {
-        casaEl.querySelector(".casa-icone").textContent = icons[i - 1] || "⬜";
-      }
-    }
+    el.style.left =
+      cellRect.left - cRect.left + (cellRect.width - laraW) / 2 + offsetX + "px";
+    el.style.top =
+      cellRect.top - cRect.top + (cellRect.height - laraH) / 2 - 6 + offsetY + "px";
+    el.classList.add("visivel");
   }
 
-  function adicionarMensagem(texto, tipo) {
+  /* ── Animation ── */
+
+  async function animatePlayerMovement(from, to) {
+    if (from === to) return;
+
+    const step = from < to ? 1 : -1;
+    const positions = [];
+    for (let p = from + step; step > 0 ? p <= to : p >= to; p += step) {
+      positions.push(p);
+    }
+
+    const player = getCurrentPlayer();
+    const el = getPlayerElement(player);
+
+    for (const pos of positions) {
+      if (pos >= 1 && pos <= TOTAL_CASAS) {
+        positionPlayerAt(pos);
+        el.classList.remove("animar-lara-pos");
+        void el.offsetWidth;
+        el.classList.add("animar-lara-pos");
+      }
+      await delay(180);
+    }
+
+    player.posicao = to;
+  }
+
+  /* ── Dice ── */
+
+  function getDadoEmoji(valor) {
+    return ["⚀", "⚁", "⚂", "⚃", "⚄", "⚅"][valor - 1] || "🎲";
+  }
+
+  async function animateDice(valor) {
+    return new Promise((resolve) => {
+      const values = [1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6];
+      let idx = 0;
+
+      elements.diceDisplay.classList.add("animar-dado");
+
+      const iv = setInterval(() => {
+        elements.diceDisplay.textContent = getDadoEmoji(values[idx]);
+        idx++;
+        if (idx >= values.length) {
+          clearInterval(iv);
+          elements.diceDisplay.textContent = getDadoEmoji(valor);
+          elements.diceValue.textContent = valor;
+          elements.diceDisplay.classList.remove("animar-dado");
+          setTimeout(resolve, 250);
+        }
+      }, 80);
+    });
+  }
+
+  /* ── History ── */
+
+  function addHistory(texto, tipo) {
     const p = document.createElement("p");
-    p.className = `msg ${tipo ? "msg-" + tipo : ""}`;
-    p.textContent = texto;
-    elements.messages.appendChild(p);
-    elements.messages.scrollTop = elements.messages.scrollHeight;
+    p.className = "hist-item";
+    const cls = tipo === "dado" ? "hist-dado"
+      : tipo === "especial" ? "hist-especial"
+      : tipo === "vitoria" ? "hist-vitoria"
+      : "hist-info";
+    p.innerHTML = `<span class="${cls}">${texto}</span>`;
+    elements.history.appendChild(p);
+    elements.history.scrollTop = elements.history.scrollHeight;
   }
 
-  function limparMensagens() {
-    elements.messages.innerHTML = "";
+  function clearHistory() {
+    elements.history.innerHTML = "";
   }
 
-  function jogarDado() {
-    if (!state.jogoAtivo || state.jogoFinalizado) return;
+  /* ── Special Cells ── */
 
-    if (state.aguardandoJogada) return;
-    state.aguardandoJogada = true;
+  async function processSpecialCell(posicao) {
+    const player = getCurrentPlayer();
+    const info = casasEspeciais[posicao];
+    if (!info) return false;
+
+    switch (info.tipo) {
+      case "avancar": {
+        const destino = Math.min(posicao + info.valor, TOTAL_CASAS);
+        addHistory(`⭐ ${info.descricao} → casa ${destino}`, "especial");
+        await animatePlayerMovement(posicao, destino);
+        player.posicao = destino;
+        if (destino >= TOTAL_CASAS) {
+          await handleVictory();
+          return false;
+        }
+        return await processSpecialCell(destino);
+      }
+      case "voltar": {
+        const destino = Math.max(posicao - info.valor, 0);
+        addHistory(`🐢 ${info.descricao} → casa ${destino}`, "especial");
+        if (destino > 0) {
+          await animatePlayerMovement(posicao, destino);
+        }
+        player.posicao = destino;
+        positionPlayerAt(destino);
+        return false;
+      }
+      case "jogar-novamente": {
+        addHistory(`🎯 ${info.descricao}`, "especial");
+        return true;
+      }
+      case "perde-rodada": {
+        player.rodadasPerdidas++;
+        addHistory(`😴 ${info.descricao}`, "especial");
+        return false;
+      }
+      case "voltar-inicio": {
+        addHistory(`🔙 ${info.descricao}`, "especial");
+        if (player.posicao !== 0) {
+          await animatePlayerMovement(player.posicao, 0);
+        }
+        player.posicao = 0;
+        positionPlayerAt(0);
+        return false;
+      }
+      case "vitoria": {
+        await handleVictory();
+        return false;
+      }
+      default:
+        return false;
+    }
+  }
+
+  /* ── Victory ── */
+
+  async function handleVictory() {
+    const player = getCurrentPlayer();
+    const el = getPlayerElement(player);
+
+    player.posicao = TOTAL_CASAS;
+    gameState.jogoFinalizado = true;
+    gameState.jogoAtivo = false;
+    elements.rollBtn.disabled = true;
+    positionPlayerAt(TOTAL_CASAS);
+    updateUI();
+
+    el.classList.add("animar-vitoria");
+
+    addHistory(`🎉🎉 PARABÉNS, ${player.name} venceu! 🎉🎉`, "vitoria");
+  }
+
+  /* ── End Turn ── */
+
+  function unlockTurn() {
+    gameState.isMoving = false;
+    elements.rollBtn.disabled = false;
+  }
+
+  /* ── Main Action ── */
+
+  async function jogarDado() {
+    if (!gameState.jogoAtivo || gameState.jogoFinalizado || gameState.isMoving)
+      return;
+
+    gameState.isMoving = true;
     elements.rollBtn.disabled = true;
 
-    if (state.rodadasPerdidas > 0) {
-      state.rodadasPerdidas--;
-      adicionarMensagem(
-        `😴 Lara perdeu esta rodada! (${state.rodadasPerdidas} restante(s))`,
-        "evento"
-      );
-      state.aguardandoJogada = false;
-      elements.rollBtn.disabled = false;
+    const player = getCurrentPlayer();
+
+    if (player.rodadasPerdidas > 0) {
+      player.rodadasPerdidas--;
+      const restante =
+        player.rodadasPerdidas > 0
+          ? ` (${player.rodadasPerdidas} restante(s))`
+          : "";
+      addHistory(`😴 ${player.name} perdeu esta rodada!${restante}`, "especial");
+      switchTurn();
+      updateUI();
+      unlockTurn();
       return;
     }
 
     const resultado = Math.floor(Math.random() * 6) + 1;
-    animarDado(resultado, () => {
-      state.posicao += resultado;
-      if (state.posicao > TOTAL_CASAS) {
-        state.posicao = TOTAL_CASAS;
-      }
+    await animateDice(resultado);
 
-      adicionarMensagem(
-        `🎲 Lara tirou ${resultado} e foi para a casa ${state.posicao}.`,
-        "destaque"
-      );
+    const from = player.posicao;
+    const target = Math.min(from + resultado, TOTAL_CASAS);
 
-      processarCasaAtual();
-    });
-  }
+    if (target > from) {
+      await animatePlayerMovement(from, target);
+    } else if (target === 0) {
+      positionPlayerAt(0);
+    }
 
-  function animarDado(valor, callback) {
-    const intervalos = [1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6];
-    let idx = 0;
+    player.posicao = target;
 
-    elements.diceDisplay.classList.add("animar-dado");
+    addHistory(`🎲 ${player.name} tirou ${resultado} → casa ${target}`, "dado");
 
-    const intervalo = setInterval(() => {
-      elements.diceDisplay.textContent = getDadoEmoji(intervalos[idx]);
-      idx++;
-      if (idx >= intervalos.length) {
-        clearInterval(intervalo);
-        elements.diceDisplay.textContent = getDadoEmoji(valor);
-        elements.diceValue.textContent = valor;
-        elements.diceDisplay.classList.remove("animar-dado");
-
-        const casaEl = document.getElementById(`casa-${state.posicao}`);
-        if (casaEl) {
-          casaEl.classList.add("animar-lara");
-          setTimeout(() => casaEl.classList.remove("animar-lara"), 500);
-        }
-
-        setTimeout(callback, 300);
-      }
-    }, 80);
-  }
-
-  function getDadoEmoji(valor) {
-    const dados = ["⚀", "⚁", "⚂", "⚃", "⚄", "⚅"];
-    return dados[valor - 1] || "🎲";
-  }
-
-  function processarCasaAtual() {
-    const casa = casasEspeciais[state.posicao];
-    if (!casa) {
-      finalizarTurno();
+    if (target >= TOTAL_CASAS) {
+      await handleVictory();
+      gameState.isMoving = false;
       return;
     }
 
-    switch (casa.tipo) {
-      case "avancar": {
-        const destino = Math.min(state.posicao + casa.valor, TOTAL_CASAS);
-        adicionarMensagem(
-          `⭐ Casa especial! ${casa.descricao} Lara vai para ${destino}.`,
-          "evento"
-        );
-        state.posicao = destino;
-        if (destino === TOTAL_CASAS) {
-          verificarVitoria();
-        } else {
-          processarCasaAtual();
-        }
-        break;
-      }
-      case "voltar": {
-        state.posicao = Math.max(state.posicao - casa.valor, 0);
-        adicionarMensagem(
-          `🐢 Casa especial! ${casa.descricao} Lara foi para ${state.posicao}.`,
-          "evento"
-        );
-        finalizarTurno();
-        break;
-      }
-      case "jogar-novamente": {
-        adicionarMensagem(
-          `🎯 Casa especial! ${casa.descricao}`,
-          "evento"
-        );
-        state.aguardandoJogada = false;
-        elements.rollBtn.disabled = false;
-        atualizarPosicaoLara();
-        return;
-      }
-      case "perde-rodada": {
-        state.rodadasPerdidas += 1;
-        adicionarMensagem(
-          `😴 Casa especial! ${casa.descricao}`,
-          "evento"
-        );
-        finalizarTurno();
-        break;
-      }
-      case "voltar-inicio": {
-        state.posicao = 0;
-        adicionarMensagem(
-          `🔙 Casa especial! ${casa.descricao}`,
-          "evento"
-        );
-        finalizarTurno();
-        break;
-      }
-      case "vitoria": {
-        verificarVitoria();
-        break;
-      }
-      default:
-        finalizarTurno();
+    const extraTurn = await processSpecialCell(target);
+
+    if (gameState.jogoFinalizado) {
+      gameState.isMoving = false;
+      return;
     }
-  }
 
-  function verificarVitoria() {
-    if (state.posicao >= TOTAL_CASAS) {
-      state.posicao = TOTAL_CASAS;
-      state.jogoFinalizado = true;
-      state.jogoAtivo = false;
-      state.aguardandoJogada = false;
-      elements.rollBtn.disabled = true;
-
-      adicionarMensagem(
-        "🎉🎉🎉 PARABÉNS! Lara completou a jornada! 🎉🎉🎉",
-        "sucesso"
-      );
-
-      for (let i = 1; i <= TOTAL_CASAS; i++) {
-        const el = document.getElementById(`casa-${i}`);
-        if (el) el.classList.remove("casa-lara");
-      }
-
-      const casaFinal = document.getElementById(`casa-${TOTAL_CASAS}`);
-      if (casaFinal) {
-        casaFinal.classList.add("casa-lara");
-        casaFinal.querySelector(".casa-icone").textContent = "🧒";
-      }
-
-      elements.currentPosition.textContent = TOTAL_CASAS;
+    if (extraTurn) {
+      gameState.isMoving = false;
+      elements.rollBtn.disabled = false;
+      updateUI();
+      addHistory("🎯 Jogue novamente!", "especial");
+      return;
     }
+
+    switchTurn();
+    updateUI();
+    unlockTurn();
   }
 
-  function finalizarTurno() {
-    atualizarPosicaoLara();
-    state.aguardandoJogada = false;
-    elements.rollBtn.disabled = false;
-  }
+  /* ── Reset ── */
 
   function reiniciarJogo() {
-    state.posicao = 0;
-    state.rodadasPerdidas = 0;
-    state.jogoAtivo = true;
-    state.jogoFinalizado = false;
-    state.aguardandoJogada = false;
+    players.forEach(p => { p.posicao = 0; p.rodadasPerdidas = 0; });
+    gameState.currentPlayerIndex = 0;
+    gameState.jogoAtivo = true;
+    gameState.jogoFinalizado = false;
+    gameState.isMoving = false;
 
     elements.rollBtn.disabled = false;
     elements.diceDisplay.textContent = "🎲";
     elements.diceValue.textContent = "-";
+    updateUI();
 
-    document.querySelectorAll(".casa-lara").forEach((el) => {
-      el.classList.remove("casa-lara");
+    players.forEach(p => {
+      const el = getPlayerElement(p);
+      if (el) el.classList.remove("visivel", "animar-vitoria");
     });
-    for (let i = 1; i <= TOTAL_CASAS; i++) {
-      const el = document.getElementById(`casa-${i}`);
-      if (el) {
-        el.querySelector(".casa-icone").textContent = icons[i - 1] || "⬜";
-      }
-    }
 
-    elements.currentPosition.textContent = "0";
+    document.querySelectorAll(".casa-ativada").forEach((el) => {
+      el.classList.remove("casa-ativada");
+    });
 
-    limparMensagens();
-    adicionarMensagem("🔄 Jogo reiniciado! Clique em 'Jogar Dado' para começar.");
+    clearHistory();
+    addHistory("🔄 Jogo reiniciado!", "info");
+  }
+
+  /* ── Init ── */
+
+  function init() {
+    renderizarTrilha();
+    renderSvgPath();
+    elements.rollBtn.addEventListener("click", jogarDado);
+    elements.resetBtn.addEventListener("click", reiniciarJogo);
+    updateUI();
+    players.forEach(p => positionPlayerAt(p.posicao, p));
+    addHistory("🎮 Bem-vindos ao Lara World!", "info");
   }
 
   document.addEventListener("DOMContentLoaded", init);

@@ -12,7 +12,7 @@ Crianças em idade pré-escolar e escolar (3 a 10 anos), mas divertido para toda
 
 Navegador web (Chrome, Firefox, Edge, Safari).
 
-## MVP (Versão 1)
+## MVP (Versão 1) ✅
 
 - 1 jogador
 - 20 casas na trilha
@@ -22,6 +22,15 @@ Navegador web (Chrome, Firefox, Edge, Safari).
 - Mensagens de eventos do jogo
 - Botão de reinício
 - Responsivo para desktop
+
+## Versão 1.5 — Tabuleiro Visual & Animação ✅
+
+- Trilha serpentina em grid 5×4 (caminho em zigue-zague)
+- Personagem Lara como elemento visual separado
+- Movimento animado casa por casa (async/await)
+- Painel lateral com dado, status, botões e histórico
+- Animações CSS: dado, movimento, celebração de vitória
+- Bloqueio de clique durante animação
 
 ## Próximos Passos
 

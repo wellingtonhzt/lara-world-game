@@ -10,33 +10,64 @@
   <div id="app">
     <header>
       <h1>🌍 Lara World</h1>
-      <p class="subtitle">A aventura de Lara começa!</p>
     </header>
 
-    <main>
-      <section id="board-section">
-        <div id="track"></div>
+    <main class="game-layout">
+      <section class="board-area">
+        <div id="track-container">
+          <div class="deco deco-cloud-1">☁️</div>
+          <div class="deco deco-cloud-2">☁️</div>
+          <div class="deco deco-cloud-3">☁️</div>
+          <div class="deco deco-tree-1">🌳</div>
+          <div class="deco deco-tree-2">🌲</div>
+          <div class="deco deco-flower-1">🌷</div>
+          <div class="deco deco-flower-2">🌻</div>
+          <div class="deco deco-flower-3">🌸</div>
+          <div class="deco deco-flower-4">🌺</div>
+          <div class="deco deco-sun">🌤️</div>
+
+          <svg class="path-line" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <path id="trail-path" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+
+          <div id="track"></div>
+          <div id="lara">🧒</div>
+          <div id="lara-p2">🧑</div>
+        </div>
       </section>
 
-      <section id="controls-section">
-        <div id="dice-area">
-          <div id="dice-display">🎲</div>
-          <span id="dice-value">-</span>
+      <aside class="panel-area">
+        <div class="panel-card">
+          <h2>🎲 Dado</h2>
+          <div class="dice-area">
+            <div id="dice-display">🎲</div>
+            <span id="dice-value">-</span>
+          </div>
         </div>
-        <div id="status-area">
-          <p id="position-info">Posição: <span id="current-position">0</span> / 20</p>
+
+        <div class="panel-card">
+          <h2>📊 Status</h2>
+          <p class="status-text turn-indicator">
+            ➡️ <strong><span id="current-player-name">🧒 Lara</span></strong>
+          </p>
+          <p class="status-text pos-p1">
+            🧒 Lara: <strong><span id="p1-pos">0</span> / 20</strong>
+          </p>
+          <p class="status-text pos-p2">
+            🧑 Amigo: <strong><span id="p2-pos">0</span> / 20</strong>
+          </p>
         </div>
-        <div id="button-area">
+
+        <div class="panel-card buttons-card">
           <button id="roll-btn" class="btn btn-primary">🎲 Jogar Dado</button>
           <button id="reset-btn" class="btn btn-secondary">🔄 Reiniciar</button>
         </div>
-      </section>
 
-      <section id="messages-section">
-        <div id="messages">
-          <p class="msg">Bem-vinda ao Lara World! Clique em "Jogar Dado" para começar.</p>
+        <div class="panel-card history-card">
+          <h2>📜 Jogadas</h2>
+          <div id="history"></div>
         </div>
-      </section>
+      </aside>
     </main>
   </div>
 
