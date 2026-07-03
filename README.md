@@ -110,7 +110,7 @@ Acesse: http://localhost:8000
 
 ```bash
 # Clone o repositório
-git clone https://github.com/seu-usuario/lara-world.git
+git clone https://github.com/wellingtonhzt/lara-world-game.git
 cd lara-world
 
 # Build e execução
