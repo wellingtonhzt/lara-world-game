@@ -1,3 +1,5 @@
+<p align="center">
+  <img src="assets/banner-lara-world.png" alt="Lara World Banner">
 # 🌍 Lara World
 
 **Lara World** é um jogo de trilha infantil para navegador, onde os jogadores percorrem um caminho de 20 casas até a linha de chegada. Feito com HTML, CSS e JavaScript puro — sem frameworks, sem backend, sem banco de dados.
