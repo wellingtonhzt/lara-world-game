@@ -76,6 +76,10 @@
     }
     if (elements.p1Pos) elements.p1Pos.textContent = players[0].posicao;
     if (elements.p2Pos) elements.p2Pos.textContent = players[1].posicao;
+    if (elements.p1Label) elements.p1Label.textContent = `${players[0].emoji} ${players[0].name}`;
+    if (elements.p2Label) elements.p2Label.textContent = `${players[1].emoji} ${players[1].name}`;
+    if (elements.lara) elements.lara.textContent = players[0].emoji;
+    if (elements.laraP2) elements.laraP2.textContent = players[1].emoji;
   }
 
   const elements = {
@@ -91,6 +95,8 @@
     currentPlayerName: document.getElementById("current-player-name"),
     p1Pos: document.getElementById("p1-pos"),
     p2Pos: document.getElementById("p2-pos"),
+    p1Label: document.getElementById("p1-label"),
+    p2Label: document.getElementById("p2-label"),
   };
 
   players[0].element = elements.lara;
@@ -457,16 +463,87 @@
     addHistory("🔄 Jogo reiniciado!", "info");
   }
 
-  /* ── Init ── */
+  /* ── Modal Setup ── */
 
-  function init() {
+  function showSetupScreen() {
+    document.getElementById("setup-screen").classList.remove("hidden");
+  }
+
+  function hideSetupScreen() {
+    document.getElementById("setup-screen").classList.add("hidden");
+  }
+
+  function startGame() {
+    players[0].name = document.getElementById("player1-name").value.trim() || "Jogador 1";
+    players[1].name = document.getElementById("player2-name").value.trim() || "Jogador 2";
+
+    const p1Selected = document.querySelector("#p1-emoji-grid .emoji-btn.selected");
+    const p2Selected = document.querySelector("#p2-emoji-grid .emoji-btn.selected");
+    players[0].emoji = p1Selected ? p1Selected.dataset.emoji : "🧒";
+    players[1].emoji = p2Selected ? p2Selected.dataset.emoji : "🧑";
+
+    elements.lara.textContent = players[0].emoji;
+    elements.laraP2.textContent = players[1].emoji;
+
+    hideSetupScreen();
     renderizarTrilha();
     renderSvgPath();
-    elements.rollBtn.addEventListener("click", jogarDado);
-    elements.resetBtn.addEventListener("click", reiniciarJogo);
     updateUI();
     players.forEach(p => positionPlayerAt(p.posicao, p));
     addHistory("🎮 Bem-vindos ao Lara World!", "info");
+  }
+
+  function setupModalEvents() {
+    const p1Name = document.getElementById("player1-name");
+    const p2Name = document.getElementById("player2-name");
+    const startBtn = document.getElementById("start-game-btn");
+    const p1Grid = document.getElementById("p1-emoji-grid");
+    const p2Grid = document.getElementById("p2-emoji-grid");
+
+    let p1Emoji = null;
+    let p2Emoji = null;
+
+    function checkReady() {
+      startBtn.disabled = !(p1Name.value.trim() && p1Emoji && p2Name.value.trim() && p2Emoji);
+    }
+
+    p1Name.addEventListener("input", checkReady);
+    p2Name.addEventListener("input", checkReady);
+
+    p1Grid.querySelectorAll(".emoji-btn").forEach(btn => {
+      btn.addEventListener("click", function () {
+        p1Grid.querySelectorAll(".emoji-btn").forEach(b => b.classList.remove("selected"));
+        this.classList.add("selected");
+        p1Emoji = this.dataset.emoji;
+        checkReady();
+      });
+    });
+
+    p2Grid.querySelectorAll(".emoji-btn").forEach(btn => {
+      btn.addEventListener("click", function () {
+        p2Grid.querySelectorAll(".emoji-btn").forEach(b => b.classList.remove("selected"));
+        this.classList.add("selected");
+        p2Emoji = this.dataset.emoji;
+        checkReady();
+      });
+    });
+
+    const p1Def = p1Grid.querySelector('.emoji-btn[data-emoji="🧒"]');
+    const p2Def = p2Grid.querySelector('.emoji-btn[data-emoji="🧑"]');
+    if (p1Def) { p1Def.classList.add("selected"); p1Emoji = "🧒"; }
+    if (p2Def) { p2Def.classList.add("selected"); p2Emoji = "🧑"; }
+
+    startBtn.addEventListener("click", startGame);
+    checkReady();
+  }
+
+  /* ── Init ── */
+
+  function init() {
+    elements.rollBtn.addEventListener("click", jogarDado);
+    elements.resetBtn.addEventListener("click", reiniciarJogo);
+    showSetupScreen();
+    setupModalEvents();
   }
 
   document.addEventListener("DOMContentLoaded", init);

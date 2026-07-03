@@ -12,6 +12,71 @@
       <h1>🌍 Lara World</h1>
     </header>
 
+    <div id="setup-screen" class="setup-screen hidden">
+      <div class="setup-content">
+        <h2>🚀 Preparar Jogo</h2>
+        <div class="setup-players">
+          <div class="setup-player-card">
+            <h3>👶 Jogador 1</h3>
+            <label for="player1-name">Nome:</label>
+            <input type="text" id="player1-name" value="Lara" maxlength="20">
+            <label>Sprite:</label>
+            <div class="emoji-grid" id="p1-emoji-grid">
+              <button class="emoji-btn" data-emoji="🧒">🧒</button>
+              <button class="emoji-btn" data-emoji="🌟">🌟</button>
+              <button class="emoji-btn" data-emoji="🌸">🌸</button>
+              <button class="emoji-btn" data-emoji="🌈">🌈</button>
+              <button class="emoji-btn" data-emoji="⭐">⭐</button>
+              <button class="emoji-btn" data-emoji="🦋">🦋</button>
+              <button class="emoji-btn" data-emoji="🍀">🍀</button>
+              <button class="emoji-btn" data-emoji="🎈">🎈</button>
+              <button class="emoji-btn" data-emoji="🐱">🐱</button>
+              <button class="emoji-btn" data-emoji="🍭">🍭</button>
+              <button class="emoji-btn" data-emoji="🎀">🎀</button>
+              <button class="emoji-btn" data-emoji="🌻">🌻</button>
+              <button class="emoji-btn" data-emoji="🐰">🐰</button>
+              <button class="emoji-btn" data-emoji="🍬">🍬</button>
+              <button class="emoji-btn" data-emoji="🦄">🦄</button>
+              <button class="emoji-btn" data-emoji="🎪">🎪</button>
+              <button class="emoji-btn" data-emoji="🐼">🐼</button>
+              <button class="emoji-btn" data-emoji="🍉">🍉</button>
+              <button class="emoji-btn" data-emoji="🐶">🐶</button>
+              <button class="emoji-btn" data-emoji="🎠">🎠</button>
+            </div>
+          </div>
+          <div class="setup-player-card">
+            <h3>👥 Jogador 2</h3>
+            <label for="player2-name">Nome:</label>
+            <input type="text" id="player2-name" value="Amigo" maxlength="20">
+            <label>Sprite:</label>
+            <div class="emoji-grid" id="p2-emoji-grid">
+              <button class="emoji-btn" data-emoji="🧑">🧑</button>
+              <button class="emoji-btn" data-emoji="🌟">🌟</button>
+              <button class="emoji-btn" data-emoji="🌸">🌸</button>
+              <button class="emoji-btn" data-emoji="🌈">🌈</button>
+              <button class="emoji-btn" data-emoji="⭐">⭐</button>
+              <button class="emoji-btn" data-emoji="🦋">🦋</button>
+              <button class="emoji-btn" data-emoji="🍀">🍀</button>
+              <button class="emoji-btn" data-emoji="🎈">🎈</button>
+              <button class="emoji-btn" data-emoji="🐱">🐱</button>
+              <button class="emoji-btn" data-emoji="🍭">🍭</button>
+              <button class="emoji-btn" data-emoji="🎀">🎀</button>
+              <button class="emoji-btn" data-emoji="🌻">🌻</button>
+              <button class="emoji-btn" data-emoji="🐰">🐰</button>
+              <button class="emoji-btn" data-emoji="🍬">🍬</button>
+              <button class="emoji-btn" data-emoji="🦄">🦄</button>
+              <button class="emoji-btn" data-emoji="🎪">🎪</button>
+              <button class="emoji-btn" data-emoji="🐼">🐼</button>
+              <button class="emoji-btn" data-emoji="🍉">🍉</button>
+              <button class="emoji-btn" data-emoji="🐶">🐶</button>
+              <button class="emoji-btn" data-emoji="🎠">🎠</button>
+            </div>
+          </div>
+        </div>
+        <button id="start-game-btn" class="btn btn-primary" disabled>🎮 Iniciar Jogo</button>
+      </div>
+    </div>
+
     <main class="game-layout">
       <section class="board-area">
         <div id="track-container">
@@ -51,10 +116,10 @@
             ➡️ <strong><span id="current-player-name">🧒 Lara</span></strong>
           </p>
           <p class="status-text pos-p1">
-            🧒 Lara: <strong><span id="p1-pos">0</span> / 20</strong>
+            <span id="p1-label">🧒 Lara</span>: <strong><span id="p1-pos">0</span> / 20</strong>
           </p>
           <p class="status-text pos-p2">
-            🧑 Amigo: <strong><span id="p2-pos">0</span> / 20</strong>
+            <span id="p2-label">🧑 Amigo</span>: <strong><span id="p2-pos">0</span> / 20</strong>
           </p>
         </div>
 
