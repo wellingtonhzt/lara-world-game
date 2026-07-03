@@ -138,6 +138,12 @@ Veja o [roadmap completo](docs/roadmap.md).
 
 ---
 
+## 🤖 Desenvolvimento Assistido por IA
+
+Este projeto segue o processo definido em [docs/AI_WORKFLOW.md](docs/AI_WORKFLOW.md), que estabelece um fluxo obrigatório de implementação, validação, documentação e memorial técnico para toda evolução futura.
+
+---
+
 ## 📄 Licença
 
 Este projeto é open source e está sob a licença MIT.
