@@ -35,6 +35,11 @@ lara-world/
 
 Estrutura semântica dividida em:
 
+- **Setup Modal** (`#setup-overlay`):
+  - Overlay fixo com `z-index: 1000`, exibido antes da partida
+  - Dois cards de jogador (`.player-card`): P1 e P2
+  - Cada card contém: campo de nome (`<input>`), grade de emojis (`.emoji-grid`)
+  - Botão **"Iniciar Jogo"** — esconde o modal e renderiza o tabuleiro
 - **Header**: Título com emoji decorativo
 - **Board Area** (esquerda):
   - `#track-container`: container com gradiente de céu/grama, decorações (nuvens, árvores, flores)
@@ -50,6 +55,9 @@ Estrutura semântica dividida em:
 ### style.css
 
 - **Layout**: Flexbox com `board-area` (flex: 1) e `panel-area` (240px fixos)
+- **Setup Modal** (`#setup-overlay`): `position: fixed`, `inset: 0`, `z-index: 1000`, `background: rgba(0,0,0,0.5)`, `display: flex` centralizado
+- **Player Cards** (`.player-card`): fundo branco com borda arredondada, padding interno, sombra suave. Destaque visual (borda dourada) para o card ativo
+- **Emoji Grid** (`.emoji-grid`): `display: flex` com `flex-wrap: wrap`, gaps entre os itens. Cada emoji (`.emoji-option`): 48×48px, cursor pointer, borda transparente. Selecionado: borda azul com fundo claro
 - **Tabuleiro**: `#track-container` com `position: relative` e gradiente de fundo
 - **Células** (`.casa`): `position: absolute` com `transform: translate(-50%,-50%)` para centralização. Cada casa recebe `left` e `top` em percentual via JS
 - **Caminho SVG**: `#trail-path` com `stroke-width: 10`, cor bege/marrom, opacidade 0.6
@@ -109,10 +117,16 @@ Turno Principal
   └── jogarDado() → função assíncrona principal
 
 Controles
-  └── reiniciarJogo() → reseta estado
+  └── reiniciarJogo() → reseta estado, chama showSetupScreen()
+
+Setup Screen
+  ├── showSetupScreen() → exibe modal, popula grade de emojis, foca P1
+  ├── hideSetupScreen() → esconde modal
+  ├── setupModalEvents() → registra eventos de clique nas grades e botão
+  └── startGame() → lê nomes/emojis dos inputs, inicia partida
 
 Inicialização
-  └── init() → dispara em DOMContentLoaded
+  └── init() → dispara em DOMContentLoaded, chama showSetupScreen()
 ```
 
 #### Sistema de Movimentação
@@ -160,7 +174,14 @@ O estado compartilhado do jogo:
 ## Fluxo do Jogo
 
 ```
-Início
+Início (DOMContentLoaded)
+  ↓
+Modal de Configuração (showSetupScreen)
+  ├── Jogador 1 → nome + sprite
+  ├── Jogador 2 → nome + sprite
+  └── Clique "Iniciar Jogo"
+  ↓
+startGame() → esconde modal, renderiza tabuleiro, inicia partida
   ↓
 Indicador mostra jogador ativo
   ↓

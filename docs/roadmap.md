@@ -24,18 +24,18 @@
 - Bloqueio de clique durante animação
 - Design responsivo
 
+### v0.3.0
+- Modal de configuração inicial com nomes e sprites personalizáveis
+- Grade de emojis exclusiva para cada jogador (seleção independente)
+- Inicialização do jogo a partir do modal
+- Reinício retorna ao modal de configuração
+
 ## Futuro
 
-### v0.3.0 — Sprites & Sons
+### v0.4.0 — Sprites & Sons
 - Sprites PNG da Lara e do Jogador 2
 - Efeitos sonoros (passos, dado, casas especiais, vitória)
 - Melhorias visuais (transições suaves, partículas)
-
-### v0.4.0 — Personalização
-- Escolha de personagens
-- Nomes personalizados para os jogadores
-- Novas casas especiais
-- Tela de vitória dedicada
 
 ### v0.5.0 — Mundos Temáticos
 - Mundo da Floresta

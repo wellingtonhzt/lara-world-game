@@ -13,14 +13,16 @@ Levar seu personagem da casa inicial (posição 0) até a **casa 20** (vitória)
 
 ## Modo 2 Jogadores (Multiplayer)
 
-1. O jogo inicia com o **Jogador 1 (Lara 🧒)**.
-2. O painel indica claramente de quem é a vez.
-3. O jogador ativo clica em **"Jogar Dado"** para sua vez.
-4. Após a jogada (incluindo efeitos de casas especiais), o turno alterna automaticamente para o outro jogador.
-5. Exceção: a casa **"Jogue novamente"** (casa 8) concede uma jogada extra ao mesmo jogador.
-6. Cada jogador tem sua própria posição na trilha e seu próprio contador de rodadas perdidas.
-7. Se os dois jogadores estiverem na mesma casa, os personagens aparecem lado a lado.
-8. **O primeiro jogador a atingir ou ultrapassar a casa 20 vence** — a partida é encerrada imediatamente.
+1. Ao abrir o jogo, o **modal de configuração** é exibido para definir nomes e sprites de cada jogador.
+2. O **Jogador 1** configura seu nome e escolhe um sprite na grade de emojis, depois o **Jogador 2** faz o mesmo.
+3. Clique em **"Iniciar Jogo"** para começar a partida.
+4. O painel indica claramente de quem é a vez.
+5. O jogador ativo clica em **"Jogar Dado"** para sua vez.
+6. Após a jogada (incluindo efeitos de casas especiais), o turno alterna automaticamente para o outro jogador.
+7. Exceção: a casa **"Jogue novamente"** (casa 8) concede uma jogada extra ao mesmo jogador.
+8. Cada jogador tem sua própria posição na trilha e seu próprio contador de rodadas perdidas.
+9. Se os dois jogadores estiverem na mesma casa, os personagens aparecem lado a lado.
+10. **O primeiro jogador a atingir ou ultrapassar a casa 20 vence** — a partida é encerrada imediatamente.
 
 ## Casas Especiais
 
@@ -40,4 +42,4 @@ Levar seu personagem da casa inicial (posição 0) até a **casa 20** (vitória)
 - **Efeito cascata**: ao cair na casa 3 (avance 2), se a nova casa também for especial, o efeito é aplicado novamente. Isso pode encadear múltiplos eventos.
 - **Casa 5 na posição 1**: se estiver na casa 1 e cair na casa 5, o personagem volta para a posição 0 e fica fora do tabuleiro. Na próxima jogada, avançará para a casa 1 ou além.
 - **Após a vitória**: o jogo é encerrado, o botão "Jogar Dado" é desabilitado e uma animação de celebração é exibida. Clique em "Reiniciar" para uma nova partida.
-- **Reinício**: o botão "Reiniciar" reseta as posições e contadores de ambos os jogadores, permitindo uma nova partida imediatamente.
+- **Reinício**: o botão "Reiniciar" exibe o modal de configuração novamente, permitindo que os jogadores alterem seus nomes e sprites antes de iniciar uma nova partida.

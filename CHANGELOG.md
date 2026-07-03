@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.3.0] - 2026-07-03
+
+### Adicionado
+- Modal de configuração inicial (setup screen) antes da partida
+- Campo de nome personalizado para Jogador 1 e Jogador 2
+- Grade de emojis exclusiva para cada jogador (seleção de sprite)
+- Botão "Iniciar Jogo" no modal para dar início à partida
+- jQuery carregado no HTML para manipulação do DOM
+- Funções `showSetupScreen()`, `hideSetupScreen()`, `startGame()`, `setupModalEvents()`
+- `reiniciarJogo()` agora retorna ao modal de configuração em vez de resetar o tabuleiro diretamente
+
+### Alterado
+- `init()` modificado para exibir o modal e só carregar o tabuleiro após "Iniciar Jogo"
+- Nomes dos jogadores agora são definidos via input do modal (fallback para "Jogador 1" / "Jogador 2")
+- Emojis dos jogadores agora são definidos via seleção na grade (fallback para 🧒 / 👦)
+- Fluxo de reinício alterado: modal → jogo → vitória → modal
+
 ## [0.2.0] - 2026-07-02
 
 ### Adicionado
