@@ -18,28 +18,28 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 
 ## Principais Funcionalidades
 
-### v0.5.0 (Atual) — Banco de Questões Educativas ✅
+### v0.6.0 (Atual) — Mundo da Floresta e Sistema de Portais ✅
 
-- Banco de questões com 30 perguntas em 6 categorias (Matemática, Português, Animais, Espaço, Natureza, Dinossauros)
-- Sorteio aleatório de perguntas a cada desafio
-- Sem repetição de perguntas na mesma partida (controle via Set)
-- Reinício automático do banco quando todas as perguntas são usadas
-- 5 casas de desafio educativo com perguntas de múltipla escolha
+- **Portal da Floresta** na casa 11 — modal com opções "Entrar" ou "Continuar"
+- **Mundo da Floresta** — mini-trilha de 8 casas com visual temático (fundo verde escuro, decorações)
+- **Jogador ativo exclusivo** — apenas o jogador que entrou aparece na floresta
+- **Turno bloqueado** — o turno não alterna enquanto o jogador estiver na floresta
+- **Casas especiais da floresta**: desafio (casas 3 e 7), atalho de saída (casa 5), saída (casa 8)
+- **Posição salva por jogador** — `entradaFloresta: {1: null, 2: null}`
+- **Retorno sem cascata** — ao sair da floresta, o bônus não ativa outras casas especiais
+- **Modo debug** — `?debug=1` na URL, painel com botões para teste rápido (portal, entrada, atalho, saída, reset)
+- Banco de questões com 30 perguntas em 6 categorias
+- Sorteio aleatório sem repetição (controle via Set)
 - Modal de desafio que bloqueia o dado até resposta
-- Acerto: avança 1 casa | Erro: volta 1 casa
-- Movimento pós-desafio não cascateia (evita loops infinitos)
+- 12 casas especiais no mundo principal (casa 11 agora é Portal da Floresta)
 - Modal de configuração inicial com nomes e sprites personalizáveis
-- Grade de emojis exclusiva para cada jogador (seleção independente)
 - Tabuleiro visual com trilha serpentina e caminho SVG
 - Movimento animado casa por casa (async/await, 180ms/passo)
 - Sistema de dado virtual 1-6 com animação de rolagem
-- 11 casas especiais com efeitos automáticos
 - Multiplayer local para 2 jogadores
-- Alternância automática de turnos
-- Destaque visual do jogador ativo
-- Personagens lado a lado quando na mesma casa
+- Alternância automática de turnos (exceto na floresta)
 - Histórico de jogadas
-- Sistema de vitória (primeiro a chegar na casa 20)
+- Sistema de vitória
 - Reinício retorna ao modal de configuração
 - Design responsivo
 

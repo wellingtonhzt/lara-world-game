@@ -16,7 +16,8 @@ lara-world/
 │   ├── arquitetura.md
 │   ├── regras-do-jogo.md
 │   ├── roadmap.md
-│   └── visao-geral.md
+│   ├── visao-geral.md
+│   └── memorial-tecnico.md
 ├── src/                 # Código-fonte do jogo
 │   ├── index.html       # Página principal
 │   ├── style.css        # Estilos do jogo
@@ -40,21 +41,30 @@ Estrutura semântica dividida em:
   - Dois cards de jogador (`.player-card`): P1 e P2
   - Cada card contém: campo de nome (`<input>`), grade de emojis (`.emoji-grid`)
   - Botão **"Iniciar Jogo"** — esconde o modal e renderiza o tabuleiro
+- **Portal Modal** (`#portal-overlay`):
+  - Overlay fixo com `z-index: 800`, exibido ao cair na casa 11
+  - Título "🌿 Portal da Floresta", mensagem descritiva
+  - Botões "Entrar na Floresta" e "Continuar no Jogo"
 - **Challenge Modal** (`#challenge-overlay`):
   - Overlay fixo com `z-index: 500`, exibido durante o jogo
   - Título "Desafio!", pergunta (`#challenge-question`) e opções (`#challenge-options`)
   - Botões de alternativa criados dinamicamente via JS
-- **Header**: Título com emoji decorativo
+- **Header**: Título com emoji decorativo, `#world-indicator` mostrando mundo atual (principal/floresta)
 - **Board Area** (esquerda):
   - `#track-container`: container com gradiente de céu/grama, decorações (nuvens, árvores, flores)
   - SVG `#trail-path`: caminho suave que conecta as casas (Catmull-Rom spline)
-  - `#track`: container das 20 células `.casa` com posicionamento absoluto
-  - `#lara` e `#lara-p2`: personagens posicionados dinamicamente
+  - `#track`: container das células `.casa` com posicionamento absoluto (20 no principal, 8 na floresta)
+  - `#lara` e `#lara-p2`: personagens posicionados dinamicamente (apenas o ativo na floresta)
+  - `.mundo-floresta` decorações: árvores (`#floresta-tree1..3`), cogumelos, folhas
 - **Panel Area** (direita):
   - `#dice-display`: dado virtual com emoji
   - Status: indicador de turno e posições de ambos os jogadores
   - Botões: Jogar Dado e Reiniciar
   - `#history`: histórico cronológico de jogadas
+- **Debug Panel** (`#debug-panel`):
+  - Exibido apenas quando `?debug=1` na URL
+  - 5 botões: Casa 11, Entrar na Floresta, Casa 5 (Atalho), Casa 8 (Saída), Voltar ao Principal
+  - Posicionado no canto inferior esquerdo com `z-index: 999`
 
 ### style.css
 
@@ -78,29 +88,39 @@ Padrão **Module Pattern** (IIFE) para encapsulamento de escopo.
 
 ```
 constantes / configuração
-  ├── TOTAL_CASAS (20)
+  ├── TOTAL_CASAS (20), FLORESTA_TOTAL (8)
   ├── PLAYER_COUNT (2)
   ├── players[]        → array de objetos {id, name, emoji, posicao, rodadasPerdidas, element}
-  ├── gameState        → {currentPlayerIndex, jogoAtivo, jogoFinalizado, isMoving, questoesUsadas}
-  ├── casasEspeciais[] → mapa de configuração (11 casas)
-  ├── boardPositions{} → coordenadas percentuais de cada casa
-  ├── icons[]          → emoji por casa
+  ├── gameState        → {currentPlayerIndex, jogoAtivo, jogoFinalizado, isMoving, questoesUsadas, mundoAtual, entradaFloresta, entrouNoPortal}
+  ├── casasEspeciais[] → mapa de configuração (12 casas no principal)
+  ├── florestaEspeciais[] → mapa de configuração (4 casas na floresta)
+  ├── boardPositions{} → coordenadas percentuais do mundo principal
+  ├── florestaPosicoes{} → coordenadas percentuais da floresta (formato S)
+  ├── icons[]          → emoji por casa no principal
+  ├── florestaIcones[] → emoji por casa na floresta
   ├── bancoQuestoes{}  → banco categorizado {categoria: [{pergunta, opcoes[], resposta}]}
   └── questoesDisponiveis[] → flat pool construído de bancoQuestoes
+
+Getters World-Aware
+  ├── getTotalCasas()      → TOTAL_CASAS ou FLORESTA_TOTAL conforme mundoAtual
+  ├── getPosicoes()        → boardPositions ou florestaPosicoes
+  ├── getIcones()          → icons ou florestaIcones
+  └── getCasasEspeciais()  → casasEspeciais ou florestaEspeciais
 
 Player Helpers
   ├── getCurrentPlayer()   → retorna o jogador ativo
   ├── getPlayerElement(p)  → retorna o elemento DOM do jogador
-  ├── switchTurn()         → alterna currentPlayerIndex
+  ├── switchTurn()         → alterna currentPlayerIndex (bloqueado se mundoAtual === "floresta")
   └── updateUI()           → atualiza indicador de turno e posições
 
 SVG Path / Board
-  ├── renderSvgPath()      → gera curva Catmull-Rom no SVG
-  └── renderizarTrilha()   → cria 20 células <div> no DOM
+  ├── renderSvgPath(posicoes?) → gera curva Catmull-Rom no SVG (usa getPosicoes() por padrão)
+  └── renderizarTrilha(mundo?) → cria células <div> no DOM (20 ou 8 conforme mundo)
 
 Posicionamento
   └── positionPlayerAt(n, player?) → posiciona personagem sobre a casa
        com offset (±12×, ±8×) se ambos jogadores estiverem na mesma casa
+       oculta sprite não ativo quando mundoAtual === "floresta"
 
 Animação
   └── animatePlayerMovement(from, to) → move player casa a casa (180ms)
@@ -117,7 +137,10 @@ Casas Especiais
   └── processSpecialCell(pos) → aplica efeitos com animação
        ├── "avancar" (casa 3) → move +n, cascateia
        ├── "voltar" (casa 5) → move -n, não cascateia
-       ├── "desafio" (casas 4,7,12,16,18) → sortearQuestao(), abre modal, move ±1, não cascateia
+       ├── "desafio" (casas 4,7,12,16,18 + floresta 3,7) → sortearQuestao(), abre modal, move ±1, não cascateia
+       ├── "portal" (casa 11) → exibe modal de entrada na floresta, salva posição, transporta
+       ├── "atalho" (floresta casa 5) → volta ao principal com +2, não cascateia
+       ├── "saida-mundo" (floresta casa 8) → volta ao principal com +3, não cascateia
        ├── "jogar-novamente" (casa 8) → retorna true (extra turn)
        ├── "perde-rodada" (casa 10) → incrementa contador
        ├── "voltar-inicio" (casa 15) → move para 0
@@ -133,10 +156,13 @@ Vitória
   └── handleVictory() → celebração, desativa jogo
 
 Turno Principal
-  └── jogarDado() → função assíncrona principal
+  └── jogarDado() → função assíncrona principal (adaptada para floresta)
+
+Modo Debug
+  └── initDebugMode() → ativado por ?debug=1, painel com 5 botões de teste
 
 Controles
-  └── reiniciarJogo() → reseta estado, chama showSetupScreen()
+  └── reiniciarJogo() → reseta estado (incluindo mundoAtual, entradaFloresta, entrouNoPortal), chama showSetupScreen()
 
 Setup Screen
   ├── showSetupScreen() → exibe modal, popula grade de emojis, foca P1
@@ -169,11 +195,12 @@ O bloqueio de clique durante movimento é feito pela flag `gameState.isMoving`, 
 
 - `gameState.currentPlayerIndex` (0 ou 1) indica o jogador ativo
 - `switchTurn()` alterna o índice: `(currentPlayerIndex + 1) % PLAYER_COUNT`
+- **Bloqueio na floresta**: a função só alterna se `mundoAtual !== "floresta"`, garantindo que o mesmo jogador complete a floresta sem interrupção
 - Chamada em três pontos de `jogarDado()`:
   - Após rodada perdida (skip automático)
   - Ao final do turno normal (sem extra turn)
 - **Não** é chamada em caso de "jogue novamente" (casa 8)
-- `updateUI()` sincroniza o painel com o jogador ativo
+- `updateUI()` sincroniza o painel com o jogador ativo e atualiza `#world-indicator`
 
 #### Gerenciamento de Estado
 
@@ -184,7 +211,8 @@ Cada jogador mantém seu próprio estado:
 
 O estado compartilhado do jogo:
 ```javascript
-{ currentPlayerIndex, jogoAtivo, jogoFinalizado, isMoving, questoesUsadas }
+{ currentPlayerIndex, jogoAtivo, jogoFinalizado, isMoving, questoesUsadas,
+  mundoAtual, entradaFloresta, entrouNoPortal }
 ```
 
 - `posicao`: posição na trilha (0 = fora do tabuleiro, 1-20 = casas)
@@ -193,6 +221,9 @@ O estado compartilhado do jogo:
 - `jogoFinalizado`: true após vitória (desabilita botão)
 - `isMoving`: true durante animação (bloqueia cliques)
 - `questoesUsadas`: Set de índices de perguntas já sorteadas na partida
+- `mundoAtual`: string — `"principal"` ou `"floresta"` (determina qual tabuleiro é exibido)
+- `entradaFloresta`: `{1: number | null, 2: number | null}` — posição de entrada salva por jogador
+- `entrouNoPortal`: boolean — evita reentrada no portal durante o mesmo turno
 
 ## Fluxo do Jogo
 
@@ -219,11 +250,14 @@ Anima personagem andando casa por casa (180ms/casa)
   ↓
 Caiu em casa especial?
   ├── Avançar (3) → anima movimento extra, cascateia
-  ├── Desafio (4,7,12,16,18) → abre modal, move ±1, não cascateia
+  ├── Desafio (4,7,12,16,18 + floresta 3,7) → abre modal, move ±1, não cascateia
+  ├── Portal (11) → exibe modal, salva posição, transporta para floresta
   ├── Voltar (5) → anima movimento reverso
   ├── Jogar novamente (8) → mantém turno ativo
   ├── Perde rodada (10) → incrementa contador
   ├── Voltar início (15) → anima até casa 0
+  ├── Atalho (floresta 5) → volta ao principal com +2, não cascateia
+  ├── Saída da Floresta (floresta 8) → volta ao principal com +3, não cascateia
   └── Vitória (20) → celebração, fim de jogo
   ↓
 Caiu em casa normal?

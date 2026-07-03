@@ -1,5 +1,48 @@
 # Memorial Técnico
 
+## [0.6.0] - 2026-07-03
+
+### Objetivo
+
+Implementar um sistema de mundos alternativos com portal de entrada, começando pelo Mundo da Floresta — uma mini-trilha de 8 casas acessada pela casa 11, com mecânicas exclusivas, visuais temáticos e proteção de turno durante a sessão na floresta. Incluir modo debug para facilitar testes.
+
+### Arquivos Alterados
+
+| Arquivo | Tipo de Alteração |
+|---------|-------------------|
+| `src/game.js` | Adicionado: constantes da floresta (`FLORESTA_TOTAL`, `florestaPosicoes`, `florestaIcones`, `florestaEspeciais`), getters world-aware, `gameState.mundoAtual`, `gameState.entradaFloresta`, `gameState.entrouNoPortal`, case "portal" e "saida-mundo" em processSpecialCell, modo debug. Modificado: `renderizarTrilha`, `renderSvgPath`, `positionPlayerAt`, `animatePlayerMovement`, `jogarDado`, `switchTurn`, `reiniciarJogo` |
+| `src/index.html` | Adicionado: `#portal-overlay` (modal de entrada), `#world-indicator` (indicador de mundo), decorações da floresta, `#debug-panel` |
+| `src/style.css` | Adicionado: `.mundo-floresta` (fundo verde escuro), estilos de casas da floresta, portal overlay, world indicator, decorações temáticas, debug panel |
+| `README.md` | Atualizado: v0.6.0 como versão ativa, funcionalidades, história, roadmap |
+| `CHANGELOG.md` | Adicionado: entrada v0.6.0 |
+| `docs/visao-geral.md` | Atualizado: v0.6.0 como versão atual |
+| `docs/arquitetura.md` | Atualizado: constantes, index.html, game.js, turnos, estado |
+| `docs/regras-do-jogo.md` | Atualizado: portal, floresta, casas especiais |
+| `docs/roadmap.md` | Atualizado: v0.6.0 movido para concluído |
+| `docs/memorial-tecnico.md` | Adicionado: entrada v0.6.0 |
+
+### Impacto Técnico
+
+- **game.js**: Adicionadas constantes `FLORESTA_TOTAL = 8`, `florestaPosicoes` (coordenadas em formato de S), `florestaIcones` (🌲🌿🍄🐾🦉🍂🌳🚪), `florestaEspeciais` (casa 3 desafio, casa 5 atalho, casa 7 desafio, casa 8 saída-mundo). Criados getters dinâmicos `getTotalCasas()`, `getPosicoes()`, `getIcones()`, `getCasasEspeciais()` que retornam valores do mundo atual. `gameState.mundoAtual` alterna entre `"principal"` e `"floresta"`. `gameState.entradaFloresta = {1: null, 2: null}` salva posição de entrada por jogador. `gameState.entrouNoPortal` evita reentrada no portal na mesma jogada. `processSpecialCell` ganhou case "portal" que exibe modal com opções Entrar/Continuar e case "saida-mundo" que retorna ao mundo principal com bônus (+3 na casa 8, +2 na casa 5 via "atalho"). `jogarDado()` adaptado para suportar floresta: ao completar a floresta, volta ao principal com bônus sem cascatear.
+- **Renderização**: `renderizarTrilha()` aceita parâmetro `mundo` para renderizar tabuleiro correto. `renderSvgPath()` aceita `posicoes` opcional para gerar caminho SVG. `positionPlayerAt()` oculta sprite do outro jogador quando `mundoAtual === "floresta"`. `animatePlayerMovement()` usa `getPosicoes()` para obter coordenadas do mundo atual.
+- **Turno**: `switchTurn()` agora verifica `if (mundoAtual !== "floresta")` antes de alternar, garantindo que o mesmo jogador complete a floresta sem interrupção.
+- **Debug**: Novo bloco opcional ativado por `?debug=1` na URL. Cinco botões: "Casa 11 (Portal)", "Entrar na Floresta", "Casa 5 (Atalho)", "Casa 8 (Saída)", "Voltar ao Principal". Renderiza painel `#debug-panel` no canto inferior esquerdo com `z-index: 999`.
+- **Correções**: `renderizarSvgPath` → `renderSvgPath` em portal e saída-mundo. `entradaFloresta` movido para fora do bloco `if (extraTurn)` — estava sendo resetado indevidamente em jogadas normais.
+
+### Impacto Funcional
+
+- Casa 11 agora abre modal "Portal da Floresta" com opção de entrar (vai para floresta, salva posição) ou continuar (ignora)
+- Mundo da Floresta com trilha própria de 8 casas em formato de S, fundo verde escuro, decorações temáticas
+- Ao entrar na floresta: jogador ativo continua jogando sem alternância de turno
+- Outro jogador não aparece no tabuleiro da floresta (sprite oculto)
+- Casa 3 da floresta: desafio educativo (pergunta do banco)
+- Casa 5 da floresta: atalho de saída — volta ao mundo principal com +2 casas de bônus
+- Casa 7 da floresta: desafio educativo (pergunta do banco)
+- Casa 8 da floresta: saída — volta ao mundo principal com +3 casas de bônus
+- Bônus de saída não cascateia para outras casas especiais
+- Modo debug facilita teste de todos os cenários da floresta
+- Todas as regras anteriores (desafios, banco de questões, multiplayer) permanecem inalteradas quando no mundo principal
+
 ## [0.5.0] - 2026-07-03
 
 ### Objetivo

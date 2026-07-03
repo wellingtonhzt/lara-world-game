@@ -8,7 +8,8 @@
 
 | Versão | Data | Status |
 |--------|------|--------|
-| **v0.5.0** | Jul/2026 | ✅ **Ativo** |
+| **v0.6.0** | Jul/2026 | ✅ **Ativo** |
+| v0.5.0 | Jul/2026 | ✅ Concluído |
 | v0.4.0 | Jul/2026 | ✅ Concluído |
 | v0.3.0 | Jul/2026 | ✅ Concluído |
 | v0.2.0 | Jul/2026 | ✅ Concluído |
@@ -16,13 +17,33 @@
 
 ---
 
-## ✨ Funcionalidades Atuais (v0.5.0)
+## ✨ Funcionalidades Atuais (v0.6.0)
+
+### Mundo da Floresta e Sistema de Portais
+
+- **Portal da Floresta** — casa 11 funciona como portal para o Mundo da Floresta
+- **Modal de entrada** — ao cair na casa 11, um modal oferece "Entrar" ou "Continuar"
+- **Mundo da Floresta** — mini jogo separado com trilha própria de 8 casas
+- **Visual temático** — fundo verde escuro, decorações de árvores, cogumelos, folhas
+- **Jogador ativo na floresta** — apenas o jogador que entrou joga na floresta
+- **Outro jogador oculto** — o sprite do outro jogador não aparece no tabuleiro da floresta
+- **Turno bloqueado na floresta** — o turno não alterna enquanto o jogador estiver na floresta
+- **Casas da floresta**:
+  - Casa 3 → 🐾 Desafio da Floresta (pergunta educativa)
+  - Casa 5 → 🌿 Atalho de Saída (volta ao mundo principal com +2)
+  - Casa 7 → 🦉 Enigma do Guardião (pergunta educativa)
+  - Casa 8 → 🚪 Saída da Floresta (volta ao mundo principal com +3)
+- **Posição salva por jogador** — cada jogador tem sua própria posição de entrada na floresta
+- **Retorno sem cascata** — ao voltar ao mundo principal, o bônus não dispara outras casas especiais
+- **Modo debug** — ativado por `?debug=1` na URL, exibe painel com botões para teste rápido
+
+### Funcionalidades Anteriores
 
 - **Banco de questões** — 30 perguntas organizadas em 6 categorias (Matemática, Português, Animais, Espaço, Natureza, Dinossauros)
 - **Sorteio aleatório** — a pergunta exibida é sorteada do banco, não fixa por casa
 - **Sem repetição na partida** — o jogo evita repetir a mesma pergunta até que todas sejam usadas
 - **Reinício automático do banco** — quando todas as perguntas forem utilizadas, o ciclo recomeça
-- **Desafios educativos** — 5 casas de desafio com perguntas de múltipla escolha (casa 4, 7, 12, 16, 18)
+- **5 casas de desafio educativo** no mundo principal (casa 4, 7, 12, 16, 18)
 - **Modal de desafio** — ao cair em uma casa de desafio, um modal com pergunta e 3 alternativas é exibido
 - **Acerto/erro com movimento** — resposta correta: avança 1 casa; resposta errada: volta 1 casa
 - **Bloqueio do dado durante desafio** — o botão "Jogar Dado" permanece desabilitado até o desafio ser respondido
@@ -35,13 +56,14 @@
 - **Tabuleiro visual em trilha** — 20 casas posicionadas em snake pattern com caminho SVG suave
 - **Movimento animado** — personagens andam casa por casa com animação pulse (180ms/passo)
 - **Sistema de dado** — dado virtual 1-6 com animação de rolagem (bounce)
-- **11 casas especiais** com efeitos automáticos:
+- **12 casas especiais no mundo principal** com efeitos automáticos:
   - Casa 3 → Avance 2 casas
   - Casa 4 → Desafio educativo
   - Casa 5 → Volte 1 casa
   - Casa 7 → Desafio educativo
   - Casa 8 → Jogue novamente
   - Casa 10 → Perde uma rodada
+  - **Casa 11 → 🌿 Portal da Floresta**
   - Casa 12 → Desafio educativo
   - Casa 15 → Volte ao início
   - Casa 16 → Desafio educativo
@@ -95,7 +117,7 @@
 
 ## 📜 História do Projeto
 
-O Lara World começou como um MVP de tabuleiro simples para 1 jogador. A primeira versão (v0.1.0) implementou a lógica básica do jogo com dados, casas especiais e Docker. Na sequência (v0.1.5) recebeu um tabuleiro visual com trilha serpentina, personagem animado e painel lateral. A versão v0.2.0 adicionou multiplayer local com alternância de turnos entre 2 jogadores. A v0.3.0 introduziu o modal de configuração inicial com nomes e sprites personalizáveis. A v0.4.0 adicionou 5 casas de desafios educativos com perguntas de múltipla escolha. A versão atual (v0.5.0) substitui as perguntas fixas por um **Banco de Questões** com 30 perguntas organizadas em 6 categorias, sorteio aleatório e proteção contra repetição na mesma partida.
+O Lara World começou como um MVP de tabuleiro simples para 1 jogador. A primeira versão (v0.1.0) implementou a lógica básica do jogo com dados, casas especiais e Docker. Na sequência (v0.1.5) recebeu um tabuleiro visual com trilha serpentina, personagem animado e painel lateral. A versão v0.2.0 adicionou multiplayer local com alternância de turnos entre 2 jogadores. A v0.3.0 introduziu o modal de configuração inicial com nomes e sprites personalizáveis. A v0.4.0 adicionou 5 casas de desafios educativos com perguntas de múltipla escolha. A v0.5.0 substituiu as perguntas fixas por um **Banco de Questões** com 30 perguntas. A versão atual (v0.6.0) adiciona o **Mundo da Floresta** com portal na casa 11, sistema de portais, mini-trilha de 8 casas com mecânicas exclusivas e modo debug.
 
 ---
 
@@ -153,7 +175,6 @@ docker compose down
 
 ## 🗺️ Roadmap
 
-- **v0.6.0** — Mundos e Portais Secretos
 - **v0.7.0** — Sprites PNG, sons, melhorias visuais
 - **v1.0.0** — Lançamento oficial
 

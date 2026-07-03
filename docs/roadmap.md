@@ -44,13 +44,15 @@
 - Sem repetição de perguntas na mesma partida (controle via Set)
 - Reinício automático do banco quando todas as perguntas são usadas
 
-## Futuro
+### v0.6.0 — Mundo da Floresta e Sistema de Portais
+- Portal da Floresta na casa 11 com modal de entrada
+- Mundo da Floresta: mini-trilha de 8 casas com visuais temáticos
+- Casas especiais da floresta: desafio, atalho (+2), saída (+3)
+- Turno não alterna enquanto jogador está na floresta
+- Posição de entrada salva por jogador (objeto `{1, 2}`)
+- Modo debug ativado por `?debug=1` na URL
 
-### v0.6.0 — Mundos e Portais Secretos
-- Portais que transportam o jogador para outra casa
-- Mundos temáticos com visuais únicos (Floresta, Espacial, Dinossauros)
-- Cada mundo com casas especiais exclusivas
-- Sistema de progressão entre mundos
+## Futuro
 
 ### v0.7.0 — Sprites PNG, sons, melhorias visuais
 

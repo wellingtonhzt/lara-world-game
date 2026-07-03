@@ -1,5 +1,39 @@
 # Changelog
 
+## [0.6.0] - 2026-07-03
+
+### Adicionado
+- Portal da Floresta na casa 11 com modal de entrada (Entrar / Continuar)
+- Mundo da Floresta: mini-trilha de 8 casas com coordenadas em formato de S
+- Constantes `FLORESTA_TOTAL`, `florestaPosicoes`, `florestaIcones`, `florestaEspeciais`
+- Funções getters world-aware: `getTotalCasas()`, `getPosicoes()`, `getIcones()`, `getCasasEspeciais()`
+- `gameState.mundoAtual` — rastreia em qual mundo o jogador está ("principal" | "floresta")
+- `gameState.entradaFloresta` — objeto `{1: null, 2: null}` para posição salva por jogador
+- `gameState.entrouNoPortal` — flag para evitar reentrada no portal
+- Renderização condicional: `renderizarTrilha()` / `renderSvgPath()` / `positionPlayerAt()` / `animatePlayerMovement()` usam getters world-aware
+- Casas especiais da floresta: "desafio" (casa 3 e 7), "atalho" (casa 5), "saida-mundo" (casa 8)
+- `processSpecialCell` cases "portal" e "saida-mundo" com transição entre mundos
+- `jogarDado()` adaptado: ao completar floresta, retorna ao mundo principal com bônus
+- CSS `.mundo-floresta` com fundo verde escuro, decorações temáticas (árvores, cogumelos, folhas)
+- `#world-indicator` no header indicando mundo atual
+- Modo debug: painel com 5 botões ativado por `?debug=1` na URL
+
+### Alterado
+- `renderizarTrilha()` — aceita parâmetro opcional `mundo` para renderizar mundo principal ou floresta
+- `renderSvgPath()` — aceita parâmetro opcional `posicoes` para gerar caminho no mundo correto
+- `positionPlayerAt()` — oculta sprite do outro jogador quando `mundoAtual === "floresta"`
+- `switchTurn()` — não alterna turno quando `mundoAtual === "floresta"` (mesmo jogador continua)
+- `jogarDado()` — ao final do turno na floresta, volta ao mundo principal com bônus e sem cascatear
+- `reiniciarJogo()` — reseta `mundoAtual`, `entradaFloresta`, `entrouNoPortal`
+- Casa 5 da floresta: de "avancar" para "atalho" (saída imediata com +2)
+- Casas especiais da floresta estilizadas com nomes temáticos
+
+### Corrigido
+- `renderizarSvgPath` → `renderSvgPath` (ReferenceError nos cases portal e saída-mundo)
+- `entradaFloresta` sendo resetado no bloco `if (extraTurn)` — movido para fora do bloco
+- Falta de `switchTurn()` guard — adicionada verificação `mundoAtual !== "floresta"` antes de alternar
+- Sprite do jogador não ativo visível na floresta — oculto via `positionPlayerAt()`
+
 ## [0.5.0] - 2026-07-03
 
 ### Adicionado
