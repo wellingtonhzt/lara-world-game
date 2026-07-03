@@ -17,10 +17,15 @@
 
   const casasEspeciais = {
     3: { tipo: "avancar", valor: 2, descricao: "Avance 2 casas!" },
+    4: { tipo: "desafio", valor: 0, descricao: "Desafio!" },
     5: { tipo: "voltar", valor: 1, descricao: "Volte 1 casa!" },
+    7: { tipo: "desafio", valor: 1, descricao: "Desafio!" },
     8: { tipo: "jogar-novamente", valor: 0, descricao: "Jogue novamente!" },
     10: { tipo: "perde-rodada", valor: 0, descricao: "Perdeu uma rodada!" },
+    12: { tipo: "desafio", valor: 2, descricao: "Desafio!" },
     15: { tipo: "voltar-inicio", valor: 0, descricao: "Volte para o início!" },
+    16: { tipo: "desafio", valor: 3, descricao: "Desafio!" },
+    18: { tipo: "desafio", valor: 4, descricao: "Desafio!" },
     20: { tipo: "vitoria", valor: 0, descricao: "🏆 Chegada!" },
   };
 
@@ -29,6 +34,14 @@
     "🍀", "🎈", "🐱", "🍭", "🎀",
     "🌻", "🐰", "🍬", "🦄", "🎪",
     "🐼", "🍉", "🐶", "🎠", "👑",
+  ];
+
+  const desafios = [
+    { pergunta: "Quanto é 2 + 2?", opcoes: ["3", "4", "5"], resposta: "4" },
+    { pergunta: "Qual animal faz 'miau'?", opcoes: ["Cachorro", "Gato", "Pato"], resposta: "Gato" },
+    { pergunta: "Qual cor mistura azul e amarelo?", opcoes: ["Verde", "Roxo", "Laranja"], resposta: "Verde" },
+    { pergunta: "Quantos dias tem uma semana?", opcoes: ["5", "7", "10"], resposta: "7" },
+    { pergunta: "Qual planeta é conhecido como planeta vermelho?", opcoes: ["Marte", "Terra", "Júpiter"], resposta: "Marte" },
   ];
 
   const boardPositions = {
@@ -336,6 +349,30 @@
         positionPlayerAt(0);
         return false;
       }
+      case "desafio": {
+        const desafio = desafios[info.valor];
+        if (!desafio) return false;
+        addHistory(`❓ ${player.name} caiu em um desafio!`, "especial");
+        const acertou = await showChallengeModal(desafio);
+        if (acertou) {
+          const destino = Math.min(posicao + 1, TOTAL_CASAS);
+          if (destino > posicao) {
+            await animatePlayerMovement(posicao, destino);
+          }
+          player.posicao = destino;
+          positionPlayerAt(destino);
+          addHistory(`✅ ${player.name} acertou! Avançou para casa ${destino}`, "especial");
+        } else {
+          const destino = Math.max(posicao - 1, 0);
+          if (destino > 0 && destino < posicao) {
+            await animatePlayerMovement(posicao, destino);
+          }
+          player.posicao = destino;
+          positionPlayerAt(destino);
+          addHistory(`❌ ${player.name} errou! Voltou para casa ${destino}`, "especial");
+        }
+        return false;
+      }
       case "vitoria": {
         await handleVictory();
         return false;
@@ -533,6 +570,32 @@
 
     startBtn.addEventListener("click", startGame);
     checkReady();
+  }
+
+  /* ── Challenge Modal ── */
+
+  function showChallengeModal(desafio) {
+    return new Promise((resolve) => {
+      const overlay = document.getElementById("challenge-overlay");
+      const questionEl = document.getElementById("challenge-question");
+      const optionsEl = document.getElementById("challenge-options");
+
+      questionEl.textContent = desafio.pergunta;
+      optionsEl.innerHTML = "";
+
+      desafio.opcoes.forEach((opcao, index) => {
+        const btn = document.createElement("button");
+        btn.className = "challenge-btn";
+        btn.textContent = `${String.fromCharCode(65 + index)}) ${opcao}`;
+        btn.addEventListener("click", () => {
+          overlay.classList.add("hidden");
+          resolve(opcao === desafio.resposta);
+        });
+        optionsEl.appendChild(btn);
+      });
+
+      overlay.classList.remove("hidden");
+    });
   }
 
   /* ── Init ── */

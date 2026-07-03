@@ -415,10 +415,125 @@ header h1 {
 .hist-item .hist-dado { font-weight: 700; color: #e91e63; }
 .hist-item .hist-especial { color: #e65100; font-weight: 600; }
 .hist-item .hist-vitoria { color: #2e7d32; font-weight: 700; }
-.hist-item .hist-info { color: #a8845a; }
+.hist-item .hist-desafio { color: #7b1fa2; font-weight: 700; }
 
 /* ═══════════════════════════════════════
-   ANIMATIONS
+   CHALLENGE MODAL
+   ═══════════════════════════════════════ */
+
+.challenge-overlay {
+  display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 500;
+  justify-content: center;
+  align-items: center;
+}
+
+.challenge-overlay.hidden {
+  display: none;
+}
+
+.challenge-content {
+  background: #fff8f0;
+  border-radius: 28px;
+  padding: 32px 36px;
+  max-width: 480px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3);
+}
+
+.challenge-content h2 {
+  color: #7b1fa2;
+  font-size: 1.6rem;
+  margin-bottom: 16px;
+}
+
+#challenge-question {
+  font-size: 1.3rem;
+  color: #4a2c0a;
+  font-weight: 700;
+  margin-bottom: 24px;
+  line-height: 1.4;
+}
+
+#challenge-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.challenge-btn {
+  padding: 14px 20px;
+  border: 2px solid #ce93d8;
+  border-radius: 16px;
+  background: #fefefe;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #4a2c0a;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.challenge-btn:hover {
+  background: #f3e5f5;
+  border-color: #7b1fa2;
+  transform: scale(1.03);
+}
+
+.challenge-btn:active {
+  transform: scale(0.97);
+}
+
+/* ── Challenge Houses Colors ── */
+
+/* casa 4 — desafio */
+.casa[data-position="4"] {
+  background: #f3e5f5;
+  border-color: #7b1fa2;
+  box-shadow: 0 3px 0 #4a148c, 0 5px 12px rgba(0, 0, 0, 0.12);
+}
+.casa[data-position="4"] .casa-tipo { color: #4a148c; background: rgba(255, 255, 255, 0.6); }
+
+/* casa 7 — desafio */
+.casa[data-position="7"] {
+  background: #f3e5f5;
+  border-color: #7b1fa2;
+  box-shadow: 0 3px 0 #4a148c, 0 5px 12px rgba(0, 0, 0, 0.12);
+}
+.casa[data-position="7"] .casa-tipo { color: #4a148c; background: rgba(255, 255, 255, 0.6); }
+
+/* casa 12 — desafio */
+.casa[data-position="12"] {
+  background: #f3e5f5;
+  border-color: #7b1fa2;
+  box-shadow: 0 3px 0 #4a148c, 0 5px 12px rgba(0, 0, 0, 0.12);
+}
+.casa[data-position="12"] .casa-tipo { color: #4a148c; background: rgba(255, 255, 255, 0.6); }
+
+/* casa 16 — desafio */
+.casa[data-position="16"] {
+  background: #f3e5f5;
+  border-color: #7b1fa2;
+  box-shadow: 0 3px 0 #4a148c, 0 5px 12px rgba(0, 0, 0, 0.12);
+}
+.casa[data-position="16"] .casa-tipo { color: #4a148c; background: rgba(255, 255, 255, 0.6); }
+
+/* casa 18 — desafio */
+.casa[data-position="18"] {
+  background: #f3e5f5;
+  border-color: #7b1fa2;
+  box-shadow: 0 3px 0 #4a148c, 0 5px 12px rgba(0, 0, 0, 0.12);
+}
+.casa[data-position="18"] .casa-tipo { color: #4a148c; background: rgba(255, 255, 255, 0.6); }
+
+/* ═══════════════════════════════════════
+   RESPONSIVE
    ═══════════════════════════════════════ */
 @keyframes pulse {
   0%, 100% { transform: scale(1); }
