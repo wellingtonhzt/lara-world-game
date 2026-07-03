@@ -18,8 +18,12 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 
 ## Principais Funcionalidades
 
-### v0.4.0 (Atual) — Desafios Educativos ✅
+### v0.5.0 (Atual) — Banco de Questões Educativas ✅
 
+- Banco de questões com 30 perguntas em 6 categorias (Matemática, Português, Animais, Espaço, Natureza, Dinossauros)
+- Sorteio aleatório de perguntas a cada desafio
+- Sem repetição de perguntas na mesma partida (controle via Set)
+- Reinício automático do banco quando todas as perguntas são usadas
 - 5 casas de desafio educativo com perguntas de múltipla escolha
 - Modal de desafio que bloqueia o dado até resposta
 - Acerto: avança 1 casa | Erro: volta 1 casa
@@ -38,6 +42,11 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 - Sistema de vitória (primeiro a chegar na casa 20)
 - Reinício retorna ao modal de configuração
 - Design responsivo
+
+### v0.4.0 ✅
+
+- 5 casas de desafio educativo com perguntas fixas
+- Modal de desafio e regras de acerto/erro
 
 ### v0.3.0 ✅
 

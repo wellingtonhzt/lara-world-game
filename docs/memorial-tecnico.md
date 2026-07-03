@@ -1,5 +1,39 @@
 # Memorial Técnico
 
+## [0.5.0] - 2026-07-03
+
+### Objetivo
+
+Evoluir o sistema de desafios educativos de perguntas fixas por casa para um Banco de Questões organizado por categorias, com sorteio aleatório e proteção contra repetição na mesma partida.
+
+### Arquivos Alterados
+
+| Arquivo | Tipo de Alteração |
+|---------|-------------------|
+| `src/game.js` | Substituído: `desafios[]` por `bancoQuestoes{}`. Adicionado: `questoesDisponiveis[]`, `sortearQuestao()`, `gameState.questoesUsadas`. Modificado: processSpecialCell case "desafio", reiniciarJogo, startGame |
+| `README.md` | Atualizado: v0.5.0 como versão ativa, funcionalidades com banco de questões, histórico, roadmap |
+| `CHANGELOG.md` | Adicionado: entrada v0.5.0 |
+| `docs/visao-geral.md` | Atualizado: funcionalidades da v0.5.0 |
+| `docs/arquitetura.md` | Atualizado: constantes com bancoQuestoes/questoesDisponiveis, gameState com questoesUsadas, seção de sorteio |
+| `docs/regras-do-jogo.md` | Atualizado: descrição das casas de desafio com sorteio, regra de não repetição |
+| `docs/roadmap.md` | Atualizado: v0.5.0 movido para concluído, v0.6.0 como Mundos e Portais Secretos |
+| `docs/memorial-tecnico.md` | Adicionado: entrada v0.5.0 |
+
+### Impacto Técnico
+
+- **game.js**: `desafios[]` (array flat de 5 perguntas) substituído por `bancoQuestoes{}` com 6 categorias e 30 perguntas. `questoesDisponiveis[]` gerado via `Object.values(bancoQuestoes).flat()`. Nova função `sortearQuestao()` que: (1) verifica se todas as perguntas foram usadas (`gameState.questoesUsadas.size >= total`), (2) limpa o Set se necessário, (3) sorteia índice aleatório não usado, (4) marca como usado e retorna a pergunta. `processSpecialCell` case "desafio" agora chama `sortearQuestao()` em vez de indexar `desafios[info.valor]`. Campos `valor` removidos das entradas de desafio em `casasEspeciais` (4, 7, 12, 16, 18) por não serem mais necessários.
+- **Reset**: `reiniciarJogo()` e `startGame()` chamam `gameState.questoesUsadas.clear()` para garantir banco fresco a cada partida.
+- **Correção de bug**: adicionado `elements.rollBtn.disabled = false` em `reiniciarJogo()` — o botão "Jogar Dado" ficava desabilitado após vencer e reiniciar porque `handleVictory()` o desabilita mas o reset não o reabilitava.
+
+### Impacto Funcional
+
+- Desafios agora exibem perguntas sorteadas de 6 categorias temáticas
+- Nenhuma pergunta se repete dentro da mesma partida
+- Partidas longas podem esgotar as 30 perguntas — o banco reinicia automaticamente
+- Botão "Jogar Dado" funciona corretamente após reinício (bug corrigido)
+- Todas as regras anteriores de desafio (acerto/erro, movimento, não cascata) permanecem inalteradas
+- Nenhuma alteração em HTML, CSS, Docker, modal inicial ou sistema de turnos
+
 ## [0.4.0] - 2026-07-03
 
 ### Objetivo

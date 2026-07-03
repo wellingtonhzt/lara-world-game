@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.5.0] - 2026-07-03
+
+### Adicionado
+- Banco de questões organizado por 6 categorias (Matemática, Português, Animais, Espaço, Natureza, Dinossauros)
+- 30 perguntas no total (5 por categoria)
+- Função `sortearQuestao()` — sorteia índice aleatório com proteção contra repetição
+- `gameState.questoesUsadas` (Set) — rastreia perguntas já sorteadas na partida
+- `questoesDisponiveis[]` — array flat construído a partir do banco categorizado
+- Reset automático: quando todas as 30 perguntas forem usadas, o Set é limpo e o ciclo recomeça
+
+### Alterado
+- `desafios[]` (array fixo) substituído por `bancoQuestoes{}` (objeto categorizado)
+- `casasEspeciais` — campos `valor` removidos das casas de desafio (4, 7, 12, 16, 18)
+- `processSpecialCell` case "desafio" — agora chama `sortearQuestao()` em vez de `desafios[info.valor]`
+
+### Corrigido
+- `reiniciarJogo()` — botão "Jogar Dado" permanecia desabilitado após vitória e reinício; agora é reabilitado com `elements.rollBtn.disabled = false`
+
 ## [0.4.0] - 2026-07-03
 
 ### Adicionado

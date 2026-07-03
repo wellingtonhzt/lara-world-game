@@ -37,18 +37,22 @@
 - Bloqueio do dado durante o desafio
 - Movimento pós-desafio não cascateia (evita loops)
 
+### v0.5.0
+- Banco de questões organizado por 6 categorias (Matemática, Português, Animais, Espaço, Natureza, Dinossauros)
+- 30 perguntas no total (5 por categoria)
+- Sorteio aleatório de perguntas a cada desafio
+- Sem repetição de perguntas na mesma partida (controle via Set)
+- Reinício automático do banco quando todas as perguntas são usadas
+
 ## Futuro
 
-### v0.5.0 — Sprites & Sons
-- Sprites PNG da Lara e do Jogador 2
-- Efeitos sonoros (passos, dado, casas especiais, vitória)
-- Melhorias visuais (transições suaves, partículas)
+### v0.6.0 — Mundos e Portais Secretos
+- Portais que transportam o jogador para outra casa
+- Mundos temáticos com visuais únicos (Floresta, Espacial, Dinossauros)
+- Cada mundo com casas especiais exclusivas
+- Sistema de progressão entre mundos
 
-### v0.6.0 — Mundos Temáticos
-- Mundo da Floresta
-- Mundo Espacial
-- Mundo dos Dinossauros
-- Cada mundo com visuais e casas especiais únicas
+### v0.7.0 — Sprites PNG, sons, melhorias visuais
 
 ### v1.0.0 — Lançamento Oficial
 - Versão estável

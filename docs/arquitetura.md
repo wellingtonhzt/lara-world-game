@@ -81,11 +81,12 @@ constantes / configuração
   ├── TOTAL_CASAS (20)
   ├── PLAYER_COUNT (2)
   ├── players[]        → array de objetos {id, name, emoji, posicao, rodadasPerdidas, element}
-  ├── gameState        → {currentPlayerIndex, jogoAtivo, jogoFinalizado, isMoving}
+  ├── gameState        → {currentPlayerIndex, jogoAtivo, jogoFinalizado, isMoving, questoesUsadas}
   ├── casasEspeciais[] → mapa de configuração (11 casas)
   ├── boardPositions{} → coordenadas percentuais de cada casa
   ├── icons[]          → emoji por casa
-  └── desafios[]       → banco de perguntas {pergunta, opcoes[], resposta}
+  ├── bancoQuestoes{}  → banco categorizado {categoria: [{pergunta, opcoes[], resposta}]}
+  └── questoesDisponiveis[] → flat pool construído de bancoQuestoes
 
 Player Helpers
   ├── getCurrentPlayer()   → retorna o jogador ativo
@@ -116,11 +117,17 @@ Casas Especiais
   └── processSpecialCell(pos) → aplica efeitos com animação
        ├── "avancar" (casa 3) → move +n, cascateia
        ├── "voltar" (casa 5) → move -n, não cascateia
-       ├── "desafio" (casas 4,7,12,16,18) → abre modal, move ±1, não cascateia
+       ├── "desafio" (casas 4,7,12,16,18) → sortearQuestao(), abre modal, move ±1, não cascateia
        ├── "jogar-novamente" (casa 8) → retorna true (extra turn)
        ├── "perde-rodada" (casa 10) → incrementa contador
        ├── "voltar-inicio" (casa 15) → move para 0
        └── "vitoria" (casa 20) → handleVictory()
+
+Sorteio de Perguntas
+  ├── sortearQuestao() → sorteia índice não usado de questoesDisponiveis[]
+  ├── gameState.questoesUsadas (Set) → rastreia índices já sorteados
+  ├── Se todas usadas → limpa o Set e recomeça
+  └── Chamado por processSpecialCell no case "desafio"
 
 Vitória
   └── handleVictory() → celebração, desativa jogo
@@ -177,7 +184,7 @@ Cada jogador mantém seu próprio estado:
 
 O estado compartilhado do jogo:
 ```javascript
-{ currentPlayerIndex, jogoAtivo, jogoFinalizado, isMoving }
+{ currentPlayerIndex, jogoAtivo, jogoFinalizado, isMoving, questoesUsadas }
 ```
 
 - `posicao`: posição na trilha (0 = fora do tabuleiro, 1-20 = casas)
@@ -185,6 +192,7 @@ O estado compartilhado do jogo:
 - `jogoAtivo`: false quando o jogo termina (vitória)
 - `jogoFinalizado`: true após vitória (desabilita botão)
 - `isMoving`: true durante animação (bloqueia cliques)
+- `questoesUsadas`: Set de índices de perguntas já sorteadas na partida
 
 ## Fluxo do Jogo
 

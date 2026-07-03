@@ -8,15 +8,20 @@
 
 | Versão | Data | Status |
 |--------|------|--------|
-| **v0.4.0** | Jul/2026 | ✅ **Ativo** |
+| **v0.5.0** | Jul/2026 | ✅ **Ativo** |
+| v0.4.0 | Jul/2026 | ✅ Concluído |
 | v0.3.0 | Jul/2026 | ✅ Concluído |
 | v0.2.0 | Jul/2026 | ✅ Concluído |
 | v0.1.0 | Jul/2026 | ✅ Concluído |
 
 ---
 
-## ✨ Funcionalidades Atuais (v0.4.0)
+## ✨ Funcionalidades Atuais (v0.5.0)
 
+- **Banco de questões** — 30 perguntas organizadas em 6 categorias (Matemática, Português, Animais, Espaço, Natureza, Dinossauros)
+- **Sorteio aleatório** — a pergunta exibida é sorteada do banco, não fixa por casa
+- **Sem repetição na partida** — o jogo evita repetir a mesma pergunta até que todas sejam usadas
+- **Reinício automático do banco** — quando todas as perguntas forem utilizadas, o ciclo recomeça
 - **Desafios educativos** — 5 casas de desafio com perguntas de múltipla escolha (casa 4, 7, 12, 16, 18)
 - **Modal de desafio** — ao cair em uma casa de desafio, um modal com pergunta e 3 alternativas é exibido
 - **Acerto/erro com movimento** — resposta correta: avança 1 casa; resposta errada: volta 1 casa
@@ -68,11 +73,11 @@
 2. Clique em **"Jogar Dado"** para lançar o dado.
 3. O personagem avança o número de casas sorteado — andando casa por casa com animação.
 4. Casas especiais podem fazer você avançar, voltar, perder rodadas, jogar novamente ou **responder a um desafio educativo** (casas 4, 7, 12, 16, 18).
-5. Ao cair em uma casa de desafio, um modal com pergunta de múltipla escolha aparece. Acertar = avança 1 casa; errar = volta 1 casa.
+5. Ao cair em uma casa de desafio, um modal com pergunta sorteada do **Banco de Questões** (6 categorias, 30 perguntas) aparece. Acertar = avança 1 casa; errar = volta 1 casa. O jogo evita repetir perguntas na mesma partida.
 6. Após cada jogada, o turno alterna automaticamente para o outro jogador.
-6. Se os dois jogadores estiverem na mesma casa, os personagens aparecem lado a lado.
-7. **O primeiro a atingir ou ultrapassar a casa 20 vence** a partida.
-8. Para uma nova partida, clique em **"Reiniciar"** — o modal de configuração reaparece para ajustar nomes e sprites.
+7. Se os dois jogadores estiverem na mesma casa, os personagens aparecem lado a lado.
+8. **O primeiro a atingir ou ultrapassar a casa 20 vence** a partida.
+9. Para uma nova partida, clique em **"Reiniciar"** — o modal de configuração reaparece para ajustar nomes e sprites.
 
 ---
 
@@ -90,7 +95,7 @@
 
 ## 📜 História do Projeto
 
-O Lara World começou como um MVP de tabuleiro simples para 1 jogador. A primeira versão (v0.1.0) implementou a lógica básica do jogo com dados, casas especiais e Docker. Na sequência (v0.1.5) recebeu um tabuleiro visual com trilha serpentina, personagem animado e painel lateral. A versão v0.2.0 adicionou multiplayer local com alternância de turnos entre 2 jogadores. A v0.3.0 introduziu o modal de configuração inicial com nomes e sprites personalizáveis. A versão atual (v0.4.0) adiciona 5 casas de desafios educativos com perguntas de múltipla escolha.
+O Lara World começou como um MVP de tabuleiro simples para 1 jogador. A primeira versão (v0.1.0) implementou a lógica básica do jogo com dados, casas especiais e Docker. Na sequência (v0.1.5) recebeu um tabuleiro visual com trilha serpentina, personagem animado e painel lateral. A versão v0.2.0 adicionou multiplayer local com alternância de turnos entre 2 jogadores. A v0.3.0 introduziu o modal de configuração inicial com nomes e sprites personalizáveis. A v0.4.0 adicionou 5 casas de desafios educativos com perguntas de múltipla escolha. A versão atual (v0.5.0) substitui as perguntas fixas por um **Banco de Questões** com 30 perguntas organizadas em 6 categorias, sorteio aleatório e proteção contra repetição na mesma partida.
 
 ---
 
@@ -148,8 +153,8 @@ docker compose down
 
 ## 🗺️ Roadmap
 
-- **v0.5.0** — Sprites PNG, sons, melhorias visuais
-- **v0.6.0** — Mundos temáticos (Floresta, Espacial, Dinossauros)
+- **v0.6.0** — Mundos e Portais Secretos
+- **v0.7.0** — Sprites PNG, sons, melhorias visuais
 - **v1.0.0** — Lançamento oficial
 
 Veja o [roadmap completo](docs/roadmap.md).
