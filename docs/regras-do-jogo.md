@@ -29,10 +29,15 @@ Levar seu personagem da casa inicial (posição 0) até a **casa 20** (vitória)
 | Casa | Efeito | Descrição |
 |------|--------|-----------|
 | 3 | ⭐ Avance 2 casas | O personagem anda 2 casas adicionais. Se cair em outra casa especial, o efeito cascateia. |
+| 4 | ❓ Desafio educativo | Abre um modal com pergunta de múltipla escolha. Acertar: avança 1 casa. Errar: volta 1 casa. O movimento não cascateia. |
 | 5 | 🐢 Volte 1 casa | O personagem volta 1 casa. Se estiver na casa 1, vai para a posição 0 (fora do tabuleiro). |
+| 7 | ❓ Desafio educativo | Mesmo efeito da casa 4. |
 | 8 | 🎯 Jogue novamente | O jogador ganha uma jogada extra imediatamente. O turno não alterna. |
 | 10 | 😴 Perde uma rodada | O jogador perde a **próxima** rodada. O contador é pessoal de cada jogador. |
+| 12 | ❓ Desafio educativo | Mesmo efeito da casa 4. |
 | 15 | 🔙 Volte ao início | O personagem volta para a posição 0 (fora do tabuleiro). |
+| 16 | ❓ Desafio educativo | Mesmo efeito da casa 4. |
+| 18 | ❓ Desafio educativo | Mesmo efeito da casa 4. |
 | 20 | 🏆 Vitória! | O jogador vence a partida. |
 
 ## Regras Adicionais
@@ -40,6 +45,7 @@ Levar seu personagem da casa inicial (posição 0) até a **casa 20** (vitória)
 - **Ultrapassar a casa 20**: se o valor do dado levar além da casa 20, o personagem para na casa 20 e vence.
 - **Rodada perdida**: o contador de rodadas perdidas é individual. Quando um jogador tem rodadas pendentes, seu turno é automaticamente pulado e o contador decrementado.
 - **Efeito cascata**: ao cair na casa 3 (avance 2), se a nova casa também for especial, o efeito é aplicado novamente. Isso pode encadear múltiplos eventos.
+- **Exceção — desafios não cascateiam**: ao acertar ou errar um desafio (casas 4, 7, 12, 16, 18), o movimento de +1 ou -1 ocorre sem cascatear para outras casas especiais, evitando loops infinitos.
 - **Casa 5 na posição 1**: se estiver na casa 1 e cair na casa 5, o personagem volta para a posição 0 e fica fora do tabuleiro. Na próxima jogada, avançará para a casa 1 ou além.
 - **Após a vitória**: o jogo é encerrado, o botão "Jogar Dado" é desabilitado e uma animação de celebração é exibida. Clique em "Reiniciar" para uma nova partida.
 - **Reinício**: o botão "Reiniciar" exibe o modal de configuração novamente, permitindo que os jogadores alterem seus nomes e sprites antes de iniciar uma nova partida.

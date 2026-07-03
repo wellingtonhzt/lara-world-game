@@ -18,14 +18,18 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 
 ## Principais Funcionalidades
 
-### v0.3.0 (Atual) — Personalização de Jogadores ✅
+### v0.4.0 (Atual) — Desafios Educativos ✅
 
+- 5 casas de desafio educativo com perguntas de múltipla escolha
+- Modal de desafio que bloqueia o dado até resposta
+- Acerto: avança 1 casa | Erro: volta 1 casa
+- Movimento pós-desafio não cascateia (evita loops infinitos)
 - Modal de configuração inicial com nomes e sprites personalizáveis
 - Grade de emojis exclusiva para cada jogador (seleção independente)
 - Tabuleiro visual com trilha serpentina e caminho SVG
 - Movimento animado casa por casa (async/await, 180ms/passo)
 - Sistema de dado virtual 1-6 com animação de rolagem
-- 6 casas especiais com efeitos automáticos
+- 11 casas especiais com efeitos automáticos
 - Multiplayer local para 2 jogadores
 - Alternância automática de turnos
 - Destaque visual do jogador ativo
@@ -34,6 +38,11 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 - Sistema de vitória (primeiro a chegar na casa 20)
 - Reinício retorna ao modal de configuração
 - Design responsivo
+
+### v0.3.0 ✅
+
+- Modal de configuração inicial com nomes e sprites
+- Reinício retorna ao modal de configuração
 
 ### v0.2.0 ✅
 

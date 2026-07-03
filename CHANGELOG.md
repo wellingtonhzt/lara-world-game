@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.4.0] - 2026-07-03
+
+### Adicionado
+- 5 casas de desafio educativo (casas 4, 7, 12, 16, 18)
+- Modal de desafio com pergunta e 3 alternativas de múltipla escolha
+- Função `showChallengeModal()` — exibe modal e retorna Promise com acerto/erro
+- Array `desafios[]` com 5 perguntas temáticas
+- Movimento pós-desafio: acertar = avançar 1 casa, errar = voltar 1 casa
+- Bloqueio do dado durante desafio (via `gameState.isMoving`)
+- Estilos visuais para casas de desafio (roxo) e modal de desafio
+- Histórico registra "caiu em desafio", "acertou" e "errou"
+
+### Alterado
+- `casasEspeciais{}` expandido de 6 para 11 casas
+- `processSpecialCell()` agora trata o tipo "desafio"
+
 ## [0.3.0] - 2026-07-03
 
 ### Adicionado

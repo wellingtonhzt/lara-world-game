@@ -40,6 +40,10 @@ Estrutura semântica dividida em:
   - Dois cards de jogador (`.player-card`): P1 e P2
   - Cada card contém: campo de nome (`<input>`), grade de emojis (`.emoji-grid`)
   - Botão **"Iniciar Jogo"** — esconde o modal e renderiza o tabuleiro
+- **Challenge Modal** (`#challenge-overlay`):
+  - Overlay fixo com `z-index: 500`, exibido durante o jogo
+  - Título "Desafio!", pergunta (`#challenge-question`) e opções (`#challenge-options`)
+  - Botões de alternativa criados dinamicamente via JS
 - **Header**: Título com emoji decorativo
 - **Board Area** (esquerda):
   - `#track-container`: container com gradiente de céu/grama, decorações (nuvens, árvores, flores)
@@ -62,7 +66,7 @@ Estrutura semântica dividida em:
 - **Células** (`.casa`): `position: absolute` com `transform: translate(-50%,-50%)` para centralização. Cada casa recebe `left` e `top` em percentual via JS
 - **Caminho SVG**: `#trail-path` com `stroke-width: 10`, cor bege/marrom, opacidade 0.6
 - **Personagens**: círculos brancos com borda rosa (Lara) ou azul (Amigo), `z-index: 20`, 58×58px
-- **Casa especial**: cores por `data-position` (3 amarela, 5 rosa, 8 laranja, 10 roxa, 15 vermelha, 20 verde com glow)
+- **Casa especial**: cores por `data-position` (3 amarela, 4 roxa desafio, 5 rosa, 7 roxa desafio, 8 laranja, 10 roxa, 12 roxa desafio, 15 vermelha, 16 roxa desafio, 18 roxa desafio, 20 verde com glow)
 - **Animações**: `pulse` (movimento), `bounce` (dado), `celebrar` (vitória)
 - **Responsivo**: `@media (max-width: 840px)` com empilhamento vertical, células 64×46px
 
@@ -78,9 +82,10 @@ constantes / configuração
   ├── PLAYER_COUNT (2)
   ├── players[]        → array de objetos {id, name, emoji, posicao, rodadasPerdidas, element}
   ├── gameState        → {currentPlayerIndex, jogoAtivo, jogoFinalizado, isMoving}
-  ├── casasEspeciais[] → mapa de configuração
+  ├── casasEspeciais[] → mapa de configuração (11 casas)
   ├── boardPositions{} → coordenadas percentuais de cada casa
-  └── icons[]          → emoji por casa
+  ├── icons[]          → emoji por casa
+  └── desafios[]       → banco de perguntas {pergunta, opcoes[], resposta}
 
 Player Helpers
   ├── getCurrentPlayer()   → retorna o jogador ativo
@@ -109,6 +114,13 @@ Histórico
 
 Casas Especiais
   └── processSpecialCell(pos) → aplica efeitos com animação
+       ├── "avancar" (casa 3) → move +n, cascateia
+       ├── "voltar" (casa 5) → move -n, não cascateia
+       ├── "desafio" (casas 4,7,12,16,18) → abre modal, move ±1, não cascateia
+       ├── "jogar-novamente" (casa 8) → retorna true (extra turn)
+       ├── "perde-rodada" (casa 10) → incrementa contador
+       ├── "voltar-inicio" (casa 15) → move para 0
+       └── "vitoria" (casa 20) → handleVictory()
 
 Vitória
   └── handleVictory() → celebração, desativa jogo
@@ -124,6 +136,9 @@ Setup Screen
   ├── hideSetupScreen() → esconde modal
   ├── setupModalEvents() → registra eventos de clique nas grades e botão
   └── startGame() → lê nomes/emojis dos inputs, inicia partida
+
+Challenge Modal
+  └── showChallengeModal(desafio) → exibe pergunta/opções, retorna Promise<boolean>
 
 Inicialização
   └── init() → dispara em DOMContentLoaded, chama showSetupScreen()
@@ -141,7 +156,7 @@ O movimento é feito por `animatePlayerMovement(from, to)`:
    - Aplica classe `animar-lara-pos` para efeito pulse
 4. Ao final, atualiza `player.posicao`
 
-O bloqueio de clique durante movimento é feito pela flag `gameState.isMoving`, que é setada como `true` no início de `jogarDado()` e liberada em `unlockTurn()`.
+O bloqueio de clique durante movimento é feito pela flag `gameState.isMoving`, que é setada como `true` no início de `jogarDado()` e liberada em `unlockTurn()`. O mesmo bloqueio protege o modal de desafio — enquanto o jogador responde, `isMoving` permanece `true` e o botão "Jogar Dado" fica desabilitado.
 
 #### Controle de Turnos
 
@@ -196,6 +211,7 @@ Anima personagem andando casa por casa (180ms/casa)
   ↓
 Caiu em casa especial?
   ├── Avançar (3) → anima movimento extra, cascateia
+  ├── Desafio (4,7,12,16,18) → abre modal, move ±1, não cascateia
   ├── Voltar (5) → anima movimento reverso
   ├── Jogar novamente (8) → mantém turno ativo
   ├── Perde rodada (10) → incrementa contador

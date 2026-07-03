@@ -1,5 +1,42 @@
 # Memorial Técnico
 
+## [0.4.0] - 2026-07-03
+
+### Objetivo
+
+Adicionar 5 casas de desafio educativo com perguntas de múltipla escolha, integradas ao fluxo de jogo existente sem alterar regras especiais prévias, modal inicial, Docker ou sistema de jogadores.
+
+### Arquivos Alterados
+
+| Arquivo | Tipo de Alteração |
+|---------|-------------------|
+| `src/game.js` | Adicionado: array `desafios[]`, 5 entradas em `casasEspeciais` (4,7,12,16,18), case "desafio" em processSpecialCell, função showChallengeModal |
+| `src/index.html` | Adicionado: estrutura do modal `#challenge-overlay` com pergunta e opções |
+| `src/style.css` | Adicionado: estilos do modal de desafio, cores das 5 casas de desafio (roxo) |
+| `README.md` | Atualizado: v0.4.0 como versão ativa, funcionalidades com desafios, tabela de casas expandida, histórico |
+| `CHANGELOG.md` | Adicionado: entrada v0.4.0 |
+| `docs/visao-geral.md` | Atualizado: funcionalidades da v0.4.0 |
+| `docs/arquitetura.md` | Atualizado: estrutura do index.html com challenge modal, cores CSS, organização do código, fluxo do jogo |
+| `docs/regras-do-jogo.md` | Atualizado: tabela de casas especiais com desafios, regra de não-cascata |
+| `docs/roadmap.md` | Atualizado: v0.4.0 movido para concluído |
+| `docs/memorial-tecnico.md` | Adicionado: entrada v0.4.0 |
+
+### Impacto Técnico
+
+- **game.js**: Adicionado array `desafios[]` com 5 objetos `{pergunta, opcoes[], resposta}`. `casasEspeciais` expandido de 6 para 11 entradas — 5 novas com tipo "desafio" e `valor` indexando o array. `processSpecialCell()` ganhou case "desafio" que: (1) registra no histórico, (2) chama `showChallengeModal()` via Promise, (3) move o jogador ±1 casa, (4) retorna `false` sem cascatear. `showChallengeModal(desafio)` cria botões dinâmicos com `String.fromCharCode(65 + index)` para rótulos A/B/C, resolve a Promise com `opcao === desafio.resposta` e esconde o overlay.
+- **HTML**: Modal `#challenge-overlay` adicionado entre o setup screen e o game-layout, com `#challenge-question` (parágrafo) e `#challenge-options` (container dos botões).
+- **CSS**: `.challenge-overlay` com `z-index: 500`, `.challenge-content` centralizado, `.challenge-btn` com hover roxo. Casas 4, 7, 12, 16, 18 estilizadas com fundo `#f3e5f5`, borda `#7b1fa2` e sombra `#4a148c`.
+- **Prevenção de loop**: O movimento pós-desafio (`+1` ou `-1`) atualiza `player.posicao` e `positionPlayerAt()` sem chamar `processSpecialCell()` novamente, eliminando qualquer risco de cascata cíclica.
+
+### Impacto Funcional
+
+- 5 novas casas especiais com mecânica de perguntas e respostas
+- Jogador que acerta avança 1 casa; que erra volta 1 casa
+- Dado fica bloqueado enquanto o modal de desafio estiver aberto
+- Histórico registra a entrada no desafio, o acerto ou o erro
+- Nenhuma regra anterior foi alterada — casas 3, 5, 8, 10, 15, 20 funcionam exatamente como antes
+- Modal inicial, Docker, sistema de jogadores — inalterados
+
 ## [0.3.0] - 2026-07-03
 
 ### Objetivo

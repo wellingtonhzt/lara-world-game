@@ -30,14 +30,21 @@
 - Inicialização do jogo a partir do modal
 - Reinício retorna ao modal de configuração
 
+### v0.4.0
+- 5 casas de desafio educativo (casas 4, 7, 12, 16, 18)
+- Modal de desafio com pergunta e 3 alternativas
+- Acerto = avança 1 casa | Erro = volta 1 casa
+- Bloqueio do dado durante o desafio
+- Movimento pós-desafio não cascateia (evita loops)
+
 ## Futuro
 
-### v0.4.0 — Sprites & Sons
+### v0.5.0 — Sprites & Sons
 - Sprites PNG da Lara e do Jogador 2
 - Efeitos sonoros (passos, dado, casas especiais, vitória)
 - Melhorias visuais (transições suaves, partículas)
 
-### v0.5.0 — Mundos Temáticos
+### v0.6.0 — Mundos Temáticos
 - Mundo da Floresta
 - Mundo Espacial
 - Mundo dos Dinossauros
