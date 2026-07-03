@@ -6,6 +6,12 @@
 
 **Lara World** é um jogo de trilha infantil para navegador, onde os jogadores percorrem um caminho de 20 casas até a linha de chegada. Feito com HTML, CSS e JavaScript puro — sem frameworks, sem backend, sem banco de dados.
 
+## 🌐 Demo Online
+
+👉 **Acesse a demonstração:** https://lara-world.wl-infra.uk/
+
+⚠️ Recomendado jogar em computador ou tablet para melhor experiência.
+
 ---
 
 ## 📌 Status do Projeto
