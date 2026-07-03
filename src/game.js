@@ -445,10 +445,8 @@
     gameState.jogoFinalizado = false;
     gameState.isMoving = false;
 
-    elements.rollBtn.disabled = false;
     elements.diceDisplay.textContent = "🎲";
     elements.diceValue.textContent = "-";
-    updateUI();
 
     players.forEach(p => {
       const el = getPlayerElement(p);
@@ -460,7 +458,7 @@
     });
 
     clearHistory();
-    addHistory("🔄 Jogo reiniciado!", "info");
+    showSetupScreen();
   }
 
   /* ── Modal Setup ── */
