@@ -13,19 +13,20 @@
     jogoAtivo: true,
     jogoFinalizado: false,
     isMoving: false,
+    questoesUsadas: new Set(),
   };
 
   const casasEspeciais = {
     3: { tipo: "avancar", valor: 2, descricao: "Avance 2 casas!" },
-    4: { tipo: "desafio", valor: 0, descricao: "Desafio!" },
+    4: { tipo: "desafio", descricao: "Desafio!" },
     5: { tipo: "voltar", valor: 1, descricao: "Volte 1 casa!" },
-    7: { tipo: "desafio", valor: 1, descricao: "Desafio!" },
+    7: { tipo: "desafio", descricao: "Desafio!" },
     8: { tipo: "jogar-novamente", valor: 0, descricao: "Jogue novamente!" },
     10: { tipo: "perde-rodada", valor: 0, descricao: "Perdeu uma rodada!" },
-    12: { tipo: "desafio", valor: 2, descricao: "Desafio!" },
+    12: { tipo: "desafio", descricao: "Desafio!" },
     15: { tipo: "voltar-inicio", valor: 0, descricao: "Volte para o início!" },
-    16: { tipo: "desafio", valor: 3, descricao: "Desafio!" },
-    18: { tipo: "desafio", valor: 4, descricao: "Desafio!" },
+    16: { tipo: "desafio", descricao: "Desafio!" },
+    18: { tipo: "desafio", descricao: "Desafio!" },
     20: { tipo: "vitoria", valor: 0, descricao: "🏆 Chegada!" },
   };
 
@@ -36,13 +37,52 @@
     "🐼", "🍉", "🐶", "🎠", "👑",
   ];
 
-  const desafios = [
-    { pergunta: "Quanto é 2 + 2?", opcoes: ["3", "4", "5"], resposta: "4" },
-    { pergunta: "Qual animal faz 'miau'?", opcoes: ["Cachorro", "Gato", "Pato"], resposta: "Gato" },
-    { pergunta: "Qual cor mistura azul e amarelo?", opcoes: ["Verde", "Roxo", "Laranja"], resposta: "Verde" },
-    { pergunta: "Quantos dias tem uma semana?", opcoes: ["5", "7", "10"], resposta: "7" },
-    { pergunta: "Qual planeta é conhecido como planeta vermelho?", opcoes: ["Marte", "Terra", "Júpiter"], resposta: "Marte" },
-  ];
+  const bancoQuestoes = {
+    Matematica: [
+      { pergunta: "Quanto é 2 + 2?", opcoes: ["3", "4", "5"], resposta: "4" },
+      { pergunta: "Quanto é 5 - 3?", opcoes: ["1", "2", "3"], resposta: "2" },
+      { pergunta: "Quanto é 3 + 4?", opcoes: ["6", "7", "8"], resposta: "7" },
+      { pergunta: "Quanto é 10 - 6?", opcoes: ["3", "4", "5"], resposta: "4" },
+      { pergunta: "Quanto é 2 × 3?", opcoes: ["5", "6", "7"], resposta: "6" },
+    ],
+    Portugues: [
+      { pergunta: "Qual é a primeira letra do alfabeto?", opcoes: ["A", "B", "C"], resposta: "A" },
+      { pergunta: "Quantas vogais existem?", opcoes: ["3", "5", "7"], resposta: "5" },
+      { pergunta: "Qual palavra está no plural?", opcoes: ["Gato", "Gatos", "Gatinho"], resposta: "Gatos" },
+      { pergunta: "Complete: 'O ___ comeu a maçã.'", opcoes: ["menino", "menina", "meninos"], resposta: "menino" },
+      { pergunta: "Qual letra inicia a palavra 'Bola'?", opcoes: ["A", "B", "C"], resposta: "B" },
+    ],
+    Animais: [
+      { pergunta: "Qual animal faz 'miau'?", opcoes: ["Cachorro", "Gato", "Pato"], resposta: "Gato" },
+      { pergunta: "Qual animal tem listras pretas e laranja?", opcoes: ["Leão", "Tigre", "Zebra"], resposta: "Tigre" },
+      { pergunta: "Qual animal vive na água?", opcoes: ["Gato", "Peixe", "Pássaro"], resposta: "Peixe" },
+      { pergunta: "Qual animal voa?", opcoes: ["Cachorro", "Peixe", "Pássaro"], resposta: "Pássaro" },
+      { pergunta: "Qual animal late?", opcoes: ["Cachorro", "Gato", "Pato"], resposta: "Cachorro" },
+    ],
+    Espaco: [
+      { pergunta: "Qual planeta é conhecido como planeta vermelho?", opcoes: ["Marte", "Terra", "Júpiter"], resposta: "Marte" },
+      { pergunta: "O que é o Sol?", opcoes: ["Um planeta", "Uma estrela", "Uma lua"], resposta: "Uma estrela" },
+      { pergunta: "Qual é o maior planeta do sistema solar?", opcoes: ["Marte", "Saturno", "Júpiter"], resposta: "Júpiter" },
+      { pergunta: "O que a Lua faz ao redor da Terra?", opcoes: ["Gira", "Para", "Explode"], resposta: "Gira" },
+      { pergunta: "Quantos planetas existem no sistema solar?", opcoes: ["7", "8", "9"], resposta: "8" },
+    ],
+    Natureza: [
+      { pergunta: "Qual cor mistura azul e amarelo?", opcoes: ["Verde", "Roxo", "Laranja"], resposta: "Verde" },
+      { pergunta: "O que as plantas precisam para crescer?", opcoes: ["Sombra", "Luz do sol", "Gelo"], resposta: "Luz do sol" },
+      { pergunta: "Qual estação vem depois do inverno?", opcoes: ["Verão", "Primavera", "Outono"], resposta: "Primavera" },
+      { pergunta: "Onde vivem os peixes?", opcoes: ["No céu", "Na água", "Na terra"], resposta: "Na água" },
+      { pergunta: "Qual é o maior animal do mundo?", opcoes: ["Elefante", "Baleia", "Girafa"], resposta: "Baleia" },
+    ],
+    Dinossauros: [
+      { pergunta: "Qual dinossauro é conhecido como 'rei dos dinossauros'?", opcoes: ["Triceratops", "T-Rex", "Estegossauro"], resposta: "T-Rex" },
+      { pergunta: "Qual dinossauro tem placas nas costas?", opcoes: ["T-Rex", "Estegossauro", "Pterodáctilo"], resposta: "Estegossauro" },
+      { pergunta: "Qual dinossauro tem três chifres?", opcoes: ["Triceratops", "T-Rex", "Estegossauro"], resposta: "Triceratops" },
+      { pergunta: "Como os dinossauros desapareceram?", opcoes: ["Meteorito", "Frio", "Fome"], resposta: "Meteorito" },
+      { pergunta: "Qual dinossauro tem pescoço muito comprido?", opcoes: ["T-Rex", "Braquiossauro", "Triceratops"], resposta: "Braquiossauro" },
+    ],
+  };
+
+  const questoesDisponiveis = Object.values(bancoQuestoes).flat();
 
   const boardPositions = {
     1:  { x: 10, y: 10 },
@@ -304,6 +344,20 @@
 
   /* ── Special Cells ── */
 
+  function sortearQuestao() {
+    const usadas = gameState.questoesUsadas;
+    const total = questoesDisponiveis.length;
+    if (usadas.size >= total) {
+      usadas.clear();
+    }
+    let idx;
+    do {
+      idx = Math.floor(Math.random() * total);
+    } while (usadas.has(idx));
+    usadas.add(idx);
+    return questoesDisponiveis[idx];
+  }
+
   async function processSpecialCell(posicao) {
     const player = getCurrentPlayer();
     const info = casasEspeciais[posicao];
@@ -350,7 +404,7 @@
         return false;
       }
       case "desafio": {
-        const desafio = desafios[info.valor];
+        const desafio = sortearQuestao();
         if (!desafio) return false;
         addHistory(`❓ ${player.name} caiu em um desafio!`, "especial");
         const acertou = await showChallengeModal(desafio);
@@ -481,6 +535,7 @@
     gameState.jogoAtivo = true;
     gameState.jogoFinalizado = false;
     gameState.isMoving = false;
+    gameState.questoesUsadas.clear();
 
     elements.diceDisplay.textContent = "🎲";
     elements.diceValue.textContent = "-";
@@ -495,6 +550,7 @@
     });
 
     clearHistory();
+    elements.rollBtn.disabled = false;
     showSetupScreen();
   }
 
@@ -521,6 +577,7 @@
     elements.laraP2.textContent = players[1].emoji;
 
     hideSetupScreen();
+    gameState.questoesUsadas.clear();
     renderizarTrilha();
     renderSvgPath();
     updateUI();
