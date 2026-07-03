@@ -14,16 +14,35 @@
     jogoFinalizado: false,
     isMoving: false,
     questoesUsadas: new Set(),
+    mundoAtual: "principal",
+    entradaFloresta: { 1: null, 2: null },
+    entrouNoPortal: false,
   };
+
+  /* ── World-aware helpers ── */
+
+  function getTotalCasas() {
+    return gameState.mundoAtual === "floresta" ? FLORESTA_TOTAL : TOTAL_CASAS;
+  }
+  function getCasasEspeciais() {
+    return gameState.mundoAtual === "floresta" ? florestaEspeciais : casasEspeciais;
+  }
+  function getPosicoes() {
+    return gameState.mundoAtual === "floresta" ? florestaPosicoes : boardPositions;
+  }
+  function getIcones() {
+    return gameState.mundoAtual === "floresta" ? florestaIcones : icons;
+  }
 
   const casasEspeciais = {
     3: { tipo: "avancar", valor: 2, descricao: "Avance 2 casas!" },
     4: { tipo: "desafio", descricao: "Desafio!" },
     5: { tipo: "voltar", valor: 1, descricao: "Volte 1 casa!" },
     7: { tipo: "desafio", descricao: "Desafio!" },
-    8: { tipo: "jogar-novamente", valor: 0, descricao: "Jogue novamente!" },
-    10: { tipo: "perde-rodada", valor: 0, descricao: "Perdeu uma rodada!" },
-    12: { tipo: "desafio", descricao: "Desafio!" },
+     8: { tipo: "jogar-novamente", valor: 0, descricao: "Jogue novamente!" },
+     10: { tipo: "perde-rodada", valor: 0, descricao: "Perdeu uma rodada!" },
+     11: { tipo: "portal", descricao: "🌿 Portal da Floresta" },
+     12: { tipo: "desafio", descricao: "Desafio!" },
     15: { tipo: "voltar-inicio", valor: 0, descricao: "Volte para o início!" },
     16: { tipo: "desafio", descricao: "Desafio!" },
     18: { tipo: "desafio", descricao: "Desafio!" },
@@ -84,6 +103,30 @@
 
   const questoesDisponiveis = Object.values(bancoQuestoes).flat();
 
+  /* ── Forest World ── */
+
+  const FLORESTA_TOTAL = 8;
+
+  const florestaPosicoes = {
+    1: { x: 12, y: 20 },
+    2: { x: 30, y: 20 },
+    3: { x: 48, y: 22 },
+    4: { x: 66, y: 30 },
+    5: { x: 70, y: 52 },
+    6: { x: 52, y: 62 },
+    7: { x: 34, y: 62 },
+    8: { x: 16, y: 70 },
+  };
+
+  const florestaIcones = ["🌲", "🍄", "🦊", "🌳", "🐿️", "🍃", "🦉", "👑"];
+
+  const florestaEspeciais = {
+    3: { tipo: "desafio", descricao: "🐾 Desafio da Floresta!" },
+    5: { tipo: "atalho", descricao: "🌿 Atalho de Saída" },
+    7: { tipo: "desafio", descricao: "🦉 Enigma do Guardião!" },
+    8: { tipo: "saida-mundo", descricao: "🚪 Saída da Floresta" },
+  };
+
   const boardPositions = {
     1:  { x: 10, y: 10 },
     2:  { x: 26, y: 10 },
@@ -137,6 +180,7 @@
 
   const elements = {
     track: document.getElementById("track"),
+    trackContainer: document.getElementById("track-container"),
     lara: document.getElementById("lara"),
     laraP2: document.getElementById("lara-p2"),
     trailPath: document.getElementById("trail-path"),
@@ -164,9 +208,10 @@
   /* ── SVG Path ── */
 
   function renderSvgPath() {
-    const sorted = Object.keys(boardPositions)
+    const posicoes = getPosicoes();
+    const sorted = Object.keys(posicoes)
       .sort((a, b) => a - b)
-      .map((k) => boardPositions[k]);
+      .map((k) => posicoes[k]);
 
     const n = sorted.length;
     if (n < 2) return;
@@ -196,8 +241,12 @@
 
   function renderizarTrilha() {
     elements.track.innerHTML = "";
-    for (let i = 1; i <= TOTAL_CASAS; i++) {
-      const pos = boardPositions[i];
+    const total = getTotalCasas();
+    const especiais = getCasasEspeciais();
+    const posicoes = getPosicoes();
+    const icones = getIcones();
+    for (let i = 1; i <= total; i++) {
+      const pos = posicoes[i];
 
       const casa = document.createElement("div");
       casa.className = "casa";
@@ -206,13 +255,14 @@
       casa.style.left = pos.x + "%";
       casa.style.top = pos.y + "%";
 
-      if (casasEspeciais[i]) {
-        casa.classList.add(i === 20 ? "casa-vitoria" : "casa-especial");
+      const info = especiais[i];
+      if (info) {
+        casa.classList.add(info.tipo === "vitoria" ? "casa-vitoria" : "casa-especial");
       }
 
       const icone = document.createElement("span");
       icone.className = "casa-icone";
-      icone.textContent = icons[i - 1] || "⬜";
+      icone.textContent = icones[i - 1] || "⬜";
 
       const numero = document.createElement("span");
       numero.className = "casa-numero";
@@ -220,8 +270,8 @@
 
       const tipo = document.createElement("span");
       tipo.className = "casa-tipo";
-      if (casasEspeciais[i]) {
-        tipo.textContent = casasEspeciais[i].descricao;
+      if (info) {
+        tipo.textContent = info.descricao;
       }
 
       casa.appendChild(icone);
@@ -238,13 +288,18 @@
     const el = getPlayerElement(p);
     if (!el) return;
 
-    if (casaNumero < 1 || casaNumero > TOTAL_CASAS) {
+    if (casaNumero < 1 || casaNumero > getTotalCasas()) {
       el.classList.remove("visivel");
       return;
     }
 
     const cell = document.getElementById(`casa-${casaNumero}`);
     if (!cell) return;
+
+    if (gameState.mundoAtual === "floresta" && p.id !== getCurrentPlayer().id) {
+      el.classList.remove("visivel");
+      return;
+    }
 
     const container = document.getElementById("track-container");
     const cRect = container.getBoundingClientRect();
@@ -285,7 +340,7 @@
     const el = getPlayerElement(player);
 
     for (const pos of positions) {
-      if (pos >= 1 && pos <= TOTAL_CASAS) {
+      if (pos >= 1 && pos <= getTotalCasas()) {
         positionPlayerAt(pos);
         el.classList.remove("animar-lara-pos");
         void el.offsetWidth;
@@ -360,16 +415,16 @@
 
   async function processSpecialCell(posicao) {
     const player = getCurrentPlayer();
-    const info = casasEspeciais[posicao];
+    const info = getCasasEspeciais()[posicao];
     if (!info) return false;
 
     switch (info.tipo) {
       case "avancar": {
-        const destino = Math.min(posicao + info.valor, TOTAL_CASAS);
+        const destino = Math.min(posicao + info.valor, getTotalCasas());
         addHistory(`⭐ ${info.descricao} → casa ${destino}`, "especial");
         await animatePlayerMovement(posicao, destino);
         player.posicao = destino;
-        if (destino >= TOTAL_CASAS) {
+        if (destino >= getTotalCasas()) {
           await handleVictory();
           return false;
         }
@@ -388,6 +443,82 @@
       case "jogar-novamente": {
         addHistory(`🎯 ${info.descricao}`, "especial");
         return true;
+      }
+      case "portal": {
+        const entrou = await showPortalModal();
+        console.log("[PORTAL] entrou =", entrou);
+        if (entrou) {
+          console.log("[PORTAL] Antes: mundoAtual=" + gameState.mundoAtual + ", isMoving=" + gameState.isMoving + ", rollBtn.disabled=" + elements.rollBtn.disabled);
+          gameState.entradaFloresta[player.id] = player.posicao;
+          console.log("[PORTAL] posicaoSalva =", gameState.posicaoSalva);
+          gameState.mundoAtual = "floresta";
+          console.log("[PORTAL] mundoAtual =", gameState.mundoAtual);
+          player.posicao = 0;
+          console.log("[PORTAL] player.posicao = 0");
+          renderizarTrilha();
+          console.log("[PORTAL] renderizarTrilha done, total casas =", document.querySelectorAll(".casa").length, ", primeira casa id =", document.querySelector(".casa")?.id);
+          renderSvgPath();
+          console.log("[PORTAL] renderSvgPath done");
+          elements.trackContainer.classList.add("mundo-floresta");
+          console.log("[PORTAL] classList add mundo-floresta, track-container className =", elements.trackContainer.className);
+          document.getElementById("world-indicator").classList.remove("hidden");
+          console.log("[PORTAL] world-indicator hidden =", document.getElementById("world-indicator").classList.contains("hidden"));
+          players.forEach(p => positionPlayerAt(p.posicao, p));
+          console.log("[PORTAL] positionPlayerAt done for all players");
+          updateUI();
+          console.log("[PORTAL] updateUI done, isMoving=" + gameState.isMoving + ", rollBtn.disabled=" + elements.rollBtn.disabled);
+          addHistory(`🌿 ${player.name} entrou no Mundo da Floresta!`, "especial");
+          gameState.entrouNoPortal = true;
+          gameState.isMoving = false;
+          elements.rollBtn.disabled = false;
+          console.log("[PORTAL] FINAL: isMoving=" + gameState.isMoving + ", rollBtn.disabled=" + elements.rollBtn.disabled + ", mundoAtual=" + gameState.mundoAtual);
+          updateUI();
+          console.log("[PORTAL] updateUI pos-final, rollBtn.disabled=" + elements.rollBtn.disabled);
+          return true;
+        } else {
+          addHistory(`➡️ ${player.name} seguiu no tabuleiro principal.`, "info");
+          return false;
+        }
+      }
+      case "atalho": {
+        const bonusA = 2;
+        const entradaA = gameState.entradaFloresta[player.id];
+        const destinoA = Math.min(entradaA + bonusA, TOTAL_CASAS);
+        gameState.mundoAtual = "principal";
+        gameState.entradaFloresta[player.id] = null;
+        player.posicao = destinoA;
+        renderizarTrilha();
+        renderSvgPath();
+        elements.trackContainer.classList.remove("mundo-floresta");
+        document.getElementById("world-indicator").classList.add("hidden");
+        players.forEach(p => positionPlayerAt(p.posicao, p));
+        updateUI();
+        addHistory(`🌿 ${player.name} pegou o Atalho da Floresta e voltou com +${bonusA} casas!`, "especial");
+        if (destinoA >= TOTAL_CASAS) {
+          await handleVictory();
+          return false;
+        }
+        return false;
+      }
+      case "saida-mundo": {
+        const bonus = 3;
+        const entrada = gameState.entradaFloresta[player.id];
+        const destino = Math.min(entrada + bonus, TOTAL_CASAS);
+        gameState.mundoAtual = "principal";
+        gameState.entradaFloresta[player.id] = null;
+        player.posicao = destino;
+        renderizarTrilha();
+        renderSvgPath();
+        elements.trackContainer.classList.remove("mundo-floresta");
+        document.getElementById("world-indicator").classList.add("hidden");
+        players.forEach(p => positionPlayerAt(p.posicao, p));
+        updateUI();
+        addHistory(`✨ ${player.name} completou o Mundo da Floresta! Avançou ${bonus} casas!`, "especial");
+        if (destino >= TOTAL_CASAS) {
+          await handleVictory();
+          return false;
+        }
+        return false;
       }
       case "perde-rodada": {
         player.rodadasPerdidas++;
@@ -409,7 +540,7 @@
         addHistory(`❓ ${player.name} caiu em um desafio!`, "especial");
         const acertou = await showChallengeModal(desafio);
         if (acertou) {
-          const destino = Math.min(posicao + 1, TOTAL_CASAS);
+          const destino = Math.min(posicao + 1, getTotalCasas());
           if (destino > posicao) {
             await animatePlayerMovement(posicao, destino);
           }
@@ -457,18 +588,24 @@
   /* ── End Turn ── */
 
   function unlockTurn() {
+    console.log("[UNLOCK] called, before: isMoving=" + gameState.isMoving + ", rollBtn.disabled=" + elements.rollBtn.disabled);
     gameState.isMoving = false;
     elements.rollBtn.disabled = false;
+    console.log("[UNLOCK] after: isMoving=" + gameState.isMoving + ", rollBtn.disabled=" + elements.rollBtn.disabled);
   }
 
   /* ── Main Action ── */
 
   async function jogarDado() {
-    if (!gameState.jogoAtivo || gameState.jogoFinalizado || gameState.isMoving)
+    console.log("[JOGAR] ENTER: isMoving=" + gameState.isMoving + ", rollBtn.disabled=" + elements.rollBtn.disabled + ", mundoAtual=" + gameState.mundoAtual + ", player.pos=" + getCurrentPlayer().posicao);
+    if (!gameState.jogoAtivo || gameState.jogoFinalizado || gameState.isMoving) {
+      console.log("[JOGAR] GUARD BLOCKED: jogoAtivo=" + gameState.jogoAtivo + ", jogoFinalizado=" + gameState.jogoFinalizado + ", isMoving=" + gameState.isMoving);
       return;
+    }
 
     gameState.isMoving = true;
     elements.rollBtn.disabled = true;
+    console.log("[JOGAR] isMoving=true, rollBtn.disabled=true");
 
     const player = getCurrentPlayer();
 
@@ -489,7 +626,7 @@
     await animateDice(resultado);
 
     const from = player.posicao;
-    const target = Math.min(from + resultado, TOTAL_CASAS);
+    const target = Math.min(from + resultado, getTotalCasas());
 
     if (target > from) {
       await animatePlayerMovement(from, target);
@@ -501,16 +638,34 @@
 
     addHistory(`🎲 ${player.name} tirou ${resultado} → casa ${target}`, "dado");
 
-    if (target >= TOTAL_CASAS) {
+    if (target >= getTotalCasas()) {
+      console.log("[JOGAR] target >= total, mundo=" + gameState.mundoAtual);
+      if (gameState.mundoAtual === "floresta") {
+        await processSpecialCell(target);
+        if (gameState.jogoFinalizado) {
+          gameState.isMoving = false;
+          console.log("[JOGAR] jogoFinalizado true, return");
+          return;
+        }
+        gameState.isMoving = false;
+        switchTurn();
+        updateUI();
+        unlockTurn();
+        console.log("[JOGAR] floresta completion, unlockTurn called");
+        return;
+      }
       await handleVictory();
       gameState.isMoving = false;
       return;
     }
 
+    console.log("[JOGAR] calling processSpecialCell(" + target + "), mundo=" + gameState.mundoAtual);
     const extraTurn = await processSpecialCell(target);
+    console.log("[JOGAR] processSpecialCell returned extraTurn=" + extraTurn + ", isMoving=" + gameState.isMoving + ", rollBtn.disabled=" + elements.rollBtn.disabled + ", mundo=" + gameState.mundoAtual);
 
     if (gameState.jogoFinalizado) {
       gameState.isMoving = false;
+      console.log("[JOGAR] jogoFinalizado true, return");
       return;
     }
 
@@ -518,13 +673,21 @@
       gameState.isMoving = false;
       elements.rollBtn.disabled = false;
       updateUI();
-      addHistory("🎯 Jogue novamente!", "especial");
+      if (!gameState.entrouNoPortal) {
+        addHistory("🎯 Jogue novamente!", "especial");
+      }
+      gameState.entrouNoPortal = false;
+      console.log("[JOGAR] extraTurn true, final state: isMoving=" + gameState.isMoving + ", rollBtn.disabled=" + elements.rollBtn.disabled);
       return;
     }
 
-    switchTurn();
+    console.log("[JOGAR] extraTurn false, switching turn");
+    if (gameState.mundoAtual !== "floresta") {
+      switchTurn();
+    }
     updateUI();
     unlockTurn();
+    console.log("[JOGAR] switchTurn+unlockTurn done, isMoving=" + gameState.isMoving + ", rollBtn.disabled=" + elements.rollBtn.disabled);
   }
 
   /* ── Reset ── */
@@ -536,6 +699,9 @@
     gameState.jogoFinalizado = false;
     gameState.isMoving = false;
     gameState.questoesUsadas.clear();
+    gameState.mundoAtual = "principal";
+    gameState.entradaFloresta = { 1: null, 2: null };
+    gameState.entrouNoPortal = false;
 
     elements.diceDisplay.textContent = "🎲";
     elements.diceValue.textContent = "-";
@@ -551,6 +717,8 @@
 
     clearHistory();
     elements.rollBtn.disabled = false;
+    elements.trackContainer.classList.remove("mundo-floresta");
+    document.getElementById("world-indicator").classList.add("hidden");
     showSetupScreen();
   }
 
@@ -655,6 +823,107 @@
     });
   }
 
+  /* ── Portal Modal ── */
+
+  function showPortalModal() {
+    return new Promise((resolve) => {
+      const overlay = document.getElementById("portal-overlay");
+      const entrarBtn = document.getElementById("portal-entrar-btn");
+      const continuarBtn = document.getElementById("portal-continuar-btn");
+
+      entrarBtn.onclick = () => {
+        overlay.classList.add("hidden");
+        resolve(true);
+      };
+      continuarBtn.onclick = () => {
+        overlay.classList.add("hidden");
+        resolve(false);
+      };
+
+      overlay.classList.remove("hidden");
+    });
+  }
+
+  /* ── Debug ── */
+
+  function setupDebugMode() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("debug") !== "1") return;
+
+    const panel = document.getElementById("debug-panel");
+    if (!panel) return;
+    panel.classList.remove("hidden");
+
+    panel.addEventListener("click", async (e) => {
+      const btn = e.target.closest(".debug-btn");
+      if (!btn) return;
+
+      switch (btn.dataset.debug) {
+        case "casa11": {
+          const p = getCurrentPlayer();
+          p.posicao = 11;
+          positionPlayerAt(11, p);
+          addHistory(`[DEBUG] ${p.name} foi para casa 11`, "info");
+          updateUI();
+          break;
+        }
+        case "entrar-floresta": {
+          const p = getCurrentPlayer();
+          gameState.entradaFloresta[p.id] = p.posicao;
+          gameState.mundoAtual = "floresta";
+          p.posicao = 0;
+          renderizarTrilha();
+          renderSvgPath();
+          elements.trackContainer.classList.add("mundo-floresta");
+          document.getElementById("world-indicator").classList.remove("hidden");
+          players.forEach(p2 => positionPlayerAt(p2.posicao, p2));
+          gameState.isMoving = false;
+          elements.rollBtn.disabled = false;
+          updateUI();
+          addHistory(`[DEBUG] ${p.name} entrou na Floresta`, "info");
+          break;
+        }
+        case "casa5-floresta": {
+          if (gameState.mundoAtual !== "floresta") return;
+          const p = getCurrentPlayer();
+          p.posicao = 5;
+          await processSpecialCell(5);
+          gameState.isMoving = false;
+          elements.rollBtn.disabled = false;
+          updateUI();
+          addHistory(`[DEBUG] Casa 5 acionada via debug`, "info");
+          break;
+        }
+        case "casa8-floresta": {
+          if (gameState.mundoAtual !== "floresta") return;
+          const p = getCurrentPlayer();
+          p.posicao = 8;
+          await processSpecialCell(8);
+          gameState.isMoving = false;
+          elements.rollBtn.disabled = false;
+          updateUI();
+          addHistory(`[DEBUG] Casa 8 acionada via debug`, "info");
+          break;
+        }
+        case "voltar-principal": {
+          gameState.mundoAtual = "principal";
+          gameState.entradaFloresta[getCurrentPlayer().id] = null;
+          gameState.entrouNoPortal = false;
+          renderizarTrilha();
+          renderSvgPath();
+          elements.trackContainer.classList.remove("mundo-floresta");
+          document.getElementById("world-indicator").classList.add("hidden");
+          players.forEach(p2 => positionPlayerAt(p2.posicao, p2));
+          gameState.isMoving = false;
+          elements.rollBtn.disabled = false;
+          updateUI();
+          addHistory(`[DEBUG] Voltou ao mundo principal`, "info");
+          break;
+        }
+      }
+    });
+  }
+
   /* ── Init ── */
 
   function init() {
@@ -662,6 +931,7 @@
     elements.resetBtn.addEventListener("click", reiniciarJogo);
     showSetupScreen();
     setupModalEvents();
+    setupDebugMode();
   }
 
   document.addEventListener("DOMContentLoaded", init);

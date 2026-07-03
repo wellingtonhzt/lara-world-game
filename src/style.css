@@ -35,6 +35,24 @@ header h1 {
   text-shadow: 2px 2px 0 #f8bbd0;
 }
 
+#world-indicator {
+  display: block;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #2e7d32;
+  background: #e8f5e9;
+  padding: 4px 16px;
+  border-radius: 20px;
+  margin-top: 6px;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#world-indicator.hidden {
+  display: none;
+}
+
 /* ── Game Layout ── */
 .game-layout {
   display: flex;
@@ -697,6 +715,159 @@ header h1 {
 }
 
 /* ═══════════════════════════════════════
+   PORTAL MODAL
+   ═══════════════════════════════════════ */
+
+.portal-overlay {
+  display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 500;
+  justify-content: center;
+  align-items: center;
+}
+
+.portal-overlay.hidden {
+  display: none;
+}
+
+.portal-content {
+  background: #fff8f0;
+  border-radius: 28px;
+  padding: 32px 36px;
+  max-width: 480px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3);
+}
+
+.portal-content h2 {
+  color: #2e7d32;
+  font-size: 1.6rem;
+  margin-bottom: 12px;
+}
+
+#portal-message {
+  font-size: 1.2rem;
+  color: #4a2c0a;
+  font-weight: 600;
+  margin-bottom: 28px;
+  line-height: 1.4;
+}
+
+.portal-buttons {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+}
+
+.portal-btn {
+  padding: 14px 28px;
+  border: none;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  min-width: 140px;
+}
+
+.portal-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+}
+
+.portal-btn:active {
+  transform: translateY(0);
+}
+
+.portal-btn-entrar {
+  background: linear-gradient(135deg, #2e7d32, #4caf50);
+  color: white;
+}
+
+.portal-btn-continuar {
+  background: linear-gradient(135deg, #8d6e4a, #a8845a);
+  color: white;
+}
+
+/* ── Portal House (casa 11) ── */
+
+.casa[data-position="11"] {
+  background: #e8f5e9;
+  border-color: #2e7d32;
+  box-shadow: 0 3px 0 #1b5e20, 0 5px 12px rgba(0, 0, 0, 0.12);
+}
+.casa[data-position="11"] .casa-tipo { color: #1b5e20; background: rgba(255, 255, 255, 0.6); }
+
+/* ── Forest World Background ── */
+
+#track-container.mundo-floresta {
+  background: linear-gradient(to bottom, #0d3b0d, #1b5e20, #2e7d32, #388e3c, #2e7d32);
+}
+
+#track-container.mundo-floresta .deco:not(.floresta-deco) {
+  display: none;
+}
+
+.floresta-deco {
+  display: none;
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+  line-height: 1;
+}
+
+#track-container.mundo-floresta .floresta-deco {
+  display: block;
+}
+
+.floresta-deco-tree-1 { top: 4%; left: 2%; font-size: 2.8rem; opacity: 0.7; }
+.floresta-deco-tree-2 { top: 8%; right: 3%; font-size: 2.4rem; opacity: 0.6; }
+.floresta-deco-tree-3 { bottom: 2%; right: 6%; font-size: 3rem; opacity: 0.65; }
+.floresta-deco-mushroom-1 { top: 40%; left: 6%; font-size: 1.6rem; opacity: 0.7; }
+.floresta-deco-mushroom-2 { bottom: 20%; left: 12%; font-size: 1.4rem; opacity: 0.6; }
+.floresta-deco-leaf-1 { top: 18%; right: 8%; font-size: 1.8rem; opacity: 0.55; transform: rotate(30deg); }
+.floresta-deco-leaf-2 { bottom: 30%; right: 18%; font-size: 1.6rem; opacity: 0.5; transform: rotate(-20deg); }
+.floresta-deco-flower { bottom: 12%; right: 4%; font-size: 1.5rem; opacity: 0.7; }
+
+/* ── Forest Houses ── */
+
+#track-container.mundo-floresta .casa[data-position="3"],
+#track-container.mundo-floresta .casa[data-position="7"] {
+  background: #f3e5f5;
+  border-color: #7b1fa2;
+  box-shadow: 0 3px 0 #4a148c, 0 5px 12px rgba(0, 0, 0, 0.12);
+}
+#track-container.mundo-floresta .casa[data-position="3"] .casa-tipo,
+#track-container.mundo-floresta .casa[data-position="7"] .casa-tipo {
+  color: #4a148c; background: rgba(255, 255, 255, 0.6);
+}
+
+#track-container.mundo-floresta .casa[data-position="5"] {
+  background: #fff8e1;
+  border-color: #f9a825;
+  box-shadow: 0 3px 0 #c7900a, 0 5px 12px rgba(0, 0, 0, 0.12);
+}
+#track-container.mundo-floresta .casa[data-position="5"] .casa-tipo {
+  color: #c7900a; background: rgba(255, 255, 255, 0.6);
+}
+
+#track-container.mundo-floresta .casa[data-position="8"] {
+  background: #e8f5e9;
+  border-color: #1b5e20;
+  box-shadow: 0 3px 0 #0d3b0d, 0 5px 12px rgba(0, 0, 0, 0.12);
+}
+#track-container.mundo-floresta .casa[data-position="8"] .casa-tipo {
+  color: #0d3b0d; background: rgba(255, 255, 255, 0.6);
+}
+
+/* ═══════════════════════════════════════
    RESPONSIVE
    ═══════════════════════════════════════ */
 @media (max-width: 840px) {
@@ -753,3 +924,36 @@ header h1 {
   .deco-flower-4 { font-size: 1rem; }
   .deco-sun { font-size: 1.2rem; }
 }
+
+/* ── Debug Panel ── */
+
+#debug-panel {
+  position: fixed;
+  bottom: 12px;
+  right: 12px;
+  background: rgba(0, 0, 0, 0.85);
+  color: #0f0;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: monospace;
+  border: 1px solid #0f0;
+}
+#debug-panel.hidden { display: none; }
+.debug-header { font-weight: 700; margin-bottom: 2px; }
+.debug-btn {
+  background: #222;
+  color: #0f0;
+  border: 1px solid #0f0;
+  border-radius: 4px;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-size: 0.7rem;
+  text-align: left;
+  font-family: monospace;
+}
+.debug-btn:hover { background: #444; }

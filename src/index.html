@@ -10,6 +10,7 @@
   <div id="app">
     <header>
       <h1>🌍 Lara World</h1>
+      <span id="world-indicator" class="hidden">🌿 Mundo da Floresta</span>
     </header>
 
     <div id="setup-screen" class="setup-screen hidden">
@@ -85,6 +86,17 @@
       </div>
     </div>
 
+    <div id="portal-overlay" class="portal-overlay hidden">
+      <div class="portal-content">
+        <h2>🌿 Portal da Floresta</h2>
+        <p id="portal-message">Você encontrou o Portal da Floresta!</p>
+        <div class="portal-buttons">
+          <button id="portal-entrar-btn" class="portal-btn portal-btn-entrar">🌲 Entrar</button>
+          <button id="portal-continuar-btn" class="portal-btn portal-btn-continuar">➡️ Continuar</button>
+        </div>
+      </div>
+    </div>
+
     <main class="game-layout">
       <section class="board-area">
         <div id="track-container">
@@ -98,6 +110,15 @@
           <div class="deco deco-flower-3">🌸</div>
           <div class="deco deco-flower-4">🌺</div>
           <div class="deco deco-sun">🌤️</div>
+
+          <div class="deco floresta-deco floresta-deco-tree-1">🌲</div>
+          <div class="deco floresta-deco floresta-deco-tree-2">🌲</div>
+          <div class="deco floresta-deco floresta-deco-tree-3">🌳</div>
+          <div class="deco floresta-deco floresta-deco-mushroom-1">🍄</div>
+          <div class="deco floresta-deco floresta-deco-mushroom-2">🍄</div>
+          <div class="deco floresta-deco floresta-deco-leaf-1">🍃</div>
+          <div class="deco floresta-deco floresta-deco-leaf-2">🍃</div>
+          <div class="deco floresta-deco floresta-deco-flower">🌺</div>
 
           <svg class="path-line" viewBox="0 0 100 100" preserveAspectRatio="none">
             <path id="trail-path" fill="none" stroke-linecap="round" stroke-linejoin="round" />
@@ -142,6 +163,15 @@
         </div>
       </aside>
     </main>
+  </div>
+
+  <div id="debug-panel" class="hidden">
+    <div class="debug-header">🐛 Debug</div>
+    <button class="debug-btn" data-debug="casa11">Ir para casa 11</button>
+    <button class="debug-btn" data-debug="entrar-floresta">Entrar na Floresta</button>
+    <button class="debug-btn" data-debug="casa5-floresta">Ir para casa 5 da Floresta</button>
+    <button class="debug-btn" data-debug="casa8-floresta">Ir para casa 8 da Floresta</button>
+    <button class="debug-btn" data-debug="voltar-principal">Voltar ao mundo principal</button>
   </div>
 
   <script src="game.js"></script>
