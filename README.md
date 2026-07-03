@@ -1,5 +1,7 @@
 <p align="center">
   <img src="assets/banner-lara-world.png" alt="Lara World Banner">
+</p>
+  
 # 🌍 Lara World
 
 **Lara World** é um jogo de trilha infantil para navegador, onde os jogadores percorrem um caminho de 20 casas até a linha de chegada. Feito com HTML, CSS e JavaScript puro — sem frameworks, sem backend, sem banco de dados.
@@ -38,6 +40,28 @@
 - **Posição salva por jogador** — cada jogador tem sua própria posição de entrada na floresta
 - **Retorno sem cascata** — ao voltar ao mundo principal, o bônus não dispara outras casas especiais
 - **Modo debug** — ativado por `?debug=1` na URL, exibe painel com botões para teste rápido
+
+---
+
+## 📸 Screenshots
+
+### 🎮 Configuração dos Jogadores
+
+![Configuração dos Jogadores](assets/screenshot-menu.png)
+
+### 🌍 Mundo Principal
+
+![Mundo Principal](assets/screenshot-mundo-principal.png)
+
+### 🌿 Mundo da Floresta
+
+![Mundo da Floresta](assets/screenshot-floresta.png)
+
+### 📚 Desafios Educativos
+
+![Desafios Educativos](assets/screenshot-desafios.png)
+
+---
 
 ### Funcionalidades Anteriores
 
