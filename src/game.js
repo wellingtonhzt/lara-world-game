@@ -413,10 +413,12 @@
     return questoesDisponiveis[idx];
   }
 
-  async function processSpecialCell(posicao) {
+  async function processSpecialCell(posicao, _cascadeVisited = new Set()) {
     const player = getCurrentPlayer();
     const info = getCasasEspeciais()[posicao];
     if (!info) return false;
+    if (_cascadeVisited.has(posicao)) return false;
+    _cascadeVisited.add(posicao);
 
     switch (info.tipo) {
       case "avancar": {
@@ -428,7 +430,7 @@
           await handleVictory();
           return false;
         }
-        return await processSpecialCell(destino);
+        return await processSpecialCell(destino, _cascadeVisited);
       }
       case "voltar": {
         const destino = Math.max(posicao - info.valor, 0);
@@ -438,6 +440,9 @@
         }
         player.posicao = destino;
         positionPlayerAt(destino);
+        if (destino > 0 && getCasasEspeciais()[destino]) {
+          return await processSpecialCell(destino, _cascadeVisited);
+        }
         return false;
       }
       case "jogar-novamente": {
