@@ -194,6 +194,9 @@
     p2Pos: document.getElementById("p2-pos"),
     p1Label: document.getElementById("p1-label"),
     p2Label: document.getElementById("p2-label"),
+    victoryOverlay: document.getElementById("victory-overlay"),
+    victoryMessage: document.getElementById("victory-message"),
+    victoryPlayAgainBtn: document.getElementById("victory-play-again-btn"),
   };
 
   players[0].element = elements.lara;
@@ -588,6 +591,13 @@
     el.classList.add("animar-vitoria");
 
     addHistory(`🎉🎉 PARABÉNS, ${player.name} venceu! 🎉🎉`, "vitoria");
+
+    if (elements.victoryMessage) {
+      elements.victoryMessage.textContent = `${player.emoji} ${player.name} venceu o jogo!`;
+    }
+    if (elements.victoryOverlay) {
+      elements.victoryOverlay.classList.remove("hidden");
+    }
   }
 
   /* ── End Turn ── */
@@ -934,6 +944,14 @@
   function init() {
     elements.rollBtn.addEventListener("click", jogarDado);
     elements.resetBtn.addEventListener("click", reiniciarJogo);
+    if (elements.victoryPlayAgainBtn) {
+      elements.victoryPlayAgainBtn.addEventListener("click", () => {
+        if (elements.victoryOverlay) {
+          elements.victoryOverlay.classList.add("hidden");
+        }
+        reiniciarJogo();
+      });
+    }
     showSetupScreen();
     setupModalEvents();
     setupDebugMode();
