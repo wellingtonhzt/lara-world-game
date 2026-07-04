@@ -194,6 +194,9 @@
     p2Pos: document.getElementById("p2-pos"),
     p1Label: document.getElementById("p1-label"),
     p2Label: document.getElementById("p2-label"),
+    victoryOverlay: document.getElementById("victory-overlay"),
+    victoryMessage: document.getElementById("victory-message"),
+    victoryPlayAgainBtn: document.getElementById("victory-play-again-btn"),
   };
 
   players[0].element = elements.lara;
@@ -413,10 +416,12 @@
     return questoesDisponiveis[idx];
   }
 
-  async function processSpecialCell(posicao) {
+  async function processSpecialCell(posicao, _cascadeVisited = new Set()) {
     const player = getCurrentPlayer();
     const info = getCasasEspeciais()[posicao];
     if (!info) return false;
+    if (_cascadeVisited.has(posicao)) return false;
+    _cascadeVisited.add(posicao);
 
     switch (info.tipo) {
       case "avancar": {
@@ -428,7 +433,7 @@
           await handleVictory();
           return false;
         }
-        return await processSpecialCell(destino);
+        return await processSpecialCell(destino, _cascadeVisited);
       }
       case "voltar": {
         const destino = Math.max(posicao - info.valor, 0);
@@ -438,6 +443,9 @@
         }
         player.posicao = destino;
         positionPlayerAt(destino);
+        if (destino > 0 && getCasasEspeciais()[destino]) {
+          return await processSpecialCell(destino, _cascadeVisited);
+        }
         return false;
       }
       case "jogar-novamente": {
@@ -583,6 +591,13 @@
     el.classList.add("animar-vitoria");
 
     addHistory(`🎉🎉 PARABÉNS, ${player.name} venceu! 🎉🎉`, "vitoria");
+
+    if (elements.victoryMessage) {
+      elements.victoryMessage.textContent = `${player.emoji} ${player.name} venceu o jogo!`;
+    }
+    if (elements.victoryOverlay) {
+      elements.victoryOverlay.classList.remove("hidden");
+    }
   }
 
   /* ── End Turn ── */
@@ -929,6 +944,14 @@
   function init() {
     elements.rollBtn.addEventListener("click", jogarDado);
     elements.resetBtn.addEventListener("click", reiniciarJogo);
+    if (elements.victoryPlayAgainBtn) {
+      elements.victoryPlayAgainBtn.addEventListener("click", () => {
+        if (elements.victoryOverlay) {
+          elements.victoryOverlay.classList.add("hidden");
+        }
+        reiniciarJogo();
+      });
+    }
     showSetupScreen();
     setupModalEvents();
     setupDebugMode();
