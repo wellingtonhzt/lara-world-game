@@ -4,13 +4,27 @@
 
 Levar seu personagem da casa inicial (posição 0) até a **casa 20** (vitória). O primeiro jogador a atingir ou ultrapassar a casa 20 vence a partida.
 
-## Modo 1 Jogador
+## Seletor de Modo
 
-1. Clique no botão **"Jogar Dado"** para lançar o dado virtual.
-2. O valor do dado (1 a 6) indica quantas casas seu personagem avança.
-3. Ao cair em uma casa especial, regras especiais são aplicadas automaticamente.
-4. Ao cair na **casa 11 (Portal da Floresta)**, um modal pergunta se deseja entrar no Mundo da Floresta.
-5. Chegue na **casa 20** para vencer!
+Ao abrir o jogo, o modal de configuração exibe um seletor com duas opções:
+
+- **👥 2 Jogadores** — modo multiplayer padrão (padrão)
+- **👤 1 Jogador** — modo Humano vs Máquina
+
+A escolha do modo determina quais campos são exibidos no modal e como o Jogador 2 se comporta.
+
+## Modo 1 Jogador (Humano vs Máquina)
+
+1. Selecione **"👤 1 Jogador"** no seletor de modo.
+2. Configure o nome e sprite do **Jogador 1** (você). O card do Jogador 2 é oculto.
+3. Clique em **"Iniciar Jogo"** para começar.
+4. Você joga primeiro. Clique em **"Jogar Dado"** para sua vez.
+5. Após sua jogada, o turno alterna para a **Máquina**, que joga automaticamente após 1 segundo.
+6. A máquina realiza a jogada completa: dado, movimento, casas especiais, desafios e portal.
+7. **Desafios da máquina**: o bot responde perguntas automaticamente com 60% de chance de acerto (delay de 600ms).
+8. **Portal da máquina**: o bot decide entrar no Portal da Floresta com 50% de chance (delay de 500ms).
+9. Os turnos alternam entre você e a máquina até alguém vencer.
+10. **Chegue na casa 20** para vencer!
 
 ## Modo 2 Jogadores (Multiplayer)
 
@@ -79,6 +93,6 @@ Levar seu personagem da casa inicial (posição 0) até a **casa 20** (vitória)
 - **Exceção — saída da floresta não cascateia**: o bônus de +2 (atalho) ou +3 (saída) ao retornar do Mundo da Floresta não ativa casas especiais.
 - **Sorteio de perguntas**: a cada desafio, uma pergunta é sorteada aleatoriamente do Banco de Questões. O jogo evita repetir a mesma pergunta durante a mesma partida. Quando todas as 30 perguntas forem utilizadas, o ciclo recomeça.
 - **Casa 5 na posição 1**: se estiver na casa 1 e cair na casa 5, o personagem volta para a posição 0 e fica fora do tabuleiro. Na próxima jogada, avançará para a casa 1 ou além.
-- **Após a vitória**: o jogo é encerrado, o botão "Jogar Dado" é desabilitado e uma animação de celebração é exibida. Clique em "Reiniciar" para uma nova partida.
+- **Após a vitória**: o jogo é encerrado, o botão "Jogar Dado" é desabilitado e um overlay de vitória com confetes animados, fogos serpentina e troféu é exibido. Clique em "Jogar Novamente" ou "Reiniciar" para uma nova partida.
 - **Reinício**: o botão "Reiniciar" exibe o modal de configuração novamente, permitindo que os jogadores alterem seus nomes e sprites antes de iniciar uma nova partida.
 - **Modo debug**: adicione `?debug=1` à URL para ativar um painel com 5 botões de teste rápido (Casa 11, Entrar na Floresta, Casa 5 Atalho, Casa 8 Saída, Voltar ao Principal). O modo debug não afeta partidas normais.

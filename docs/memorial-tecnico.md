@@ -1,5 +1,38 @@
 # Memorial Técnico
 
+## [0.7.0] - 2026-07-05
+
+### Objetivo
+
+Adicionar modo Single Player (Humano vs Máquina) com bot automático que joga dado, responde desafios e decide entrar no portal. Implementar tela de vitória visual com confetes e overlay. Corrigir cascata da casa 5 na posição 1 e botão "Jogar Dado" após reinício.
+
+### Arquivos Alterados
+
+| Arquivo | Tipo de Alteração |
+|---------|-------------------|
+| `src/game.js` | Adicionado: `players[].isBot`, `isSinglePlayer`, `botTurnScheduled`, `resolveChallenge()`, `resolvePortal()`, `scheduleBotTurnIfNeeded()`, seletor de modo em `setupModalEvents()`, `handleVictory()`. Modificado: `startGame()` (configura P2 como bot), `switchTurn()` (proteção 1P), `unlockTurn()` (agenda bot), `jogarDado()` (suporte a bot) |
+| `src/index.html` | Adicionado: seletor de modo (`.mode-selector` com radio buttons 1P/2P), overlay de vitória (`#victory-overlay`) com confetes, serpentina, troféu e botão "Jogar Novamente" |
+| `src/style.css` | Adicionado: `.mode-selector`, `.mode-option`, `.mode-option.selected`, `#setup-screen.mode-1p .player2-card`, estilos do overlay de vitória (confetes, serpentina, conteúdo) |
+
+### Impacto Técnico
+
+- **game.js**: `players[]` ganhou campo `isBot: false` padrão. Nova variável `isSinglePlayer` (boolean) controla modo de jogo. `botTurnScheduled` impede agendamento duplicado do turno do bot. `startGame()` — em modo 1P, P2 recebe name="Máquina", emoji="🤖", isBot=true; P2 card fica oculto. `resolveChallenge(desafio)` — se `player.isBot`, delay(600ms) + `Math.random() < 0.6` para acerto; senão, chama `showChallengeModal()`. `resolvePortal()` — se `player.isBot`, delay(500ms) + `Math.random() < 0.5` para entrar; senão, chama `showPortalModal()`. `scheduleBotTurnIfNeeded()` — verifica se jogador atual é bot e jogo ativo, agenda `setTimeout(jogarDado, 1000)`. `unlockTurn()` agora chama `scheduleBotTurnIfNeeded()` ao final. `switchTurn()` ganhou guarda `if (PLAYER_COUNT < 2) return` para modo 1P. `handleVictory()` — nova função que define `jogoFinalizado = true`, desabilita dado, exibe `#victory-overlay` com confetes e botão "Jogar Novamente".
+- **HTML**: Seletor de modo adicionado ao `#setup-screen` com dois `<label class="mode-option">` contendo radio buttons. Overlay `#victory-overlay` com 15 `.confetti-piece` (cores variadas, posições aleatórias, animações com delay), 2 `.serpentine` (fogos), título "🏆 Vitória!", mensagem `#victory-message`, botão "🔄 Jogar Novamente".
+- **CSS**: `.mode-selector` (flex, gap 12px, centralizado), `.mode-option` (flex 1, padding, border-radius, transição), `.mode-option.selected` (borda rosa, fundo rosa claro). `#setup-screen.mode-1p .player2-card` com `display: none`. Overlay de vitória: `.victory-overlay` (fixed, inset 0, z-index 2000, flex centralizado, background rgba), `.confetti-piece` (position absolute, top -10px, animação `confetti-fall` com duração e delay variados), `.serpentine` (position absolute, animação `firework`), `.victory-content` (background branco, border-radius, padding, z-index 10).
+
+### Impacto Funcional
+
+- Novo seletor de modo no modal de configuração permite escolher entre 2 Jogadores e 1 Jogador
+- Modo 1 Jogador: jogador humano vs máquina com turnos alternados automaticamente
+- Bot joga sozinho após 1 segundo de espera, incluindo dado, movimento e casas especiais
+- Bot responde desafios educativos com 60% de chance de acerto (sem exibir modal)
+- Bot decide entrar no Portal da Floresta com 50% de chance (sem exibir modal)
+- Ao vencer, overlay de vitória com confetes animados e fogos serpentina é exibido
+- Botão "Jogar Novamente" no overlay retorna ao modal de configuração
+- Casa 5 na posição 1 não abre mais modal de desafio indevidamente
+- Botão "Jogar Dado" funciona corretamente após reinício
+- Todas as funcionalidades anteriores (multiplayer 2P, floresta, desafios, banco de questões) permanecem inalteradas no modo 2 jogadores
+
 ## [0.6.0] - 2026-07-03
 
 ### Objetivo

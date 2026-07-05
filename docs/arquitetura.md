@@ -36,11 +36,17 @@ lara-world/
 
 Estrutura semântica dividida em:
 
-- **Setup Modal** (`#setup-overlay`):
+- **Setup Modal** (`#setup-screen`):
   - Overlay fixo com `z-index: 1000`, exibido antes da partida
-  - Dois cards de jogador (`.player-card`): P1 e P2
+  - Seletor de modo (`.mode-selector`): botões de rádio "👥 2 Jogadores" e "👤 1 Jogador"
+  - Dois cards de jogador (`.setup-player-card`): P1 e P2
   - Cada card contém: campo de nome (`<input>`), grade de emojis (`.emoji-grid`)
+  - No modo 1 jogador, o card do P2 é oculto via CSS (`#setup-screen.mode-1p .player2-card`)
   - Botão **"Iniciar Jogo"** — esconde o modal e renderiza o tabuleiro
+- **Victory Overlay** (`#victory-overlay`):
+  - Overlay fixo com confetes animados (`.confetti-piece`) e fogos serpentina (`.serpentine`)
+  - Título "🏆 Vitória!", mensagem personalizada com nome do vencedor
+  - Botão "🔄 Jogar Novamente" — dispara `reiniciarJogo()`
 - **Portal Modal** (`#portal-overlay`):
   - Overlay fixo com `z-index: 800`, exibido ao cair na casa 11
   - Título "🌿 Portal da Floresta", mensagem descritiva
@@ -90,8 +96,10 @@ Padrão **Module Pattern** (IIFE) para encapsulamento de escopo.
 constantes / configuração
   ├── TOTAL_CASAS (20), FLORESTA_TOTAL (8)
   ├── PLAYER_COUNT (2)
-  ├── players[]        → array de objetos {id, name, emoji, posicao, rodadasPerdidas, element}
+  ├── players[]        → array de objetos {id, name, emoji, posicao, rodadasPerdidas, element, isBot}
   ├── gameState        → {currentPlayerIndex, jogoAtivo, jogoFinalizado, isMoving, questoesUsadas, mundoAtual, entradaFloresta, entrouNoPortal}
+  ├── isSinglePlayer   → boolean global (alterna entre modo 1P e 2P)
+  └── botTurnScheduled → boolean que evita agendamento duplicado do turno do bot
   ├── casasEspeciais[] → mapa de configuração (12 casas no principal)
   ├── florestaEspeciais[] → mapa de configuração (4 casas na floresta)
   ├── boardPositions{} → coordenadas percentuais do mundo principal
@@ -152,11 +160,16 @@ Sorteio de Perguntas
   ├── Se todas usadas → limpa o Set e recomeça
   └── Chamado por processSpecialCell no case "desafio"
 
+Bot AI
+  ├── resolveChallenge(desafio) → se for bot, responde com 60% acerto (delay 600ms); senão, abre modal
+  ├── resolvePortal() → se for bot, decide entrar com 50% chance (delay 500ms); senão, abre modal
+  └── scheduleBotTurnIfNeeded() → agenda jogada do bot após 1s, com guarda botTurnScheduled
+
 Vitória
-  └── handleVictory() → celebração, desativa jogo
+  └── handleVictory() → overlay de vitória com confetes, desativa jogo
 
 Turno Principal
-  └── jogarDado() → função assíncrona principal (adaptada para floresta)
+  └── jogarDado() → função assíncrona principal (adaptada para floresta e bot)
 
 Modo Debug
   └── initDebugMode() → ativado por ?debug=1, painel com 5 botões de teste
@@ -206,13 +219,19 @@ O bloqueio de clique durante movimento é feito pela flag `gameState.isMoving`, 
 
 Cada jogador mantém seu próprio estado:
 ```javascript
-{ id, name, emoji, posicao, rodadasPerdidas, element }
+{ id, name, emoji, posicao, rodadasPerdidas, element, isBot }
 ```
 
 O estado compartilhado do jogo:
 ```javascript
 { currentPlayerIndex, jogoAtivo, jogoFinalizado, isMoving, questoesUsadas,
   mundoAtual, entradaFloresta, entrouNoPortal }
+```
+
+Além do estado dos jogadores, o módulo possui duas variáveis globais:
+```javascript
+let isSinglePlayer = false;   // true quando modo 1 jogador está ativo
+let botTurnScheduled = false; // true quando um turno de bot já foi agendado
 ```
 
 - `posicao`: posição na trilha (0 = fora do tabuleiro, 1-20 = casas)
@@ -231,8 +250,9 @@ O estado compartilhado do jogo:
 Início (DOMContentLoaded)
   ↓
 Modal de Configuração (showSetupScreen)
-  ├── Jogador 1 → nome + sprite
-  ├── Jogador 2 → nome + sprite
+  ├── Seletor de modo: 2 Jogadores (padrão) ou 1 Jogador
+  ├── Modo 2P: Jogador 1 → nome + sprite, Jogador 2 → nome + sprite
+  ├── Modo 1P: Jogador 1 → nome + sprite, P2 é configurado como Máquina (isBot: true)
   └── Clique "Iniciar Jogo"
   ↓
 startGame() → esconde modal, renderiza tabuleiro, inicia partida
@@ -261,7 +281,26 @@ Caiu em casa especial?
   └── Vitória (20) → celebração, fim de jogo
   ↓
 Caiu em casa normal?
-  └── switchTurn, updateUI, libera botão
+  └── switchTurn, updateUI, unlockTurn
+      └── Se jogador atual for bot → scheduleBotTurnIfNeeded() agenda jogada em 1s
+```
+
+### Fluxo do Bot (Modo 1 Jogador)
+
+```
+Fim do turno humano
+  ↓
+switchTurn → currentPlayerIndex = 1
+  ↓
+unlockTurn → scheduleBotTurnIfNeeded()
+  ├── Verifica: getCurrentPlayer().isBot && jogoAtivo && !botTurnScheduled?
+  ├── Sim → botTurnScheduled = true, setTimeout(1000ms)
+  │         └── Após 1s → botTurnScheduled = false, chama jogarDado()
+  │               ├── Bot tira dado, move, processa casas especiais
+  │               ├── Se cair em desafio → resolveChallenge() — 60% acerto (600ms delay)
+  │               ├── Se cair em portal → resolvePortal() — 50% entrar (500ms delay)
+  │               └── Ao final → switchTurn + unlockTurn (agenda próximo turno humano)
+  └── Não → aguarda clique humano
 ```
 
 ## Docker

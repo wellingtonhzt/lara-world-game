@@ -18,7 +18,16 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 
 ## Principais Funcionalidades
 
-### v0.6.0 (Atual) — Mundo da Floresta e Sistema de Portais ✅
+### v0.7.0 (Atual) — Modo Single Player e Tela de Vitória ✅
+
+- **Seletor de modo** — botões de rádio 1P / 2P no modal de configuração
+- **Modo 1 Jogador** — Humano vs Máquina com bot automático (jogada a cada 1s)
+- **Bot inteligente** — responde desafios com 60% de acerto, decide portal com 50% de chance
+- **Tela de vitória** — overlay com confetes animados, fogos serpentina, troféu e botão "Jogar Novamente"
+- **Correção**: casa 5 (voltar) na posição 1 não cascateia para desafio
+- **Correção**: botão "Jogar Dado" reabilitado corretamente após reinício
+
+### v0.6.0 ✅
 
 - **Portal da Floresta** na casa 11 — modal com opções "Entrar" ou "Continuar"
 - **Mundo da Floresta** — mini-trilha de 8 casas com visual temático (fundo verde escuro, decorações)

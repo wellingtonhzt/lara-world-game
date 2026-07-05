@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.7.0] - 2026-07-05
+
+### Adicionado
+- Seletor de modo no modal de configuração: botões de rádio "👥 2 Jogadores" (padrão) e "👤 1 Jogador"
+- Modo 1 Jogador (Humano vs Máquina) — P2 é controlado automaticamente pela máquina
+- `players[].isBot` — flag que marca um jogador como controlado pela máquina
+- `resolveChallenge()` — bot responde desafios com 60% de chance de acerto (delay de 600ms)
+- `resolvePortal()` — bot decide entrar no portal com 50% de chance (delay de 500ms)
+- `scheduleBotTurnIfNeeded()` — agenda jogada automática do bot após 1 segundo
+- `botTurnScheduled` — flag booleana para evitar agendamento duplicado
+- `isSinglePlayer` — flag global que alterna entre modo 1P e 2P
+- Tela de vitória (`#victory-overlay`) com confetes animados, fogos serpentina, troféu e botão "Jogar Novamente"
+- `handleVictory()` — exibe overlay, desabilita dado, anima personagem vencedor
+- CSS `.mode-selector`, `.mode-option`, `.mode-option.selected`, `#setup-screen.mode-1p .player2-card`
+- Estilos do overlay de vitória (confetes, serpentina, conteúdo centralizado)
+
+### Alterado
+- `setupModalEvents()` — integrado seletor de modo com validação condicional (1P só exige P1)
+- `startGame()` — no modo 1 jogador, P2 recebe nome "Máquina", emoji "🤖" e `isBot: true`
+- `switchTurn()` — proteção `if (PLAYER_COUNT < 2) return` para modo 1 jogador
+- `unlockTurn()` — agora chama `scheduleBotTurnIfNeeded()` para agendar jogada do bot
+- `showSetupScreen()` / `hideSetupScreen()` — adaptado para usar `#setup-screen`
+- HTML `#setup-screen` — adicionado seletor de modo, removido jQuery (agora JS puro)
+
+### Corrigido
+- Casa 5 (🐢 Volte 1 casa) na posição 1: ao voltar para posição 0, o código processava a casa como desafio, abrindo modal indevidamente — corrigido com guarda que impede cascata para casa especial após `voltar` para posição 0
+- Botão "Jogar Dado" permanecia desabilitado após vitória — `handleVictory()` agora garante `elements.rollBtn.disabled = true` e reinício reabilita corretamente
+
 ## [0.6.0] - 2026-07-03
 
 ### Adicionado

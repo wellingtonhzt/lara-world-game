@@ -52,9 +52,17 @@
 - Posição de entrada salva por jogador (objeto `{1, 2}`)
 - Modo debug ativado por `?debug=1` na URL
 
+### v0.7.0 — Modo Single Player (Humano vs Máquina)
+- Seletor de modo no modal de configuração (1P / 2P)
+- Modo 1 Jogador: Humano vs Máquina com bot automático
+- Bot responde desafios (60% acerto) e decide portal (50% chance)
+- Tela de vitória com confetes animados e fogos serpentina
+- Correção: casa 5 não cascateia para desafio na posição 1
+- Correção: botão "Jogar Dado" reabilitado corretamente após vitória
+
 ## Futuro
 
-### v0.7.0 — Sprites PNG, sons, melhorias visuais
+### v0.8.0 — Sprites PNG, sons, melhorias visuais
 
 ### v1.0.0 — Lançamento Oficial
 - Versão estável

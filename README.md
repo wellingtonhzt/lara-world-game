@@ -18,7 +18,8 @@
 
 | Versão | Data | Status |
 |--------|------|--------|
-| **v0.6.0** | Jul/2026 | ✅ **Ativo** |
+| **v0.7.0** | Jul/2026 | ✅ **Ativo** |
+| v0.6.0 | Jul/2026 | ✅ Concluído |
 | v0.5.0 | Jul/2026 | ✅ Concluído |
 | v0.4.0 | Jul/2026 | ✅ Concluído |
 | v0.3.0 | Jul/2026 | ✅ Concluído |
@@ -27,7 +28,23 @@
 
 ---
 
-## ✨ Funcionalidades Atuais (v0.6.0)
+## ✨ Funcionalidades Atuais (v0.7.0)
+
+### Modo Single Player (Humano vs Máquina)
+
+- **Seletor de modo** — ao abrir o modal de configuração, escolha entre "👥 2 Jogadores" ou "👤 1 Jogador"
+- **Modo 1 Jogador** — você controla o Jogador 1; o Jogador 2 é controlado pela máquina (🤖)
+- **Configuração simplificada** — no modo 1 jogador, apenas o nome e sprite do Jogador 1 são solicitados
+- **Bot automático** — a máquina joga sozinha após 1 segundo de espera, com jogada completa (dado, movimento, casas especiais)
+- **Desafios do bot** — o bot responde desafios educativos com 60% de chance de acerto
+- **Portal do bot** — o bot decide entrar no Portal da Floresta com 50% de chance
+- **Alternância automática** — os turnos alternam normalmente entre humano e máquina
+
+### Tela de Vitória
+
+- **Overlay de vitória** — ao vencer, uma tela com confetes animados, fogos serpentina e troféu é exibida
+- **Mensagem personalizada** — exibe o nome e emoji do jogador vencedor
+- **Botão "Jogar Novamente"** — retorna ao modal de configuração para uma nova partida
 
 ### Mundo da Floresta e Sistema de Portais
 
@@ -117,9 +134,10 @@
 
 1. Abra o jogo no navegador.
 2. O **modal de configuração** é exibido automaticamente.
-3. Digite o nome do **Jogador 1** e escolha um sprite na grade de emojis.
-4. Digite o nome do **Jogador 2** e escolha um sprite na grade de emojis.
-5. Clique em **"Iniciar Jogo"** para começar a partida.
+3. Escolha o **modo de jogo**: "👥 2 Jogadores" ou "👤 1 Jogador".
+4. No **modo 2 jogadores**: digite o nome do **Jogador 1**, escolha um sprite, depois faça o mesmo para o **Jogador 2**.
+5. No **modo 1 jogador**: apenas o nome e sprite do **Jogador 1** são necessários — o Jogador 2 será a **Máquina** (🤖).
+6. Clique em **"Iniciar Jogo"** para começar a partida.
 
 ### Modo 2 Jogadores (Multiplayer)
 
@@ -132,6 +150,17 @@
 7. Se os dois jogadores estiverem na mesma casa, os personagens aparecem lado a lado.
 8. **O primeiro a atingir ou ultrapassar a casa 20 vence** a partida.
 9. Para uma nova partida, clique em **"Reiniciar"** — o modal de configuração reaparece para ajustar nomes e sprites.
+
+### Modo 1 Jogador (Humano vs Máquina)
+
+1. O jogo inicia com o **Jogador 1** (você) no turno.
+2. Clique em **"Jogar Dado"** para lançar o dado — seu personagem avança e ativa casas especiais.
+3. Após sua jogada, o turno alterna para a **Máquina** (🤖), que joga automaticamente após 1 segundo.
+4. A máquina realiza a jogada completa: dado, movimento, casas especiais, desafios e portal.
+5. **Desafios da máquina**: o bot responde com 60% de chance de acerto — sem modal, resolvido em 600ms.
+6. **Portal da máquina**: o bot decide entrar no Portal da Floresta com 50% de chance — decidido em 500ms.
+7. Os turnos alternam entre você e a máquina até alguém atingir a **casa 20**.
+8. Para uma nova partida, clique em **"Reiniciar"** — o modal de configuração reaparece.
 
 ---
 
@@ -149,7 +178,7 @@
 
 ## 📜 História do Projeto
 
-O Lara World começou como um MVP de tabuleiro simples para 1 jogador. A primeira versão (v0.1.0) implementou a lógica básica do jogo com dados, casas especiais e Docker. Na sequência (v0.1.5) recebeu um tabuleiro visual com trilha serpentina, personagem animado e painel lateral. A versão v0.2.0 adicionou multiplayer local com alternância de turnos entre 2 jogadores. A v0.3.0 introduziu o modal de configuração inicial com nomes e sprites personalizáveis. A v0.4.0 adicionou 5 casas de desafios educativos com perguntas de múltipla escolha. A v0.5.0 substituiu as perguntas fixas por um **Banco de Questões** com 30 perguntas. A versão atual (v0.6.0) adiciona o **Mundo da Floresta** com portal na casa 11, sistema de portais, mini-trilha de 8 casas com mecânicas exclusivas e modo debug.
+O Lara World começou como um MVP de tabuleiro simples para 1 jogador. A primeira versão (v0.1.0) implementou a lógica básica do jogo com dados, casas especiais e Docker. Na sequência (v0.1.5) recebeu um tabuleiro visual com trilha serpentina, personagem animado e painel lateral. A versão v0.2.0 adicionou multiplayer local com alternância de turnos entre 2 jogadores. A v0.3.0 introduziu o modal de configuração inicial com nomes e sprites personalizáveis. A v0.4.0 adicionou 5 casas de desafios educativos com perguntas de múltipla escolha. A v0.5.0 substituiu as perguntas fixas por um **Banco de Questões** com 30 perguntas. A v0.6.0 adicionou o **Mundo da Floresta** com portal na casa 11, sistema de portais, mini-trilha de 8 casas com mecânicas exclusivas e modo debug. A versão atual (v0.7.0) adiciona o **modo Single Player (Humano vs Máquina)** com bot inteligente, tela de vitória com confetes e correções de cascata.
 
 ---
 
@@ -207,7 +236,7 @@ docker compose down
 
 ## 🗺️ Roadmap
 
-- **v0.7.0** — Sprites PNG, sons, melhorias visuais
+- **v0.8.0** — Sprites PNG, sons, melhorias visuais
 - **v1.0.0** — Lançamento oficial
 
 Veja o [roadmap completo](docs/roadmap.md).
