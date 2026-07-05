@@ -21,6 +21,7 @@
 
   let isSinglePlayer = false;
   let botTurnScheduled = false;
+  let modoJogo = null;
 
   /* ── World-aware helpers ── */
 
@@ -200,6 +201,7 @@
     victoryOverlay: document.getElementById("victory-overlay"),
     victoryMessage: document.getElementById("victory-message"),
     victoryPlayAgainBtn: document.getElementById("victory-play-again-btn"),
+    victoryMainMenuBtn: document.getElementById("victory-main-menu-btn"),
   };
 
   players[0].element = elements.lara;
@@ -726,7 +728,7 @@
 
   /* ── Reset ── */
 
-  function reiniciarJogo() {
+  function resetGameState() {
     players.forEach(p => { p.posicao = 0; p.rodadasPerdidas = 0; });
     gameState.currentPlayerIndex = 0;
     gameState.jogoAtivo = true;
@@ -753,7 +755,31 @@
     elements.rollBtn.disabled = false;
     elements.trackContainer.classList.remove("mundo-floresta");
     document.getElementById("world-indicator").classList.add("hidden");
-    showSetupScreen();
+  }
+
+  function reiniciarJogo() {
+    resetGameState();
+    showMainMenu();
+  }
+
+  /* ── Main Menu ── */
+
+  function showMainMenu() {
+    document.getElementById("main-menu").classList.remove("hidden");
+    document.getElementById("setup-screen").classList.add("hidden");
+    modoJogo = null;
+  }
+
+  function hideMainMenu() {
+    document.getElementById("main-menu").classList.add("hidden");
+  }
+
+  function setupMenuEvents() {
+    document.getElementById("btn-rapido").addEventListener("click", () => {
+      modoJogo = "rapido";
+      hideMainMenu();
+      showSetupScreen();
+    });
   }
 
   /* ── Modal Setup ── */
@@ -1029,10 +1055,25 @@
         if (elements.victoryOverlay) {
           elements.victoryOverlay.classList.add("hidden");
         }
-        reiniciarJogo();
+        resetGameState();
+        if (modoJogo === "rapido") {
+          showSetupScreen();
+        } else {
+          showMainMenu();
+        }
       });
     }
-    showSetupScreen();
+    if (elements.victoryMainMenuBtn) {
+      elements.victoryMainMenuBtn.addEventListener("click", () => {
+        if (elements.victoryOverlay) {
+          elements.victoryOverlay.classList.add("hidden");
+        }
+        resetGameState();
+        showMainMenu();
+      });
+    }
+    showMainMenu();
+    setupMenuEvents();
     setupModalEvents();
     setupDebugMode();
   }

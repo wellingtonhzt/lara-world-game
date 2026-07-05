@@ -36,17 +36,19 @@ lara-world/
 
 Estrutura semântica dividida em:
 
+- **Main Menu** (`#main-menu`):
+  - Container centralizado com `z-index: 1000`, exibido ao carregar o jogo
+  - Título "🌍 Lara World" com estilo decorativo
+  - Dois botões: "⚡ Jogo Rápido" (ativo) e "🏆 Modo Carreira" (desabilitado, "(Em Breve)")
+  - Escondido quando uma partida é iniciada; reexibido via "Voltar ao Menu"
 - **Setup Modal** (`#setup-screen`):
-  - Overlay fixo com `z-index: 1000`, exibido antes da partida
-  - Seletor de modo (`.mode-selector`): botões de rádio "👥 2 Jogadores" e "👤 1 Jogador"
-  - Dois cards de jogador (`.setup-player-card`): P1 e P2
-  - Cada card contém: campo de nome (`<input>`), grade de emojis (`.emoji-grid`)
-  - No modo 1 jogador, o card do P2 é oculto via CSS (`#setup-screen.mode-1p .player2-card`)
+  - Overlay fixo com `z-index: 1000`, exibido após clicar em "Jogo Rápido"
+  - Card do Jogador 1 com campo de nome (`<input>`) e grade de emojis (`.emoji-grid`)
   - Botão **"Iniciar Jogo"** — esconde o modal e renderiza o tabuleiro
 - **Victory Overlay** (`#victory-overlay`):
   - Overlay fixo com confetes animados (`.confetti-piece`) e fogos serpentina (`.serpentine`)
   - Título "🏆 Vitória!", mensagem personalizada com nome do vencedor
-  - Botão "🔄 Jogar Novamente" — dispara `reiniciarJogo()`
+  - Container `.victory-actions` com dois botões: "🔁 Jogar Novamente" (dispara `reiniciarJogo()`) e "🏠 Voltar ao Menu" (dispara `showMainMenu()`)
 - **Portal Modal** (`#portal-overlay`):
   - Overlay fixo com `z-index: 800`, exibido ao cair na casa 11
   - Título "🌿 Portal da Floresta", mensagem descritiva
@@ -98,6 +100,7 @@ constantes / configuração
   ├── PLAYER_COUNT (2)
   ├── players[]        → array de objetos {id, name, emoji, posicao, rodadasPerdidas, element, isBot}
   ├── gameState        → {currentPlayerIndex, jogoAtivo, jogoFinalizado, isMoving, questoesUsadas, mundoAtual, entradaFloresta, entrouNoPortal}
+  ├── modoJogo         → string | null ("rapido" no Jogo Rápido, null no menu)
   ├── isSinglePlayer   → boolean global (alterna entre modo 1P e 2P)
   └── botTurnScheduled → boolean que evita agendamento duplicado do turno do bot
   ├── casasEspeciais[] → mapa de configuração (12 casas no principal)
@@ -160,13 +163,18 @@ Sorteio de Perguntas
   ├── Se todas usadas → limpa o Set e recomeça
   └── Chamado por processSpecialCell no case "desafio"
 
+Main Menu
+  ├── showMainMenu() → exibe menu inicial, esconde tabuleiro/painel/victory
+  ├── hideMainMenu() → esconde menu, prepara tabuleiro
+  └── setupMenuEvents() → registra clique em "⚡ Jogo Rápido" e "🏆 Modo Carreira"
+
 Bot AI
   ├── resolveChallenge(desafio) → se for bot, responde com 60% acerto (delay 600ms); senão, abre modal
   ├── resolvePortal() → se for bot, decide entrar com 50% chance (delay 500ms); senão, abre modal
   └── scheduleBotTurnIfNeeded() → agenda jogada do bot após 1s, com guarda botTurnScheduled
 
 Vitória
-  └── handleVictory() → overlay de vitória com confetes, desativa jogo
+  └── handleVictory() → overlay de vitória com confetes, desativa jogo, exibe dois botões (Jogar Novamente / Voltar ao Menu)
 
 Turno Principal
   └── jogarDado() → função assíncrona principal (adaptada para floresta e bot)
@@ -175,7 +183,8 @@ Modo Debug
   └── initDebugMode() → ativado por ?debug=1, painel com 5 botões de teste
 
 Controles
-  └── reiniciarJogo() → reseta estado (incluindo mundoAtual, entradaFloresta, entrouNoPortal), chama showSetupScreen()
+  ├── resetGameState() → reseta estado (posições, rodadasPerdidas, mundoAtual, entradaFloresta, entrouNoPortal, questoesUsadas, jogoAtivo, jogoFinalizado) sem exibir UI
+  └── reiniciarJogo() → chama resetGameState(), depois showSetupScreen()
 
 Setup Screen
   ├── showSetupScreen() → exibe modal, popula grade de emojis, foca P1
@@ -187,7 +196,7 @@ Challenge Modal
   └── showChallengeModal(desafio) → exibe pergunta/opções, retorna Promise<boolean>
 
 Inicialização
-  └── init() → dispara em DOMContentLoaded, chama showSetupScreen()
+  └── init() → dispara em DOMContentLoaded, chama showMainMenu()
 ```
 
 #### Sistema de Movimentação
@@ -249,10 +258,12 @@ let botTurnScheduled = false; // true quando um turno de bot já foi agendado
 ```
 Início (DOMContentLoaded)
   ↓
+Menu Inicial (showMainMenu)
+  ├── "⚡ Jogo Rápido" → setupModalEvents() configura modoJogo = "rapido", esconde menu
+  └── "🏆 Modo Carreira" → desabilitado (Em Breve)
+  ↓
 Modal de Configuração (showSetupScreen)
-  ├── Seletor de modo: 2 Jogadores (padrão) ou 1 Jogador
-  ├── Modo 2P: Jogador 1 → nome + sprite, Jogador 2 → nome + sprite
-  ├── Modo 1P: Jogador 1 → nome + sprite, P2 é configurado como Máquina (isBot: true)
+  ├── Card do Jogador 1 → nome + sprite (modo 1P forçado no Jogo Rápido)
   └── Clique "Iniciar Jogo"
   ↓
 startGame() → esconde modal, renderiza tabuleiro, inicia partida

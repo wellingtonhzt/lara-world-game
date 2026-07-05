@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lara World</title>
-  <link rel="stylesheet" href="style.css?v=0.7.0">
+  <link rel="stylesheet" href="style.css?v=0.8.0">
 </head>
 <body>
   <div id="app">
@@ -12,6 +12,17 @@
       <h1>🌍 Lara World</h1>
       <span id="world-indicator" class="hidden">🌿 Mundo da Floresta</span>
     </header>
+
+    <div id="main-menu" class="main-menu hidden">
+      <div class="menu-content">
+        <h1><span class="menu-title-emoji">🌍</span> Lara World</h1>
+        <p class="menu-subtitle">A aventura da Lara começa aqui!</p>
+        <div class="menu-buttons">
+          <button id="btn-rapido" class="menu-btn menu-btn-primary">⚡ Jogo Rápido</button>
+          <button id="btn-carreira" class="menu-btn menu-btn-secondary" disabled>🏆 Modo Carreira <span class="badge-embreve">Em breve</span></button>
+        </div>
+      </div>
+    </div>
 
     <div id="setup-screen" class="setup-screen hidden">
       <div class="setup-content">
@@ -130,7 +141,10 @@
       <div class="victory-content">
         <h2 id="victory-title"><span id="victory-trophy">🏆</span> Vitória!</h2>
         <p id="victory-message"></p>
-        <button id="victory-play-again-btn" class="btn btn-primary">🔄 Jogar Novamente</button>
+        <div class="victory-buttons">
+          <button id="victory-play-again-btn" class="btn btn-primary">🔁 Jogar Novamente</button>
+          <button id="victory-main-menu-btn" class="btn btn-secondary">🏠 Voltar ao Menu</button>
+        </div>
       </div>
     </div>
 
@@ -211,6 +225,6 @@
     <button class="debug-btn" data-debug="voltar-principal">Voltar ao mundo principal</button>
   </div>
 
-  <script src="game.js?v=0.7.0"></script>
+  <script src="game.js?v=0.8.0"></script>
 </body>
 </html>

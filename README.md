@@ -18,7 +18,8 @@
 
 | Versão | Data | Status |
 |--------|------|--------|
-| **v0.7.0** | Jul/2026 | ✅ **Ativo** |
+| **v0.8.0** | Jul/2026 | ✅ **Ativo** |
+| v0.7.0 | Jul/2026 | ✅ Concluído |
 | v0.6.0 | Jul/2026 | ✅ Concluído |
 | v0.5.0 | Jul/2026 | ✅ Concluído |
 | v0.4.0 | Jul/2026 | ✅ Concluído |
@@ -28,7 +29,13 @@
 
 ---
 
-## ✨ Funcionalidades Atuais (v0.7.0)
+## ✨ Funcionalidades Atuais (v0.8.0)
+
+### Menu Inicial
+
+- **Tela inicial** — ao abrir o jogo, um menu principal com título e botões é exibido
+- **⚡ Jogo Rápido** — inicia uma partida no modo Single Player (Humano vs Máquina) com configuração simplificada
+- **🏆 Modo Carreira (Em Breve)** — botão desabilitado visualmente, reservado para futura progressão com fases e pontuação
 
 ### Modo Single Player (Humano vs Máquina)
 
@@ -44,7 +51,8 @@
 
 - **Overlay de vitória** — ao vencer, uma tela com confetes animados, fogos serpentina e troféu é exibida
 - **Mensagem personalizada** — exibe o nome e emoji do jogador vencedor
-- **Botão "Jogar Novamente"** — retorna ao modal de configuração para uma nova partida
+- **Botão "🔁 Jogar Novamente"** — reinicia a partida no mesmo modo (Jogo Rápido mantém single player)
+- **Botão "🏠 Voltar ao Menu"** — retorna ao menu inicial para escolher outro modo
 
 ### Mundo da Floresta e Sistema de Portais
 
@@ -132,12 +140,10 @@
 
 ### Configuração Inicial
 
-1. Abra o jogo no navegador.
-2. O **modal de configuração** é exibido automaticamente.
-3. Escolha o **modo de jogo**: "👥 2 Jogadores" ou "👤 1 Jogador".
-4. No **modo 2 jogadores**: digite o nome do **Jogador 1**, escolha um sprite, depois faça o mesmo para o **Jogador 2**.
-5. No **modo 1 jogador**: apenas o nome e sprite do **Jogador 1** são necessários — o Jogador 2 será a **Máquina** (🤖).
-6. Clique em **"Iniciar Jogo"** para começar a partida.
+1. Abra o jogo no navegador — a **Tela Inicial** é exibida com o título Lara World.
+2. Clique em **"⚡ Jogo Rápido"** para iniciar uma partida single player.
+3. O **modal de configuração** é exibido para definir nome e sprite do Jogador 1.
+4. Clique em **"Iniciar Jogo"** para começar a partida.
 
 ### Modo 2 Jogadores (Multiplayer)
 
@@ -178,7 +184,7 @@
 
 ## 📜 História do Projeto
 
-O Lara World começou como um MVP de tabuleiro simples para 1 jogador. A primeira versão (v0.1.0) implementou a lógica básica do jogo com dados, casas especiais e Docker. Na sequência (v0.1.5) recebeu um tabuleiro visual com trilha serpentina, personagem animado e painel lateral. A versão v0.2.0 adicionou multiplayer local com alternância de turnos entre 2 jogadores. A v0.3.0 introduziu o modal de configuração inicial com nomes e sprites personalizáveis. A v0.4.0 adicionou 5 casas de desafios educativos com perguntas de múltipla escolha. A v0.5.0 substituiu as perguntas fixas por um **Banco de Questões** com 30 perguntas. A v0.6.0 adicionou o **Mundo da Floresta** com portal na casa 11, sistema de portais, mini-trilha de 8 casas com mecânicas exclusivas e modo debug. A versão atual (v0.7.0) adiciona o **modo Single Player (Humano vs Máquina)** com bot inteligente, tela de vitória com confetes e correções de cascata.
+O Lara World começou como um MVP de tabuleiro simples para 1 jogador. A primeira versão (v0.1.0) implementou a lógica básica do jogo com dados, casas especiais e Docker. Na sequência (v0.1.5) recebeu um tabuleiro visual com trilha serpentina, personagem animado e painel lateral. A versão v0.2.0 adicionou multiplayer local com alternância de turnos entre 2 jogadores. A v0.3.0 introduziu o modal de configuração inicial com nomes e sprites personalizáveis. A v0.4.0 adicionou 5 casas de desafios educativos com perguntas de múltipla escolha. A v0.5.0 substituiu as perguntas fixas por um **Banco de Questões** com 30 perguntas. A v0.6.0 adicionou o **Mundo da Floresta** com portal na casa 11, sistema de portais, mini-trilha de 8 casas com mecânicas exclusivas e modo debug. A v0.7.0 adicionou o **modo Single Player (Humano vs Máquina)** com bot inteligente, tela de vitória com confetes e correções de cascata. A versão atual (v0.8.0) adiciona um **Menu Inicial** com opções "⚡ Jogo Rápido" (single player) e "🏆 Modo Carreira (Em Breve)", além de uma tela de vitória com dois botões de saída (Jogar Novamente e Voltar ao Menu).
 
 ---
 
@@ -236,7 +242,7 @@ docker compose down
 
 ## 🗺️ Roadmap
 
-- **v0.8.0** — Sprites PNG, sons, melhorias visuais
+- **v0.9.0** — Sprites PNG, sons, melhorias visuais
 - **v1.0.0** — Lançamento oficial
 
 Veja o [roadmap completo](docs/roadmap.md).

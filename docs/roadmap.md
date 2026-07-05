@@ -60,9 +60,17 @@
 - Correção: casa 5 não cascateia para desafio na posição 1
 - Correção: botão "Jogar Dado" reabilitado corretamente após vitória
 
+### v0.8.0 — Menu Inicial e Interface Refinada
+- Tela inicial (Main Menu) com título e botões "⚡ Jogo Rápido" / "🏆 Modo Carreira (Em Breve)"
+- Modo Jogo Rápido: inicia partida single player com configuração simplificada
+- Tela de vitória com dois botões: "🔁 Jogar Novamente" e "🏠 Voltar ao Menu"
+- Variável `modoJogo` para controle do modo de jogo
+- Função `resetGameState()` extraída para reúso
+- Cache-busting via `?v=0.8.0`
+
 ## Futuro
 
-### v0.8.0 — Sprites PNG, sons, melhorias visuais
+### v0.9.0 — Sprites PNG, sons, melhorias visuais
 
 ### v1.0.0 — Lançamento Oficial
 - Versão estável

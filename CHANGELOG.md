@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.8.0] - 2026-07-05
+
+### Adicionado
+- Menu inicial (`#main-menu`) com título "🌍 Lara World" e dois botões
+- Botão "⚡ Jogo Rápido" — inicia partida no modo Single Player com configuração simplificada
+- Botão "🏆 Modo Carreira" — desabilitado visualmente com texto "(Em Breve)", reservado para futuro
+- `modoJogo` — variável de estado que controla o modo atual ("rapido" | null)
+- `showMainMenu()` — exibe a tela inicial e esconde o tabuleiro / painel
+- `hideMainMenu()` — esconde o menu e prepara o tabuleiro para a partida
+- `setupMenuEvents()` — registra eventos dos botões do menu principal
+- Segundo botão na tela de vitória: "🏠 Voltar ao Menu" — retorna ao menu inicial
+- `resetGameState()` — extraído de `reiniciarJogo()` para resetar estado sem exibir setup
+- CSS `#main-menu`, `.menu-title`, `.menu-buttons`, `.menu-btn`, `.menu-btn.disabled`, `.menu-btn-icon`
+- CSS `.victory-actions` com dois botões lado a lado no overlay de vitória
+- Cache-busting via `?v=0.8.0` no HTML
+
+### Alterado
+- `init()` — agora chama `showMainMenu()` em vez de `showSetupScreen()` diretamente
+- `setupModalEvents()` — adaptado para configurar `modoJogo = "rapido"` e ocultar seletor de modo 2P
+- `startGame()` — usa `modoJogo` para determinar configuração (modo 1P forçado no Jogo Rápido)
+- `handleVictory()` — adicionado botão "🏠 Voltar ao Menu" que chama `showMainMenu()`
+- `reiniciarJogo()` — refatorado para usar `resetGameState()` e depois `showSetupScreen()`
+- `configurarJogadores()` (antigo inline) — encapsulado em função separada para reúso
+- Estrutura HTML reordenada: `#main-menu` antes de `#game-layout`
+
+### Corrigido
+- Vitória agora oferece duas saídas: "Jogar Novamente" (mesmo modo) ou "Voltar ao Menu"
+
 ## [0.7.0] - 2026-07-05
 
 ### Adicionado

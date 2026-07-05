@@ -18,7 +18,17 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 
 ## Principais Funcionalidades
 
-### v0.7.0 (Atual) — Modo Single Player e Tela de Vitória ✅
+### v0.8.0 (Atual) — Menu Inicial e Interface Refinada ✅
+
+- **Menu Inicial** (`#main-menu`) — tela inicial com título e dois botões
+- **⚡ Jogo Rápido** — inicia partida single player com configuração simplificada
+- **🏆 Modo Carreira (Em Breve)** — botão desabilitado, reservado para progressão futura
+- **Tela de vitória com duas saídas** — "🔁 Jogar Novamente" (mesmo modo) e "🏠 Voltar ao Menu"
+- **`modoJogo`** — variável de estado que controla o modo de jogo atual
+- **`resetGameState()`** — função extraída para resetar estado sem exibir setup
+- Cache-busting via `?v=0.8.0`
+
+### v0.7.0 — Modo Single Player e Tela de Vitória ✅
 
 - **Seletor de modo** — botões de rádio 1P / 2P no modal de configuração
 - **Modo 1 Jogador** — Humano vs Máquina com bot automático (jogada a cada 1s)

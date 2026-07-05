@@ -4,6 +4,15 @@
 
 Levar seu personagem da casa inicial (posição 0) até a **casa 20** (vitória). O primeiro jogador a atingir ou ultrapassar a casa 20 vence a partida.
 
+## Tela Inicial (Menu Principal)
+
+Ao abrir o jogo, a **Tela Inicial** é exibida com duas opções:
+
+- **⚡ Jogo Rápido** — inicia uma partida no modo Single Player (Humano vs Máquina) com configuração simplificada (apenas nome e sprite do Jogador 1)
+- **🏆 Modo Carreira** — botão desabilitado visualmente com texto "(Em Breve)", reservado para futura progressão com fases e pontuação
+
+Clique em **"⚡ Jogo Rápido"** para acessar o modal de configuração e começar a jogar.
+
 ## Seletor de Modo
 
 Ao abrir o jogo, o modal de configuração exibe um seletor com duas opções:
@@ -93,6 +102,6 @@ A escolha do modo determina quais campos são exibidos no modal e como o Jogador
 - **Exceção — saída da floresta não cascateia**: o bônus de +2 (atalho) ou +3 (saída) ao retornar do Mundo da Floresta não ativa casas especiais.
 - **Sorteio de perguntas**: a cada desafio, uma pergunta é sorteada aleatoriamente do Banco de Questões. O jogo evita repetir a mesma pergunta durante a mesma partida. Quando todas as 30 perguntas forem utilizadas, o ciclo recomeça.
 - **Casa 5 na posição 1**: se estiver na casa 1 e cair na casa 5, o personagem volta para a posição 0 e fica fora do tabuleiro. Na próxima jogada, avançará para a casa 1 ou além.
-- **Após a vitória**: o jogo é encerrado, o botão "Jogar Dado" é desabilitado e um overlay de vitória com confetes animados, fogos serpentina e troféu é exibido. Clique em "Jogar Novamente" ou "Reiniciar" para uma nova partida.
+- **Após a vitória**: o jogo é encerrado, o botão "Jogar Dado" é desabilitado e um overlay de vitória com confetes animados, fogos serpentina e troféu é exibido. Duas opções estão disponíveis: **"🔁 Jogar Novamente"** (reinicia no mesmo modo) ou **"🏠 Voltar ao Menu"** (retorna à tela inicial).
 - **Reinício**: o botão "Reiniciar" exibe o modal de configuração novamente, permitindo que os jogadores alterem seus nomes e sprites antes de iniciar uma nova partida.
 - **Modo debug**: adicione `?debug=1` à URL para ativar um painel com 5 botões de teste rápido (Casa 11, Entrar na Floresta, Casa 5 Atalho, Casa 8 Saída, Voltar ao Principal). O modo debug não afeta partidas normais.

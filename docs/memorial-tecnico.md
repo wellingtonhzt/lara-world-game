@@ -1,5 +1,43 @@
 # Memorial Técnico
 
+## [0.8.0] - 2026-07-05
+
+### Objetivo
+
+Implementar um menu inicial (Main Menu) com duas opções de entrada ("⚡ Jogo Rápido" e "🏆 Modo Carreira (Em Breve)"), refatorar a tela de vitória para oferecer duas saídas distintas (Jogar Novamente / Voltar ao Menu), e extrair `resetGameState()` para reúso entre reinício e retorno ao menu.
+
+### Arquivos Alterados
+
+| Arquivo | Tipo de Alteração |
+|---------|-------------------|
+| `src/game.js` | Adicionado: `modoJogo`, `showMainMenu()`, `hideMainMenu()`, `setupMenuEvents()`, `resetGameState()`. Modificado: `init()` (agora chama `showMainMenu()`), `setupModalEvents()` (configura `modoJogo`, oculta seletor 2P), `startGame()` (usa `modoJogo`), `handleVictory()` (dois botões), `reiniciarJogo()` (usa `resetGameState()`) |
+| `src/index.html` | Adicionado: `#main-menu` com `.menu-title`, `.menu-buttons`, `.menu-btn` para "Jogo Rápido" e "Carreira". Reordenado: `#main-menu` antes de `#game-layout`. Modificado: `#victory-overlay` com container `.victory-actions` para dois botões. Cache-busting atualizado para `?v=0.8.0` |
+| `src/style.css` | Adicionado: `#main-menu`, `.menu-title` (fonte grande, gradiente dourado), `.menu-buttons` (flex column, gap), `.menu-btn` (hover rosa, borda), `.menu-btn.disabled` (opacity, cursor not-allowed), `.menu-btn-icon` (tamanho fixo 64px), `.victory-actions` (flex, gap, dois botões lado a lado) |
+| `README.md` | Atualizado: v0.8.0 como versão ativa, funcionalidades, história, roadmap |
+| `CHANGELOG.md` | Adicionado: entrada v0.8.0 |
+| `docs/visao-geral.md` | Atualizado: v0.8.0 como versão atual |
+| `docs/arquitetura.md` | Atualizado: index.html com main menu, game.js com modoJogo/showMainMenu/resetGameState, fluxo do jogo |
+| `docs/regras-do-jogo.md` | Atualizado: Tela Inicial, tela de vitória com duas saídas |
+| `docs/roadmap.md` | Atualizado: v0.8.0 movido para concluído |
+| `docs/memorial-tecnico.md` | Adicionado: entrada v0.8.0 |
+
+### Impacto Técnico
+
+- **game.js**: Nova variável `modoJogo` (string | null) controla o modo atual — `"rapido"` para Jogo Rápido, `null` no menu. `init()` agora chama `showMainMenu()` em vez de `showSetupScreen()`. `showMainMenu()` exibe `#main-menu` e oculta `#game-layout`, `#setup-screen`, `#victory-overlay`. `hideMainMenu()` oculta `#main-menu` e exibe `#game-layout`. `setupMenuEvents()` registra clique no botão "Jogo Rápido" (configura `modoJogo = "rapido"`, chama `hideMainMenu()` + `showSetupScreen()`) e no botão "Carreira" (disabled, sem ação). `setupModalEvents()` no modo Jogo Rápido oculta o seletor de modo e força configuração 1P. `startGame()` usa `modoJogo` para determinar se é single player. `resetGameState()` extrai a lógica de reset de estado de `reiniciarJogo()`: zera posições, `rodadasPerdidas`, `mundoAtual = "principal"`, `entradaFloresta = {1: null, 2: null}`, `entrouNoPortal = false`, `questoesUsadas.clear()`, `jogoAtivo = true`, `jogoFinalizado = false`. `reiniciarJogo()` agora chama `resetGameState()` e depois `showSetupScreen()`. `handleVictory()` agora cria dois botões no container `.victory-actions`: "🔁 Jogar Novamente" chama `reiniciarJogo()` e "🏠 Voltar ao Menu" chama `showMainMenu()`.
+- **HTML**: Novo `#main-menu` com `<h1 class="menu-title">🌍 Lara World</h1>`, dois `<button class="menu-btn">` no container `.menu-buttons`. O segundo botão ("🏆 Modo Carreira") possui classe `disabled` e `disabled` attribute. Estrutura reordenada: `#main-menu` é o primeiro elemento do body, seguido por `#game-layout`. `#victory-overlay` ganhou container `.victory-actions` com `id="victory-actions"`. Cache-busting: `?v=0.8.0` no link do CSS e script do JS.
+- **CSS**: `#main-menu` com `position: fixed`, `inset: 0`, `z-index: 1000`, `display: flex`, `flex-direction: column`, centralizado, fundo com gradiente animado. `.menu-title` com `font-size: 4rem`, gradiente dourado (`linear-gradient(135deg, #ffd700, #ff8c00)`), `text-shadow` decorativo. `.menu-buttons` com `display: flex`, `flex-direction: column`, `gap: 20px`. `.menu-btn` com `padding: 20px 40px`, `font-size: 1.5rem`, `border-radius: 16px`, `border: 3px solid rgba(255,255,255,0.3)`, `background: rgba(255,255,255,0.1)`, `cursor: pointer`, hover com borda rosa. `.menu-btn.disabled` com `opacity: 0.4`, `cursor: not-allowed`. `.menu-btn-icon` com `font-size: 64px`, `line-height: 1`. `.victory-actions` com `display: flex`, `gap: 12px`, `justify-content: center`.
+
+### Impacto Funcional
+
+- Jogo agora inicia com um menu principal visual com título decorativo e dois botões
+- "⚡ Jogo Rápido" inicia partida single player com configuração mínima (apenas nome/sprite do Jogador 1)
+- "🏆 Modo Carreira" aparece como botão desabilitado com "(Em Breve)", sem ação
+- Tela de vitória agora oferece duas opções: "Jogar Novamente" (mesmo modo) ou "Voltar ao Menu"
+- "Jogar Novamente" agora reinicia a partida sem sair do modo atual (não exige re-seleção)
+- "Voltar ao Menu" retorna ao menu principal, permitindo iniciar nova partida do zero
+- Cache-busting via `?v=0.8.0` garante que navegadores carreguem a versão mais recente dos assets
+- Todas as funcionalidades anteriores (single player, multiplayer, floresta, desafios, banco de questões) permanecem inalteradas
+
 ## [0.7.0] - 2026-07-05
 
 ### Objetivo
