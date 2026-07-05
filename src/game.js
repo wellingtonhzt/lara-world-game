@@ -4,8 +4,8 @@
 
   /* ── Players ── */
   const players = [
-    { id: 1, name: 'Lara', emoji: '🧒', posicao: 0, rodadasPerdidas: 0, element: null },
-    { id: 2, name: 'Amigo', emoji: '🧑', posicao: 0, rodadasPerdidas: 0, element: null },
+    { id: 1, name: 'Lara', emoji: '🧒', posicao: 0, rodadasPerdidas: 0, element: null, isBot: false },
+    { id: 2, name: 'Amigo', emoji: '🧑', posicao: 0, rodadasPerdidas: 0, element: null, isBot: false },
   ];
 
   const gameState = {
@@ -18,6 +18,9 @@
     entradaFloresta: { 1: null, 2: null },
     entrouNoPortal: false,
   };
+
+  let isSinglePlayer = false;
+  let botTurnScheduled = false;
 
   /* ── World-aware helpers ── */
 
@@ -453,7 +456,7 @@
         return true;
       }
       case "portal": {
-        const entrou = await showPortalModal();
+        const entrou = await resolvePortal();
         console.log("[PORTAL] entrou =", entrou);
         if (entrou) {
           console.log("[PORTAL] Antes: mundoAtual=" + gameState.mundoAtual + ", isMoving=" + gameState.isMoving + ", rollBtn.disabled=" + elements.rollBtn.disabled);
@@ -546,7 +549,7 @@
         const desafio = sortearQuestao();
         if (!desafio) return false;
         addHistory(`❓ ${player.name} caiu em um desafio!`, "especial");
-        const acertou = await showChallengeModal(desafio);
+        const acertou = await resolveChallenge(desafio);
         if (acertou) {
           const destino = Math.min(posicao + 1, getTotalCasas());
           if (destino > posicao) {
@@ -607,6 +610,21 @@
     gameState.isMoving = false;
     elements.rollBtn.disabled = false;
     console.log("[UNLOCK] after: isMoving=" + gameState.isMoving + ", rollBtn.disabled=" + elements.rollBtn.disabled);
+    scheduleBotTurnIfNeeded();
+  }
+
+  function scheduleBotTurnIfNeeded() {
+    const p = getCurrentPlayer();
+    if (p.isBot && gameState.jogoAtivo && !gameState.jogoFinalizado && !botTurnScheduled) {
+      botTurnScheduled = true;
+      elements.rollBtn.disabled = true;
+      setTimeout(async () => {
+        botTurnScheduled = false;
+        if (getCurrentPlayer().isBot && gameState.jogoAtivo && !gameState.jogoFinalizado) {
+          await jogarDado();
+        }
+      }, 1000);
+    }
   }
 
   /* ── Main Action ── */
@@ -693,6 +711,7 @@
       }
       gameState.entrouNoPortal = false;
       console.log("[JOGAR] extraTurn true, final state: isMoving=" + gameState.isMoving + ", rollBtn.disabled=" + elements.rollBtn.disabled);
+      scheduleBotTurnIfNeeded();
       return;
     }
 
@@ -749,16 +768,24 @@
 
   function startGame() {
     players[0].name = document.getElementById("player1-name").value.trim() || "Jogador 1";
-    players[1].name = document.getElementById("player2-name").value.trim() || "Jogador 2";
-
     const p1Selected = document.querySelector("#p1-emoji-grid .emoji-btn.selected");
-    const p2Selected = document.querySelector("#p2-emoji-grid .emoji-btn.selected");
     players[0].emoji = p1Selected ? p1Selected.dataset.emoji : "🧒";
-    players[1].emoji = p2Selected ? p2Selected.dataset.emoji : "🧑";
+
+    if (isSinglePlayer) {
+      players[1].name = "Máquina";
+      players[1].emoji = "🤖";
+      players[1].isBot = true;
+    } else {
+      players[1].name = document.getElementById("player2-name").value.trim() || "Jogador 2";
+      const p2Selected = document.querySelector("#p2-emoji-grid .emoji-btn.selected");
+      players[1].emoji = p2Selected ? p2Selected.dataset.emoji : "🧑";
+      players[1].isBot = false;
+    }
 
     elements.lara.textContent = players[0].emoji;
     elements.laraP2.textContent = players[1].emoji;
 
+    botTurnScheduled = false;
     hideSetupScreen();
     gameState.questoesUsadas.clear();
     renderizarTrilha();
@@ -774,13 +801,36 @@
     const startBtn = document.getElementById("start-game-btn");
     const p1Grid = document.getElementById("p1-emoji-grid");
     const p2Grid = document.getElementById("p2-emoji-grid");
+    const setupScreen = document.getElementById("setup-screen");
 
     let p1Emoji = null;
     let p2Emoji = null;
 
     function checkReady() {
-      startBtn.disabled = !(p1Name.value.trim() && p1Emoji && p2Name.value.trim() && p2Emoji);
+      if (isSinglePlayer) {
+        startBtn.disabled = !(p1Name.value.trim() && p1Emoji);
+      } else {
+        startBtn.disabled = !(p1Name.value.trim() && p1Emoji && p2Name.value.trim() && p2Emoji);
+      }
     }
+
+    function updateModeUI() {
+      if (isSinglePlayer) {
+        setupScreen.classList.add("mode-1p");
+      } else {
+        setupScreen.classList.remove("mode-1p");
+      }
+      checkReady();
+    }
+
+    document.querySelectorAll('.mode-option input[type="radio"]').forEach(radio => {
+      radio.addEventListener("change", function () {
+        document.querySelectorAll(".mode-option").forEach(opt => opt.classList.remove("selected"));
+        this.closest(".mode-option").classList.add("selected");
+        isSinglePlayer = this.value === "1p";
+        updateModeUI();
+      });
+    });
 
     p1Name.addEventListener("input", checkReady);
     p2Name.addEventListener("input", checkReady);
@@ -809,7 +859,7 @@
     if (p2Def) { p2Def.classList.add("selected"); p2Emoji = "🧑"; }
 
     startBtn.addEventListener("click", startGame);
-    checkReady();
+    updateModeUI();
   }
 
   /* ── Challenge Modal ── */
@@ -857,6 +907,36 @@
 
       overlay.classList.remove("hidden");
     });
+  }
+
+  async function resolveChallenge(desafio) {
+    const player = getCurrentPlayer();
+    if (player.isBot) {
+      await delay(600);
+      const acertou = Math.random() < 0.6;
+      if (acertou) {
+        addHistory(`🤖 ${player.name} acertou o desafio!`, "especial");
+      } else {
+        addHistory(`🤖 ${player.name} errou o desafio!`, "especial");
+      }
+      return acertou;
+    }
+    return showChallengeModal(desafio);
+  }
+
+  async function resolvePortal() {
+    const player = getCurrentPlayer();
+    if (player.isBot) {
+      await delay(500);
+      const entrou = Math.random() < 0.5;
+      if (entrou) {
+        addHistory(`🤖 ${player.name} decidiu entrar no portal!`, "especial");
+      } else {
+        addHistory(`🤖 ${player.name} decidiu continuar no tabuleiro.`, "info");
+      }
+      return entrou;
+    }
+    return showPortalModal();
   }
 
   /* ── Debug ── */

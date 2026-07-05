@@ -832,7 +832,53 @@ header h1 {
   text-align: center;
   color: #e91e63;
   font-size: 1.8rem;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
+}
+
+/* ── Mode Selector ── */
+
+.mode-selector {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.mode-option {
+  flex: 1;
+  max-width: 200px;
+  padding: 10px 16px;
+  border: 2px solid #e0d6c8;
+  border-radius: 12px;
+  background: #fefefe;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #8d6e4a;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.mode-option input[type="radio"] {
+  display: none;
+}
+
+.mode-option.selected {
+  border-color: #e91e63;
+  background: #fce4ec;
+  color: #e91e63;
+}
+
+.mode-option:hover {
+  border-color: #e91e63;
+  transform: scale(1.02);
+}
+
+/* ── Hide P2 card in 1-Player mode ── */
+
+#setup-screen.mode-1p .player2-card {
+  display: none;
 }
 
 .setup-players {

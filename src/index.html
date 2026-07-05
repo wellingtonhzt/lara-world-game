@@ -16,6 +16,16 @@
     <div id="setup-screen" class="setup-screen hidden">
       <div class="setup-content">
         <h2>🚀 Preparar Jogo</h2>
+        <div class="mode-selector">
+          <label class="mode-option mode-2p selected">
+            <input type="radio" name="game-mode" value="2p" checked>
+            👥 2 Jogadores
+          </label>
+          <label class="mode-option mode-1p">
+            <input type="radio" name="game-mode" value="1p">
+            👤 1 Jogador
+          </label>
+        </div>
         <div class="setup-players">
           <div class="setup-player-card">
             <h3>👶 Jogador 1</h3>
@@ -45,7 +55,7 @@
               <button class="emoji-btn" data-emoji="🎠">🎠</button>
             </div>
           </div>
-          <div class="setup-player-card">
+          <div class="setup-player-card player2-card">
             <h3>👥 Jogador 2</h3>
             <label for="player2-name">Nome:</label>
             <input type="text" id="player2-name" value="Amigo" maxlength="20">
