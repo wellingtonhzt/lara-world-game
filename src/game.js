@@ -1240,6 +1240,16 @@
       });
     }
     document.getElementById("draw-start-btn").addEventListener("click", continueAfterDraw);
+
+    const historyToggle = document.querySelector(".history-toggle");
+    if (historyToggle) {
+      historyToggle.addEventListener("click", function () {
+        const hist = document.getElementById("history");
+        hist.classList.toggle("expanded");
+        this.textContent = hist.classList.contains("expanded") ? "\u25B2" : "\u25BC";
+      });
+    }
+
     showMainMenu();
     setupMenuEvents();
     setupModalEvents();

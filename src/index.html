@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lara World</title>
-  <link rel="stylesheet" href="style.css?v=0.8.1">
+  <link rel="stylesheet" href="style.css?v=0.8.2">
 </head>
 <body>
   <div id="app">
@@ -243,7 +243,10 @@
         </div>
 
         <div class="panel-card history-card">
-          <h2>📜 Jogadas</h2>
+          <div class="history-header">
+            <h2>📜 Jogadas</h2>
+            <button class="history-toggle" aria-label="Alternar hist\u00f3rico" type="button">▼</button>
+          </div>
           <div id="history"></div>
         </div>
       </aside>
@@ -259,6 +262,6 @@
     <button class="debug-btn" data-debug="voltar-principal">Voltar ao mundo principal</button>
   </div>
 
-  <script src="game.js?v=0.8.1"></script>
+  <script src="game.js?v=0.8.2"></script>
 </body>
 </html>
