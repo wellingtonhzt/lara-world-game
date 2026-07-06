@@ -310,12 +310,14 @@
       return;
     }
 
+    el.classList.add("visivel");
+
     const container = document.getElementById("track-container");
     const cRect = container.getBoundingClientRect();
     const cellRect = cell.getBoundingClientRect();
 
-    const laraW = 58;
-    const laraH = 58;
+    const laraW = el.offsetWidth;
+    const laraH = el.offsetHeight;
 
     let offsetX = 0;
     let offsetY = 0;
@@ -331,7 +333,6 @@
       cellRect.left - cRect.left + (cellRect.width - laraW) / 2 + offsetX + "px";
     el.style.top =
       cellRect.top - cRect.top + (cellRect.height - laraH) / 2 - 6 + offsetY + "px";
-    el.classList.add("visivel");
   }
 
   /* ── Animation ── */
