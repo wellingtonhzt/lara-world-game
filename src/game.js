@@ -19,6 +19,7 @@
     entrouNoPortal: false,
   };
 
+  let selectedWorldId = null;
   let isSinglePlayer = false;
   let botTurnScheduled = false;
   let modoJogo = null;
@@ -769,6 +770,8 @@
   function showMainMenu() {
     document.getElementById("main-menu").classList.remove("hidden");
     document.getElementById("setup-screen").classList.add("hidden");
+    document.getElementById("world-selector").classList.add("hidden");
+    selectedWorldId = null;
     modoJogo = null;
   }
 
@@ -780,7 +783,36 @@
     document.getElementById("btn-rapido").addEventListener("click", () => {
       modoJogo = "rapido";
       hideMainMenu();
-      showSetupScreen();
+      showWorldSelector();
+    });
+  }
+
+  /* ── World Selector ── */
+
+  function showWorldSelector() {
+    document.getElementById("world-selector").classList.remove("hidden");
+  }
+
+  function hideWorldSelector() {
+    document.getElementById("world-selector").classList.add("hidden");
+  }
+
+  function selectWorld(worldId) {
+    selectedWorldId = worldId === "random" ? "floresta" : worldId;
+    hideWorldSelector();
+    showSetupScreen();
+  }
+
+  function setupWorldSelectorEvents() {
+    document.querySelectorAll(".world-card:not(:disabled)").forEach(card => {
+      card.addEventListener("click", function () {
+        selectWorld(this.dataset.world);
+      });
+    });
+
+    document.getElementById("world-back-btn").addEventListener("click", () => {
+      hideWorldSelector();
+      showMainMenu();
     });
   }
 
@@ -1253,6 +1285,7 @@
 
     showMainMenu();
     setupMenuEvents();
+    setupWorldSelectorEvents();
     setupModalEvents();
     setupDebugMode();
   }
