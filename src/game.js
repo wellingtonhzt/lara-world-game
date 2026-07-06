@@ -1,3 +1,6 @@
+import { register, get, getDefault } from './engine/world-registry.js';
+import { florestaEncantada } from './worlds/floresta/config.js';
+
 (function () {
   const TOTAL_CASAS = 20;
   const PLAYER_COUNT = 2;
@@ -20,6 +23,7 @@
   };
 
   let selectedWorldId = null;
+  let currentWorldConfig = null;
   let isSinglePlayer = false;
   let botTurnScheduled = false;
   let modoJogo = null;
@@ -772,6 +776,7 @@
     document.getElementById("setup-screen").classList.add("hidden");
     document.getElementById("world-selector").classList.add("hidden");
     selectedWorldId = null;
+    currentWorldConfig = null;
     modoJogo = null;
   }
 
@@ -790,6 +795,18 @@
   /* ── World Selector ── */
 
   function showWorldSelector() {
+    document.querySelectorAll('.world-card:not(:disabled):not([data-world="random"])').forEach(card => {
+      const wid = card.dataset.world;
+      try {
+        const wc = get(wid);
+        const emojiEl = card.querySelector('.world-card-emoji');
+        const nameEl = card.querySelector('.world-card-name');
+        if (emojiEl && wc.icon) emojiEl.textContent = wc.icon;
+        if (nameEl && wc.name) nameEl.textContent = wc.name.replace(wc.icon || '', '').trim();
+      } catch (e) {
+        /* world not registered, keep default display */
+      }
+    });
     document.getElementById("world-selector").classList.remove("hidden");
   }
 
@@ -798,7 +815,13 @@
   }
 
   function selectWorld(worldId) {
-    selectedWorldId = worldId === "random" ? "floresta" : worldId;
+    if (worldId === "random") {
+      currentWorldConfig = getDefault();
+      selectedWorldId = currentWorldConfig.id;
+    } else {
+      currentWorldConfig = get(worldId);
+      selectedWorldId = worldId;
+    }
     hideWorldSelector();
     showSetupScreen();
   }
@@ -1248,6 +1271,8 @@
   /* ── Init ── */
 
   function init() {
+    register(florestaEncantada);
+
     elements.rollBtn.addEventListener("click", jogarDado);
     elements.resetBtn.addEventListener("click", reiniciarJogo);
     if (elements.victoryPlayAgainBtn) {
