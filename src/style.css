@@ -1557,6 +1557,70 @@ header h1 {
   color: #0d3b0d; background: rgba(255, 255, 255, 0.6);
 }
 
+/* ── Dinosaur World Theme ── */
+
+body[data-world="dinossauros"] {
+  background: linear-gradient(135deg, #f4a460 0%, #e8d5a3 30%, #c9a96e 60%, #a0522d 100%);
+}
+
+body[data-world="dinossauros"] #track-container:not(.mundo-floresta) {
+  background: linear-gradient(
+    to bottom,
+    #f4c97a 0%,
+    #e8b85a 20%,
+    #d4a055 40%,
+    #c48a3a 60%,
+    #8b6914 100%
+  );
+  box-shadow: inset 0 0 30px rgba(139, 90, 43, 0.15);
+}
+
+body[data-world="dinossauros"] #track-container:not(.mundo-floresta) .deco:not(.dino-deco) {
+  display: none;
+}
+
+body[data-world="dinossauros"] .dino-deco {
+  display: block;
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+  line-height: 1;
+}
+
+.dino-deco { display: none; }
+
+.dino-deco-palm-1 { bottom: 6%; right: 2%; font-size: 2.8rem; }
+.dino-deco-palm-2 { bottom: 14%; left: 3%; font-size: 2.2rem; }
+.dino-deco-volcano { top: 2%; right: 4%; font-size: 2.6rem; opacity: 0.8; }
+.dino-deco-rock-1 { bottom: 8%; left: 14%; font-size: 1.6rem; }
+.dino-deco-rock-2 { bottom: 20%; right: 12%; font-size: 1.4rem; }
+.dino-deco-dino { bottom: 2%; left: 10%; font-size: 2rem; }
+
+body[data-world="dinossauros"] #track-container:not(.mundo-floresta) #trail-path {
+  stroke: #c48a3a;
+  opacity: 0.7;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.12));
+}
+
+body[data-world="dinossauros"] #track-container:not(.mundo-floresta) .casa {
+  background: #fff3e0;
+  border-color: #b87333;
+  box-shadow: 0 3px 0 #8b5e3c, 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+body[data-world="dinossauros"] .casa-especial {
+  border-color: #e65100;
+  background: #fff3e0;
+  box-shadow: 0 3px 0 #bf360c, 0 5px 12px rgba(0, 0, 0, 0.12);
+}
+
+body[data-world="dinossauros"] .casa-vitoria {
+  border-color: #f9a825;
+  background: #fff8e1;
+  box-shadow: 0 3px 0 #c7900a, 0 5px 16px rgba(212, 175, 55, 0.3);
+}
+
 /* ═══════════════════════════════════════
    RESPONSIVE
    ═══════════════════════════════════════ */

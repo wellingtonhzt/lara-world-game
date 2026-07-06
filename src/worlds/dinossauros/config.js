@@ -2,7 +2,7 @@ export const valeDosDinossauros = {
 
   // ── Metadata ──
 
-  id: 'vale-dinossauros',
+  id: 'dinossauros',
   name: '\uD83E\uDD96 Vale dos Dinossauros',
   description: 'Explore um vale pr\u00e9-hist\u00f3rico cheio de dinossauros, f\u00f3sseis e vulc\u00f5es ativos! Responda desafios, desvie de perigos e seja o primeiro a escapar!',
   icon: '\uD83E\uDD96',

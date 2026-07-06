@@ -1,5 +1,5 @@
-import { register, get, getDefault } from './engine/world-registry.js';
-import { florestaEncantada } from './worlds/floresta/config.js';
+import { get, getDefault } from './engine/world-registry.js';
+import { loadAllWorlds } from './worlds/loader.js';
 
 (function () {
   const TOTAL_CASAS = 20;
@@ -805,6 +805,36 @@ import { florestaEncantada } from './worlds/floresta/config.js';
     showMainMenu();
   }
 
+  /* ── World Theme ── */
+
+  const dinoDecorations = [
+    { className: 'dino-deco dino-deco-palm-1', content: '\uD83C\uDF34' },
+    { className: 'dino-deco dino-deco-palm-2', content: '\uD83C\uDF34' },
+    { className: 'dino-deco dino-deco-volcano', content: '\uD83C\uDF0B' },
+    { className: 'dino-deco dino-deco-rock-1', content: '\uD83E\uDEA8' },
+    { className: 'dino-deco dino-deco-rock-2', content: '\uD83E\uDEA8' },
+    { className: 'dino-deco dino-deco-dino', content: '\uD83E\uDD96' },
+  ];
+
+  function applyWorldTheme() {
+    if (currentWorldConfig && currentWorldConfig.id) {
+      document.body.dataset.world = currentWorldConfig.id;
+      if (currentWorldConfig.id === 'dinossauros') {
+        dinoDecorations.forEach(deco => {
+          const el = document.createElement('div');
+          el.className = 'deco ' + deco.className;
+          el.textContent = deco.content;
+          elements.trackContainer.appendChild(el);
+        });
+      }
+    }
+  }
+
+  function clearWorldTheme() {
+    delete document.body.dataset.world;
+    document.querySelectorAll('.dino-deco').forEach(el => el.remove());
+  }
+
   /* ── Main Menu ── */
 
   function showMainMenu() {
@@ -814,6 +844,7 @@ import { florestaEncantada } from './worlds/floresta/config.js';
     selectedWorldId = null;
     currentWorldConfig = null;
     modoJogo = null;
+    clearWorldTheme();
   }
 
   function hideMainMenu() {
@@ -829,6 +860,17 @@ import { florestaEncantada } from './worlds/floresta/config.js';
   }
 
   /* ── World Selector ── */
+
+  function enableWorldCard(worldId) {
+    const card = document.querySelector(`.world-card[data-world="${worldId}"]`);
+    if (!card) return;
+    card.disabled = false;
+    const badge = card.querySelector('.world-card-badge');
+    if (badge) {
+      badge.textContent = '\u2705 Dispon\u00edvel';
+      badge.className = 'world-card-badge badge-available';
+    }
+  }
 
   function showWorldSelector() {
     document.querySelectorAll('.world-card:not(:disabled):not([data-world="random"])').forEach(card => {
@@ -858,6 +900,7 @@ import { florestaEncantada } from './worlds/floresta/config.js';
       currentWorldConfig = get(worldId);
       selectedWorldId = worldId;
     }
+    applyWorldTheme();
     hideWorldSelector();
     showSetupScreen();
   }
@@ -1307,7 +1350,8 @@ import { florestaEncantada } from './worlds/floresta/config.js';
   /* ── Init ── */
 
   function init() {
-    register(florestaEncantada);
+    loadAllWorlds();
+    enableWorldCard('dinossauros');
 
     elements.rollBtn.addEventListener("click", jogarDado);
     elements.resetBtn.addEventListener("click", reiniciarJogo);

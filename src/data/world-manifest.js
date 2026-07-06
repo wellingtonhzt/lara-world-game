@@ -11,8 +11,8 @@
 // with the WorldRegistry. No engine code needs to change.
 
 export const WORLD_IDS = [
-  // 'floresta-encantada',
-  // 'vale-dinossauros',
+  'floresta-encantada',
+  'dinossauros',
   // 'galaxia-estelar',
   // 'reino-oceanos',
   // 'castelo-dragoes',

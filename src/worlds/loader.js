@@ -1,24 +1,11 @@
 import { registerAll } from '../engine/world-registry.js';
 import { WORLD_IDS } from '../data/world-manifest.js';
-
-// ── Explicit static imports ──
-// World configs are imported explicitly here (no dynamic import()).
-// When adding a new world:
-//   1. Uncomment the import for its config
-//   2. Add it to worldConfigMap
-//
-// import florestaEncantada from './floresta-encantada/config.js';
-// import valeDinossauros from './vale-dinossauros/config.js';
-// import galaxiaEstelar from './galaxia-estelar/config.js';
-// import reinoOceanos from './reino-oceanos/config.js';
-// import casteloDragoes from './castelo-dragoes/config.js';
+import { florestaEncantada } from './floresta/config.js';
+import { valeDosDinossauros } from './dinossauros/config.js';
 
 const worldConfigMap = {
-  // 'floresta-encantada': florestaEncantada,
-  // 'vale-dinossauros': valeDinossauros,
-  // 'galaxia-estelar': galaxiaEstelar,
-  // 'reino-oceanos': reinoOceanos,
-  // 'castelo-dragoes': casteloDragoes,
+  'floresta-encantada': florestaEncantada,
+  'dinossauros': valeDosDinossauros,
 };
 
 export function loadAllWorlds() {
