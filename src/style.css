@@ -773,6 +773,169 @@ header h1 {
 }
 
 /* ═══════════════════════════════════════
+   DRAW OVERLAY — Sorteio Inicial
+   ═══════════════════════════════════════ */
+
+.draw-overlay {
+  display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 1500;
+  justify-content: center;
+  align-items: center;
+}
+
+.draw-overlay.hidden {
+  display: none;
+}
+
+.draw-content {
+  background: linear-gradient(160deg, #fff8f0, #fff3e0);
+  border-radius: 28px;
+  padding: 36px 40px;
+  max-width: 560px;
+  width: 92%;
+  text-align: center;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3);
+  border: 3px solid #ffd700;
+}
+
+.draw-header h2 {
+  font-size: 1.8rem;
+  color: #e91e63;
+  margin-bottom: 6px;
+}
+
+.draw-header p {
+  font-size: 0.95rem;
+  color: #8d6e4a;
+  margin-bottom: 24px;
+  font-weight: 500;
+}
+
+.draw-players {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.draw-player {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 24px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 20px;
+  border: 3px solid #f0e8e0;
+  min-width: 150px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.draw-player.winner {
+  border-color: #ffd700;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.4), 0 0 40px rgba(255, 215, 0, 0.15);
+}
+
+.draw-player-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.draw-player-emoji {
+  font-size: 2.4rem;
+  line-height: 1;
+}
+
+.draw-player-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #4a2c0a;
+}
+
+.draw-dice-box {
+  font-size: 3.2rem;
+  width: 72px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fef7e6;
+  border-radius: 16px;
+  box-shadow: inset 0 -3px 0 #ddd, 0 3px 10px rgba(0, 0, 0, 0.08);
+}
+
+.draw-dice-value {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #e91e63;
+  min-width: 24px;
+  text-align: center;
+}
+
+.draw-roll-btn {
+  font-size: 0.95rem;
+  padding: 10px 20px;
+  min-width: 100px;
+}
+
+.draw-roll-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.draw-vs {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #b8956a;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.draw-vs-text {
+  display: block;
+  padding: 8px;
+}
+
+.draw-status {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #4a2c0a;
+  min-height: 40px;
+  line-height: 1.4;
+  margin-bottom: 16px;
+}
+
+#draw-start-btn {
+  font-size: 1.15rem;
+  padding: 14px 40px;
+  min-width: 200px;
+  animation: draw-btn-pulse 2s ease-in-out infinite;
+}
+
+#draw-start-btn.hidden {
+  display: none;
+}
+
+@keyframes draw-btn-pulse {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(233, 30, 99, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(233, 30, 99, 0.6);
+  }
+}
+
+/* ═══════════════════════════════════════
    RESPONSIVE
    ═══════════════════════════════════════ */
 @keyframes pulse {

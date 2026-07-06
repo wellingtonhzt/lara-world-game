@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lara World</title>
-  <link rel="stylesheet" href="style.css?v=0.8.0">
+  <link rel="stylesheet" href="style.css?v=0.8.1">
 </head>
 <body>
   <div id="app">
@@ -96,6 +96,40 @@
           </div>
         </div>
         <button id="start-game-btn" class="btn btn-primary" disabled>🎮 Iniciar Jogo</button>
+      </div>
+    </div>
+
+    <div id="draw-overlay" class="draw-overlay hidden">
+      <div class="draw-content">
+        <div class="draw-header">
+          <h2>🎲 Quem começa?</h2>
+          <p>Cada jogador rola o dado. Quem tirar o maior número inicia!</p>
+        </div>
+        <div class="draw-players">
+          <div class="draw-player" id="draw-player-0">
+            <div class="draw-player-info">
+              <span class="draw-player-emoji" id="draw-emoji-0">🧒</span>
+              <span class="draw-player-name" id="draw-name-0">Lara</span>
+            </div>
+            <div class="draw-dice-box" id="draw-dice-box-0">🎲</div>
+            <div class="draw-dice-value" id="draw-value-0">-</div>
+            <button class="draw-roll-btn btn btn-primary" id="draw-roll-btn-0">🎲 Rolar</button>
+          </div>
+          <div class="draw-vs">
+            <span class="draw-vs-text">VS</span>
+          </div>
+          <div class="draw-player" id="draw-player-1">
+            <div class="draw-player-info">
+              <span class="draw-player-emoji" id="draw-emoji-1">🤖</span>
+              <span class="draw-player-name" id="draw-name-1">Máquina</span>
+            </div>
+            <div class="draw-dice-box" id="draw-dice-box-1">🎲</div>
+            <div class="draw-dice-value" id="draw-value-1">-</div>
+            <button class="draw-roll-btn btn btn-primary" id="draw-roll-btn-1">🎲 Rolar</button>
+          </div>
+        </div>
+        <div class="draw-status" id="draw-status"></div>
+        <button id="draw-start-btn" class="btn btn-primary hidden">▶ Começar</button>
       </div>
     </div>
 
@@ -225,6 +259,6 @@
     <button class="debug-btn" data-debug="voltar-principal">Voltar ao mundo principal</button>
   </div>
 
-  <script src="game.js?v=0.8.0"></script>
+  <script src="game.js?v=0.8.1"></script>
 </body>
 </html>

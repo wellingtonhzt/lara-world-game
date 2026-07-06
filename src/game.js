@@ -22,6 +22,7 @@
   let isSinglePlayer = false;
   let botTurnScheduled = false;
   let modoJogo = null;
+  let drawState = { rolls: [null, null], drawWinnerIndex: null };
 
   /* ── World-aware helpers ── */
 
@@ -884,8 +885,174 @@
     if (p1Def) { p1Def.classList.add("selected"); p1Emoji = "🧒"; }
     if (p2Def) { p2Def.classList.add("selected"); p2Emoji = "🧑"; }
 
-    startBtn.addEventListener("click", startGame);
+    startBtn.addEventListener("click", prepareAndDraw);
     updateModeUI();
+  }
+
+  /* ── Sorteio Inicial (Draw) ── */
+
+  function prepareAndDraw() {
+    players[0].name = document.getElementById("player1-name").value.trim() || "Jogador 1";
+    const p1Sel = document.querySelector("#p1-emoji-grid .emoji-btn.selected");
+    players[0].emoji = p1Sel ? p1Sel.dataset.emoji : "🧒";
+    players[0].isBot = false;
+
+    if (isSinglePlayer) {
+      players[1].name = "Máquina";
+      players[1].emoji = "🤖";
+      players[1].isBot = true;
+    } else {
+      players[1].name = document.getElementById("player2-name").value.trim() || "Jogador 2";
+      const p2Sel = document.querySelector("#p2-emoji-grid .emoji-btn.selected");
+      players[1].emoji = p2Sel ? p2Sel.dataset.emoji : "🧑";
+      players[1].isBot = false;
+    }
+
+    elements.lara.textContent = players[0].emoji;
+    elements.laraP2.textContent = players[1].emoji;
+
+    botTurnScheduled = false;
+    hideSetupScreen();
+    startDrawSequence();
+  }
+
+  function showDrawScreen() {
+    document.getElementById("draw-emoji-0").textContent = players[0].emoji;
+    document.getElementById("draw-name-0").textContent = players[0].name;
+    document.getElementById("draw-emoji-1").textContent = players[1].emoji;
+    document.getElementById("draw-name-1").textContent = players[1].name;
+
+    document.getElementById("draw-dice-box-0").textContent = "🎲";
+    document.getElementById("draw-dice-box-1").textContent = "🎲";
+    document.getElementById("draw-value-0").textContent = "-";
+    document.getElementById("draw-value-1").textContent = "-";
+
+    document.getElementById("draw-player-0").classList.remove("winner");
+    document.getElementById("draw-player-1").classList.remove("winner");
+
+    drawState.drawWinnerIndex = null;
+
+    document.getElementById("draw-status").textContent = "";
+    document.getElementById("draw-start-btn").classList.add("hidden");
+    document.getElementById("draw-start-btn").disabled = true;
+
+    document.getElementById("draw-roll-btn-0").disabled = false;
+    document.getElementById("draw-roll-btn-0").classList.remove("hidden");
+
+    if (isSinglePlayer) {
+      document.getElementById("draw-roll-btn-1").classList.add("hidden");
+    } else {
+      document.getElementById("draw-roll-btn-1").classList.remove("hidden");
+      document.getElementById("draw-roll-btn-1").disabled = false;
+    }
+
+    document.getElementById("draw-overlay").classList.remove("hidden");
+  }
+
+  function hideDrawScreen() {
+    document.getElementById("draw-overlay").classList.add("hidden");
+  }
+
+  function waitForPlayerRoll(playerIndex) {
+    return new Promise(resolve => {
+      const btn = document.getElementById(`draw-roll-btn-${playerIndex}`);
+      btn.onclick = function handler() {
+        btn.disabled = true;
+        btn.onclick = null;
+        const value = Math.floor(Math.random() * 6) + 1;
+        animateDrawDice(playerIndex, value).then(() => resolve(value));
+      };
+    });
+  }
+
+  async function autoBotRoll(playerIndex) {
+    await delay(800);
+    const value = Math.floor(Math.random() * 6) + 1;
+    await animateDrawDice(playerIndex, value);
+    return value;
+  }
+
+  async function animateDrawDice(playerIndex, valor) {
+    const box = document.getElementById(`draw-dice-box-${playerIndex}`);
+    const valueEl = document.getElementById(`draw-value-${playerIndex}`);
+
+    for (const v of [1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6]) {
+      box.textContent = getDadoEmoji(v);
+      await delay(60);
+    }
+
+    box.textContent = getDadoEmoji(valor);
+    valueEl.textContent = valor;
+    await delay(250);
+  }
+
+  async function startDrawSequence() {
+    showDrawScreen();
+
+    while (true) {
+      drawState.rolls = [null, null];
+
+      drawState.rolls[0] = await waitForPlayerRoll(0);
+
+      if (isSinglePlayer) {
+        drawState.rolls[1] = await autoBotRoll(1);
+      } else {
+        drawState.rolls[1] = await waitForPlayerRoll(1);
+      }
+
+      const [v1, v2] = drawState.rolls;
+
+      if (v1 === v2) {
+        drawState.drawWinnerIndex = null;
+        document.getElementById("draw-start-btn").disabled = true;
+        document.getElementById("draw-status").textContent = "🤝 Empate! Vamos rolar novamente!";
+        document.getElementById("draw-dice-box-0").textContent = "🎲";
+        document.getElementById("draw-dice-box-1").textContent = "🎲";
+        document.getElementById("draw-value-0").textContent = "-";
+        document.getElementById("draw-value-1").textContent = "-";
+        document.getElementById("draw-player-0").classList.remove("winner");
+        document.getElementById("draw-player-1").classList.remove("winner");
+        document.getElementById("draw-roll-btn-0").disabled = false;
+        if (!isSinglePlayer) {
+          document.getElementById("draw-roll-btn-1").disabled = false;
+        }
+        await delay(1500);
+        continue;
+      }
+
+      const winnerIndex = v1 > v2 ? 0 : 1;
+      drawState.drawWinnerIndex = winnerIndex;
+
+      document.getElementById(`draw-player-${winnerIndex}`).classList.add("winner");
+
+      const winner = players[winnerIndex];
+      document.getElementById("draw-status").textContent =
+        `🏆 ${winner.emoji} ${winner.name} começa a aventura!`;
+      document.getElementById("draw-start-btn").classList.remove("hidden");
+      document.getElementById("draw-start-btn").disabled = false;
+      break;
+    }
+  }
+
+  function continueAfterDraw() {
+    if (drawState.drawWinnerIndex === null || drawState.drawWinnerIndex === undefined) {
+      return;
+    }
+
+    const startBtn = document.getElementById("draw-start-btn");
+    startBtn.disabled = true;
+    gameState.currentPlayerIndex = drawState.drawWinnerIndex;
+    hideDrawScreen();
+    gameState.questoesUsadas.clear();
+    renderizarTrilha();
+    renderSvgPath();
+    updateUI();
+    players.forEach(p => positionPlayerAt(p.posicao, p));
+    addHistory("🎮 Bem-vindos ao Lara World!", "info");
+
+    if (getCurrentPlayer().isBot && gameState.jogoAtivo && !gameState.jogoFinalizado) {
+      scheduleBotTurnIfNeeded();
+    }
   }
 
   /* ── Challenge Modal ── */
@@ -1072,6 +1239,7 @@
         showMainMenu();
       });
     }
+    document.getElementById("draw-start-btn").addEventListener("click", continueAfterDraw);
     showMainMenu();
     setupMenuEvents();
     setupModalEvents();
