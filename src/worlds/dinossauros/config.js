@@ -319,18 +319,18 @@ export const cavernaDosFosseis = {
     3: [
       { type: 'challenge', description: '\uD83E\uDEB4 Desafio' },
     ],
-    4: [
-      { type: 'extraTurn', description: '\uD83E\uDD5A Jogue novamente' },
-    ],
+     4: [
+        { type: 'challenge', description: '\uD83D\uDC8E Desafio' },
+      ],
     5: [
       { type: 'move', params: { delta: -2 }, description: '\uD83E\uDEA8 Volte 2' },
     ],
     6: [
       { type: 'challenge', description: '\uD83E\uDD96 Desafio' },
     ],
-    7: [
-      { type: 'move', params: { delta: 2 }, description: '\uD83C\uDFC6 Avance 2' },
-    ],
+     7: [
+        { type: 'worldExit', params: { bonusCells: 0 }, description: '\uD83D\uDD73\uFE0F Sa\u00edda r\u00e1pida' },
+      ],
     8: [
       { type: 'worldExit', params: { bonusCells: 3 }, description: '\uD83D\uDEAA Sa\u00edda' },
     ],

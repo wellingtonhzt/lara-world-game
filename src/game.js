@@ -474,25 +474,28 @@ import { cavernaDosFosseis } from './worlds/dinossauros/config.js';
     switch (info.tipo) {
       case "avancar": {
         const destino = Math.min(posicao + info.valor, getTotalCasas());
-        addHistory(`⭐ ${info.descricao} → casa ${destino}`, "especial");
+        addHistory(`\u2B50 ${info.descricao} \u2192 casa ${destino}`, "especial");
         await animatePlayerMovement(posicao, destino);
         player.posicao = destino;
-        if (destino >= getTotalCasas()) {
+        if (player.posicao >= getTotalCasas()) {
           await handleVictory();
           return false;
         }
-        return await processSpecialCell(destino, _cascadeVisited);
+        if (getCasasEspeciais()[player.posicao]) {
+          return await processSpecialCell(player.posicao, _cascadeVisited);
+        }
+        return false;
       }
       case "voltar": {
         const destino = Math.max(posicao - info.valor, 0);
-        addHistory(`🐢 ${info.descricao} → casa ${destino}`, "especial");
+        addHistory(`\uD83D\uDC22 ${info.descricao} \u2192 casa ${destino}`, "especial");
         if (destino > 0) {
           await animatePlayerMovement(posicao, destino);
         }
         player.posicao = destino;
         positionPlayerAt(destino);
-        if (destino > 0 && getCasasEspeciais()[destino]) {
-          return await processSpecialCell(destino, _cascadeVisited);
+        if (player.posicao > 0 && getCasasEspeciais()[player.posicao]) {
+          return await processSpecialCell(player.posicao, _cascadeVisited);
         }
         return false;
       }
@@ -531,7 +534,7 @@ import { cavernaDosFosseis } from './worlds/dinossauros/config.js';
         }
       }
       case "atalho": {
-        const bonusA = info.valor || 0;
+        const bonusA = info.valor ?? 0;
         const entradaA = gameState.subworldEntry[player.id];
         const swCfgA = getSubworldConfig();
         const principalTotal = (currentWorldConfig && currentWorldConfig.board && currentWorldConfig.board.totalCells) || TOTAL_CASAS;
@@ -553,7 +556,7 @@ import { cavernaDosFosseis } from './worlds/dinossauros/config.js';
         return false;
       }
       case "saida-mundo": {
-        const bonus = info.valor || 0;
+        const bonus = info.valor ?? 0;
         const entrada = gameState.subworldEntry[player.id];
         const swCfgS = getSubworldConfig();
         const principalTotal = (currentWorldConfig && currentWorldConfig.board && currentWorldConfig.board.totalCells) || TOTAL_CASAS;
@@ -591,7 +594,7 @@ import { cavernaDosFosseis } from './worlds/dinossauros/config.js';
       case "desafio": {
         const desafio = sortearQuestao();
         if (!desafio) return false;
-        addHistory(`❓ ${player.name} caiu em um desafio!`, "especial");
+        addHistory(`\u2753 ${player.name} caiu em um desafio!`, "especial");
         const acertou = await resolveChallenge(desafio);
         if (acertou) {
           const destino = Math.min(posicao + 1, getTotalCasas());
@@ -600,7 +603,14 @@ import { cavernaDosFosseis } from './worlds/dinossauros/config.js';
           }
           player.posicao = destino;
           positionPlayerAt(destino);
-          addHistory(`✅ ${player.name} acertou! Avançou para casa ${destino}`, "especial");
+          addHistory(`\u2705 ${player.name} acertou! Avan\u00e7ou para casa ${destino}`, "especial");
+          if (player.posicao >= getTotalCasas()) {
+            await handleVictory();
+            return false;
+          }
+          if (getCasasEspeciais()[player.posicao]) {
+            return await processSpecialCell(player.posicao, _cascadeVisited);
+          }
         } else {
           const destino = Math.max(posicao - 1, 0);
           if (destino > 0 && destino < posicao) {
@@ -608,7 +618,7 @@ import { cavernaDosFosseis } from './worlds/dinossauros/config.js';
           }
           player.posicao = destino;
           positionPlayerAt(destino);
-          addHistory(`❌ ${player.name} errou! Voltou para casa ${destino}`, "especial");
+          addHistory(`\u274C ${player.name} errou! Voltou para casa ${destino}`, "especial");
         }
         return false;
       }
