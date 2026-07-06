@@ -37,7 +37,11 @@ import { florestaEncantada } from './worlds/floresta/config.js';
     return (cfg && cfg.board && cfg.board.totalCells) || TOTAL_CASAS;
   }
   function getCasasEspeciais() {
-    return gameState.mundoAtual === "floresta" ? florestaEspeciais : casasEspeciais;
+    if (gameState.mundoAtual === "floresta") return florestaEspeciais;
+    if (currentWorldConfig && currentWorldConfig.events) {
+      return eventsToSpecialCells(currentWorldConfig.events);
+    }
+    return casasEspeciais;
   }
   function getPosicoes() {
     if (gameState.mundoAtual === "floresta") return florestaPosicoes;
@@ -48,6 +52,29 @@ import { florestaEncantada } from './worlds/floresta/config.js';
     if (gameState.mundoAtual === "floresta") return florestaIcones;
     const cfg = currentWorldConfig;
     return (cfg && cfg.board && cfg.board.cellIcons) || icons;
+  }
+  function eventsToSpecialCells(events) {
+    const result = {};
+    if (!events) return result;
+    for (const [key, list] of Object.entries(events)) {
+      const cell = Number(key);
+      if (!Array.isArray(list) || list.length === 0) continue;
+      const ev = list[0];
+      const d = ev.description || '';
+      switch (ev.type) {
+        case 'move':
+          if (ev.params && ev.params.delta > 0) result[cell] = { tipo: 'avancar', valor: ev.params.delta, descricao: d };
+          else if (ev.params && ev.params.delta < 0) result[cell] = { tipo: 'voltar', valor: Math.abs(ev.params.delta), descricao: d };
+          break;
+        case 'challenge': result[cell] = { tipo: 'desafio', descricao: d }; break;
+        case 'extraTurn': result[cell] = { tipo: 'jogar-novamente', valor: 0, descricao: d }; break;
+        case 'skipTurn': result[cell] = { tipo: 'perde-rodada', valor: 0, descricao: d }; break;
+        case 'portal': result[cell] = { tipo: 'portal', descricao: d }; break;
+        case 'resetPosition': result[cell] = { tipo: 'voltar-inicio', valor: 0, descricao: d }; break;
+        case 'finishWorld': result[cell] = { tipo: 'vitoria', valor: 0, descricao: d }; break;
+      }
+    }
+    return result;
   }
 
   const casasEspeciais = {
