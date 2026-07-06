@@ -101,6 +101,59 @@ Colocar a Engine em produção: inicializar o WorldRegistry no bootstrap do jogo
 - A5.1 foi a primeira sprint com código da engine EFETIVAMENTE executado no jogo — anteriormente os módulos existiam apenas em paralelo, não conectados
 - A5.2 estendeu o consumo para `board.totalCells`, `board.positions`, `board.cellIcons` — todos os getters world-aware agora lêem do config
 
+## Marco 5 — Motor Multi-Mundos Consolidado (v0.10.0-preview)
+
+### Objetivo
+
+Completar o primeiro ecossistema multi-mundos do Lara World: integrar o Vale dos Dinossauros como segundo mundo jogável, implementar a Caverna dos Fósseis como segunda Área Especial, tornar o sistema de portais genérico (baseado em configuração, sem hardcoded), aplicar tema visual por mundo via Theme Engine, e garantir que a Engine não precise ser alterada para adicionar novos mundos.
+
+### Arquivos Alterados
+
+| Arquivo | Tipo de Alteração |
+|---------|-------------------|
+| `src/game.js` | **Sprint A6.3**: `document.body.dataset.world` setado em `selectWorld()`, removido em `showMainMenu()`. **Sprint A6.6**: `mundoAtual`/`entradaFloresta`/`entradaCaverna` substituídos por `activeSubworldId` e `subworldEntry`. Getters usam `getSubworldConfig()`. `eventsToSpecialCells` mapeia `shortcut`→`atalho` e `worldExit`→`saida-mundo`. ProcessSpecialCell "portal", "atalho" e "saida-mundo" leem do WorldConfig. Subworld CSS class aplicada/removida nos handlers de portal e debug |
+| `src/index.html` | Adicionado: debug buttons da caverna separados por `<hr>`. Portal overlay dinâmico (título/mensagem via JS). world-indicator alterado para "🌀 Submundo" |
+| `src/style.css` | Adicionado: `.debug-separator`. Seletores `:not(.mundo-floresta)` em regras conflitantes para proteger o tema da Floresta |
+| `src/worlds/dinossauros/config.js` | Adicionado: portal config na casa 10 com `targetWorldId: "caverna-dos-fosseis"`. `cavernaDosFosseis` exportado com 8 casas e 6 eventos |
+| `README.md` | Atualizado: v0.10.0-preview como versão ativa, lista de mundos (Floresta + Dinossauros), conceito de Área Especial, arquitetura, história |
+| `CHANGELOG.md` | Adicionado: entrada v0.10.0-preview |
+| `docs/visao-geral.md` | Atualizado: v0.10.0-preview como versão atual, fluxo principal com Área Especial |
+| `docs/arquitetura.md` | Atualizado: game.js com estado genérico, fluxo com seletor de mundos + portal, motor de mundos com ambos os world configs |
+| `docs/arquitetura-motor-de-mundos.md` | Atualizado: seção Marco 5, mapeamento dos dois mundos, plano de migração com sprints concluídas |
+| `docs/roadmap.md` | Atualizado: A6, Vale dos Dinossauros, Caverna movidos para concluído |
+| `docs/memorial-tecnico.md` | Adicionado: entrada Marco 5 |
+
+### Impacto Técnico
+
+- **game.js — Estado genérico**: As variáveis `mundoAtual` (string "principal"/"floresta") e `entradaFloresta`/`entradaCaverna` foram unificadas em `activeSubworldId` (string | null) e `subworldEntry` (objeto `{playerId: posicao}`). Isso elimina qualquer referência hardcoded a "floresta" ou "dinossauros" no estado global.
+- **game.js — Getters**: `getTotalCasas()`, `getPosicoes()`, `getIcones()`, `getCasasEspeciais()` agora usam `getSubworldConfig()` que faz lookup em `subworldConfigs[activeSubworldId]`. Se null, retorna `currentWorldConfig` (mundo principal). Nova função `getPortalConfigForCell(pos)` busca portais no `currentWorldConfig.portals`.
+- **game.js — eventsToSpecialCells**: Converte eventos do WorldConfig para o formato de casas especiais que `processSpecialCell` entende. Mapeia `shortcut`→`atalho`, `worldExit`→`saida-mundo`, `move`→`avancar`/`voltar`, etc. O `valor` é extraído de `params.bonusCells` (para atalho/saída) ou `params.delta` (para movimento).
+- **game.js — Portais**: `resolvePortal()` agora usa `getPortalConfigForCell()` para encontrar o portal config. O modal de portal é dinâmico (título e mensagem do config). Ao entrar, o `theme.cssClass` do submundo é aplicado ao `trackContainer`. Ao sair (atalho/saída), a classe é removida.
+- **Theme Engine**: `document.body.dataset.world` é setado para o ID do mundo selecionado em `selectWorld()` e removido em `showMainMenu()`. O CSS usa `[data-world="vale-dinossauros"]` para aplicar gradiente quente e células em tons terra. Decorações temáticas são injetadas via JS.
+- **Caverna dos Fósseis**: 8 casas com coordenadas em formato de S. Eventos: casa 3 (desafio), casa 5 (move, avança 2), casa 7 (extraTurn), casa 8 (saida-mundo com +2). Tema visual compartilha o data-world do Vale (nenhuma classe CSS específica para a caverna ainda).
+- **Debug**: Painel expandido com botões da caverna. Um `<hr class="debug-separator">` separa os botões da Floresta dos botões da Caverna. Cada debug handler verifica `activeSubworldId` antes de operar.
+- **Zero engine files alterados**: Nenhuma modificação em `src/engine/*`, `src/core/*`, `src/data/*` ou `src/worlds/loader.js`.
+
+### Impacto Funcional
+
+- Vale dos Dinossauros totalmente jogável: 20 casas, portal na casa 10, Caverna dos Fósseis como Área Especial
+- Caverna dos Fósseis com 8 casas, eventos próprios, saída com bônus +2
+- Floresta Encantada continua funcionando exatamente como antes (portal casa 11, Floresta Misteriosa, bônus +3)
+- Portal overlay agora é dinâmico: mostra o nome e descrição do submundo alvo
+- Theme Engine aplica visual diferente para cada mundo sem conflitos
+- Debug da caverna disponível com `?debug=1`
+- Nenhuma regressão funcional em single player, multiplayer, bot, desafios ou banco de questões
+- Cache-busting atualizado para `?v=20260706`
+
+### Notas Técnicas
+
+- A Regra de Ouro foi validada: adicionar o Vale dos Dinossauros + Caverna dos Fósseis exigiu **zero alterações na Engine**
+- `getSubworldConfig()` retorna null quando `activeSubworldId` é null, fazendo os getters fallbackarem para `currentWorldConfig`
+- O portal do Vale está na casa 10 (não 11) para diferenciar da Floresta
+- Floresta Misteriosa mantém eventos próprios (atalho casa 5 com +2, saída casa 8 com +3)
+- Caverna dos Fósseis tem 6 eventos (vs 4 da Floresta), incluindo `extraTurn` (casa 7) e `move` (casa 5, avança 2)
+- Cache-busting via `?v=20260706` com `no-cache, must-revalidate` no Nginx
+
 ## [0.8.0] - 2026-07-05
 
 ### Objetivo

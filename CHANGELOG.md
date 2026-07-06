@@ -1,6 +1,30 @@
 # Changelog
 
-## [0.9.0-preview] - 2026-07-06
+## [0.10.0-preview] - 2026-07-06
+
+### Adicionado
+- **Vale dos Dinossauros** — segundo mundo completo (`src/worlds/dinossauros/config.js`), com 20 casas, portal na casa 10, eventos temáticos de dinossauros
+- **Caverna dos Fósseis** — segunda Área Especial (submundo), 8 casas, eventos próprios (desafio, move, extraTurn, worldExit com bônus +2)
+- **Sprint A6.3**: Theme Engine em produção — `document.body.dataset.world` aplicado em `selectWorld()`, CSS temático para o Vale (gradiente quente, células em tons terra, decorações dino injetadas via JS). Floresta Encantada protegida com seletores `:not(.mundo-floresta)` onde necessário
+- **Sprint A6.5**: Config `cavernaDosFosseis` + debug (botões "🦴 Entrar na Caverna", "Casa 3 desafio", "Casa 5 passagem", "Casa 8 saída")
+- **Sprint A6.6 — Portal genérico**: `gameState.mundoAtual`/`entradaFloresta`/`entradaCaverna` substituídos por `activeSubworldId` e `subworldEntry`. Getters usam `getSubworldConfig()` com lookup em `subworldConfigs`. `eventsToSpecialCells` mapeia `shortcut`→`atalho` e `worldExit`→`saida-mundo` com `valor: ev.params.bonusCells`. ProcessSpecialCell "portal", "atalho" e "saida-mundo" leem bonus/entrada do WorldConfig
+- **Portal do Vale** — adicionado em casa 10 com `targetWorldId: "caverna-dos-fosseis"`
+- **Portal overlay dinâmico** — título e mensagem lidos do portal config
+- **Subworld CSS class** — `theme.cssClass` aplicado no track-container ao entrar em submundo, removido ao sair
+- **Cache-busting** atualizado para `?v=0.10.0-preview` (Nginx com `no-cache, must-revalidate`)
+
+### Alterado
+- `src/game.js`: Estado de subworld refatorado para `activeSubworldId` (string | null) e `subworldEntry` (map playerId→posição) — sem hardcoded "floresta" ou "dinossauros". `getPortalConfigForCell()` busca em `currentWorldConfig.portals`. Subworld configs importados de `./worlds/floresta/config.js` e `./worlds/dinossauros/config.js`. `eventsToSpecialCells` agora mapeia todos os tipos de evento que game.js entende
+- `src/index.html`: Debug panel com botões da caverna separados por `<hr>`. Portal overlay dinâmico. world-indicator alterado para texto dinâmico
+- `src/style.css`: `.debug-separator` adicionado. `.mundo-floresta` mantido para tema da Floresta
+- `src/worlds/dinossauros/config.js`: Portal adicionado em casa 10 com `targetWorldId: "caverna-dos-fosseis"`. `cavernaDosFosseis` exportado com 8 casas e eventos próprios
+
+### Notas Técnicas
+- Engine totalmente genérica — nenhuma referência a "floresta" ou "dinossauros" em game.js
+- Subworld exit bonus lido de `worldExit.params.bonusCells` — Floresta tem 3, Caverna tem 2
+- `getSubworldConfig()` retorna null quando `activeSubworldId` é null
+- Nenhum arquivo de engine (`src/engine/*`, `src/core/*`, `src/data/*`, `src/worlds/loader.js`) foi alterado
+- Adicionar um novo mundo exige apenas: config + registrar em `subworldConfigs` + botões de debug em index.html
 
 ### Adicionado
 - Sprint A5.1: engine em produção — WorldRegistry inicializado no bootstrap

@@ -18,7 +18,19 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 
 ## Principais Funcionalidades
 
-### v0.9.0-preview (Atual) — Seletor de Mundos e Motor Modular ✅
+### v0.10.0-preview (Atual) — Primeiro Ecossistema Multi-Mundos ✅
+
+- **Vale dos Dinossauros** — segundo mundo completo (20 casas, portal na casa 10, eventos temáticos)
+- **Caverna dos Fósseis** — segunda Área Especial (8 casas, desafios, retorno com +2)
+- **Floresta Encantada** — primeiro mundo (20 casas, portal, Floresta Misteriosa como Área Especial)
+- **Portal genérico** — sem hardcoded de nomes de mundo; navegação via configuração
+- **Theme Engine** — tema visual aplicado por mundo (`data-world` no body, CSS temático)
+- **Retorno parametrizado** — bônus de saída lido do WorldConfig (Floresta +3, Caverna +2)
+- **Debug independente** — botões para cada Área Especial no painel de debug
+- **Arquitetura consolidada** — engine não conhece mundos específicos; tudo via WorldConfig
+- Cache-busting atualizado para `?v=0.10.0-preview`
+
+### v0.9.0-preview — Seletor de Mundos e Motor Modular ✅
 
 - **Seletor de Mundos** — 6 cards exibidos entre "Jogo Rápido" e setup (Floresta, 4 "Em breve", Aleatório)
 - **Engine modular** — SessionManager, StateManager, WorldRegistry, EventProcessor como módulos independentes
@@ -97,6 +109,32 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 - Lógica de dado e movimento
 - Casas especiais básicas
 - Docker + Nginx
+
+## Fluxo do Jogo
+
+```
+Menu (Tela Inicial)
+  ↓
+Escolher Mundo (Floresta / Dinossauros / Aleatório)
+  ↓
+Configurar Jogadores (nome + sprite)
+  ↓
+Jogar Mundo Principal (20 casas, eventos, desafios)
+  ↓
+(Quando existir) Portal → Área Especial
+  ├── Entrar: mini-trilha com eventos próprios
+  └── Continuar: segue no mundo principal
+  ↓
+Retornar da Área Especial (com bônus parametrizado)
+  ↓
+Concluir Mundo (atingir casa final)
+  ↓
+Vitória → Jogar Novamente / Voltar ao Menu
+```
+
+## Sobre Áreas Especiais
+
+Cada mundo do Lara World pode conter uma ou mais Áreas Especiais (submundos), acessadas através de portais posicionados em casas específicas do tabuleiro. Uma Área Especial é uma mini-trilha com eventos, regras e visual próprios. Ao entrar, a posição do jogador é salva. Ao completar ou sair, o jogador retorna ao mundo principal com um bônus de casas definido na configuração da área. A engine é genérica — não conhece nomes de mundos — e toda navegação entre mundos e áreas é baseada em WorldConfigs.
 
 ## Próximos Passos
 

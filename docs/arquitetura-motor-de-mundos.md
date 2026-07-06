@@ -2,7 +2,7 @@
 
 > **Documento oficial de arquitetura**
 > Aprovado nas sprints A0 e A0.1
-> Implementação: Sprints A1–A4 concluídas (v0.9.0-preview)
+> Implementação: Sprints A1–A6.6 concluídas (v0.10.0-preview)
 
 ---
 
@@ -474,32 +474,54 @@ data/questions/
 
 ---
 
-## 10. Mapeamento do Mundo Atual
+## 10. Mapeamento dos Mundos Atuais
 
-### Mundo Principal
+### Mundo Principal — 🌳 Floresta Encantada
 
 ```
 🌳 Floresta Encantada
 ├── ID: "floresta-encantada"
 ├── 20 casas
-├── Eventos: casa 3 (move→12), 5 (move←3), 7 (challenge), 10 (extraTurn),
-│           11 (portal→Floresta Misteriosa), 13 (resetPosition), 15 (challenge),
-│           20 (finishWorld)
-├── Categorias: geografia, historia, ciencias, portugues
-└── Portal: 1 (para "floresta-misteriosa", casa 11, retorno casa 11 + 0 bônus)
+├── Eventos: casa 3 (avancar), 4 (desafio), 5 (voltar), 7 (desafio),
+│           8 (jogar-novamente), 10 (perde-rodada), 11 (portal→Floresta Misteriosa),
+│           12 (desafio), 15 (voltar-inicio), 16 (desafio), 18 (desafio), 20 (vitoria)
+├── Portal: casa 11 → "floresta-misteriosa"
+└── Submundo: Floresta Misteriosa (8 casas, worldExit bonus +3)
 ```
 
-### Submundo
+### Submundo — 🌲 Floresta Misteriosa
 
 ```
 🌲 Floresta Misteriosa
 ├── ID: "floresta-misteriosa"
 ├── 8 casas
-├── Eventos: casa 2 (move←2), 4 (move→7), 5 (challenge categoria natureza),
-│           8 (finishWorld → retorna ao mundo pai)
-├── Categoria extra: natureza
-├── Regra: bônus de +5 casas ao retornar para o mundo pai
-└── Tipo: subworld (mesmo contrato de World, type="subworld")
+├── Eventos: casa 3 (desafio), 5 (atalho→volta +2), 7 (desafio), 8 (saida-mundo→volta +3)
+├── Tipo: subworld
+└── Retorno: +3 casas a partir da entrada
+```
+
+### Mundo Principal — 🦖 Vale dos Dinossauros
+
+```
+🦖 Vale dos Dinossauros
+├── ID: "vale-dinossauros"
+├── 20 casas
+├── Eventos: casa 3 (avancar), 4 (desafio), 5 (voltar), 7 (desafio),
+│           8 (jogar-novamente), 10 (portal→Caverna dos Fósseis),
+│           12 (desafio), 15 (voltar-inicio), 16 (desafio), 18 (desafio), 20 (vitoria)
+├── Portal: casa 10 → "caverna-dos-fosseis"
+└── Submundo: Caverna dos Fósseis (8 casas, worldExit bonus +2)
+```
+
+### Submundo — 🦴 Caverna dos Fósseis
+
+```
+🦴 Caverna dos Fósseis
+├── ID: "caverna-dos-fosseis"
+├── 8 casas
+├── Eventos: casa 3 (desafio), 5 (move→passagem), 7 (extraTurn), 8 (saida-mundo→volta +2)
+├── Tipo: subworld
+└── Retorno: +2 casas a partir da entrada
 ```
 
 ---
@@ -537,15 +559,16 @@ data/questions/
 | **v0.9.0-preview** | World Selector + documentação: tela de seleção de mundos, cache-busting, docs atualizadas | ✅ Concluído |
 | **A5.1** | Conectar engine — WorldRegistry em produção: game.js como ES Module, WorldRegistry.init() no bootstrap, currentWorldConfig populado, cards do seletor consomem WorldConfig | ✅ Concluído |
 | **A5.2** | Consumir Board do WorldConfig: getTotalCasas(), getPosicoes(), getIcones(), handleVictory(), "atalho", "saida-mundo" usam currentWorldConfig.board com fallback | ✅ Concluído |
-| **A5.3** | ThemeManager: aplicar tema visual do WorldConfig (cores, gradientes, CSS class) ao tabuleiro e painel | ⏳ Pendente |
-| **A5.4** | EventProcessor + StateManager: conectar ao game.js para processar eventos de célula via engine em vez de processSpecialCell | ⏳ Pendente |
-| **A6** | BoardRenderer: extrair renderização do tabuleiro de game.js para `engine/board-renderer.js` | ⏳ Pendente |
-| **A7** | QuestionCatalog: extrair `bancoQuestoes` para `data/questions/*`. ChallengeSystem lê por categoria | ⏳ Pendente |
-| **A8** | ChallengeSystem: extrair `showChallengeModal`, `sortearQuestao`, lógica para `engine/challenge-system.js` | ⏳ Pendente |
-| **A9** | BotController + VictorySystem: extrair bot AI e vitória para módulos do engine | ⏳ Pendente |
-| **A10** | PortalManager: extrair lógica de portal de game.js para `engine/portal-manager.js` | ⏳ Pendente |
-| **A11** | CampaignSystem: `engine/campaign-system.js`. Modo Carreira com sequência de mundos | ⏳ Pendente |
-| **A12** | Vale dos Dinossauros: criar `worlds/vale-dinossauros/config.js`. Testar "apenas configuração" | ⏳ Pendente |
+| **A6** | Vale dos Dinossauros: criar `worlds/dinossauros/config.js`. Testar "apenas configuração" | ✅ Concluído |
+| **A6 (continuação)** | Caverna dos Fósseis: criar submundo, eventos, portal, debug | ✅ Concluído |
+| **A6.3** | ThemeManager: aplicar tema visual do WorldConfig (cores, gradientes, CSS class) ao tabuleiro e painel | ✅ Concluído |
+| **A6.6** | Portal genérico: `activeSubworldId` substitui `mundoAtual`, lookup em `subworldConfigs`, sem hardcoded | ✅ Concluído |
+| **A7** | BoardRenderer: extrair renderização do tabuleiro de game.js para `engine/board-renderer.js` | ⏳ Pendente |
+| **A8** | QuestionCatalog: extrair `bancoQuestoes` para `data/questions/*`. ChallengeSystem lê por categoria | ⏳ Pendente |
+| **A9** | ChallengeSystem: extrair `showChallengeModal`, `sortearQuestao`, lógica para `engine/challenge-system.js` | ⏳ Pendente |
+| **A10** | BotController + VictorySystem: extrair bot AI e vitória para módulos do engine | ⏳ Pendente |
+| **A11** | PortalManager: extrair lógica de portal de game.js para `engine/portal-manager.js` | ⏳ Pendente |
+| **A12** | CampaignSystem: `engine/campaign-system.js`. Modo Carreira com sequência de mundos | ⏳ Pendente |
 | **A13** | CustomEventHandlers: implementar handlers customizados no EventProcessor para eventos de mundo | ⏳ Pendente |
 | **A14** | Assets Dinâmicos: carregamento sob demanda de assets declarados no config | ⏳ Pendente |
 | **A15** | Polimento: overlays dinâmicos, MenuController genérico, testes de regressão | ⏳ Pendente |
@@ -587,7 +610,44 @@ Ideias registradas para sprints futuras (fora do escopo atual):
 
 ---
 
-## Arquivos Alterados (Sprints A0–A4)
+## 15. Marco 5 — Primeiro Ecossistema Multi-Mundos (v0.10.0-preview)
+
+### O que foi entregue
+
+- **Dois mundos completos**: Floresta Encantada e Vale dos Dinossauros, cada um com 20 casas, eventos temáticos, portal próprio
+- **Duas Áreas Especiais**: Floresta Misteriosa (submundo da Floresta) e Caverna dos Fósseis (submundo do Vale), cada uma com 8 casas e eventos próprios
+- **Portal genérico**: o estado de submundo (`activeSubworldId`, `subworldEntry`) substituiu as variáveis hardcoded `mundoAtual`, `entradaFloresta`, `entradaCaverna`
+- **Retorno parametrizado**: o bônus de saída é lido do WorldConfig (`worldExit.params.bonusCells`) — Floresta +3, Caverna +2
+- **Theme Engine**: tema visual aplicado via `data-world` no `<body>`, CSS temático para cada mundo, decorações dinâmicas injetadas via JS
+- **Debug independente**: botões específicos para cada Área Especial no painel de debug
+- **Zero alterações na Engine**: nenhum arquivo em `src/engine/`, `src/core/`, `src/data/` ou `src/worlds/loader.js` foi modificado
+
+### Impacto na Arquitetura
+
+| Componente | Antes (v0.9.0) | Depois (v0.10.0) |
+|---|---|---|
+| Estado de submundo | `mundoAtual`, `entradaFloresta`, `entradaCaverna` | `activeSubworldId`, `subworldEntry` |
+| Lookup de dados | `getTotalCasas()` com switch implícito | `getSubworldConfig()` via `subworldConfigs[id]` |
+| Portal | Hardcoded na casa 11, "Portal da Floresta" fixo | `getPortalConfigForCell()` lê de `currentWorldConfig.portals` |
+| Eventos de área especial | `florestaEspeciais[]` separado | `eventsToSpecialCells()` converte qualquer config |
+| Tema visual | Classe `.mundo-floresta` fixa | `data-world` dinâmico, CSS class do config |
+| Quantidade de mundos | 1 (Floresta) | 2 (Floresta + Dinossauros) |
+| Quantidade de submundos | 1 (Floresta Misteriosa) | 2 (Floresta Misteriosa + Caverna dos Fósseis) |
+
+### Como criar um novo mundo + área especial
+
+1. Criar `src/worlds/novo-mundo/config.js` exportando o WorldConfig com `board`, `events`, `portals`
+2. Criar submundo com `type: "subworld"` no mesmo arquivo (ou separado)
+3. Importar ambos em `src/game.js` e adicionar ao `WorldRegistry.init()` e `subworldConfigs`
+4. Adicionar botões de debug em `src/index.html` dentro do `#debug-panel`
+
+**Nenhuma engine modificada.**
+
+---
+
+## Arquivos Alterados (Sprints A0–A6.6)
+
+### Documentação criada/alterada
 
 ### Documentação criada/alterada
 
@@ -635,8 +695,4 @@ Ideias registradas para sprints futuras (fora do escopo atual):
 
 ---
 
-**Sprints A0.2–A5.2 concluídas.** A arquitetura do motor de mundos está documentada
-e implementada. O WorldRegistry está em produção desde a Sprint A5.1: inicializado
-no bootstrap, populando `currentWorldConfig` e consumido pelos getters do jogo.
-O jogo executa a partir de `game.js` como ES Module. Os demais módulos (EventProcessor,
-StateManager, SessionManager) estão pendentes de conexão nas sprints A5.3–A5.4.
+**Sprints A0.2–A6.6 concluídas (v0.10.0-preview).** O motor de mundos está consolidado com dois mundos completos, duas áreas especiais, portal genérico e Theme Engine em produção. A engine modular (EventProcessor, StateManager, SessionManager) e os getters world-aware consomem WorldConfigs sem hardcoded. Nenhum arquivo da engine foi alterado na adição do segundo mundo — a Regra de Ouro foi validada com sucesso.

@@ -81,45 +81,38 @@
 - **Sprint A5.1** — Engine em produção (WorldRegistry init, currentWorldConfig populado, game.js como ES Module)
 - **Sprint A5.2** — Board do WorldConfig consumido por getters do jogo
 
+### v0.10.0-preview — Vale dos Dinossauros e Ecossistema Multi-Mundos
+- **🦖 Vale dos Dinossauros** — segundo mundo completo com 20 casas, eventos temáticos e portal na casa 10
+- **🦴 Caverna dos Fósseis** — segunda Área Especial (submundo), 8 casas, eventos próprios, retorno +2
+- **Portal genérico** — `activeSubworldId` substitui `mundoAtual` hardcoded
+- **Retorno parametrizado** — bônus lido do WorldConfig (Floresta +3, Caverna +2)
+- **Theme Engine** — tema visual por mundo via `data-world` no body
+- **Debug da Caverna** — botões específicos no painel `?debug=1`
+- **Sprint A6.3** — Theme Manager em produção
+- **Sprint A6.5** — Config e debug da Caverna dos Fósseis
+- **Sprint A6.6** — Portal genérico sem hardcoded
+- **Arquitetura consolidada** — dois mundos, duas áreas, zero alterações na engine
+- Cache-busting via `?v=20260706`
+
 ## Futuro
 
-### A5.3 — ThemeManager
-- Aplicar tema visual do WorldConfig (cores, gradientes, CSS class) ao tabuleiro
+### A7 — Theme Engine Completa
+- Temas visuais completos para todos os mundos atuais
+- Decorações dinâmicas por configuração (não mais injetadas via JS)
+- Transições suaves entre temas
 
-### A5.4 — EventProcessor + StateManager
-- Conectar ao game.js para processar eventos de célula via engine
-
-### A6 — BoardRenderer
-- Extrair renderização do tabuleiro de game.js para `engine/board-renderer.js`
-
-### A7 — QuestionCatalog
+### A8 — Question Engine
 - Extrair bancoQuestoes para `data/questions/*.js`
+- ChallengeSystem como módulo independente
+- Categorias de perguntas reutilizáveis entre mundos
 
-### A8 — ChallengeSystem
-- Extrair showChallengeModal e lógica de desafio para `engine/challenge-system.js`
+### A9 — Galáxia Estelar
+- Criar `worlds/galaxia/config.js`
+- Terceiro mundo completo com eventos espaciais
+- Validar processo de adição de novo mundo
 
-### A9 — BotController + VictorySystem
-- Extrair bot AI e vitória para módulos do engine
-
-### A10 — PortalManager
-- Extrair lógica de portal de game.js para `engine/portal-manager.js`
-
-### A11 — CampaignSystem
-- Modo Carreira com sequência de mundos
-
-### A12 — Vale dos Dinossauros
-- Criar `worlds/vale-dinossauros/config.js` — testar "apenas configuração"
-
-### A13 — CustomEventHandlers
-- Implementar handlers customizados no EventProcessor
-
-### A14 — Assets Dinâmicos
-- Carregamento sob demanda de assets declarados no config
-
-### A15 — Polimento
-- Overlays dinâmicos, MenuController genérico, testes de regressão
-
-### v1.0.0 — Lançamento Oficial
-- Versão estável
-- Documentação completa
-- Deploy oficial
+### UX 2.0 — Redesign Visual Completo
+- Sprites PNG para personagens
+- Sons e músicas
+- Animações refinadas
+- Suporte mobile-first completo

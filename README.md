@@ -18,8 +18,8 @@
 
 | Versão | Data | Status |
 |--------|------|--------|
-| **v0.9.0-preview** | Jul/2026 | ✅ **Ativo** |
-| v0.8.1 | Jul/2026 | ✅ Concluído |
+| **v0.10.0-preview** | Jul/2026 | ✅ **Ativo** |
+| v0.9.0-preview | Jul/2026 | ✅ Concluído |
 | v0.8.0 | Jul/2026 | ✅ Concluído |
 | v0.7.0 | Jul/2026 | ✅ Concluído |
 | v0.6.0 | Jul/2026 | ✅ Concluído |
@@ -31,13 +31,16 @@
 
 ---
 
-## ✨ Funcionalidades Atuais (v0.9.0-preview)
+## ✨ Funcionalidades Atuais (v0.10.0-preview)
 
 ### Seletor de Mundos
 
-- **Tela de seleção de mundo** — após clicar em "⚡ Jogo Rápido", 6 cards de mundos são exibidos (Floresta, 4 "Em breve" bloqueados, Aleatório)
-- **Floresta Encantada** — único mundo disponível no momento, com 20 casas, desafios educativos e portal para submundo
-- **Mundo Aleatório** — seleciona Floresta automaticamente (fallback até mais mundos serem adicionados)
+- **Tela de seleção de mundo** — após clicar em "⚡ Jogo Rápido", 6 cards de mundos são exibidos (Floresta, Dinossauros, 3 "Em breve" bloqueados, Aleatório)
+- **🌳 Floresta Encantada** — mundo com 20 casas, desafios educativos e portal para Área Especial (Floresta Misteriosa)
+- **🦖 Vale dos Dinossauros** — segundo mundo disponível, com 20 casas, desafios educativos e portal para Área Especial (Caverna dos Fósseis)
+- **🌲 Área Especial (Floresta Misteriosa)** — submundo de 8 casas acessado pelo portal da Floresta, com desafios próprios e retorno parametrizado
+- **🦴 Área Especial (Caverna dos Fósseis)** — submundo de 8 casas acessado pelo portal do Vale, com desafios próprios e retorno parametrizado
+- **Mundo Aleatório** — seleciona um mundo aleatório entre os disponíveis
 - **Cards "Em breve"** — visualmente bloqueados com badge "🔒 Em breve", sem ação ao clicar
 
 ### Menu Inicial
@@ -63,23 +66,23 @@
 - **Botão "🔁 Jogar Novamente"** — reinicia a partida no mesmo modo (Jogo Rápido mantém single player)
 - **Botão "🏠 Voltar ao Menu"** — retorna ao menu inicial para escolher outro modo
 
-### Mundo da Floresta e Sistema de Portais
+### Sistema de Mundos e Áreas Especiais
 
-- **Portal da Floresta** — casa 11 funciona como portal para o Mundo da Floresta
-- **Modal de entrada** — ao cair na casa 11, um modal oferece "Entrar" ou "Continuar"
-- **Mundo da Floresta** — mini jogo separado com trilha própria de 8 casas
-- **Visual temático** — fundo verde escuro, decorações de árvores, cogumelos, folhas
-- **Jogador ativo na floresta** — apenas o jogador que entrou joga na floresta
-- **Outro jogador oculto** — o sprite do outro jogador não aparece no tabuleiro da floresta
-- **Turno bloqueado na floresta** — o turno não alterna enquanto o jogador estiver na floresta
-- **Casas da floresta**:
-  - Casa 3 → 🐾 Desafio da Floresta (pergunta educativa)
-  - Casa 5 → 🌿 Atalho de Saída (volta ao mundo principal com +2)
-  - Casa 7 → 🦉 Enigma do Guardião (pergunta educativa)
-  - Casa 8 → 🚪 Saída da Floresta (volta ao mundo principal com +3)
-- **Posição salva por jogador** — cada jogador tem sua própria posição de entrada na floresta
+- **Dois mundos completos** — 🌳 Floresta Encantada e 🦖 Vale dos Dinossauros, cada um com 20 casas, eventos e portal próprio
+- **Áreas Especiais** — cada mundo pode conter uma área especial (submundo) acessada via portal:
+  - 🌲 **Floresta Misteriosa** (submundo da Floresta) — 8 casas, mini-trilha com visual temático
+  - 🦴 **Caverna dos Fósseis** (submundo do Vale) — 8 casas, mini-trilha com visual temático
+- **Portal** — casa específica que abre modal perguntando se deseja entrar na Área Especial
+- **Modal de entrada** — ao cair na casa do portal, um modal oferece "Entrar" ou "Continuar"
+- **Jogador ativo na área especial** — apenas o jogador que entrou joga na área
+- **Outro jogador oculto** — o sprite do outro jogador não aparece no tabuleiro da área
+- **Turno bloqueado** — o turno não alterna enquanto o jogador estiver na área especial
+- **Casas especiais próprias** — cada área define seus próprios eventos (desafios, atalhos, saída)
+- **Posição salva por jogador** — cada jogador tem sua própria posição de entrada na área
+- **Retorno parametrizado** — ao sair, o jogador avança `bonusCells` (definido no WorldConfig) a partir da posição de entrada
 - **Retorno sem cascata** — ao voltar ao mundo principal, o bônus não dispara outras casas especiais
-- **Modo debug** — ativado por `?debug=1` na URL, exibe painel com botões para teste rápido
+- **Modo debug** — ativado por `?debug=1` na URL, exibe painel com botões para teste rápido de cada área
+- **Portal genérico** — a engine não conhece nomes de mundos ou áreas; toda navegação é baseada em configuração (`targetWorldId`, `bonusCells`, etc.)
 
 ---
 
@@ -193,7 +196,7 @@
 
 ## 📜 História do Projeto
 
-O Lara World começou como um MVP de tabuleiro simples para 1 jogador. A primeira versão (v0.1.0) implementou a lógica básica do jogo com dados, casas especiais e Docker. Na sequência (v0.1.5) recebeu um tabuleiro visual com trilha serpentina, personagem animado e painel lateral. A versão v0.2.0 adicionou multiplayer local com alternância de turnos entre 2 jogadores. A v0.3.0 introduziu o modal de configuração inicial com nomes e sprites personalizáveis. A v0.4.0 adicionou 5 casas de desafios educativos com perguntas de múltipla escolha. A v0.5.0 substituiu as perguntas fixas por um **Banco de Questões** com 30 perguntas. A v0.6.0 adicionou o **Mundo da Floresta** com portal na casa 11, sistema de portais, mini-trilha de 8 casas com mecânicas exclusivas e modo debug. A v0.7.0 adicionou o **modo Single Player (Humano vs Máquina)** com bot inteligente, tela de vitória com confetes e correções de cascata. A v0.8.0 adicionou um **Menu Inicial** com opções "⚡ Jogo Rápido" (single player) e "🏆 Modo Carreira (Em Breve)", além de uma tela de vitória com dois botões de saída (Jogar Novamente e Voltar ao Menu). A versão atual (v0.9.0-preview) inicia a **Fase de Mundos** com seletor de mundos, motor modular (SessionManager, StateManager, WorldRegistry, EventProcessor) e o primeiro WorldConfig (Floresta Encantada + Floresta Misteriosa) — tudo coexistindo com o jogo original.
+O Lara World começou como um MVP de tabuleiro simples para 1 jogador. A primeira versão (v0.1.0) implementou a lógica básica do jogo com dados, casas especiais e Docker. Na sequência (v0.1.5) recebeu um tabuleiro visual com trilha serpentina, personagem animado e painel lateral. A versão v0.2.0 adicionou multiplayer local com alternância de turnos entre 2 jogadores. A v0.3.0 introduziu o modal de configuração inicial com nomes e sprites personalizáveis. A v0.4.0 adicionou 5 casas de desafios educativos com perguntas de múltipla escolha. A v0.5.0 substituiu as perguntas fixas por um **Banco de Questões** com 30 perguntas. A v0.6.0 adicionou o **Mundo da Floresta** com portal na casa 11, sistema de portais, mini-trilha de 8 casas com mecânicas exclusivas e modo debug. A v0.7.0 adicionou o **modo Single Player (Humano vs Máquina)** com bot inteligente, tela de vitória com confetes e correções de cascata. A v0.8.0 adicionou um **Menu Inicial** com opções "⚡ Jogo Rápido" (single player) e "🏆 Modo Carreira (Em Breve)", além de uma tela de vitória com dois botões de saída (Jogar Novamente e Voltar ao Menu). A v0.9.0-preview iniciou a **Fase de Mundos** com seletor de mundos, motor modular (SessionManager, StateManager, WorldRegistry, EventProcessor) e o primeiro WorldConfig (Floresta Encantada + Floresta Misteriosa). A versão atual (v0.10.0-preview) consolida o **primeiro ecossistema multi-mundos** com a integração completa do Vale dos Dinossauros, da Caverna dos Fósseis, portal genérico baseado em configuração, Theme Engine em produção e debug independente para cada área.
 
 ---
 
@@ -253,7 +256,7 @@ docker compose down
 ## 🗺️ Roadmap
 
 - **v0.9.0-preview** — ✅ Concluído — Seletor de mundos, motor modular, primeiro WorldConfig
-- **v0.10.0** — Sprites PNG, sons, melhorias visuais
+- **v0.10.0-preview** — ✅ **Ativo** — Vale dos Dinossauros, Caverna dos Fósseis, portal genérico, Theme Engine
 - **v1.0.0** — Lançamento oficial
 
 Veja o [roadmap completo](docs/roadmap.md).
