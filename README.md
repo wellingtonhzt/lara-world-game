@@ -18,7 +18,8 @@
 
 | Versão | Data | Status |
 |--------|------|--------|
-| **v0.8.0** | Jul/2026 | ✅ **Ativo** |
+| **v0.8.1** | Jul/2026 | ✅ **Ativo** |
+| v0.8.0 | Jul/2026 | ✅ Concluído |
 | v0.7.0 | Jul/2026 | ✅ Concluído |
 | v0.6.0 | Jul/2026 | ✅ Concluído |
 | v0.5.0 | Jul/2026 | ✅ Concluído |
