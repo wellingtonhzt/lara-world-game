@@ -1575,11 +1575,11 @@ body[data-world="dinossauros"] #track-container:not(.mundo-floresta) {
   box-shadow: inset 0 0 30px rgba(139, 90, 43, 0.15);
 }
 
-body[data-world="dinossauros"] #track-container:not(.mundo-floresta) .deco:not(.dino-deco) {
+body[data-world="dinossauros"] #track-container:not(.mundo-floresta) .deco:not(.theme-deco) {
   display: none;
 }
 
-body[data-world="dinossauros"] .dino-deco {
+body[data-world="dinossauros"] .theme-deco {
   display: block;
   position: absolute;
   z-index: 0;
@@ -1588,14 +1588,14 @@ body[data-world="dinossauros"] .dino-deco {
   line-height: 1;
 }
 
-.dino-deco { display: none; }
+.theme-deco { display: none; }
 
-.dino-deco-palm-1 { bottom: 6%; right: 2%; font-size: 2.8rem; }
-.dino-deco-palm-2 { bottom: 14%; left: 3%; font-size: 2.2rem; }
-.dino-deco-volcano { top: 2%; right: 4%; font-size: 2.6rem; opacity: 0.8; }
-.dino-deco-rock-1 { bottom: 8%; left: 14%; font-size: 1.6rem; }
-.dino-deco-rock-2 { bottom: 20%; right: 12%; font-size: 1.4rem; }
-.dino-deco-dino { bottom: 2%; left: 10%; font-size: 2rem; }
+.deco-palm-1 { bottom: 6%; right: 2%; font-size: 2.8rem; }
+.deco-palm-2 { bottom: 14%; left: 3%; font-size: 2.2rem; }
+.deco-volcano { top: 2%; right: 4%; font-size: 2.6rem; opacity: 0.8; }
+.deco-rock-1 { bottom: 8%; left: 14%; font-size: 1.6rem; }
+.deco-rock-2 { bottom: 20%; right: 12%; font-size: 1.4rem; }
+.deco-dino { bottom: 2%; left: 10%; font-size: 2rem; }
 
 body[data-world="dinossauros"] #track-container:not(.mundo-floresta) #trail-path {
   stroke: #c48a3a;
@@ -1802,3 +1802,4 @@ body[data-world="dinossauros"] .casa-vitoria {
   font-family: monospace;
 }
 .debug-btn:hover { background: #444; }
+.debug-separator { border: none; border-top: 1px solid #0f0; margin: 4px 0; opacity: 0.4; }

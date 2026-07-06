@@ -44,10 +44,10 @@ export const valeDosDinossauros = {
       20: { x: 10, y: 82 },
     },
     cellIcons: [
-      '\uD83C\uDF1F', '\uD83C\uDF34', '\uD83E\uDEB4', '\uD83E\uDD5A', '\uD83E\uDD96',
-      '\uD83C\uDF0B', '\uD83E\uDEA8', '\uD83E\uDD5A', '\uD83E\uDD95', '\uD83C\uDF0B',
-      '\uD83C\uDF34', '\uD83E\uDEB4', '\uD83E\uDD96', '\uD83E\uDD95', '\uD83E\uDEA8',
-      '\uD83C\uDF0B', '\uD83E\uDD5A', '\uD83E\uDEB4', '\uD83C\uDF34', '\uD83C\uDFC1',
+      '\uD83C\uDF1F', '\uD83E\uDEB4', '\uD83C\uDF3F', '\uD83E\uDD95', '\uD83C\uDF34',
+      '\uD83E\uDEA8', '\u26F0\uFE0F', '\uD83E\uDD5A', '\uD83C\uDF0B', '\uD83C\uDF40',
+      '\uD83E\uDD96', '\uD83D\uDC3E', '\uD83E\uDEB4', '\uD83E\uDEA8', '\uD83C\uDF34',
+      '\uD83E\uDEA8', '\uD83C\uDF0B', '\uD83E\uDD85', '\uD83E\uDD96', '\uD83C\uDFC1',
     ],
   },
 
@@ -112,38 +112,38 @@ export const valeDosDinossauros = {
   // ── Events ──
 
   events: {
-    3: [
-      { type: 'move', params: { delta: 2 }, description: '\uD83E\uDEB4 Encontrou um f\u00f3ssil! Avance 2 casas.' },
+    2: [
+      { type: 'challenge', description: '\uD83E\uDEB4 F\u00f3ssil raro encontrado! Responda ao desafio.' },
     ],
     4: [
-      { type: 'challenge', description: '\uD83E\uDD5A Desafio do Ninho!' },
+      { type: 'move', params: { delta: 3 }, description: '\uD83E\uDD95 Um Diplodoco amigo te empurra! Avance 3 casas.' },
     ],
-    5: [
-      { type: 'move', params: { delta: -1 }, description: '\uD83E\uDD96 Um T-Rex apareceu! Volte 1 casa.' },
-    ],
-    7: [
-      { type: 'challenge', description: '\uD83E\uDEA8 Desafio das Rochas!' },
+    6: [
+      { type: 'move', params: { delta: -2 }, description: '\uD83E\uDEA8 Rocha no caminho! Volte 2 casas.' },
     ],
     8: [
-      { type: 'extraTurn', description: '\uD83E\uDD5A Ninho de dinossauro. Jogue novamente!' },
+      { type: 'extraTurn', description: '\uD83E\uDD5A O ovo brilha misteriosamente... Jogue novamente!' },
+    ],
+    9: [
+      { type: 'challenge', description: '\uD83C\uDF0B Tremor de terra! Responda ao desafio para manter o equil\u00edbrio.' },
     ],
     10: [
-      { type: 'skipTurn', params: { count: 1 }, description: '\uD83C\uDF0B Vulc\u00e3o ativo! Perdeu uma rodada.' },
+      { type: 'portal', params: { portalId: 'portal-caverna-fosseis' }, description: '\uD83E\uDEB4 Portal da Caverna dos F\u00f3sseis' },
     ],
-    12: [
-      { type: 'challenge', description: '\uD83E\uDEB4 Desafio dos F\u00f3sseis!' },
+    11: [
+      { type: 'move', params: { delta: -4 }, description: '\uD83E\uDD96 T-Rex faminto! Corra 4 casas para tr\u00e1s!' },
     ],
-    14: [
-      { type: 'challenge', description: '\uD83E\uDD95 Desafio das Pegadas!' },
+    13: [
+      { type: 'challenge', description: '\uD83D\uDC3E Pegadas enormes! Responda ao desafio para seguir a trilha.' },
     ],
     15: [
-      { type: 'resetPosition', description: '\uD83E\uDEA8 Escorregou nas rochas! Volte ao in\u00edcio.' },
+      { type: 'move', params: { delta: 1 }, description: '\uD83C\uDF34 Esconderijo seguro! Avance 1 casa protegido.' },
     ],
-    16: [
-      { type: 'challenge', description: '\uD83C\uDF0B Desafio do Vulc\u00e3o!' },
+    17: [
+      { type: 'skipTurn', params: { count: 1 }, description: '\uD83C\uDF0B Lava obstrui a passagem! Perdeu uma rodada.' },
     ],
-    18: [
-      { type: 'challenge', description: '\uD83E\uDEB4 Desafio dos Ossos!' },
+    19: [
+      { type: 'challenge', description: '\uD83E\uDD85 Pterod\u00e1ctilo ataca! Responda ao desafio.' },
     ],
     20: [
       { type: 'finishWorld', description: '\uD83C\uDFC1 Voc\u00ea escapou do Vale dos Dinossauros!' },
@@ -152,7 +152,33 @@ export const valeDosDinossauros = {
 
   // ── Portals ──
 
-  portals: [],
+  portals: [
+    {
+      id: 'portal-caverna-fosseis',
+      name: '\uD83E\uDEB4 Caverna dos F\u00f3sseis',
+      description: 'Uma antiga caverna cheia de f\u00f3sseis e cristais.',
+      sourceCell: 10,
+      type: 'fixed',
+      targetWorldId: 'caverna-dos-fosseis',
+      entrance: {
+        message: 'Voc\u00EA encontrou a entrada de uma caverna antiga! Deseja explorar?',
+        effect: null,
+        requiresConfirmation: true,
+        requirements: null,
+      },
+      exitBehavior: {
+        returnCell: null,
+        bonusCells: 0,
+        message: '\u2728 Retornou ao Vale dos Dinossauros!',
+        clearsPenalties: false,
+      },
+      lifetime: {
+        maxActivations: null,
+        expiresAfterTurn: null,
+        expiresOnComplete: false,
+      },
+    },
+  ],
 
   // ── Question Categories ──
 
@@ -204,6 +230,159 @@ export const valeDosDinossauros = {
   },
 
   // ── Custom Event Handlers ──
+
+  customEventHandlers: {},
+};
+
+export const cavernaDosFosseis = {
+  id: 'caverna-dos-fosseis',
+  name: '\uD83E\uDEB4 Caverna dos F\u00f3sseis',
+  description: 'Uma antiga caverna onde paleont\u00f3logos encontraram f\u00f3sseis gigantes, cristais brilhantes e o esqueleto de um temido T-Rex.',
+  icon: '\uD83E\uDEB4',
+  thumbnail: null,
+  version: '1.0.0',
+  type: 'subworld',
+
+  board: {
+    totalCells: 8,
+    startCell: 1,
+    finishCell: 8,
+    pathType: 'linear',
+    positions: {
+      1: { x: 10, y: 15 },
+      2: { x: 28, y: 15 },
+      3: { x: 46, y: 18 },
+      4: { x: 64, y: 22 },
+      5: { x: 72, y: 42 },
+      6: { x: 58, y: 58 },
+      7: { x: 38, y: 62 },
+      8: { x: 18, y: 66 },
+    },
+    cellIcons: [
+      '\uD83D\uDEAA', '\uD83D\uDC8E', '\uD83E\uDEB4', '\uD83E\uDD5A',
+      '\uD83E\uDEA8', '\uD83E\uDD96', '\uD83C\uDFC6', '\uD83C\uDFC1',
+    ],
+  },
+
+  theme: {
+    themeId: 'caverna-dos-fosseis',
+    cssClass: 'mundo-caverna-fosseis',
+    background: {
+      type: 'gradient',
+      value: 'linear-gradient(to bottom, #2d1b0e 0%, #4a3020 30%, #3a2515 60%, #1a0f08 100%)',
+    },
+    colors: {
+      primary: '#ff8f00',
+      secondary: '#5d4037',
+      accent: '#ffd54f',
+      background: '#2d1b0e',
+      text: '#f5e6d3',
+      cellDefault: '#4a3020',
+      cellSpecial: '#5d4037',
+    },
+    decorations: [
+      { type: 'emoji', content: '\uD83D\uDDA4', className: 'caverna-deco-crystal-1' },
+      { type: 'emoji', content: '\uD83D\uDDA4', className: 'caverna-deco-crystal-2' },
+      { type: 'emoji', content: '\uD83E\uDEB4', className: 'caverna-deco-fossil-1' },
+      { type: 'emoji', content: '\uD83E\uDEB4', className: 'caverna-deco-fossil-2' },
+      { type: 'emoji', content: '\uD83E\uDD96', className: 'caverna-deco-trex' },
+      { type: 'emoji', content: '\uD83E\uDEA8', className: 'caverna-deco-rock' },
+    ],
+    music: {
+      theme: null,
+      portal: null,
+      victory: null,
+    },
+  },
+
+  rules: {
+    diceFaces: 6,
+    passStartBonus: false,
+    allowBackMovement: true,
+    slipChance: 0,
+    slipDelta: 0,
+  },
+
+  objectives: [
+    {
+      type: 'reachEnd',
+      params: { cell: 8 },
+      label: 'Explorar a caverna e retornar ao Vale dos Dinossauros!',
+      optional: false,
+    },
+  ],
+
+  events: {
+    2: [
+      { type: 'move', params: { delta: 1 }, description: '\uD83D\uDC8E Cristais antigos iluminam o caminho! Avance 1 casa.' },
+    ],
+    3: [
+      { type: 'challenge', description: '\uD83E\uDEB4 F\u00f3sseis gigantes bloqueiam a passagem! Responda ao desafio.' },
+    ],
+    4: [
+      { type: 'extraTurn', description: '\uD83E\uDD5A Um ovo pr\u00e9-hist\u00f3rico brilha... Jogue novamente!' },
+    ],
+    5: [
+      { type: 'move', params: { delta: -2 }, description: '\uD83E\uDEA8 Passagem estreita! Volte 2 casas.' },
+    ],
+    6: [
+      { type: 'challenge', description: '\uD83E\uDD96 O esqueleto do T-Rex guarda um segredo! Responda ao desafio.' },
+    ],
+    7: [
+      { type: 'move', params: { delta: 2 }, description: '\uD83C\uDFC6 F\u00f3ssil rar\u00edssimo encontrado! Avance 2 casas.' },
+    ],
+    8: [
+      { type: 'worldExit', params: { bonusCells: 2 }, description: '\uD83D\uDEAA Sa\u00edda da Caverna' },
+    ],
+  },
+
+  portals: [],
+
+  questionCategories: [
+    'dinossauros',
+    'natureza',
+    'animais',
+  ],
+
+  assets: {
+    backgrounds: {
+      main: null,
+      loading: null,
+      victory: null,
+      portal: null,
+    },
+    sprites: {
+      cristais: null,
+      fossil: null,
+      ovo: null,
+      trex: null,
+      caverna: null,
+    },
+    sounds: {
+      dice: null,
+      move: null,
+      portal: null,
+      challenge: null,
+      victory: null,
+    },
+    music: {
+      theme: null,
+      portal: null,
+      victory: null,
+    },
+    ui: {
+      icon: null,
+      banner: null,
+    },
+  },
+
+  ui: {
+    worldName: 'Caverna dos F\u00f3sseis',
+    subtitle: 'Antigas cavernas de f\u00f3sseis e cristais.',
+    initialMessage: '\uD83E\uDEB4 Bem-vindo \u00e0 Caverna dos F\u00f3sseis!',
+    worldIndicator: '\uD83E\uDEB4 Mundo da Caverna',
+    victoryTitle: 'Caverna Explorada!',
+  },
 
   customEventHandlers: {},
 };

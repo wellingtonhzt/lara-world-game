@@ -1,5 +1,7 @@
 import { get, getDefault } from './engine/world-registry.js';
 import { loadAllWorlds } from './worlds/loader.js';
+import { florestaMisteriosa } from './worlds/floresta/config.js';
+import { cavernaDosFosseis } from './worlds/dinossauros/config.js';
 
 (function () {
   const TOTAL_CASAS = 20;
@@ -17,8 +19,8 @@ import { loadAllWorlds } from './worlds/loader.js';
     jogoFinalizado: false,
     isMoving: false,
     questoesUsadas: new Set(),
-    mundoAtual: "principal",
-    entradaFloresta: { 1: null, 2: null },
+    activeSubworldId: null,
+    subworldEntry: { 1: null, 2: null },
     entrouNoPortal: false,
   };
 
@@ -29,27 +31,50 @@ import { loadAllWorlds } from './worlds/loader.js';
   let modoJogo = null;
   let drawState = { rolls: [null, null], drawWinnerIndex: null };
 
+  /* ── Subworld config map ── */
+
+  const subworldConfigs = {
+    'floresta-misteriosa': florestaMisteriosa,
+    'caverna-dos-fosseis': cavernaDosFosseis,
+  };
+
+  /* ── Subworld helpers ── */
+
+  function getSubworldConfig() {
+    return gameState.activeSubworldId ? subworldConfigs[gameState.activeSubworldId] : null;
+  }
+
+  function getPortalConfigForCell(cell) {
+    const portals = currentWorldConfig?.portals;
+    if (!portals) return null;
+    return portals.find(p => p.sourceCell === cell) || null;
+  }
+
   /* ── World-aware helpers ── */
 
   function getTotalCasas() {
-    if (gameState.mundoAtual === "floresta") return FLORESTA_TOTAL;
+    const sw = getSubworldConfig();
+    if (sw) return sw.board.totalCells;
     const cfg = currentWorldConfig;
     return (cfg && cfg.board && cfg.board.totalCells) || TOTAL_CASAS;
   }
   function getCasasEspeciais() {
-    if (gameState.mundoAtual === "floresta") return florestaEspeciais;
+    const sw = getSubworldConfig();
+    if (sw) return eventsToSpecialCells(sw.events);
     if (currentWorldConfig && currentWorldConfig.events) {
       return eventsToSpecialCells(currentWorldConfig.events);
     }
     return casasEspeciais;
   }
   function getPosicoes() {
-    if (gameState.mundoAtual === "floresta") return florestaPosicoes;
+    const sw = getSubworldConfig();
+    if (sw) return sw.board.positions;
     const cfg = currentWorldConfig;
     return (cfg && cfg.board && cfg.board.positions) || boardPositions;
   }
   function getIcones() {
-    if (gameState.mundoAtual === "floresta") return florestaIcones;
+    const sw = getSubworldConfig();
+    if (sw) return sw.board.cellIcons;
     const cfg = currentWorldConfig;
     return (cfg && cfg.board && cfg.board.cellIcons) || icons;
   }
@@ -72,6 +97,8 @@ import { loadAllWorlds } from './worlds/loader.js';
         case 'portal': result[cell] = { tipo: 'portal', descricao: d }; break;
         case 'resetPosition': result[cell] = { tipo: 'voltar-inicio', valor: 0, descricao: d }; break;
         case 'finishWorld': result[cell] = { tipo: 'vitoria', valor: 0, descricao: d }; break;
+        case 'shortcut': result[cell] = { tipo: 'atalho', valor: ev.params?.bonusCells ?? 0, descricao: d }; break;
+        case 'worldExit': result[cell] = { tipo: 'saida-mundo', valor: ev.params?.bonusCells ?? 0, descricao: d }; break;
       }
     }
     return result;
@@ -145,30 +172,6 @@ import { loadAllWorlds } from './worlds/loader.js';
   };
 
   const questoesDisponiveis = Object.values(bancoQuestoes).flat();
-
-  /* ── Forest World ── */
-
-  const FLORESTA_TOTAL = 8;
-
-  const florestaPosicoes = {
-    1: { x: 12, y: 20 },
-    2: { x: 30, y: 20 },
-    3: { x: 48, y: 22 },
-    4: { x: 66, y: 30 },
-    5: { x: 70, y: 52 },
-    6: { x: 52, y: 62 },
-    7: { x: 34, y: 62 },
-    8: { x: 16, y: 70 },
-  };
-
-  const florestaIcones = ["🌲", "🍄", "🦊", "🌳", "🐿️", "🍃", "🦉", "👑"];
-
-  const florestaEspeciais = {
-    3: { tipo: "desafio", descricao: "🐾 Desafio da Floresta!" },
-    5: { tipo: "atalho", descricao: "🌿 Atalho de Saída" },
-    7: { tipo: "desafio", descricao: "🦉 Enigma do Guardião!" },
-    8: { tipo: "saida-mundo", descricao: "🚪 Saída da Floresta" },
-  };
 
   const boardPositions = {
     1:  { x: 10, y: 10 },
@@ -343,7 +346,7 @@ import { loadAllWorlds } from './worlds/loader.js';
     const cell = document.getElementById(`casa-${casaNumero}`);
     if (!cell) return;
 
-    if (gameState.mundoAtual === "floresta" && p.id !== getCurrentPlayer().id) {
+    if (gameState.activeSubworldId && p.id !== getCurrentPlayer().id) {
       el.classList.remove("visivel");
       return;
     }
@@ -499,55 +502,50 @@ import { loadAllWorlds } from './worlds/loader.js';
       }
       case "portal": {
         const entrou = await resolvePortal();
-        console.log("[PORTAL] entrou =", entrou);
         if (entrou) {
-          console.log("[PORTAL] Antes: mundoAtual=" + gameState.mundoAtual + ", isMoving=" + gameState.isMoving + ", rollBtn.disabled=" + elements.rollBtn.disabled);
-          gameState.entradaFloresta[player.id] = player.posicao;
-          console.log("[PORTAL] posicaoSalva =", gameState.posicaoSalva);
-          gameState.mundoAtual = "floresta";
-          console.log("[PORTAL] mundoAtual =", gameState.mundoAtual);
+          const portalCfg = getPortalConfigForCell(player.posicao);
+          const swId = portalCfg?.targetWorldId;
+          const swCfg = swId ? subworldConfigs[swId] : null;
+          const swName = swCfg?.name || 'Submundo';
+          const swClass = swCfg?.theme?.cssClass;
+          gameState.subworldEntry[player.id] = player.posicao;
+          gameState.activeSubworldId = swId;
           player.posicao = 0;
-          console.log("[PORTAL] player.posicao = 0");
           renderizarTrilha();
-          console.log("[PORTAL] renderizarTrilha done, total casas =", document.querySelectorAll(".casa").length, ", primeira casa id =", document.querySelector(".casa")?.id);
           renderSvgPath();
-          console.log("[PORTAL] renderSvgPath done");
-          elements.trackContainer.classList.add("mundo-floresta");
-          console.log("[PORTAL] classList add mundo-floresta, track-container className =", elements.trackContainer.className);
-          document.getElementById("world-indicator").classList.remove("hidden");
-          console.log("[PORTAL] world-indicator hidden =", document.getElementById("world-indicator").classList.contains("hidden"));
+          if (swClass) elements.trackContainer.classList.add(swClass);
+          const indicator = document.getElementById("world-indicator");
+          indicator.textContent = swCfg?.ui?.worldIndicator || swName;
+          indicator.classList.remove("hidden");
           players.forEach(p => positionPlayerAt(p.posicao, p));
-          console.log("[PORTAL] positionPlayerAt done for all players");
           updateUI();
-          console.log("[PORTAL] updateUI done, isMoving=" + gameState.isMoving + ", rollBtn.disabled=" + elements.rollBtn.disabled);
-          addHistory(`🌿 ${player.name} entrou no Mundo da Floresta!`, "especial");
+          addHistory(`✦ ${player.name} entrou em ${swName}!`, "especial");
           gameState.entrouNoPortal = true;
           gameState.isMoving = false;
           elements.rollBtn.disabled = false;
-          console.log("[PORTAL] FINAL: isMoving=" + gameState.isMoving + ", rollBtn.disabled=" + elements.rollBtn.disabled + ", mundoAtual=" + gameState.mundoAtual);
           updateUI();
-          console.log("[PORTAL] updateUI pos-final, rollBtn.disabled=" + elements.rollBtn.disabled);
           return true;
         } else {
-          addHistory(`➡️ ${player.name} seguiu no tabuleiro principal.`, "info");
+          addHistory(`\u279E ${player.name} seguiu no tabuleiro principal.`, "info");
           return false;
         }
       }
       case "atalho": {
-        const bonusA = 2;
-        const entradaA = gameState.entradaFloresta[player.id];
+        const bonusA = info.valor || 0;
+        const entradaA = gameState.subworldEntry[player.id];
+        const swCfgA = getSubworldConfig();
         const principalTotal = (currentWorldConfig && currentWorldConfig.board && currentWorldConfig.board.totalCells) || TOTAL_CASAS;
         const destinoA = Math.min(entradaA + bonusA, principalTotal);
-        gameState.mundoAtual = "principal";
-        gameState.entradaFloresta[player.id] = null;
+        gameState.activeSubworldId = null;
+        gameState.subworldEntry[player.id] = null;
         player.posicao = destinoA;
         renderizarTrilha();
         renderSvgPath();
-        elements.trackContainer.classList.remove("mundo-floresta");
+        if (swCfgA?.theme?.cssClass) elements.trackContainer.classList.remove(swCfgA.theme.cssClass);
         document.getElementById("world-indicator").classList.add("hidden");
         players.forEach(p => positionPlayerAt(p.posicao, p));
         updateUI();
-        addHistory(`🌿 ${player.name} pegou o Atalho da Floresta e voltou com +${bonusA} casas!`, "especial");
+        addHistory(`🔀 ${player.name} pegou um atalho e voltou com +${bonusA} casas!`, "especial");
         if (destinoA >= principalTotal) {
           await handleVictory();
           return false;
@@ -555,20 +553,21 @@ import { loadAllWorlds } from './worlds/loader.js';
         return false;
       }
       case "saida-mundo": {
-        const bonus = 3;
-        const entrada = gameState.entradaFloresta[player.id];
+        const bonus = info.valor || 0;
+        const entrada = gameState.subworldEntry[player.id];
+        const swCfgS = getSubworldConfig();
         const principalTotal = (currentWorldConfig && currentWorldConfig.board && currentWorldConfig.board.totalCells) || TOTAL_CASAS;
         const destino = Math.min(entrada + bonus, principalTotal);
-        gameState.mundoAtual = "principal";
-        gameState.entradaFloresta[player.id] = null;
+        gameState.activeSubworldId = null;
+        gameState.subworldEntry[player.id] = null;
         player.posicao = destino;
         renderizarTrilha();
         renderSvgPath();
-        elements.trackContainer.classList.remove("mundo-floresta");
+        if (swCfgS?.theme?.cssClass) elements.trackContainer.classList.remove(swCfgS.theme.cssClass);
         document.getElementById("world-indicator").classList.add("hidden");
         players.forEach(p => positionPlayerAt(p.posicao, p));
         updateUI();
-        addHistory(`✨ ${player.name} completou o Mundo da Floresta! Avançou ${bonus} casas!`, "especial");
+        addHistory(`✨ ${player.name} completou o submundo! Avan\u00e7ou ${bonus} casas!`, "especial");
         if (destino >= principalTotal) {
           await handleVictory();
           return false;
@@ -675,7 +674,7 @@ import { loadAllWorlds } from './worlds/loader.js';
   /* ── Main Action ── */
 
   async function jogarDado() {
-    console.log("[JOGAR] ENTER: isMoving=" + gameState.isMoving + ", rollBtn.disabled=" + elements.rollBtn.disabled + ", mundoAtual=" + gameState.mundoAtual + ", player.pos=" + getCurrentPlayer().posicao);
+    console.log("[JOGAR] ENTER: isMoving=" + gameState.isMoving + ", rollBtn.disabled=" + elements.rollBtn.disabled + ", activeSubworldId=" + gameState.activeSubworldId + ", player.pos=" + getCurrentPlayer().posicao);
     if (!gameState.jogoAtivo || gameState.jogoFinalizado || gameState.isMoving) {
       console.log("[JOGAR] GUARD BLOCKED: jogoAtivo=" + gameState.jogoAtivo + ", jogoFinalizado=" + gameState.jogoFinalizado + ", isMoving=" + gameState.isMoving);
       return;
@@ -717,8 +716,8 @@ import { loadAllWorlds } from './worlds/loader.js';
     addHistory(`🎲 ${player.name} tirou ${resultado} → casa ${target}`, "dado");
 
     if (target >= getTotalCasas()) {
-      console.log("[JOGAR] target >= total, mundo=" + gameState.mundoAtual);
-      if (gameState.mundoAtual === "floresta") {
+      console.log("[JOGAR] target >= total, activeSubworldId=" + gameState.activeSubworldId);
+      if (gameState.activeSubworldId) {
         await processSpecialCell(target);
         if (gameState.jogoFinalizado) {
           gameState.isMoving = false;
@@ -729,7 +728,7 @@ import { loadAllWorlds } from './worlds/loader.js';
         switchTurn();
         updateUI();
         unlockTurn();
-        console.log("[JOGAR] floresta completion, unlockTurn called");
+        console.log("[JOGAR] subworld completion, unlockTurn called");
         return;
       }
       await handleVictory();
@@ -737,9 +736,9 @@ import { loadAllWorlds } from './worlds/loader.js';
       return;
     }
 
-    console.log("[JOGAR] calling processSpecialCell(" + target + "), mundo=" + gameState.mundoAtual);
+    console.log("[JOGAR] calling processSpecialCell(" + target + "), activeSubworldId=" + gameState.activeSubworldId);
     const extraTurn = await processSpecialCell(target);
-    console.log("[JOGAR] processSpecialCell returned extraTurn=" + extraTurn + ", isMoving=" + gameState.isMoving + ", rollBtn.disabled=" + elements.rollBtn.disabled + ", mundo=" + gameState.mundoAtual);
+    console.log("[JOGAR] processSpecialCell returned extraTurn=" + extraTurn + ", isMoving=" + gameState.isMoving + ", rollBtn.disabled=" + elements.rollBtn.disabled + ", activeSubworldId=" + gameState.activeSubworldId);
 
     if (gameState.jogoFinalizado) {
       gameState.isMoving = false;
@@ -761,7 +760,7 @@ import { loadAllWorlds } from './worlds/loader.js';
     }
 
     console.log("[JOGAR] extraTurn false, switching turn");
-    if (gameState.mundoAtual !== "floresta") {
+    if (!gameState.activeSubworldId) {
       switchTurn();
     }
     updateUI();
@@ -778,8 +777,8 @@ import { loadAllWorlds } from './worlds/loader.js';
     gameState.jogoFinalizado = false;
     gameState.isMoving = false;
     gameState.questoesUsadas.clear();
-    gameState.mundoAtual = "principal";
-    gameState.entradaFloresta = { 1: null, 2: null };
+    gameState.activeSubworldId = null;
+    gameState.subworldEntry = { 1: null, 2: null };
     gameState.entrouNoPortal = false;
 
     elements.diceDisplay.textContent = "🎲";
@@ -805,34 +804,33 @@ import { loadAllWorlds } from './worlds/loader.js';
     showMainMenu();
   }
 
-  /* ── World Theme ── */
-
-  const dinoDecorations = [
-    { className: 'dino-deco dino-deco-palm-1', content: '\uD83C\uDF34' },
-    { className: 'dino-deco dino-deco-palm-2', content: '\uD83C\uDF34' },
-    { className: 'dino-deco dino-deco-volcano', content: '\uD83C\uDF0B' },
-    { className: 'dino-deco dino-deco-rock-1', content: '\uD83E\uDEA8' },
-    { className: 'dino-deco dino-deco-rock-2', content: '\uD83E\uDEA8' },
-    { className: 'dino-deco dino-deco-dino', content: '\uD83E\uDD96' },
-  ];
+  /* ── Theme Engine ── */
 
   function applyWorldTheme() {
-    if (currentWorldConfig && currentWorldConfig.id) {
-      document.body.dataset.world = currentWorldConfig.id;
-      if (currentWorldConfig.id === 'dinossauros') {
-        dinoDecorations.forEach(deco => {
-          const el = document.createElement('div');
-          el.className = 'deco ' + deco.className;
-          el.textContent = deco.content;
-          elements.trackContainer.appendChild(el);
-        });
-      }
+    const cfg = currentWorldConfig;
+    if (!cfg || !cfg.theme) return;
+
+    document.body.dataset.world = cfg.id;
+
+    const theme = cfg.theme;
+
+    /* Remove previously applied theme decorations */
+    document.querySelectorAll('.theme-deco').forEach(el => el.remove());
+
+    /* Apply decorations from config */
+    if (theme.decorations && Array.isArray(theme.decorations)) {
+      theme.decorations.forEach(deco => {
+        const el = document.createElement('div');
+        el.className = 'deco theme-deco ' + (deco.className || '');
+        el.textContent = deco.content || '';
+        elements.trackContainer.appendChild(el);
+      });
     }
   }
 
   function clearWorldTheme() {
     delete document.body.dataset.world;
-    document.querySelectorAll('.dino-deco').forEach(el => el.remove());
+    document.querySelectorAll('.theme-deco').forEach(el => el.remove());
   }
 
   /* ── Main Menu ── */
@@ -1218,11 +1216,21 @@ import { loadAllWorlds } from './worlds/loader.js';
 
   /* ── Portal Modal ── */
 
-  function showPortalModal() {
+  function showPortalModal(portalCfg) {
     return new Promise((resolve) => {
       const overlay = document.getElementById("portal-overlay");
+      const titleEl = overlay.querySelector("h2");
+      const msgEl = document.getElementById("portal-message");
       const entrarBtn = document.getElementById("portal-entrar-btn");
       const continuarBtn = document.getElementById("portal-continuar-btn");
+
+      if (portalCfg) {
+        titleEl.textContent = portalCfg.name || '\uD83C\uDF0D Portal';
+        msgEl.textContent = portalCfg.entrance?.message || 'Voc\u00EA encontrou um portal! Deseja entrar?';
+      } else {
+        titleEl.textContent = '\uD83C\uDF0D Portal';
+        msgEl.textContent = 'Voc\u00EA encontrou um portal! Deseja entrar?';
+      }
 
       entrarBtn.onclick = () => {
         overlay.classList.add("hidden");
@@ -1254,17 +1262,21 @@ import { loadAllWorlds } from './worlds/loader.js';
 
   async function resolvePortal() {
     const player = getCurrentPlayer();
+    const portalCfg = getPortalConfigForCell(player.posicao);
+    const swCfg = portalCfg?.targetWorldId ? subworldConfigs[portalCfg.targetWorldId] : null;
+    const swName = swCfg?.name || 'Submundo';
+
     if (player.isBot) {
       await delay(500);
       const entrou = Math.random() < 0.5;
       if (entrou) {
-        addHistory(`🤖 ${player.name} decidiu entrar no portal!`, "especial");
+        addHistory(`🤖 ${player.name} decidiu entrar em ${swName}!`, "especial");
       } else {
         addHistory(`🤖 ${player.name} decidiu continuar no tabuleiro.`, "info");
       }
       return entrou;
     }
-    return showPortalModal();
+    return showPortalModal(portalCfg);
   }
 
   /* ── Debug ── */
@@ -1291,25 +1303,28 @@ import { loadAllWorlds } from './worlds/loader.js';
           break;
         }
         case "entrar-floresta": {
-          const p = getCurrentPlayer();
-          gameState.entradaFloresta[p.id] = p.posicao;
-          gameState.mundoAtual = "floresta";
-          p.posicao = 0;
+          const pF = getCurrentPlayer();
+          gameState.subworldEntry[pF.id] = pF.posicao;
+          gameState.activeSubworldId = "floresta-misteriosa";
+          pF.posicao = 0;
           renderizarTrilha();
           renderSvgPath();
-          elements.trackContainer.classList.add("mundo-floresta");
-          document.getElementById("world-indicator").classList.remove("hidden");
+          const swCfgF = getSubworldConfig();
+          if (swCfgF?.theme?.cssClass) elements.trackContainer.classList.add(swCfgF.theme.cssClass);
+          const indF = document.getElementById("world-indicator");
+          indF.textContent = swCfgF?.ui?.worldIndicator || '\uD83C\uDF32 Floresta Misteriosa';
+          indF.classList.remove("hidden");
           players.forEach(p2 => positionPlayerAt(p2.posicao, p2));
           gameState.isMoving = false;
           elements.rollBtn.disabled = false;
           updateUI();
-          addHistory(`[DEBUG] ${p.name} entrou na Floresta`, "info");
+          addHistory(`[DEBUG] ${pF.name} entrou na Floresta`, "info");
           break;
         }
         case "casa5-floresta": {
-          if (gameState.mundoAtual !== "floresta") return;
-          const p = getCurrentPlayer();
-          p.posicao = 5;
+          if (gameState.activeSubworldId !== "floresta-misteriosa") return;
+          const p5 = getCurrentPlayer();
+          p5.posicao = 5;
           await processSpecialCell(5);
           gameState.isMoving = false;
           elements.rollBtn.disabled = false;
@@ -1318,9 +1333,9 @@ import { loadAllWorlds } from './worlds/loader.js';
           break;
         }
         case "casa8-floresta": {
-          if (gameState.mundoAtual !== "floresta") return;
-          const p = getCurrentPlayer();
-          p.posicao = 8;
+          if (gameState.activeSubworldId !== "floresta-misteriosa") return;
+          const p8 = getCurrentPlayer();
+          p8.posicao = 8;
           await processSpecialCell(8);
           gameState.isMoving = false;
           elements.rollBtn.disabled = false;
@@ -1329,11 +1344,13 @@ import { loadAllWorlds } from './worlds/loader.js';
           break;
         }
         case "voltar-principal": {
-          gameState.mundoAtual = "principal";
-          gameState.entradaFloresta[getCurrentPlayer().id] = null;
+          const swCfgV = getSubworldConfig();
+          gameState.activeSubworldId = null;
+          gameState.subworldEntry[getCurrentPlayer().id] = null;
           gameState.entrouNoPortal = false;
           renderizarTrilha();
           renderSvgPath();
+          if (swCfgV?.theme?.cssClass) elements.trackContainer.classList.remove(swCfgV.theme.cssClass);
           elements.trackContainer.classList.remove("mundo-floresta");
           document.getElementById("world-indicator").classList.add("hidden");
           players.forEach(p2 => positionPlayerAt(p2.posicao, p2));
@@ -1341,6 +1358,58 @@ import { loadAllWorlds } from './worlds/loader.js';
           elements.rollBtn.disabled = false;
           updateUI();
           addHistory(`[DEBUG] Voltou ao mundo principal`, "info");
+          break;
+        }
+        case "entrar-caverna": {
+          const pC = getCurrentPlayer();
+          gameState.subworldEntry[pC.id] = pC.posicao;
+          gameState.activeSubworldId = "caverna-dos-fosseis";
+          pC.posicao = 0;
+          renderizarTrilha();
+          renderSvgPath();
+          const swCfgC = getSubworldConfig();
+          if (swCfgC?.theme?.cssClass) elements.trackContainer.classList.add(swCfgC.theme.cssClass);
+          const indC = document.getElementById("world-indicator");
+          indC.textContent = swCfgC?.ui?.worldIndicator || '\uD83E\uDEB4 Caverna dos F\u00f3sseis';
+          indC.classList.remove("hidden");
+          players.forEach(p2 => positionPlayerAt(p2.posicao, p2));
+          gameState.isMoving = false;
+          elements.rollBtn.disabled = false;
+          updateUI();
+          addHistory(`[DEBUG] ${pC.name} entrou na Caverna dos F\u00f3sseis`, "info");
+          break;
+        }
+        case "casa3-caverna": {
+          if (gameState.activeSubworldId !== "caverna-dos-fosseis") return;
+          const p3 = getCurrentPlayer();
+          p3.posicao = 3;
+          await processSpecialCell(3);
+          gameState.isMoving = false;
+          elements.rollBtn.disabled = false;
+          updateUI();
+          addHistory(`[DEBUG] Casa 3 da Caverna acionada`, "info");
+          break;
+        }
+        case "casa5-caverna": {
+          if (gameState.activeSubworldId !== "caverna-dos-fosseis") return;
+          const p5c = getCurrentPlayer();
+          p5c.posicao = 5;
+          await processSpecialCell(5);
+          gameState.isMoving = false;
+          elements.rollBtn.disabled = false;
+          updateUI();
+          addHistory(`[DEBUG] Casa 5 da Caverna acionada`, "info");
+          break;
+        }
+        case "casa8-caverna": {
+          if (gameState.activeSubworldId !== "caverna-dos-fosseis") return;
+          const p8c = getCurrentPlayer();
+          p8c.posicao = 8;
+          await processSpecialCell(8);
+          gameState.isMoving = false;
+          elements.rollBtn.disabled = false;
+          updateUI();
+          addHistory(`[DEBUG] Casa 8 da Caverna acionada`, "info");
           break;
         }
       }
