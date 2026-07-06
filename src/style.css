@@ -1776,7 +1776,10 @@ body[data-world="dinossauros"] .casa-vitoria {
   position: fixed;
   bottom: 12px;
   right: 12px;
-  background: rgba(0, 0, 0, 0.85);
+  width: 380px;
+  max-height: 80vh;
+  overflow-y: auto;
+  background: rgba(0, 0, 0, 0.9);
   color: #0f0;
   padding: 10px 14px;
   border-radius: 10px;
@@ -1784,22 +1787,83 @@ body[data-world="dinossauros"] .casa-vitoria {
   z-index: 999;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
   font-family: monospace;
   border: 1px solid #0f0;
 }
 #debug-panel.hidden { display: none; }
-.debug-header { font-weight: 700; margin-bottom: 2px; }
+#debug-panel::-webkit-scrollbar { width: 4px; }
+#debug-panel::-webkit-scrollbar-track { background: #111; }
+#debug-panel::-webkit-scrollbar-thumb { background: #0f0; border-radius: 2px; }
+
+.debug-header { font-weight: 700; margin-bottom: 4px; font-size: 0.8rem; }
+.debug-section { border-top: 1px solid rgba(0, 255, 0, 0.2); padding-top: 4px; margin-bottom: 4px; }
+.debug-section-title { font-weight: 700; margin-bottom: 3px; font-size: 0.7rem; }
+.debug-section-title-row { display: flex; align-items: center; justify-content: space-between; }
+
+.debug-state-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1px 8px;
+  font-size: 0.65rem;
+  line-height: 1.5;
+}
+.debug-state-grid span:nth-child(odd) { color: #8f8; }
+
+.debug-row { display: flex; gap: 4px; margin-bottom: 3px; align-items: center; }
+.debug-input {
+  width: 52px;
+  background: #111;
+  color: #0f0;
+  border: 1px solid #0f0;
+  border-radius: 3px;
+  padding: 2px 4px;
+  font-family: monospace;
+  font-size: 0.7rem;
+  text-align: center;
+}
+.debug-select {
+  background: #111;
+  color: #0f0;
+  border: 1px solid #0f0;
+  border-radius: 3px;
+  padding: 2px 4px;
+  font-family: monospace;
+  font-size: 0.7rem;
+}
+.debug-select option { background: #222; color: #0f0; }
+
 .debug-btn {
   background: #222;
   color: #0f0;
   border: 1px solid #0f0;
-  border-radius: 4px;
+  border-radius: 3px;
   padding: 4px 10px;
   cursor: pointer;
   font-size: 0.7rem;
   text-align: left;
   font-family: monospace;
+  line-height: 1.2;
 }
 .debug-btn:hover { background: #444; }
+.debug-btn-action { flex: 1; text-align: center; }
+.debug-btn-test { flex: 1; text-align: center; padding: 3px 4px; font-size: 0.6rem; min-width: 0; }
+.debug-btn-sm { padding: 2px 8px; font-size: 0.6rem; display: inline; }
+.debug-btn-group { display: flex; flex-wrap: wrap; gap: 2px; }
+
+.debug-log-container {
+  max-height: 90px;
+  overflow-y: auto;
+  font-size: 0.6rem;
+  line-height: 1.3;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(0, 255, 0, 0.15);
+  border-radius: 3px;
+  padding: 2px 4px;
+}
+.debug-log-container::-webkit-scrollbar { width: 3px; }
+.debug-log-container::-webkit-scrollbar-track { background: #111; }
+.debug-log-container::-webkit-scrollbar-thumb { background: #0f0; border-radius: 2px; }
+.debug-log-item { border-bottom: 1px solid rgba(0, 255, 0, 0.08); padding: 1px 0; }
+
 .debug-separator { border: none; border-top: 1px solid #0f0; margin: 4px 0; opacity: 0.4; }

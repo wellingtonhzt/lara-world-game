@@ -295,18 +295,78 @@
   </div>
 
   <div id="debug-panel" class="hidden">
-    <div class="debug-header">🐛 Debug</div>
-    <button class="debug-btn" data-debug="casa11">Ir para casa 11</button>
-    <button class="debug-btn" data-debug="entrar-floresta">Entrar na Floresta</button>
-    <button class="debug-btn" data-debug="casa5-floresta">Ir para casa 5 da Floresta</button>
-    <button class="debug-btn" data-debug="casa8-floresta">Ir para casa 8 da Floresta</button>
-    <hr class="debug-separator">
-    <button class="debug-btn" data-debug="entrar-caverna">🦴 Entrar na Caverna</button>
-    <button class="debug-btn" data-debug="casa3-caverna">Casa 3 desafio</button>
-    <button class="debug-btn" data-debug="casa5-caverna">Casa 5 passagem</button>
-    <button class="debug-btn" data-debug="casa8-caverna">Casa 8 saída</button>
-    <hr class="debug-separator">
-    <button class="debug-btn" data-debug="voltar-principal">Voltar ao mundo principal</button>
+    <div class="debug-header">🐛 QA Debug 2.0</div>
+
+    <!-- Estado Atual -->
+    <div class="debug-section">
+      <div class="debug-section-title">📊 Estado Atual</div>
+      <div class="debug-state-grid">
+        <span>Mundo:</span><span id="d-world">-</span>
+        <span>Área:</span><span id="d-area">-</span>
+        <span>Jogador:</span><span id="d-player">-</span>
+        <span>Posição:</span><span id="d-pos">-</span>
+        <span>P1:</span><span id="d-p1">-</span>
+        <span>P2:</span><span id="d-p2">-</span>
+        <span>Entrada:</span><span id="d-entry">-</span>
+        <span>Jogo:</span><span id="d-game">-</span>
+        <span>Turno:</span><span id="d-turn">-</span>
+      </div>
+    </div>
+
+    <!-- Mover Jogador -->
+    <div class="debug-section">
+      <div class="debug-section-title">🎯 Mover Jogador</div>
+      <div class="debug-row">
+        <select id="debug-player-select" class="debug-select">
+          <option value="0">Jogador 1</option>
+          <option value="1">Jogador 2</option>
+        </select>
+        <input type="number" id="debug-target-cell" class="debug-input" min="0" max="20" value="1">
+      </div>
+      <div class="debug-row">
+        <button class="debug-btn debug-btn-action" data-debug="move-only">Mover</button>
+        <button class="debug-btn debug-btn-action" data-debug="process-only">Processar</button>
+        <button class="debug-btn debug-btn-action" data-debug="move-process">Mover+Proc</button>
+      </div>
+    </div>
+
+    <!-- Testes Rápidos -->
+    <div class="debug-section">
+      <div class="debug-section-title">⚡ Testes Rápidos</div>
+      <div class="debug-btn-group">
+        <button class="debug-btn debug-btn-test" data-debug="vale-casa6">Vale C6</button>
+        <button class="debug-btn debug-btn-test" data-debug="vale-casa19">Vale C19</button>
+        <button class="debug-btn debug-btn-test" data-debug="vale-portal">Vale Portal</button>
+        <button class="debug-btn debug-btn-test" data-debug="caverna-casa4">Cav C4</button>
+        <button class="debug-btn debug-btn-test" data-debug="caverna-casa7">Cav C7</button>
+        <button class="debug-btn debug-btn-test" data-debug="caverna-casa8">Cav C8</button>
+        <button class="debug-btn debug-btn-test" data-debug="floresta-casa5">Flor C5</button>
+        <button class="debug-btn debug-btn-test" data-debug="floresta-portal">Flor Portal</button>
+        <button class="debug-btn debug-btn-test" data-debug="floresta-saida">Flor Sda</button>
+      </div>
+    </div>
+
+    <!-- Resultado do Último Evento -->
+    <div class="debug-section">
+      <div class="debug-section-title">📋 Último Evento</div>
+      <div class="debug-state-grid" id="debug-event-result">
+        <span>Evento:</span><span id="d-event-type">-</span>
+        <span>Antes:</span><span id="d-event-before">-</span>
+        <span>Depois:</span><span id="d-event-after">-</span>
+        <span>Cascata:</span><span id="d-event-cascade">-</span>
+        <span>Vitória:</span><span id="d-event-victory">-</span>
+        <span>Área:</span><span id="d-event-area">-</span>
+      </div>
+    </div>
+
+    <!-- Logs -->
+    <div class="debug-section">
+      <div class="debug-section-title debug-section-title-row">
+        <span>📝 Logs</span>
+        <button class="debug-btn debug-btn-sm" data-debug="clear-logs">Limpar</button>
+      </div>
+      <div id="debug-log-container" class="debug-log-container"></div>
+    </div>
   </div>
 
   <script type="module" src="game.js?v=20260706"></script>

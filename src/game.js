@@ -1299,131 +1299,281 @@ import { cavernaDosFosseis } from './worlds/dinossauros/config.js';
     if (!panel) return;
     panel.classList.remove("hidden");
 
+    // ── Debug State ──
+    const debugLog = [];
+    let lastEventResult = {
+      eventType: '-', posBefore: '-', posAfter: '-',
+      cascaded: '-', victory: '-', specialAreaChange: '-',
+    };
+
+    function addLog(msg) {
+      debugLog.unshift(`[${new Date().toLocaleTimeString()}] ${msg}`);
+      if (debugLog.length > 20) debugLog.pop();
+      renderLogs();
+    }
+
+    function setEventResult(partial) {
+      Object.assign(lastEventResult, partial);
+      renderEventResult();
+    }
+
+    function clearEventResult() {
+      lastEventResult = { eventType: '-', posBefore: '-', posAfter: '-', cascaded: '-', victory: '-', specialAreaChange: '-' };
+      renderEventResult();
+    }
+
+    function txt(id, val) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = String(val);
+    }
+
+    function renderState() {
+      const p = getCurrentPlayer();
+      txt('d-world', currentWorldConfig?.name || '-');
+      txt('d-area', getSubworldConfig()?.name || 'Nenhuma');
+      txt('d-player', p ? `${p.emoji} ${p.name}` : '-');
+      txt('d-pos', p != null ? p.posicao : '-');
+      txt('d-p1', players[0] ? `${players[0].emoji} ${players[0].posicao}` : '-');
+      txt('d-p2', players[1] ? `${players[1].emoji} ${players[1].posicao}` : '-');
+      txt('d-entry', p != null ? (gameState.subworldEntry[p.id] ?? '-') : '-');
+      txt('d-game', gameState.jogoAtivo ? (gameState.jogoFinalizado ? 'Finalizado' : 'Ativo') : 'Inativo');
+      txt('d-turn', `${gameState.currentPlayerIndex + 1}/${PLAYER_COUNT}`);
+    }
+
+    function renderLogs() {
+      const c = document.getElementById('debug-log-container');
+      if (c) c.innerHTML = debugLog.map(m => `<div class="debug-log-item">${m}</div>`).join('');
+    }
+
+    function renderEventResult() {
+      txt('d-event-type', lastEventResult.eventType);
+      txt('d-event-before', lastEventResult.posBefore);
+      txt('d-event-after', lastEventResult.posAfter);
+      txt('d-event-cascade', lastEventResult.cascaded);
+      txt('d-event-victory', lastEventResult.victory);
+      txt('d-event-area', lastEventResult.specialAreaChange);
+    }
+
+    setInterval(renderState, 500);
+
+    // ── Subworld helpers ──
+    function enterSubworld(swId) {
+      const p = getCurrentPlayer();
+      gameState.subworldEntry[p.id] = p.posicao;
+      gameState.activeSubworldId = swId;
+      p.posicao = 0;
+      renderizarTrilha();
+      renderSvgPath();
+      const swCfg = subworldConfigs[swId];
+      if (swCfg?.theme?.cssClass) elements.trackContainer.classList.add(swCfg.theme.cssClass);
+      const ind = document.getElementById("world-indicator");
+      ind.textContent = swCfg?.ui?.worldIndicator || swCfg?.name || swId;
+      ind.classList.remove("hidden");
+      players.forEach(p2 => positionPlayerAt(p2.posicao, p2));
+      gameState.isMoving = false;
+      elements.rollBtn.disabled = false;
+      updateUI();
+      addLog(`\uD83D\uDEAA Entrou em ${swCfg?.name || swId}`);
+    }
+
+    function exitSubworld() {
+      const swCfg = getSubworldConfig();
+      gameState.activeSubworldId = null;
+      gameState.subworldEntry[getCurrentPlayer().id] = null;
+      gameState.entrouNoPortal = false;
+      renderizarTrilha();
+      renderSvgPath();
+      if (swCfg?.theme?.cssClass) elements.trackContainer.classList.remove(swCfg.theme.cssClass);
+      document.getElementById("world-indicator").classList.add("hidden");
+      players.forEach(p2 => positionPlayerAt(p2.posicao, p2));
+      gameState.isMoving = false;
+      elements.rollBtn.disabled = false;
+      updateUI();
+      addLog('\u2B05 Voltou ao mundo principal');
+    }
+
+    // ── Move + Process action ──
+    async function debugMoveAndProcess(targetCell) {
+      const player = getCurrentPlayer();
+      const prevPos = player.posicao;
+      const prevArea = gameState.activeSubworldId;
+      const info = getCasasEspeciais()[targetCell];
+      const eventType = info?.tipo || 'nenhum';
+
+      clearEventResult();
+      setEventResult({ eventType, posBefore: prevPos });
+
+      player.posicao = targetCell;
+      positionPlayerAt(targetCell);
+      updateUI();
+      addLog(`\uD83D\uDCCC Moveu para casa ${targetCell} (${eventType})`);
+
+      if (info) {
+        await processSpecialCell(targetCell);
+      } else {
+        addLog(`\u26A0\uFE0F Casa ${targetCell} sem evento`);
+      }
+
+      const afterPos = player.posicao;
+      const afterArea = gameState.activeSubworldId;
+      const victory = gameState.jogoFinalizado;
+      const cascaded = afterPos !== targetCell && afterPos !== prevPos;
+      let areaChange = '-';
+      if (prevArea !== afterArea) {
+        areaChange = afterArea
+          ? `Entrou em ${subworldConfigs[afterArea]?.name || afterArea}`
+          : 'Saiu da \u00e1rea especial';
+      }
+
+      setEventResult({
+        posAfter: afterPos,
+        cascaded: cascaded ? `Sim (${targetCell} \u2192 ${afterPos})` : 'N\u00e3o',
+        victory: victory ? 'Sim \uD83C\uDFC6' : 'N\u00e3o',
+        specialAreaChange: areaChange,
+      });
+
+      if (victory) addLog('\uD83C\uDFC6 Vit\u00f3ria disparada!');
+      if (cascaded) addLog(`\uD83D\uDD00 Cascata: ${targetCell} \u2192 ${afterPos}`);
+      if (areaChange !== '-') addLog(`\uD83D\uDEAA ${areaChange}`);
+
+      gameState.isMoving = false;
+      elements.rollBtn.disabled = false;
+      updateUI();
+    }
+
+    // ── Button Handler ──
     panel.addEventListener("click", async (e) => {
       const btn = e.target.closest(".debug-btn");
       if (!btn) return;
 
-      switch (btn.dataset.debug) {
-        case "casa11": {
-          const p = getCurrentPlayer();
-          p.posicao = 11;
-          positionPlayerAt(11, p);
-          addHistory(`[DEBUG] ${p.name} foi para casa 11`, "info");
-          updateUI();
-          break;
+      const action = btn.dataset.debug;
+      const player = getCurrentPlayer();
+
+      clearEventResult();
+
+      try {
+        switch (action) {
+
+          // ── Mover ──
+          case "move-only": {
+            const cell = parseInt(document.getElementById("debug-target-cell")?.value || "1", 10);
+            const idx = parseInt(document.getElementById("debug-player-select")?.value || "0", 10);
+            const target = players[idx];
+            if (!target) break;
+            const clamped = Math.max(0, Math.min(cell, getTotalCasas()));
+            target.posicao = clamped;
+            positionPlayerAt(clamped, target);
+            updateUI();
+            addLog(`\uD83D\uDCCD ${target.emoji} ${target.name} \u2192 casa ${clamped}`);
+            setEventResult({ eventType: 'movimento manual', posBefore: target.posicao, posAfter: clamped });
+            break;
+          }
+
+          // ── Processar ──
+          case "process-only": {
+            const cp = getCurrentPlayer();
+            const curCell = cp.posicao;
+            const info = getCasasEspeciais()[curCell];
+            if (!info) {
+              addLog(`\u26A0\uFE0F Casa ${curCell} sem evento`);
+              setEventResult({ eventType: 'nenhum', posBefore: curCell, posAfter: curCell });
+              break;
+            }
+            setEventResult({ eventType: info.tipo, posBefore: curCell });
+            addLog(`\u26A1 Processando casa ${curCell} (${info.tipo})`);
+            await processSpecialCell(curCell);
+            setEventResult({ posAfter: cp.posicao, cascaded: cp.posicao !== curCell ? `Sim (${curCell} \u2192 ${cp.posicao})` : 'N\u00e3o' });
+            if (gameState.jogoFinalizado) {
+              setEventResult({ victory: 'Sim \uD83C\uDFC6' });
+              addLog('\uD83C\uDFC6 Vit\u00f3ria disparada!');
+            }
+            gameState.isMoving = false;
+            elements.rollBtn.disabled = false;
+            updateUI();
+            break;
+          }
+
+          // ── Mover + Processar ──
+          case "move-process": {
+            const cell = parseInt(document.getElementById("debug-target-cell")?.value || "1", 10);
+            await debugMoveAndProcess(cell);
+            break;
+          }
+
+          // ── Testes Rápidos: Vale ──
+          case "vale-casa6": {
+            if (gameState.activeSubworldId) { addLog('\u26A0\uFE0F Est\u00e1 em submundo. Use o bot\u00e3o de sair primeiro.'); break; }
+            if (currentWorldConfig?.id !== 'dinossauros') { addLog('\u26A0\uFE0F Teste v\u00e1lido apenas no Vale dos Dinossauros'); break; }
+            await debugMoveAndProcess(6);
+            break;
+          }
+          case "vale-casa19": {
+            if (gameState.activeSubworldId) { addLog('\u26A0\uFE0F Est\u00e1 em submundo. Use o bot\u00e3o de sair primeiro.'); break; }
+            if (currentWorldConfig?.id !== 'dinossauros') { addLog('\u26A0\uFE0F Teste v\u00e1lido apenas no Vale dos Dinossauros'); break; }
+            await debugMoveAndProcess(19);
+            break;
+          }
+          case "vale-portal": {
+            if (gameState.activeSubworldId) { addLog('\u26A0\uFE0F Est\u00e1 em submundo. Use o bot\u00e3o de sair primeiro.'); break; }
+            if (currentWorldConfig?.id !== 'dinossauros') { addLog('\u26A0\uFE0F Teste v\u00e1lido apenas no Vale dos Dinossauros'); break; }
+            await debugMoveAndProcess(10);
+            break;
+          }
+
+          // ── Testes Rápidos: Caverna ──
+          case "caverna-casa4":
+          case "caverna-casa7":
+          case "caverna-casa8": {
+            const cavCell = { 'caverna-casa4': 4, 'caverna-casa7': 7, 'caverna-casa8': 8 }[action];
+            if (gameState.activeSubworldId !== 'caverna-dos-fosseis') {
+              addLog('\uD83D\uDEAA Entrando na Caverna dos F\u00f3sseis...');
+              enterSubworld('caverna-dos-fosseis');
+              setEventResult({ specialAreaChange: 'Entrou na Caverna dos F\u00f3sseis' });
+            }
+            await debugMoveAndProcess(cavCell);
+            break;
+          }
+
+          // ── Testes Rápidos: Floresta ──
+          case "floresta-casa5": {
+            if (gameState.activeSubworldId) { addLog('\u26A0\uFE0F Est\u00e1 em submundo.'); break; }
+            if (currentWorldConfig?.id !== 'floresta-encantada') { addLog('\u26A0\uFE0F Teste v\u00e1lido apenas na Floresta Encantada'); break; }
+            await debugMoveAndProcess(5);
+            break;
+          }
+          case "floresta-portal": {
+            if (gameState.activeSubworldId) { addLog('\u26A0\uFE0F Est\u00e1 em submundo.'); break; }
+            if (currentWorldConfig?.id !== 'floresta-encantada') { addLog('\u26A0\uFE0F Teste v\u00e1lido apenas na Floresta Encantada'); break; }
+            await debugMoveAndProcess(11);
+            break;
+          }
+          case "floresta-saida": {
+            if (gameState.activeSubworldId !== 'floresta-misteriosa') {
+              addLog('\uD83D\uDEAA Entrando na Floresta Misteriosa...');
+              enterSubworld('floresta-misteriosa');
+              setEventResult({ specialAreaChange: 'Entrou na Floresta Misteriosa' });
+            }
+            await debugMoveAndProcess(8);
+            break;
+          }
+
+          // ── Limpar Logs ──
+          case "clear-logs":
+            debugLog.length = 0;
+            renderLogs();
+            break;
         }
-        case "entrar-floresta": {
-          const pF = getCurrentPlayer();
-          gameState.subworldEntry[pF.id] = pF.posicao;
-          gameState.activeSubworldId = "floresta-misteriosa";
-          pF.posicao = 0;
-          renderizarTrilha();
-          renderSvgPath();
-          const swCfgF = getSubworldConfig();
-          if (swCfgF?.theme?.cssClass) elements.trackContainer.classList.add(swCfgF.theme.cssClass);
-          const indF = document.getElementById("world-indicator");
-          indF.textContent = swCfgF?.ui?.worldIndicator || '\uD83C\uDF32 Floresta Misteriosa';
-          indF.classList.remove("hidden");
-          players.forEach(p2 => positionPlayerAt(p2.posicao, p2));
-          gameState.isMoving = false;
-          elements.rollBtn.disabled = false;
-          updateUI();
-          addHistory(`[DEBUG] ${pF.name} entrou na Floresta`, "info");
-          break;
-        }
-        case "casa5-floresta": {
-          if (gameState.activeSubworldId !== "floresta-misteriosa") return;
-          const p5 = getCurrentPlayer();
-          p5.posicao = 5;
-          await processSpecialCell(5);
-          gameState.isMoving = false;
-          elements.rollBtn.disabled = false;
-          updateUI();
-          addHistory(`[DEBUG] Casa 5 acionada via debug`, "info");
-          break;
-        }
-        case "casa8-floresta": {
-          if (gameState.activeSubworldId !== "floresta-misteriosa") return;
-          const p8 = getCurrentPlayer();
-          p8.posicao = 8;
-          await processSpecialCell(8);
-          gameState.isMoving = false;
-          elements.rollBtn.disabled = false;
-          updateUI();
-          addHistory(`[DEBUG] Casa 8 acionada via debug`, "info");
-          break;
-        }
-        case "voltar-principal": {
-          const swCfgV = getSubworldConfig();
-          gameState.activeSubworldId = null;
-          gameState.subworldEntry[getCurrentPlayer().id] = null;
-          gameState.entrouNoPortal = false;
-          renderizarTrilha();
-          renderSvgPath();
-          if (swCfgV?.theme?.cssClass) elements.trackContainer.classList.remove(swCfgV.theme.cssClass);
-          elements.trackContainer.classList.remove("mundo-floresta");
-          document.getElementById("world-indicator").classList.add("hidden");
-          players.forEach(p2 => positionPlayerAt(p2.posicao, p2));
-          gameState.isMoving = false;
-          elements.rollBtn.disabled = false;
-          updateUI();
-          addHistory(`[DEBUG] Voltou ao mundo principal`, "info");
-          break;
-        }
-        case "entrar-caverna": {
-          const pC = getCurrentPlayer();
-          gameState.subworldEntry[pC.id] = pC.posicao;
-          gameState.activeSubworldId = "caverna-dos-fosseis";
-          pC.posicao = 0;
-          renderizarTrilha();
-          renderSvgPath();
-          const swCfgC = getSubworldConfig();
-          if (swCfgC?.theme?.cssClass) elements.trackContainer.classList.add(swCfgC.theme.cssClass);
-          const indC = document.getElementById("world-indicator");
-          indC.textContent = swCfgC?.ui?.worldIndicator || '\uD83E\uDEB4 Caverna dos F\u00f3sseis';
-          indC.classList.remove("hidden");
-          players.forEach(p2 => positionPlayerAt(p2.posicao, p2));
-          gameState.isMoving = false;
-          elements.rollBtn.disabled = false;
-          updateUI();
-          addHistory(`[DEBUG] ${pC.name} entrou na Caverna dos F\u00f3sseis`, "info");
-          break;
-        }
-        case "casa3-caverna": {
-          if (gameState.activeSubworldId !== "caverna-dos-fosseis") return;
-          const p3 = getCurrentPlayer();
-          p3.posicao = 3;
-          await processSpecialCell(3);
-          gameState.isMoving = false;
-          elements.rollBtn.disabled = false;
-          updateUI();
-          addHistory(`[DEBUG] Casa 3 da Caverna acionada`, "info");
-          break;
-        }
-        case "casa5-caverna": {
-          if (gameState.activeSubworldId !== "caverna-dos-fosseis") return;
-          const p5c = getCurrentPlayer();
-          p5c.posicao = 5;
-          await processSpecialCell(5);
-          gameState.isMoving = false;
-          elements.rollBtn.disabled = false;
-          updateUI();
-          addHistory(`[DEBUG] Casa 5 da Caverna acionada`, "info");
-          break;
-        }
-        case "casa8-caverna": {
-          if (gameState.activeSubworldId !== "caverna-dos-fosseis") return;
-          const p8c = getCurrentPlayer();
-          p8c.posicao = 8;
-          await processSpecialCell(8);
-          gameState.isMoving = false;
-          elements.rollBtn.disabled = false;
-          updateUI();
-          addHistory(`[DEBUG] Casa 8 da Caverna acionada`, "info");
-          break;
-        }
+      } catch (err) {
+        addLog(`\u274C Erro: ${err.message}`);
+        console.error('[Debug Error]', err);
+        gameState.isMoving = false;
+        elements.rollBtn.disabled = false;
       }
     });
+
+    renderState();
+    renderLogs();
+    renderEventResult();
   }
 
   /* ── Init ── */
