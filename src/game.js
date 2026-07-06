@@ -32,16 +32,22 @@ import { florestaEncantada } from './worlds/floresta/config.js';
   /* ── World-aware helpers ── */
 
   function getTotalCasas() {
-    return gameState.mundoAtual === "floresta" ? FLORESTA_TOTAL : TOTAL_CASAS;
+    if (gameState.mundoAtual === "floresta") return FLORESTA_TOTAL;
+    const cfg = currentWorldConfig;
+    return (cfg && cfg.board && cfg.board.totalCells) || TOTAL_CASAS;
   }
   function getCasasEspeciais() {
     return gameState.mundoAtual === "floresta" ? florestaEspeciais : casasEspeciais;
   }
   function getPosicoes() {
-    return gameState.mundoAtual === "floresta" ? florestaPosicoes : boardPositions;
+    if (gameState.mundoAtual === "floresta") return florestaPosicoes;
+    const cfg = currentWorldConfig;
+    return (cfg && cfg.board && cfg.board.positions) || boardPositions;
   }
   function getIcones() {
-    return gameState.mundoAtual === "floresta" ? florestaIcones : icons;
+    if (gameState.mundoAtual === "floresta") return florestaIcones;
+    const cfg = currentWorldConfig;
+    return (cfg && cfg.board && cfg.board.cellIcons) || icons;
   }
 
   const casasEspeciais = {
@@ -503,7 +509,8 @@ import { florestaEncantada } from './worlds/floresta/config.js';
       case "atalho": {
         const bonusA = 2;
         const entradaA = gameState.entradaFloresta[player.id];
-        const destinoA = Math.min(entradaA + bonusA, TOTAL_CASAS);
+        const principalTotal = (currentWorldConfig && currentWorldConfig.board && currentWorldConfig.board.totalCells) || TOTAL_CASAS;
+        const destinoA = Math.min(entradaA + bonusA, principalTotal);
         gameState.mundoAtual = "principal";
         gameState.entradaFloresta[player.id] = null;
         player.posicao = destinoA;
@@ -514,7 +521,7 @@ import { florestaEncantada } from './worlds/floresta/config.js';
         players.forEach(p => positionPlayerAt(p.posicao, p));
         updateUI();
         addHistory(`🌿 ${player.name} pegou o Atalho da Floresta e voltou com +${bonusA} casas!`, "especial");
-        if (destinoA >= TOTAL_CASAS) {
+        if (destinoA >= principalTotal) {
           await handleVictory();
           return false;
         }
@@ -523,7 +530,8 @@ import { florestaEncantada } from './worlds/floresta/config.js';
       case "saida-mundo": {
         const bonus = 3;
         const entrada = gameState.entradaFloresta[player.id];
-        const destino = Math.min(entrada + bonus, TOTAL_CASAS);
+        const principalTotal = (currentWorldConfig && currentWorldConfig.board && currentWorldConfig.board.totalCells) || TOTAL_CASAS;
+        const destino = Math.min(entrada + bonus, principalTotal);
         gameState.mundoAtual = "principal";
         gameState.entradaFloresta[player.id] = null;
         player.posicao = destino;
@@ -534,7 +542,7 @@ import { florestaEncantada } from './worlds/floresta/config.js';
         players.forEach(p => positionPlayerAt(p.posicao, p));
         updateUI();
         addHistory(`✨ ${player.name} completou o Mundo da Floresta! Avançou ${bonus} casas!`, "especial");
-        if (destino >= TOTAL_CASAS) {
+        if (destino >= principalTotal) {
           await handleVictory();
           return false;
         }
@@ -592,12 +600,13 @@ import { florestaEncantada } from './worlds/floresta/config.js';
   async function handleVictory() {
     const player = getCurrentPlayer();
     const el = getPlayerElement(player);
+    const total = getTotalCasas();
 
-    player.posicao = TOTAL_CASAS;
+    player.posicao = total;
     gameState.jogoFinalizado = true;
     gameState.jogoAtivo = false;
     elements.rollBtn.disabled = true;
-    positionPlayerAt(TOTAL_CASAS);
+    positionPlayerAt(total);
     updateUI();
 
     el.classList.add("animar-vitoria");
