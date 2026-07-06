@@ -197,21 +197,17 @@ O Lara World começou como um MVP de tabuleiro simples para 1 jogador. A primeir
 
 ---
 
-## 🚀 Como Executar Localmente
+## 🚀 Desenvolvimento Local
 
-> ⚠️ A partir da v0.9.0-preview o jogo utiliza **ES Modules** (`<script type="module">`).
+> ⚠️ A partir da Sprint A5.1 (`v0.9.0-preview`) o `game.js` foi migrado de um script global para **ES Module** (`<script type="module">`).
 > Por segurança, navegadores bloqueiam módulos ES quando a página é aberta pelo protocolo `file://`.
 > **É obrigatório usar um servidor HTTP local.**
 
 ### Opção 1 — Servidor local (Python)
 
 ```bash
-# Linux / macOS
-cd src && python3 -m http.server 8000
-
-# Windows
 cd src
-py -m http.server 8000
+python3 -m http.server 8000
 ```
 
 Acesse: http://localhost:8000
@@ -219,7 +215,7 @@ Acesse: http://localhost:8000
 ### Opção 2 — Servidor local (Node.js)
 
 ```bash
-npx serve src/
+cd src && npx serve .
 ```
 
 Acesse: http://localhost:3000

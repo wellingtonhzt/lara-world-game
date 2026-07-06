@@ -78,10 +78,46 @@
 - Módulos core: `constants.js`, `utils.js`, `types.js`
 - `world-manifest.js` e `loader.js` — infraestrutura de carregamento
 - Cache-busting via `?v=0.9.0-preview`
+- **Sprint A5.1** — Engine em produção (WorldRegistry init, currentWorldConfig populado, game.js como ES Module)
+- **Sprint A5.2** — Board do WorldConfig consumido por getters do jogo
 
 ## Futuro
 
-### v0.10.0 — Sprites PNG, sons, melhorias visuais
+### A5.3 — ThemeManager
+- Aplicar tema visual do WorldConfig (cores, gradientes, CSS class) ao tabuleiro
+
+### A5.4 — EventProcessor + StateManager
+- Conectar ao game.js para processar eventos de célula via engine
+
+### A6 — BoardRenderer
+- Extrair renderização do tabuleiro de game.js para `engine/board-renderer.js`
+
+### A7 — QuestionCatalog
+- Extrair bancoQuestoes para `data/questions/*.js`
+
+### A8 — ChallengeSystem
+- Extrair showChallengeModal e lógica de desafio para `engine/challenge-system.js`
+
+### A9 — BotController + VictorySystem
+- Extrair bot AI e vitória para módulos do engine
+
+### A10 — PortalManager
+- Extrair lógica de portal de game.js para `engine/portal-manager.js`
+
+### A11 — CampaignSystem
+- Modo Carreira com sequência de mundos
+
+### A12 — Vale dos Dinossauros
+- Criar `worlds/vale-dinossauros/config.js` — testar "apenas configuração"
+
+### A13 — CustomEventHandlers
+- Implementar handlers customizados no EventProcessor
+
+### A14 — Assets Dinâmicos
+- Carregamento sob demanda de assets declarados no config
+
+### A15 — Polimento
+- Overlays dinâmicos, MenuController genérico, testes de regressão
 
 ### v1.0.0 — Lançamento Oficial
 - Versão estável

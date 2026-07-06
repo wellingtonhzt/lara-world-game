@@ -58,6 +58,49 @@ Iniciar a Fase de Mundos do Lara World: criar um motor modular (SessionManager, 
 - `selectedWorldId` está definido em game.js e pronto para consumo pelo WorldRegistry na Sprint A5
 - Os 4 cards "Em breve" são placeholder visual — seus IDs estão reservados no world-manifest.js
 
+## Marco 3 — Engine em Produção (Sprints A5.1 e A5.2)
+
+### Objetivo
+
+Colocar a Engine em produção: inicializar o WorldRegistry no bootstrap do jogo, migrar `game.js` para ES Module, popular `currentWorldConfig` a partir do registry, e consumir os dados de `board` do WorldConfig nos getters e funções do jogo — tudo com fallback seguro para dados hardcoded.
+
+### Arquivos Alterados
+
+| Arquivo | Tipo de Alteração |
+|---------|-------------------|
+| `src/game.js` | Migrado de IIFE para ES Module (`type="module"`). Adicionado: import de `WorldRegistry` e `florestaEncantada`, `WorldRegistry.init()` no bootstrap, `currentWorldConfig`. `selectWorld()` agora usa `WorldRegistry.get()`. `getTotalCasas()`, `getPosicoes()`, `getIcones()` consomem `currentWorldConfig.board` com fallback. `handleVictory()` e casos "atalho"/"saida-mundo" usam `config.board.totalCells` |
+| `src/index.html` | `<script>` alterado para `<script type="module">`. `data-world="floresta"` alterado para `data-world="floresta-encantada"` |
+| `README.md` | Seção de execução local atualizada com exigência de servidor HTTP |
+| `CHANGELOG.md` | Adicionado: entrada Sprint A5.1 + A5.2 |
+| `docs/arquitetura.md` | Atualizado: fluxo de inicialização com WorldRegistry, seletor de mundos consumindo config |
+| `docs/arquitetura-motor-de-mundos.md` | Atualizado: plano de migração com A5.1-A5.4 |
+| `docs/roadmap.md` | Atualizado: A5.1 e A5.2 em concluído |
+
+### Impacto Técnico
+
+- **game.js → ES Module**: O arquivo foi convertido de um IIFE (Immediately Invoked Function Expression) para um módulo ES6 (`export` implícito via script type="module"). Isso permite usar `import` para trazer `WorldRegistry`, `florestaEncantada` e, futuramente, outros módulos do engine. Consequência: o jogo não pode mais ser executado via `file://` — exige servidor HTTP.
+- **WorldRegistry.init([florestaEncantada])**: Chamado no início do bootstrap, registra o primeiro mundo no registry. `selectWorld(worldId)` agora consulta o registry via `WorldRegistry.get(worldId)` — se o mundo não for encontrado, usa `WorldRegistry.getDefault()` como fallback.
+- **currentWorldConfig**: Nova variável no escopo do módulo que armazena o WorldConfig completo do mundo selecionado. É populada em `selectWorld()` e consumida pelos getters world-aware.
+- **Getters com fallback**: `getTotalCasas()` retorna `currentWorldConfig?.board?.totalCells ?? TOTAL_CASAS`. `getPosicoes()` retorna `currentWorldConfig?.board?.positions ?? boardPositions`. `getIcones()` retorna `currentWorldConfig?.board?.cellIcons ?? icons`. Isso garante que o jogo funciona mesmo se `currentWorldConfig` estiver ausente (fallback para os dados hardcoded do monólito).
+- **handleVictory() e casas especiais**: O case "atalho" (floresta casa 5) e "saida-mundo" (floresta casa 8) usam `currentWorldConfig?.board?.totalCells` em vez de `FLORESTA_TOTAL`. O mesmo para `handleVictory()` que agora lê `currentWorldConfig?.board?.totalCells ?? TOTAL_CASAS`.
+- **data-world**: O atributo `data-world` no `<html>` foi alterado de `"floresta"` para `"floresta-encantada"` para corresponder ao ID formal do WorldConfig.
+- **Ambiente de desenvolvimento**: `cd src && npx serve .` (porta 3000) ou `cd src && py -m http.server 8000`.
+
+### Impacto Funcional
+
+- Nenhuma regressão funcional — todos os fallbacks preservam o comportamento original
+- Cards do seletor de mundos agora exibem nome e descrição extraídos do WorldConfig (antes eram texto estático no HTML)
+- Demo online (https://lara-world.wl-infra.uk/) continua funcionando sem alterações
+- Jogadores precisam usar servidor HTTP local para desenvolvimento — `file://` não funciona mais
+
+### Notas Técnicas
+
+- A migração para ES Module foi necessária para viabilizar imports de módulos do engine
+- `file://` é bloqueado por segurança do navegador — não é uma limitação do código
+- O fallback nos getters garante compatibilidade retroativa: se um novo mundo for carregado sem config, o jogo usa os dados hardcoded do monólito
+- A5.1 foi a primeira sprint com código da engine EFETIVAMENTE executado no jogo — anteriormente os módulos existiam apenas em paralelo, não conectados
+- A5.2 estendeu o consumo para `board.totalCells`, `board.positions`, `board.cellIcons` — todos os getters world-aware agora lêem do config
+
 ## [0.8.0] - 2026-07-05
 
 ### Objetivo

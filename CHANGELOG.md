@@ -3,6 +3,14 @@
 ## [0.9.0-preview] - 2026-07-06
 
 ### Adicionado
+- Sprint A5.1: engine em produção — WorldRegistry inicializado no bootstrap
+- `game.js` migrado de script global para ES Module (`type="module"`)
+- `src/game.js`: import de `WorldRegistry` do engine e `florestaEncantada` do config
+- `src/game.js`: `WorldRegistry.init()` chamado no bootstrap com `florestaEncantada`
+- `src/game.js`: `currentWorldConfig` populado via `WorldRegistry.get()` / `getDefault()`
+- Cards do seletor de mundos agora populam descrição via WorldConfig
+- Sprint A5.2: `getTotalCasas()`, `getPosicoes()`, `getIcones()` consomem `currentWorldConfig.board` com fallback
+- `handleVictory()` e casos "atalho"/"saida-mundo" usam `currentWorldConfig.board.totalCells`
 - Seletor de Mundos na tela inicial (6 cards: Floresta + 4 "Em breve" + Aleatório)
 - `src/engine/event-processor.js` — processador de eventos de células (8 tipos built-in, handlers customizados, cascade)
 - `src/engine/session-manager.js` — gerenciamento de sessão com validação e deepFreeze
@@ -15,12 +23,16 @@
 - Cache-busting via `?v=0.9.0-preview`
 
 ### Alterado
-- `src/index.html` — adicionado seletor de mundos com 6 cards; cache-busting atualizado
+- `src/index.html` — `<script type="module">`, `data-world="floresta"` → `"floresta-encantada"`; adicionado seletor de mundos com 6 cards; cache-busting atualizado
 - `src/style.css` — estilos do seletor de mundos (overlay, grid, cards, badges)
-- `src/game.js` — fluxo do seletor de mundos integrado (+35 linhas), `selectedWorldId` tracking
+- `src/game.js` — removido IIFE em favor de ES Module; fluxo do seletor de mundos integrado (+35 linhas), `selectedWorldId` tracking; getters world-aware consomem config
 - Documentação: README, CHANGELOG, docs/visao-geral, docs/arquitetura, docs/roadmap, docs/memorial-tecnico, docs/arquitetura-motor-de-mundos atualizados para v0.9.0
 
 ### Notas Técnicas
+- ES Modules exigem servidor HTTP — `file://` é bloqueado por segurança do navegador
+- Ambiente oficial de desenvolvimento: `cd src && npx serve .` (porta 3000)
+- WorldRegistry.get("floresta-encantada") retorna o WorldConfig completo
+- Fallbacks preservam compatibilidade se currentWorldConfig estiver ausente
 - Engine modular coexiste com game.js original — nada foi desconectado
 - EventProcessor revisado com 7 correções (ordem de handlers, cascade, callbacks)
 - WorldConfig da Floresta extraído 1:1 do game.js — 20 células, 12 eventos, 1 portal

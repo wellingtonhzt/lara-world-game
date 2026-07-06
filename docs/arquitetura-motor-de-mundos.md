@@ -535,7 +535,10 @@ data/questions/
 | **A3** | Event System Core: `engine/event-processor.js` com 8 tipos built-in, handlers customizados, cascade | ✅ Concluído |
 | **A4** | Floresta Encantada como primeira config: `worlds/floresta/config.js` (Floresta Encantada + Floresta Misteriosa) | ✅ Concluído |
 | **v0.9.0-preview** | World Selector + documentação: tela de seleção de mundos, cache-busting, docs atualizadas | ✅ Concluído |
-| **A5** | Conectar engine: ativar loader, ThemeManager, PortalManager, conectar EventProcessor e StateManager ao game.js | ⏳ Pendente |
+| **A5.1** | Conectar engine — WorldRegistry em produção: game.js como ES Module, WorldRegistry.init() no bootstrap, currentWorldConfig populado, cards do seletor consomem WorldConfig | ✅ Concluído |
+| **A5.2** | Consumir Board do WorldConfig: getTotalCasas(), getPosicoes(), getIcones(), handleVictory(), "atalho", "saida-mundo" usam currentWorldConfig.board com fallback | ✅ Concluído |
+| **A5.3** | ThemeManager: aplicar tema visual do WorldConfig (cores, gradientes, CSS class) ao tabuleiro e painel | ⏳ Pendente |
+| **A5.4** | EventProcessor + StateManager: conectar ao game.js para processar eventos de célula via engine em vez de processSpecialCell | ⏳ Pendente |
 | **A6** | BoardRenderer: extrair renderização do tabuleiro de game.js para `engine/board-renderer.js` | ⏳ Pendente |
 | **A7** | QuestionCatalog: extrair `bancoQuestoes` para `data/questions/*`. ChallengeSystem lê por categoria | ⏳ Pendente |
 | **A8** | ChallengeSystem: extrair `showChallengeModal`, `sortearQuestao`, lógica para `engine/challenge-system.js` | ⏳ Pendente |
@@ -632,7 +635,8 @@ Ideias registradas para sprints futuras (fora do escopo atual):
 
 ---
 
-**Sprints A0.2–A4 concluídas.** A arquitetura do motor de mundos está documentada
-e implementada como módulos independentes que coexistem com o monólito original.
-O jogo continua executando a partir de `game.js` — nenhum módulo do motor foi
-conectado. A conexão está planejada para a Sprint A5.
+**Sprints A0.2–A5.2 concluídas.** A arquitetura do motor de mundos está documentada
+e implementada. O WorldRegistry está em produção desde a Sprint A5.1: inicializado
+no bootstrap, populando `currentWorldConfig` e consumido pelos getters do jogo.
+O jogo executa a partir de `game.js` como ES Module. Os demais módulos (EventProcessor,
+StateManager, SessionManager) estão pendentes de conexão nas sprints A5.3–A5.4.

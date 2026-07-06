@@ -212,8 +212,9 @@ Setup Screen
 Challenge Modal
   └── showChallengeModal(desafio) → exibe pergunta/opções, retorna Promise<boolean>
 
-Inicialização
-  └── init() → dispara em DOMContentLoaded, chama showMainMenu()
+Inicialização (A5.1)
+  └── init() → WorldRegistry.init([florestaEncantada]), chama showMainMenu()
+       └── selectWorld() → currentWorldConfig = WorldRegistry.get(id) || getDefault()
 ```
 
 #### Sistema de Movimentação
@@ -333,7 +334,7 @@ unlockTurn → scheduleBotTurnIfNeeded()
 
 ## Motor de Mundos (v0.9.0-preview)
 
-A partir da v0.9.0-preview, o Lara World iniciou a **Fase de Mundos** com a criação de um motor modular que coexiste com o monólito original. Nenhum módulo está conectado ao game.js — todos existem em paralelo.
+A partir da v0.9.0-preview, o Lara World iniciou a **Fase de Mundos** com a criação de um motor modular. Na Sprint A5.1 o motor entrou em produção: o WorldRegistry é inicializado no bootstrap e o `currentWorldConfig` é populado na seleção do mundo. O game.js foi migrado para ES Module e consome `currentWorldConfig.board` diretamente (Sprint A5.2).
 
 ### Módulos do Engine
 
@@ -366,7 +367,7 @@ O seletor de mundos é uma tela intermediária entre o clique em "⚡ Jogo Rápi
 - **4 cards "Em breve"** — bloqueados visualmente (badge 🔒), sem ação
 - **Mundo Aleatório** — seleciona Floresta (fallback)
 
-A variável `selectedWorldId` é definida no escopo do game.js e está pronta para ser consumida pelo WorldRegistry na Sprint A5.
+A variável `selectedWorldId` é definida no escopo do game.js. Na Sprint A5.1, o WorldRegistry foi integrado ao fluxo de inicialização: `WorldRegistry.init()` é chamado no bootstrap, `selectWorld()` consulta o registry via `WorldRegistry.get(id)` e popula `currentWorldConfig`. Os cards do seletor agora exibem descrição e nome vindos do WorldConfig.
 
 ## Docker
 
