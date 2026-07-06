@@ -274,6 +274,10 @@ export function isLoaded() {
   return _isLoaded;
 }
 
+export function resolveLoaded() {
+  _isLoaded = true;
+}
+
 export function reset() {
   _registry.clear();
   _isLoaded = false;

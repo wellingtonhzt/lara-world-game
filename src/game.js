@@ -1,4 +1,4 @@
-import { get, getDefault } from './engine/world-registry.js';
+import { get, getDefault, isLoaded, resolveLoaded } from './engine/world-registry.js';
 import { loadAllWorlds } from './worlds/loader.js';
 
 (function () {
@@ -873,6 +873,7 @@ import { loadAllWorlds } from './worlds/loader.js';
   }
 
   function showWorldSelector() {
+    if (!isLoaded()) resolveLoaded();
     document.querySelectorAll('.world-card:not(:disabled):not([data-world="random"])').forEach(card => {
       const wid = card.dataset.world;
       try {
@@ -893,6 +894,7 @@ import { loadAllWorlds } from './worlds/loader.js';
   }
 
   function selectWorld(worldId) {
+    if (!isLoaded()) resolveLoaded();
     if (worldId === "random") {
       currentWorldConfig = getDefault();
       selectedWorldId = currentWorldConfig.id;
