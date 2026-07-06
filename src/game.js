@@ -1350,7 +1350,6 @@ import { loadAllWorlds } from './worlds/loader.js';
   /* ── Init ── */
 
   function init() {
-    loadAllWorlds();
     enableWorldCard('dinossauros');
 
     elements.rollBtn.addEventListener("click", jogarDado);
@@ -1395,5 +1394,8 @@ import { loadAllWorlds } from './worlds/loader.js';
     setupDebugMode();
   }
 
-  document.addEventListener("DOMContentLoaded", init);
+  document.addEventListener("DOMContentLoaded", async () => {
+    await loadAllWorlds();
+    init();
+  });
 })();
