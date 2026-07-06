@@ -510,7 +510,7 @@ data/questions/
 │           8 (jogar-novamente), 10 (portal→Caverna dos Fósseis),
 │           12 (desafio), 15 (voltar-inicio), 16 (desafio), 18 (desafio), 20 (vitoria)
 ├── Portal: casa 10 → "caverna-dos-fosseis"
-└── Submundo: Caverna dos Fósseis (8 casas, worldExit bonus +2)
+└── Submundo: Caverna dos Fósseis (8 casas, worldExit bonus +3)
 ```
 
 ### Submundo — 🦴 Caverna dos Fósseis
@@ -617,7 +617,7 @@ Ideias registradas para sprints futuras (fora do escopo atual):
 - **Dois mundos completos**: Floresta Encantada e Vale dos Dinossauros, cada um com 20 casas, eventos temáticos, portal próprio
 - **Duas Áreas Especiais**: Floresta Misteriosa (submundo da Floresta) e Caverna dos Fósseis (submundo do Vale), cada uma com 8 casas e eventos próprios
 - **Portal genérico**: o estado de submundo (`activeSubworldId`, `subworldEntry`) substituiu as variáveis hardcoded `mundoAtual`, `entradaFloresta`, `entradaCaverna`
-- **Retorno parametrizado**: o bônus de saída é lido do WorldConfig (`worldExit.params.bonusCells`) — Floresta +3, Caverna +2
+- **Retorno parametrizado**: o bônus de saída é lido do WorldConfig (`worldExit.params.bonusCells`) — Floresta +3, Caverna +3
 - **Theme Engine**: tema visual aplicado via `data-world` no `<body>`, CSS temático para cada mundo, decorações dinâmicas injetadas via JS
 - **Debug independente**: botões específicos para cada Área Especial no painel de debug
 - **Zero alterações na Engine**: nenhum arquivo em `src/engine/`, `src/core/`, `src/data/` ou `src/worlds/loader.js` foi modificado

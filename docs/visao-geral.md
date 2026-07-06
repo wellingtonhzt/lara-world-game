@@ -21,11 +21,11 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 ### v0.10.0-preview (Atual) — Primeiro Ecossistema Multi-Mundos ✅
 
 - **Vale dos Dinossauros** — segundo mundo completo (20 casas, portal na casa 10, eventos temáticos)
-- **Caverna dos Fósseis** — segunda Área Especial (8 casas, desafios, retorno com +2)
+- **Caverna dos Fósseis** — segunda Área Especial (8 casas, desafios, retorno com +3)
 - **Floresta Encantada** — primeiro mundo (20 casas, portal, Floresta Misteriosa como Área Especial)
 - **Portal genérico** — sem hardcoded de nomes de mundo; navegação via configuração
 - **Theme Engine** — tema visual aplicado por mundo (`data-world` no body, CSS temático)
-- **Retorno parametrizado** — bônus de saída lido do WorldConfig (Floresta +3, Caverna +2)
+- **Retorno parametrizado** — bônus de saída lido do WorldConfig (Floresta +3, Caverna +3)
 - **Debug independente** — botões para cada Área Especial no painel de debug
 - **Arquitetura consolidada** — engine não conhece mundos específicos; tudo via WorldConfig
 - Cache-busting atualizado para `?v=0.10.0-preview`

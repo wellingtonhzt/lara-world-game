@@ -332,7 +332,7 @@ export const cavernaDosFosseis = {
       { type: 'move', params: { delta: 2 }, description: '\uD83C\uDFC6 F\u00f3ssil rar\u00edssimo encontrado! Avance 2 casas.' },
     ],
     8: [
-      { type: 'worldExit', params: { bonusCells: 2 }, description: '\uD83D\uDEAA Sa\u00edda da Caverna' },
+      { type: 'worldExit', params: { bonusCells: 3 }, description: '\uD83D\uDEAA Sa\u00edda da Caverna' },
     ],
   },
 
@@ -380,7 +380,7 @@ export const cavernaDosFosseis = {
     worldName: 'Caverna dos F\u00f3sseis',
     subtitle: 'Antigas cavernas de f\u00f3sseis e cristais.',
     initialMessage: '\uD83E\uDEB4 Bem-vindo \u00e0 Caverna dos F\u00f3sseis!',
-    worldIndicator: '\uD83E\uDEB4 Mundo da Caverna',
+    worldIndicator: '\uD83E\uDEB4 Caverna dos F\u00f3sseis',
     victoryTitle: 'Caverna Explorada!',
   },
 

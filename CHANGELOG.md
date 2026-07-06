@@ -4,7 +4,7 @@
 
 ### Adicionado
 - **Vale dos Dinossauros** — segundo mundo completo (`src/worlds/dinossauros/config.js`), com 20 casas, portal na casa 10, eventos temáticos de dinossauros
-- **Caverna dos Fósseis** — segunda Área Especial (submundo), 8 casas, eventos próprios (desafio, move, extraTurn, worldExit com bônus +2)
+- **Caverna dos Fósseis** — segunda Área Especial (submundo), 8 casas, eventos próprios (desafio, move, extraTurn, worldExit com bônus +3)
 - **Sprint A6.3**: Theme Engine em produção — `document.body.dataset.world` aplicado em `selectWorld()`, CSS temático para o Vale (gradiente quente, células em tons terra, decorações dino injetadas via JS). Floresta Encantada protegida com seletores `:not(.mundo-floresta)` onde necessário
 - **Sprint A6.5**: Config `cavernaDosFosseis` + debug (botões "🦴 Entrar na Caverna", "Casa 3 desafio", "Casa 5 passagem", "Casa 8 saída")
 - **Sprint A6.6 — Portal genérico**: `gameState.mundoAtual`/`entradaFloresta`/`entradaCaverna` substituídos por `activeSubworldId` e `subworldEntry`. Getters usam `getSubworldConfig()` com lookup em `subworldConfigs`. `eventsToSpecialCells` mapeia `shortcut`→`atalho` e `worldExit`→`saida-mundo` com `valor: ev.params.bonusCells`. ProcessSpecialCell "portal", "atalho" e "saida-mundo" leem bonus/entrada do WorldConfig
@@ -21,7 +21,7 @@
 
 ### Notas Técnicas
 - Engine totalmente genérica — nenhuma referência a "floresta" ou "dinossauros" em game.js
-- Subworld exit bonus lido de `worldExit.params.bonusCells` — Floresta tem 3, Caverna tem 2
+- Subworld exit bonus lido de `worldExit.params.bonusCells` — Floresta tem 3, Caverna tem 3
 - `getSubworldConfig()` retorna null quando `activeSubworldId` é null
 - Nenhum arquivo de engine (`src/engine/*`, `src/core/*`, `src/data/*`, `src/worlds/loader.js`) foi alterado
 - Adicionar um novo mundo exige apenas: config + registrar em `subworldConfigs` + botões de debug em index.html
