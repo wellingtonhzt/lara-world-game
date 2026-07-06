@@ -18,7 +18,8 @@
 
 | Versão | Data | Status |
 |--------|------|--------|
-| **v0.8.1** | Jul/2026 | ✅ **Ativo** |
+| **v0.9.0-preview** | Jul/2026 | ✅ **Ativo** |
+| v0.8.1 | Jul/2026 | ✅ Concluído |
 | v0.8.0 | Jul/2026 | ✅ Concluído |
 | v0.7.0 | Jul/2026 | ✅ Concluído |
 | v0.6.0 | Jul/2026 | ✅ Concluído |
@@ -30,7 +31,14 @@
 
 ---
 
-## ✨ Funcionalidades Atuais (v0.8.0)
+## ✨ Funcionalidades Atuais (v0.9.0-preview)
+
+### Seletor de Mundos
+
+- **Tela de seleção de mundo** — após clicar em "⚡ Jogo Rápido", 6 cards de mundos são exibidos (Floresta, 4 "Em breve" bloqueados, Aleatório)
+- **Floresta Encantada** — único mundo disponível no momento, com 20 casas, desafios educativos e portal para submundo
+- **Mundo Aleatório** — seleciona Floresta automaticamente (fallback até mais mundos serem adicionados)
+- **Cards "Em breve"** — visualmente bloqueados com badge "🔒 Em breve", sem ação ao clicar
 
 ### Menu Inicial
 
@@ -185,7 +193,7 @@
 
 ## 📜 História do Projeto
 
-O Lara World começou como um MVP de tabuleiro simples para 1 jogador. A primeira versão (v0.1.0) implementou a lógica básica do jogo com dados, casas especiais e Docker. Na sequência (v0.1.5) recebeu um tabuleiro visual com trilha serpentina, personagem animado e painel lateral. A versão v0.2.0 adicionou multiplayer local com alternância de turnos entre 2 jogadores. A v0.3.0 introduziu o modal de configuração inicial com nomes e sprites personalizáveis. A v0.4.0 adicionou 5 casas de desafios educativos com perguntas de múltipla escolha. A v0.5.0 substituiu as perguntas fixas por um **Banco de Questões** com 30 perguntas. A v0.6.0 adicionou o **Mundo da Floresta** com portal na casa 11, sistema de portais, mini-trilha de 8 casas com mecânicas exclusivas e modo debug. A v0.7.0 adicionou o **modo Single Player (Humano vs Máquina)** com bot inteligente, tela de vitória com confetes e correções de cascata. A versão atual (v0.8.0) adiciona um **Menu Inicial** com opções "⚡ Jogo Rápido" (single player) e "🏆 Modo Carreira (Em Breve)", além de uma tela de vitória com dois botões de saída (Jogar Novamente e Voltar ao Menu).
+O Lara World começou como um MVP de tabuleiro simples para 1 jogador. A primeira versão (v0.1.0) implementou a lógica básica do jogo com dados, casas especiais e Docker. Na sequência (v0.1.5) recebeu um tabuleiro visual com trilha serpentina, personagem animado e painel lateral. A versão v0.2.0 adicionou multiplayer local com alternância de turnos entre 2 jogadores. A v0.3.0 introduziu o modal de configuração inicial com nomes e sprites personalizáveis. A v0.4.0 adicionou 5 casas de desafios educativos com perguntas de múltipla escolha. A v0.5.0 substituiu as perguntas fixas por um **Banco de Questões** com 30 perguntas. A v0.6.0 adicionou o **Mundo da Floresta** com portal na casa 11, sistema de portais, mini-trilha de 8 casas com mecânicas exclusivas e modo debug. A v0.7.0 adicionou o **modo Single Player (Humano vs Máquina)** com bot inteligente, tela de vitória com confetes e correções de cascata. A v0.8.0 adicionou um **Menu Inicial** com opções "⚡ Jogo Rápido" (single player) e "🏆 Modo Carreira (Em Breve)", além de uma tela de vitória com dois botões de saída (Jogar Novamente e Voltar ao Menu). A versão atual (v0.9.0-preview) inicia a **Fase de Mundos** com seletor de mundos, motor modular (SessionManager, StateManager, WorldRegistry, EventProcessor) e o primeiro WorldConfig (Floresta Encantada + Floresta Misteriosa) — tudo coexistindo com o jogo original.
 
 ---
 
@@ -243,7 +251,8 @@ docker compose down
 
 ## 🗺️ Roadmap
 
-- **v0.9.0** — Sprites PNG, sons, melhorias visuais
+- **v0.9.0-preview** — ✅ Concluído — Seletor de mundos, motor modular, primeiro WorldConfig
+- **v0.10.0** — Sprites PNG, sons, melhorias visuais
 - **v1.0.0** — Lançamento oficial
 
 Veja o [roadmap completo](docs/roadmap.md).

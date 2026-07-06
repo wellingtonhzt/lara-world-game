@@ -14,14 +14,31 @@ lara-world/
 ├── README.md            # Documentação principal
 ├── docs/                # Documentação do projeto
 │   ├── arquitetura.md
+│   ├── arquitetura-motor-de-mundos.md
 │   ├── regras-do-jogo.md
 │   ├── roadmap.md
 │   ├── visao-geral.md
-│   └── memorial-tecnico.md
+│   ├── memorial-tecnico.md
+│   └── AI_WORKFLOW.md
 ├── src/                 # Código-fonte do jogo
 │   ├── index.html       # Página principal
 │   ├── style.css        # Estilos do jogo
-│   └── game.js          # Lógica do jogo
+│   ├── game.js          # Lógica do jogo (monólito original)
+│   ├── core/            # Módulos fundamentais do motor
+│   │   ├── constants.js # Constantes do motor
+│   │   ├── types.js     # Tipos JSDoc
+│   │   └── utils.js     # Utilitários
+│   ├── data/
+│   │   └── world-manifest.js  # Manifesto de IDs de mundos
+│   ├── engine/          # Módulos do motor de mundos
+│   │   ├── event-processor.js  # Processador de eventos
+│   │   ├── session-manager.js  # Gerenciamento de sessão
+│   │   ├── state-manager.js    # Gerenciamento de estado
+│   │   └── world-registry.js   # Registro de mundos
+│   └── worlds/          # Configurações de mundos
+│       ├── loader.js    # Carregador de mundos
+│       └── floresta/
+│           └── config.js  # WorldConfig Floresta Encantada
 ├── docker/
 │   └── nginx.conf       # Configuração do Nginx
 ├── Dockerfile           # Build da imagem Docker
@@ -313,6 +330,43 @@ unlockTurn → scheduleBotTurnIfNeeded()
   │               └── Ao final → switchTurn + unlockTurn (agenda próximo turno humano)
   └── Não → aguarda clique humano
 ```
+
+## Motor de Mundos (v0.9.0-preview)
+
+A partir da v0.9.0-preview, o Lara World iniciou a **Fase de Mundos** com a criação de um motor modular que coexiste com o monólito original. Nenhum módulo está conectado ao game.js — todos existem em paralelo.
+
+### Módulos do Engine
+
+| Módulo | Arquivo | Responsabilidade |
+|--------|---------|-----------------|
+| **WorldRegistry** | `src/engine/world-registry.js` | Registro e validação de mundos, 12 métodos, 4 classes de erro |
+| **SessionManager** | `src/engine/session-manager.js` | Criação/validação de sessão, deepFreeze, 5 métodos |
+| **StateManager** | `src/engine/state-manager.js` | Gerenciamento de estado do jogo, deepClone, 17 métodos |
+| **EventProcessor** | `src/engine/event-processor.js` | Processamento de eventos de células, 8 tipos built-in, cascade |
+
+### Módulos de Apoio
+
+| Módulo | Arquivo | Responsabilidade |
+|--------|---------|-----------------|
+| **Core** | `src/core/constants.js`, `utils.js`, `types.js` | Constantes, funções auxiliares, tipos JSDoc |
+| **World Manifest** | `src/data/world-manifest.js` | Array WORLD_IDS com todos os IDs de mundos (comentados) |
+| **Loader** | `src/worlds/loader.js` | Imports estáticos dos WorldConfigs |
+
+### Primeiro WorldConfig
+
+| Mundo | Arquivo | Células | Eventos | Portais |
+|-------|---------|---------|---------|---------|
+| Floresta Encantada | `src/worlds/floresta/config.js` | 20 | 12 | 1 (para Floresta Misteriosa) |
+| Floresta Misteriosa | (mesmo arquivo) | 8 | 4 | — |
+
+### Seletor de Mundos
+
+O seletor de mundos é uma tela intermediária entre o clique em "⚡ Jogo Rápido" e o modal de configuração. Exibe 6 cards em grid:
+- **Floresta Encantada** — selecionável, define `selectedWorldId = "floresta"`
+- **4 cards "Em breve"** — bloqueados visualmente (badge 🔒), sem ação
+- **Mundo Aleatório** — seleciona Floresta (fallback)
+
+A variável `selectedWorldId` é definida no escopo do game.js e está pronta para ser consumida pelo WorldRegistry na Sprint A5.
 
 ## Docker
 

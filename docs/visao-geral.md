@@ -18,7 +18,18 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 
 ## Principais Funcionalidades
 
-### v0.8.0 (Atual) — Menu Inicial e Interface Refinada ✅
+### v0.9.0-preview (Atual) — Seletor de Mundos e Motor Modular ✅
+
+- **Seletor de Mundos** — 6 cards exibidos entre "Jogo Rápido" e setup (Floresta, 4 "Em breve", Aleatório)
+- **Engine modular** — SessionManager, StateManager, WorldRegistry, EventProcessor como módulos independentes
+- **Primeiro WorldConfig** — Floresta Encantada (20 células, 12 eventos, 1 portal) + Floresta Misteriosa (subworld, 8 células)
+- **Módulos fundamentais** — `src/core/constants.js`, `utils.js`, `types.js`
+- **World Manifest** — `src/data/world-manifest.js` com WORLD_IDS
+- **Loader** — `src/worlds/loader.js` com imports estáticos
+- **Coexistência** — motor modular e game.js rodam lado a lado; nada foi desconectado
+- Cache-busting atualizado para `?v=0.9.0-preview`
+
+### v0.8.0 — Menu Inicial e Interface Refinada ✅
 
 - **Menu Inicial** (`#main-menu`) — tela inicial com título e dois botões
 - **⚡ Jogo Rápido** — inicia partida single player com configuração simplificada

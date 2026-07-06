@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.9.0-preview] - 2026-07-06
+
+### Adicionado
+- Seletor de Mundos na tela inicial (6 cards: Floresta + 4 "Em breve" + Aleatório)
+- `src/engine/event-processor.js` — processador de eventos de células (8 tipos built-in, handlers customizados, cascade)
+- `src/engine/session-manager.js` — gerenciamento de sessão com validação e deepFreeze
+- `src/engine/state-manager.js` — gerenciamento de estado do jogo (17 métodos, deepClone)
+- `src/engine/world-registry.js` — registro de mundos (12 métodos, 4 classes de erro)
+- `src/worlds/floresta/config.js` — primeiro WorldConfig (Floresta Encantada + Floresta Misteriosa)
+- `src/core/constants.js`, `src/core/utils.js`, `src/core/types.js` — módulos fundamentais do motor
+- `src/data/world-manifest.js` — manifesto de IDs de mundos
+- `src/worlds/loader.js` — carregador de mundos (esqueleto com imports estáticos)
+- Cache-busting via `?v=0.9.0-preview`
+
+### Alterado
+- `src/index.html` — adicionado seletor de mundos com 6 cards; cache-busting atualizado
+- `src/style.css` — estilos do seletor de mundos (overlay, grid, cards, badges)
+- `src/game.js` — fluxo do seletor de mundos integrado (+35 linhas), `selectedWorldId` tracking
+- Documentação: README, CHANGELOG, docs/visao-geral, docs/arquitetura, docs/roadmap, docs/memorial-tecnico, docs/arquitetura-motor-de-mundos atualizados para v0.9.0
+
+### Notas Técnicas
+- Engine modular coexiste com game.js original — nada foi desconectado
+- EventProcessor revisado com 7 correções (ordem de handlers, cascade, callbacks)
+- WorldConfig da Floresta extraído 1:1 do game.js — 20 células, 12 eventos, 1 portal
+- Floresta Misteriosa (subworld) definida com eventos customizados (atalho, worldExit) pendentes de implementação no EventProcessor
+- Nenhuma funcionalidade existente foi alterada
+
 ## [0.8.0] - 2026-07-05
 
 ### Adicionado

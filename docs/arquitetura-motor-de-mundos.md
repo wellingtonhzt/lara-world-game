@@ -2,6 +2,7 @@
 
 > **Documento oficial de arquitetura**
 > Aprovado nas sprints A0 e A0.1
+> Implementação: Sprints A1–A4 concluídas (v0.9.0-preview)
 
 ---
 
@@ -526,24 +527,25 @@ data/questions/
 
 ## 12. Plano de Migração
 
-| Sprint | O que fazer |
-|---|---|
-| **A1** | Fundação dos contratos: `core/constants.js`, `core/utils.js`, `worlds/registry.js` (esqueleto), `engine/event-processor.js` (esqueleto), contratos JSDoc |
-| **A2** | State Manager: extrair `gameState` + `resetGameState` para `engine/state-manager.js`. Remover `entradaFloresta`. Adicionar `worldStack` |
-| **A3** | Event System Core: implementar `EventProcessor.process()`, registrar handlers core, substituir `processSpecialCell()` por delegação |
-| **A4** | Portal Manager: extrair lógica de portal para `engine/portal-manager.js`. PortalConfig como entidade. Substituir hardcode de "floresta" |
-| **A5** | Floresta Encantada como primeira config: criar `worlds/floresta-encantada/config.js` e `worlds/floresta-misteriosa/config.js`. Mover dados do motor para config |
-| **A6** | Theme System: extrair CSS da floresta de `style.css` para `worlds/floresta-encantada/style.css`. `ThemeManager` via data-attribute |
-| **A7** | Question Catalog: extrair `bancoQuestoes` para `data/questions/*`. ChallengeSystem lê por categoria |
-| **A8** | Challenge System: extrair `showChallengeModal`, `sortearQuestao`, lógica para `engine/challenge-system.js` |
-| **A9** | Board Renderer: extrair `renderizarTrilha`, `renderSvgPath`, criação de cells para `engine/board-renderer.js` |
-| **A10** | Bot Controller + Victory System: extrair bot AI e vitória. Victory lê de `worldConfig.objectives` |
-| **A11** | Campaign System: `engine/campaign-system.js`. Modo Carreira com sequência de mundos. Progresso em memória |
-| **A12** | World Selector: tela de seleção de mundo no menu. Jogo Rápido com escolha + aleatório |
-| **A13** | Vale dos Dinossauros: criar `worlds/vale-dinossauros/config.js`. Testar "apenas configuração" |
-| **A14** | Custom Event Handlers: registro de handlers customizados no config. Mundo com evento novo sem alterar engine |
-| **A15** | Assets Dinâmicos: carregamento sob demanda de assets declarados no config |
-| **A16** | Polimento: overlays dinâmicos, MenuController genérico, testes de regressão |
+| Sprint | O que fazer | Status |
+|---|---|---|---|
+| **A1** | Fundação dos contratos: `core/constants.js`, `core/utils.js`, `core/types.js` | ✅ Concluído |
+| **A1.5** | World Registry + Loader + World Manifest: `engine/world-registry.js`, `worlds/loader.js`, `data/world-manifest.js` | ✅ Concluído |
+| **A2** | SessionManager + StateManager: `engine/session-manager.js`, `engine/state-manager.js` | ✅ Concluído |
+| **A3** | Event System Core: `engine/event-processor.js` com 8 tipos built-in, handlers customizados, cascade | ✅ Concluído |
+| **A4** | Floresta Encantada como primeira config: `worlds/floresta/config.js` (Floresta Encantada + Floresta Misteriosa) | ✅ Concluído |
+| **v0.9.0-preview** | World Selector + documentação: tela de seleção de mundos, cache-busting, docs atualizadas | ✅ Concluído |
+| **A5** | Conectar engine: ativar loader, ThemeManager, PortalManager, conectar EventProcessor e StateManager ao game.js | ⏳ Pendente |
+| **A6** | BoardRenderer: extrair renderização do tabuleiro de game.js para `engine/board-renderer.js` | ⏳ Pendente |
+| **A7** | QuestionCatalog: extrair `bancoQuestoes` para `data/questions/*`. ChallengeSystem lê por categoria | ⏳ Pendente |
+| **A8** | ChallengeSystem: extrair `showChallengeModal`, `sortearQuestao`, lógica para `engine/challenge-system.js` | ⏳ Pendente |
+| **A9** | BotController + VictorySystem: extrair bot AI e vitória para módulos do engine | ⏳ Pendente |
+| **A10** | PortalManager: extrair lógica de portal de game.js para `engine/portal-manager.js` | ⏳ Pendente |
+| **A11** | CampaignSystem: `engine/campaign-system.js`. Modo Carreira com sequência de mundos | ⏳ Pendente |
+| **A12** | Vale dos Dinossauros: criar `worlds/vale-dinossauros/config.js`. Testar "apenas configuração" | ⏳ Pendente |
+| **A13** | CustomEventHandlers: implementar handlers customizados no EventProcessor para eventos de mundo | ⏳ Pendente |
+| **A14** | Assets Dinâmicos: carregamento sob demanda de assets declarados no config | ⏳ Pendente |
+| **A15** | Polimento: overlays dinâmicos, MenuController genérico, testes de regressão | ⏳ Pendente |
 
 ---
 
@@ -566,6 +568,8 @@ Se o mundo precisar de:
 
 ---
 
+> **Nota sobre a execução:** O plano original listava o World Selector como Sprint A12. Na execução real, ele foi antecipado para v0.9.0-preview (após A4) para fornecer a interface de seleção de mundos antes da conexão completa do motor. As demais sprints (A5–A15) seguem a ordem planejada.
+
 ## 14. Observações Futuras
 
 Ideias registradas para sprints futuras (fora do escopo atual):
@@ -580,39 +584,55 @@ Ideias registradas para sprints futuras (fora do escopo atual):
 
 ---
 
-## Arquivos Alterados
+## Arquivos Alterados (Sprints A0–A4)
 
-Nenhum arquivo de código foi alterado nesta sprint.
+### Documentação criada/alterada
 
-### Documentação criada
+| Arquivo | Sprint | Descrição |
+|---|---|---|
+| `docs/arquitetura-motor-de-mundos.md` | A0.2 | Documento oficial de arquitetura do motor de mundos |
+| `docs/visao-geral.md` | v0.9.0 | Atualizado: v0.9.0-preview como versão atual |
+| `docs/arquitetura.md` | v0.9.0 | Atualizado: diretórios core/engine/worlds, motor de mundos |
+| `docs/roadmap.md` | v0.9.0 | Atualizado: v0.9.0-preview movido para concluído |
+| `README.md` | v0.9.0 | Atualizado: v0.9.0-preview como versão ativa |
+| `CHANGELOG.md` | v0.9.0 | Adicionado: entrada v0.9.0-preview |
+| `docs/memorial-tecnico.md` | v0.9.0 | Adicionado: entrada v0.9.0-preview |
 
-| Arquivo | Descrição |
-|---|---|
-| `docs/arquitetura-motor-de-mundos.md` | Documento oficial de arquitetura do motor de mundos |
+### Código criado (não conectado ao game.js)
 
-### Documentação existente (não alterada)
+| Arquivo | Sprint | Descrição |
+|---|---|---|
+| `src/core/constants.js` | A1 | Constantes do motor (event types, error codes) |
+| `src/core/utils.js` | A1 | Utilitários (deepFreeze, deepClone, validateConfig) |
+| `src/core/types.js` | A1 | Tipos JSDoc (WorldConfig, PortalConfig, EventConfig, etc.) |
+| `src/engine/world-registry.js` | A1.5 | Registro de mundos (12 métodos, 4 classes de erro) |
+| `src/data/world-manifest.js` | A1.5 | Array WORLD_IDS (todos comentados) |
+| `src/worlds/loader.js` | A1.5 | Imports estáticos dos WorldConfigs |
+| `src/engine/session-manager.js` | A2 | Gerenciamento de sessão (5 métodos, deepFreeze) |
+| `src/engine/state-manager.js` | A2 | Gerenciamento de estado do jogo (17 métodos, deepClone) |
+| `src/engine/event-processor.js` | A3 | Processador de eventos (8 tipos built-in, cascade, handlers customizados) |
+| `src/worlds/floresta/config.js` | A4 | Primeiro WorldConfig (Floresta Encantada + Floresta Misteriosa, 402 linhas) |
 
-| Arquivo | Status |
-|---|---|
-| `docs/arquitetura.md` | Não alterado (documento anterior, manter para referência) |
-| `docs/regras-do-jogo.md` | Não alterado |
-| `docs/visao-geral.md` | Não alterado |
-| `docs/roadmap.md` | Não alterado |
-| `docs/memorial-tecnico.md` | Não alterado |
-| `docs/AI_WORKFLOW.md` | Não alterado |
+### Código alterado (para o seletor de mundos)
+
+| Arquivo | Sprint | Descrição |
+|---|---|---|
+| `src/game.js` | v0.9.0-preview | +35 linhas: fluxo do seletor de mundos, `selectedWorldId` |
+| `src/index.html` | v0.9.0-preview | +45 linhas: seletor de mundos com 6 cards, cache-busting atualizado |
+| `src/style.css` | v0.9.0-preview | +123 linhas: estilos do seletor de mundos (overlay, grid, cards, badges) |
 
 ### Código existente (não alterado)
 
 | Diretório/Arquivo | Status |
 |---|---|
-| `src/game.js` | Não alterado |
-| `src/index.html` | Não alterado |
-| `src/style.css` | Não alterado |
 | `Dockerfile` | Não alterado |
 | `docker-compose.yml` | Não alterado |
+| `docs/regras-do-jogo.md` | Não alterado |
+| `docs/AI_WORKFLOW.md` | Não alterado |
 
 ---
 
-**Sprint A0.2 concluída.** Nenhuma linha de código foi escrita ou alterada.
-A arquitetura do motor de mundos está oficialmente documentada e congelada
-para início da implementação na Sprint A1.
+**Sprints A0.2–A4 concluídas.** A arquitetura do motor de mundos está documentada
+e implementada como módulos independentes que coexistem com o monólito original.
+O jogo continua executando a partir de `game.js` — nenhum módulo do motor foi
+conectado. A conexão está planejada para a Sprint A5.

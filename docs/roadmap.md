@@ -68,9 +68,20 @@
 - Função `resetGameState()` extraída para reúso
 - Cache-busting via `?v=0.8.0`
 
+### v0.9.0-preview — Seletor de Mundos e Motor Modular
+- Seletor de Mundos na tela inicial (6 cards: Floresta + 4 "Em breve" + Aleatório)
+- `SessionManager` — gerenciamento de sessão com validação
+- `StateManager` — gerenciamento de estado do jogo (17 métodos)
+- `WorldRegistry` — registro de mundos (12 métodos)
+- `EventProcessor` — processador de eventos de células (8 tipos built-in)
+- `src/worlds/floresta/config.js` — primeiro WorldConfig (Floresta Encantada + Floresta Misteriosa)
+- Módulos core: `constants.js`, `utils.js`, `types.js`
+- `world-manifest.js` e `loader.js` — infraestrutura de carregamento
+- Cache-busting via `?v=0.9.0-preview`
+
 ## Futuro
 
-### v0.9.0 — Sprites PNG, sons, melhorias visuais
+### v0.10.0 — Sprites PNG, sons, melhorias visuais
 
 ### v1.0.0 — Lançamento Oficial
 - Versão estável

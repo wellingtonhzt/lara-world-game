@@ -1,5 +1,63 @@
 # Memorial Técnico
 
+## [0.9.0-preview] - 2026-07-06
+
+### Objetivo
+
+Iniciar a Fase de Mundos do Lara World: criar um motor modular (SessionManager, StateManager, WorldRegistry, EventProcessor) que coexista com o monólito original, adicionar um seletor de mundos na interface entre o menu e o setup, e implementar o primeiro WorldConfig (Floresta Encantada + Floresta Misteriosa). Nenhuma funcionalidade existente foi alterada.
+
+### Arquivos Alterados
+
+| Arquivo | Tipo de Alteração |
+|---------|-------------------|
+| `src/game.js` | Adicionado: fluxo do seletor de mundos (+35 linhas), variável `selectedWorldId`. Modificado: `showSetupScreen()` agora recebe parâmetro do mundo selecionado |
+| `src/index.html` | Adicionado: seletor de mundos com 6 cards (`.world-card`), grid `.world-selector-grid`, overlay `.world-selector-overlay` |
+| `src/style.css` | Adicionado: estilos do seletor de mundos (overlay, grid, cards, hover, badge "Em breve", badge "Aleatório") |
+| `src/engine/event-processor.js` | **Criado** — 381 linhas, 8 tipos de evento built-in, registro de handlers customizados, cascade com proteção de loop, JSDoc typedefs (EventContext, EventResult, EventHandler) |
+| `src/engine/session-manager.js` | **Criado** — 133 linhas, 5 métodos (create, validate, getCurrentWorld, getDrawState, isMultiWorld), validação de sessão, deepFreeze |
+| `src/engine/state-manager.js` | **Criado** — 227 linhas, 17 métodos, deepClone em leituras, avanço mecânico de turno, gerenciamento de worldStack, playerState |
+| `src/engine/world-registry.js` | **Criado** — 12 métodos, 4 classes de erro (WorldNotFoundError, WorldAlreadyRegisteredError, InvalidWorldConfigError, WorldNotReadyError), validação de contrato, deepFreeze |
+| `src/worlds/floresta/config.js` | **Criado** — 402 linhas, exporta `florestaEncantada` (20 células, 12 eventos, 1 portal, 6 categorias) e `florestaMisteriosa` (8 células, 4 eventos, 2 categorias) |
+| `src/core/constants.js` | **Criado** — Constantes do motor (event types, error codes, default values) |
+| `src/core/utils.js` | **Criado** — Funções utilitárias (deepFreeze, deepClone, validateConfig, isValidId) |
+| `src/core/types.js` | **Criado** — Tipos JSDoc para contratos do motor (WorldConfig, PortalConfig, EventConfig, GameSession, GameState) |
+| `src/data/world-manifest.js` | **Criado** — Array WORLD_IDS com todos os IDs de mundos (todos comentados exceto floresta) |
+| `src/worlds/loader.js` | **Criado** — Imports estáticos dos WorldConfigs, função `loadWorldConfig()` por ID |
+| `docs/arquitetura-motor-de-mundos.md` | Atualizado: seção "Arquivos Alterados" com arquivos criados, plano de migração ajustado para execução real |
+| `docs/visao-geral.md` | Atualizado: v0.9.0-preview como versão atual, funcionalidades do seletor de mundos |
+| `docs/arquitetura.md` | Atualizado: diretórios (core/, engine/, worlds/), motor de mundos, seletor de mundos |
+| `docs/roadmap.md` | Atualizado: v0.9.0-preview movido para concluído |
+| `README.md` | Atualizado: v0.9.0-preview como versão ativa, funcionalidades, história, roadmap |
+| `CHANGELOG.md` | Adicionado: entrada v0.9.0-preview |
+| `docs/memorial-tecnico.md` | Adicionado: entrada v0.9.0-preview |
+
+### Impacto Técnico
+
+- **game.js**: Novo fluxo `showWorldSelector()` inserido entre o clique em "Jogo Rápido" e `showSetupScreen()`. Seletor exibe 6 `.world-card` em grid 3×2. `selectedWorldId` (string | null) armazena a escolha. Ao selecionar Floresta ou Aleatório, o seletor é ocultado e `showSetupScreen()` é chamado. Cards bloqueados ("Em breve") exibem badge e ignoram clique. Cache-busting atualizado para `?v=0.9.0-preview`.
+- **HTML**: Novo `#world-selector-overlay` com container `.world-selector-content`, título, grid `.world-selector-grid`, botão "Voltar". Seis `.world-card` com `.world-card-icon`, `.world-card-name`, `.world-card-desc`, `.world-card-badge`.
+- **CSS**: `.world-selector-overlay` (fixed, inset 0, z-index 1100, flex centralizado, fundo escuro). `.world-selector-grid` (display grid, 3 columns, gap 20px, max-width 800px). `.world-card` (background rgba branco, border-radius 16px, padding, cursor pointer, transição hover com escala e borda rosa). `.world-card.disabled` (opacity 0.5, cursor not-allowed). `.world-card-badge` (position absolute, top right, padding, border-radius, "🔒 Em breve" ou "🎲 Aleatório").
+- **Engine**: Todos os módulos do motor são independentes e não conectados ao game.js. WorldRegistry oferece `register()`, `get()`, `getAll()`, `isRegistered()`, `validate()`, `getReady()`, `getByType()`, `listIds()`, `size()`, `has()`, `remove()`, `clear()` — todos com validação de tipos e deepFreeze. SessionManager gerencia sessão com `create()` (valida worldId, gera seed, inicializa drawState), `validate()`, `getCurrentWorld()`, `getDrawState()`, `isMultiWorld()`. StateManager oferece 17 métodos para gerenciar estado do jogo: `create()`, `getState()`, `getPlayer()`, `getCurrentPlayer()`, `setPlayerPosition()`, `switchTurn()`, `getWorldStack()`, `pushWorld()`, `popWorld()`, etc. EventProcessor implementa 8 tipos built-in (`move`, `challenge`, `skipTurn`, `extraTurn`, `portal`, `resetPosition`, `finishWorld`, `item`) com cascade automático e proteção de loop (max 100 iterações).
+- **EventProcessor (revisões)**: Ordem de resolução alterada de built-in→world→global para world→built-in→global. `processCell` renomeado para `processEventsAtCell`. `addItem` e `setEntryPosition` substituídos por callbacks `onCollectItem`/`onPortalEntryPosition` para evitar dependência de StateManager. Operador `||` substituído por `??` para defaults falsy-safe. Cascade movido para após TODOS os eventos de uma célula, não entre cada evento.
+- **WorldConfig Floresta**: 402 linhas com dados extraídos 1:1 do game.js. 20 cells no mundo principal com 12 eventos espalhados, incluindo portal (casa 11 → Floresta Misteriosa). 8 cells no submundo com 4 eventos (2 desafios, 1 atalho, 1 saída-mundo). Temas, regras, cores, ícones, posições SVG — todos migrados. Não consumido por nada — puramente declarativo.
+
+### Impacto Funcional
+
+- Novo seletor de mundos aparece após clicar em "⚡ Jogo Rápido", antes do setup
+- Floresta Encantada é o único mundo jogável; 4 mundos aparecem como "Em breve"
+- "Mundo Aleatório" seleciona Floresta automaticamente (preparado para futura expansão)
+- Engine modular existe em paralelo — nenhuma funcionalidade existente foi alterada
+- game.js, index.html, style.css continuam sendo o jogo executado
+- Cache-busting atualizado para `?v=0.9.0-preview` garante carregamento da nova versão
+- Todas as funcionalidades anteriores (single player, multiplayer, floresta, desafios, banco de questões, menu) permanecem inalteradas
+
+### Notas Técnicas
+
+- O EventProcessor foi criado e revisado com 7 correções, mas NÃO está conectado ao game.js
+- O WorldConfig da Floresta contém todos os dados do mundo mas NÃO é consumido por nada
+- Floresta Misteriosa usa tipos de evento customizados (`shortcut`, `worldExit`) que não são built-in no EventProcessor — placeholder em `customEventHandlers` para implementação futura
+- `selectedWorldId` está definido em game.js e pronto para consumo pelo WorldRegistry na Sprint A5
+- Os 4 cards "Em breve" são placeholder visual — seus IDs estão reservados no world-manifest.js
+
 ## [0.8.0] - 2026-07-05
 
 ### Objetivo
