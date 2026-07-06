@@ -113,40 +113,40 @@ export const valeDosDinossauros = {
 
   events: {
     2: [
-      { type: 'challenge', description: '\uD83E\uDEB4 F\u00f3ssil raro encontrado! Responda ao desafio.' },
+      { type: 'challenge', description: '\uD83E\uDEB4 Desafio' },
     ],
     4: [
-      { type: 'move', params: { delta: 3 }, description: '\uD83E\uDD95 Um Diplodoco amigo te empurra! Avance 3 casas.' },
+      { type: 'move', params: { delta: 3 }, description: '\uD83E\uDD95 Avance 3' },
     ],
     6: [
-      { type: 'move', params: { delta: -2 }, description: '\uD83E\uDEA8 Rocha no caminho! Volte 2 casas.' },
+      { type: 'move', params: { delta: -2 }, description: '\uD83E\uDEA8 Volte 2' },
     ],
     8: [
-      { type: 'extraTurn', description: '\uD83E\uDD5A O ovo brilha misteriosamente... Jogue novamente!' },
+      { type: 'extraTurn', description: '\uD83E\uDD5A Jogue novamente' },
     ],
-    9: [
-      { type: 'challenge', description: '\uD83C\uDF0B Tremor de terra! Responda ao desafio para manter o equil\u00edbrio.' },
+      9: [
+      { type: 'challenge', description: '\uD83C\uDF0B Desafio' },
     ],
     10: [
-      { type: 'portal', params: { portalId: 'portal-caverna-fosseis' }, description: '\uD83E\uDEB4 Portal da Caverna dos F\u00f3sseis' },
+      { type: 'portal', params: { portalId: 'portal-caverna-fosseis' }, description: '\uD83E\uDEB4 Portal' },
     ],
     11: [
-      { type: 'move', params: { delta: -4 }, description: '\uD83E\uDD96 T-Rex faminto! Corra 4 casas para tr\u00e1s!' },
+      { type: 'move', params: { delta: -4 }, description: '\uD83E\uDD96 Volte 4' },
     ],
     13: [
-      { type: 'challenge', description: '\uD83D\uDC3E Pegadas enormes! Responda ao desafio para seguir a trilha.' },
+      { type: 'challenge', description: '\uD83D\uDC3E Desafio' },
     ],
     15: [
-      { type: 'move', params: { delta: 1 }, description: '\uD83C\uDF34 Esconderijo seguro! Avance 1 casa protegido.' },
+      { type: 'move', params: { delta: 1 }, description: '\uD83C\uDF34 Avance 1' },
     ],
     17: [
-      { type: 'skipTurn', params: { count: 1 }, description: '\uD83C\uDF0B Lava obstrui a passagem! Perdeu uma rodada.' },
+      { type: 'skipTurn', params: { count: 1 }, description: '\uD83C\uDF0B Perde 1 rodada' },
     ],
     19: [
-      { type: 'challenge', description: '\uD83E\uDD85 Pterod\u00e1ctilo ataca! Responda ao desafio.' },
+      { type: 'challenge', description: '\uD83E\uDD85 Desafio' },
     ],
     20: [
-      { type: 'finishWorld', description: '\uD83C\uDFC1 Voc\u00ea escapou do Vale dos Dinossauros!' },
+      { type: 'finishWorld', description: '\uD83C\uDFC1 Vit\u00f3ria' },
     ],
   },
 
@@ -314,25 +314,25 @@ export const cavernaDosFosseis = {
 
   events: {
     2: [
-      { type: 'move', params: { delta: 1 }, description: '\uD83D\uDC8E Cristais antigos iluminam o caminho! Avance 1 casa.' },
+      { type: 'move', params: { delta: 1 }, description: '\uD83D\uDC8E Avance 1' },
     ],
     3: [
-      { type: 'challenge', description: '\uD83E\uDEB4 F\u00f3sseis gigantes bloqueiam a passagem! Responda ao desafio.' },
+      { type: 'challenge', description: '\uD83E\uDEB4 Desafio' },
     ],
     4: [
-      { type: 'extraTurn', description: '\uD83E\uDD5A Um ovo pr\u00e9-hist\u00f3rico brilha... Jogue novamente!' },
+      { type: 'extraTurn', description: '\uD83E\uDD5A Jogue novamente' },
     ],
     5: [
-      { type: 'move', params: { delta: -2 }, description: '\uD83E\uDEA8 Passagem estreita! Volte 2 casas.' },
+      { type: 'move', params: { delta: -2 }, description: '\uD83E\uDEA8 Volte 2' },
     ],
     6: [
-      { type: 'challenge', description: '\uD83E\uDD96 O esqueleto do T-Rex guarda um segredo! Responda ao desafio.' },
+      { type: 'challenge', description: '\uD83E\uDD96 Desafio' },
     ],
     7: [
-      { type: 'move', params: { delta: 2 }, description: '\uD83C\uDFC6 F\u00f3ssil rar\u00edssimo encontrado! Avance 2 casas.' },
+      { type: 'move', params: { delta: 2 }, description: '\uD83C\uDFC6 Avance 2' },
     ],
     8: [
-      { type: 'worldExit', params: { bonusCells: 3 }, description: '\uD83D\uDEAA Sa\u00edda da Caverna' },
+      { type: 'worldExit', params: { bonusCells: 3 }, description: '\uD83D\uDEAA Sa\u00edda' },
     ],
   },
 
