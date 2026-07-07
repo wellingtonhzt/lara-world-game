@@ -134,9 +134,9 @@ header h1 {
 
 #trail-path {
   stroke: #d4a87a;
+  stroke: url(#path-texture);
   stroke-width: 14;
-  opacity: 0.55;
-  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.08));
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.12));
 }
 
 /* ── Decorative Elements ── */
@@ -1685,10 +1685,38 @@ header h1 {
 }
 .casa[data-position="11"] .casa-tipo { color: #1b5e20; background: rgba(255, 255, 255, 0.7); }
 
-/* ── Forest World Background ── */
+/* ═══════════════════════════════════════
+   ASSET-001 — Background ilustrado da Floresta
+   ═══════════════════════════════════════ */
+/* Aplica imagem de fundo ilustrada apenas na área do tabuleiro (#track-container)
+   quando o mundo Floresta Encantada (main world) ou Floresta Misteriosa (subworld)
+   estiver ativo. O asset assets/worlds/floresta/background.webp ainda será criado.
+   Enquanto não existir, o fallback de gradiente verde mantém o funcionamento.
+   Uma camada overlay semitransparente garante contraste das casas sobre a imagem. */
 
+body[data-world="floresta-encantada"] #track-container,
 #track-container.mundo-floresta {
-  background: linear-gradient(to bottom, #0d3b0d, #1b5e20, #2e7d32, #388e3c, #2e7d32);
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
+    url("assets/worlds/floresta/background.webp"),
+    linear-gradient(to bottom, #0d3b0d, #1b5e20, #2e7d32, #388e3c, #2e7d32);
+  background-size: cover, cover, auto;
+  background-position: center, center, 0 0;
+  background-repeat: no-repeat, no-repeat, repeat;
+}
+
+/* ── Forest Path Texture ── */
+/* ART-002 v2: caminho sólido com textura via SVG pattern.
+   opacity removido — o caminho deve parecer um elemento físico.
+   O asset path.webp será adicionado futuramente. Enquanto não existir,
+   o <rect> fill #6d8f5e dentro do pattern serve como fallback sólido. */
+
+body[data-world="floresta-encantada"] #trail-path,
+#track-container.mundo-floresta #trail-path {
+  stroke: #6d8f5e;
+  stroke: url(#path-texture-floresta);
+  stroke-width: 14;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.12));
 }
 
 #track-container.mundo-floresta .deco:not(.floresta-deco) {
@@ -1796,8 +1824,7 @@ body[data-world="dinossauros"] .theme-deco {
 body[data-world="dinossauros"] #track-container:not(.mundo-floresta) #trail-path {
   stroke: #c48a3a;
   stroke-width: 14;
-  opacity: 0.6;
-  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.08));
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.12));
 }
 
 body[data-world="dinossauros"] #track-container:not(.mundo-floresta) .casa {
