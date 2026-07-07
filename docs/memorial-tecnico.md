@@ -130,14 +130,14 @@ Completar o primeiro ecossistema multi-mundos do Lara World: integrar o Vale dos
 - **game.js — eventsToSpecialCells**: Converte eventos do WorldConfig para o formato de casas especiais que `processSpecialCell` entende. Mapeia `shortcut`→`atalho`, `worldExit`→`saida-mundo`, `move`→`avancar`/`voltar`, etc. O `valor` é extraído de `params.bonusCells` (para atalho/saída) ou `params.delta` (para movimento).
 - **game.js — Portais**: `resolvePortal()` agora usa `getPortalConfigForCell()` para encontrar o portal config. O modal de portal é dinâmico (título e mensagem do config). Ao entrar, o `theme.cssClass` do submundo é aplicado ao `trackContainer`. Ao sair (atalho/saída), a classe é removida.
 - **Theme Engine**: `document.body.dataset.world` é setado para o ID do mundo selecionado em `selectWorld()` e removido em `showMainMenu()`. O CSS usa `[data-world="vale-dinossauros"]` para aplicar gradiente quente e células em tons terra. Decorações temáticas são injetadas via JS.
-- **Caverna dos Fósseis**: 8 casas com coordenadas em formato de S. Eventos: casa 3 (desafio), casa 5 (move, avança 2), casa 7 (extraTurn), casa 8 (saida-mundo com +3). Tema visual compartilha o data-world do Vale (nenhuma classe CSS específica para a caverna ainda).
+- **Caverna dos Fósseis**: 8 casas com coordenadas em formato de S. Filosofia risco x recompensa — eventos leves e espaçados. Eventos: casa 2 (move, avança 1), casa 3 (desafio), casa 5 (move, volta 1), casa 7 (saida-mundo com +0), casa 8 (saida-mundo com +3). Tema visual compartilha o data-world do Vale (nenhuma classe CSS específica para a caverna ainda).
 - **Debug**: Painel expandido com botões da caverna. Um `<hr class="debug-separator">` separa os botões da Floresta dos botões da Caverna. Cada debug handler verifica `activeSubworldId` antes de operar.
 - **Zero engine files alterados**: Nenhuma modificação em `src/engine/*`, `src/core/*`, `src/data/*` ou `src/worlds/loader.js`.
 
 ### Impacto Funcional
 
 - Vale dos Dinossauros totalmente jogável: 20 casas, portal na casa 10, Caverna dos Fósseis como Área Especial
-- Caverna dos Fósseis com 8 casas, eventos próprios, saída com bônus +3
+- Caverna dos Fósseis com 8 casas, 5 eventos, risco x recompensa (saída rápida +0 ou saída completa +3)
 - Floresta Encantada continua funcionando exatamente como antes (portal casa 11, Floresta Misteriosa, bônus +3)
 - Portal overlay agora é dinâmico: mostra o nome e descrição do submundo alvo
 - Theme Engine aplica visual diferente para cada mundo sem conflitos
@@ -151,7 +151,7 @@ Completar o primeiro ecossistema multi-mundos do Lara World: integrar o Vale dos
 - `getSubworldConfig()` retorna null quando `activeSubworldId` é null, fazendo os getters fallbackarem para `currentWorldConfig`
 - O portal do Vale está na casa 10 (não 11) para diferenciar da Floresta
 - Floresta Misteriosa mantém eventos próprios (atalho casa 5 com +2, saída casa 8 com +3)
-- Caverna dos Fósseis tem 6 eventos (vs 4 da Floresta), incluindo `extraTurn` (casa 7) e `move` (casa 5, avança 2)
+- Caverna dos Fósseis tem 5 eventos (vs 4 da Floresta), estruturados em risco x recompensa: `move` (c2, c5), `challenge` (c3), `worldExit` com +0 (c7 — saída rápida/armadilha) e `worldExit` com +3 (c8 — saída completa). Casas 4 e 6 são normais (sem evento), criando pausas na mini-trilha. A mudança reduziu de 7 para 5 eventos, tornando a Caverna mais curta e intuitiva
 - Cache-busting via `?v=20260706` com `no-cache, must-revalidate` no Nginx
 
 ## [0.8.0] - 2026-07-05

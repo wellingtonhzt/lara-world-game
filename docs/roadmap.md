@@ -83,7 +83,7 @@
 
 ### v0.10.0-preview — Vale dos Dinossauros e Ecossistema Multi-Mundos
 - **🦖 Vale dos Dinossauros** — segundo mundo completo com 20 casas, eventos temáticos e portal na casa 10
-- **🦴 Caverna dos Fósseis** — segunda Área Especial (submundo), 8 casas, eventos próprios, retorno +3
+- **🦴 Caverna dos Fósseis** — segunda Área Especial (submundo), 8 casas, risco x recompensa: saída rápida sem bônus (c7) ou saída completa com +3 (c8)
 - **Portal genérico** — `activeSubworldId` substitui `mundoAtual` hardcoded
 - **Retorno parametrizado** — bônus lido do WorldConfig (Floresta +3, Caverna +3)
 - **Theme Engine** — tema visual por mundo via `data-world` no body

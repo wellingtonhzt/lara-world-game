@@ -18,6 +18,7 @@
 - `src/index.html`: Debug panel com botões da caverna separados por `<hr>`. Portal overlay dinâmico. world-indicator alterado para texto dinâmico
 - `src/style.css`: `.debug-separator` adicionado. `.mundo-floresta` mantido para tema da Floresta
 - `src/worlds/dinossauros/config.js`: Portal adicionado em casa 10 com `targetWorldId: "caverna-dos-fosseis"`. `cavernaDosFosseis` exportado com 8 casas e eventos próprios
+- **Caverna dos Fósseis simplificada**: redistribuição de eventos para filosofia risco x recompensa — casas 4 e 6 viram normais (sem evento), casa 5 muda de `move -2` para `move -1`, casa 7 vira `worldExit` com bônus 0 (saída rápida), casa 8 mantém `worldExit +3` (saída completa). `cellIcons` atualizados: 🪨 (c4), 💀 (c6), ☠️ (c7), 🚪 (c8). Agora 5 eventos em 8 casas (vs 7 antes): 💎 Avance 1, 🦴 Desafio, 🪨 Volte 1, ☠️ Saída rápida, 🚪 Saída
 
 ### Notas Técnicas
 - Engine totalmente genérica — nenhuma referência a "floresta" ou "dinossauros" em game.js
