@@ -99,23 +99,28 @@
 ### v0.11.0-preview — Evolução Visual (UX 2.0)
 - **UX-1.1** — Overhaul CSS completo (cartoon, arredondado, 3D, profundidade)
 - **ASSET-001** — Sistema de backgrounds por mundo (estrutura + CSS)
-- **ART-002** — Caminhos temáticos (infraestrutura SVG pattern)
-- **Estrutura `src/assets/worlds/`** criada
+- **ART-002** — Caminhos temáticos (infraestrutura SVG pattern, Floresta)
+- **ART-002 v2** — Caminho sólido (opacity removido de todos os paths)
+- **ART-003** — Background + caminho do Vale dos Dinossauros
+- **ART-004** — Remoção dos elementos decorativos antigos do HTML
+- **Estrutura `src/assets/worlds/`** com floresta/ e dinossauros/
 
 ## ART — Direção de Arte
 
-Nova trilha de desenvolvimento focada exclusivamente na identidade visual do projeto.
+Trilha de desenvolvimento focada exclusivamente na identidade visual do projeto.
 
 | Etapa | Status | Descrição |
 |-------|--------|-----------|
-| **ART-001** | ✅ Concluído | Sistema de backgrounds por mundo — estrutura, CSS, overlay de contraste, fallback |
-| **ART-002** | ⏳ Em andamento | Caminhos temáticos — textura no stroke do SVG, fallback sólido, preparado para expansão |
-| **ART-003** | 🔲 Pendente | Casas ilustradas — substituir células CSS por assets visuais por tipo de casa |
-| **ART-004** | 🔲 Pendente | HUD ilustrada — painel lateral, botões, dados e indicadores com assets próprios |
-| **ART-005** | 🔲 Pendente | Logo oficial — identidade visual do título Lara World |
-| **ART-006** | 🔲 Pendente | Personagens — sprites dos jogadores com design próprio (não apenas emojis) |
-| **ART-007** | 🔲 Pendente | Ícones próprios — substituir emojis por iconografia original do jogo |
-| **ART-008** | 🔲 Pendente | Animações — movimentos, transições e efeitos visuais refinados |
+| **ART-001** | ✅ Concluído | Estrutura de assets — pastas por mundo, `.gitkeep`, organização inicial |
+| **ART-002** | ✅ Concluído | Background Floresta Encantada + Caminho temático Floresta — CSS, SVG pattern, overlay, fallback |
+| **ART-003** | ✅ Concluído | Background Vale dos Dinossauros + Caminho temático Dinossauros — CSS, SVG pattern, overlay, fallback |
+| **ART-004** | ✅ Concluído | Remoção dos elementos decorativos antigos — emojis fixos do HTML removidos, CSS limpo |
+| **ART-005** | 🔲 Pendente | Background Floresta Misteriosa — assets e CSS para o submundo da Floresta |
+| **ART-006** | 🔲 Pendente | Background Caverna dos Fósseis — assets e CSS para o submundo do Vale |
+| **ART-007** | 🔲 Pendente | Casas ilustradas — substituir células CSS por assets visuais por tipo de casa |
+| **ART-008** | 🔲 Pendente | HUD ilustrada — painel lateral, botões, dados e indicadores com assets próprios |
+| **ART-009** | 🔲 Pendente | Ícones próprios — substituir emojis por iconografia original do jogo |
+| **ART-010** | 🔲 Pendente | Personagens — sprites dos jogadores com design próprio (não apenas emojis) |
 
 ### A7 — Theme Engine Completa
 - Temas visuais completos para todos os mundos atuais

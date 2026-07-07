@@ -26,7 +26,10 @@ lara-world/
 │   ├── game.js          # Lógica do jogo (ES Module)
 │   ├── assets/          # Recursos visuais do jogo
 │   │   └── worlds/      # Assets por mundo
-│   │       └── floresta/
+│   │       ├── floresta/
+│   │       │   ├── background.webp  # Background ilustrado do tabuleiro (pendente)
+│   │       │   └── path.webp        # Textura do caminho (pendente)
+│   │       └── dinossauros/
 │   │           ├── background.webp  # Background ilustrado do tabuleiro (pendente)
 │   │           └── path.webp        # Textura do caminho (pendente)
 │   ├── core/            # Módulos fundamentais do motor
@@ -52,7 +55,7 @@ lara-world/
 └── docker-compose.yml   # Orquestração Docker
 ```
 
-> Nota: a pasta `src/assets/` foi criada na v0.11.0-preview para iniciar a fase de identidade visual. A subpasta `worlds/` abriga assets por mundo (`background.webp`, `path.webp`). `src/assets/sounds/` está prevista para versões futuras.
+> Nota: a pasta `src/assets/` foi criada na v0.11.0-preview para iniciar a fase de identidade visual. A subpasta `worlds/` abriga assets por mundo (`background.webp`, `path.webp`), atualmente com floresta/ e dinossauros/. Cada mundo possui seu próprio background e textura de caminho, com fallback CSS garantido se o asset não existir. `src/assets/sounds/` está prevista para versões futuras.
 
 ## Arquitetura do Frontend
 

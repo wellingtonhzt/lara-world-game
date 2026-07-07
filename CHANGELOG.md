@@ -2,30 +2,39 @@
 
 ## [0.11.0-preview] - 2026-07-07
 
-### Início da Evolução Visual (UX 2.0)
+### Consolidação da Direção de Arte (Sprint ART)
 - **UX-1.1 — Overhaul visual completo**: redesign ousado de todo o CSS com estilo cartoon, arredondado, colorido e com profundidade. Inclui: body com multi-radial gradient, células 98×64px com border-radius 20px e bottom shadow 6px, botões com shine pseudo-element e shadow 3D, overlays com backdrop-filter blur(6px), vitória com glow dourado animado e firework pseudo-elements, glass card no menu principal, scrollbar temática no histórico
 - **ASSET-001 — Background ilustrado por mundo**: criada estrutura `src/assets/worlds/` e preparado CSS para aplicar `background.webp` apenas na área do tabuleiro (`#track-container`), com fallback de gradiente verde e overlay semitransparente para contraste. Aplicação no body foi descartada em favor da área do tabuleiro
-- **ART-002 — Caminho temático**: infraestrutura para textura de caminho via SVG pattern (`path-texture-floresta`), com stroke sólido (opacity removido), fallback de cor sólida e preparação para futuros caminhos por mundo
-- **Assets pipeline**: estrutura `src/assets/worlds/` criada com `.gitkeep` para versionamento
+- **ART-002 — Caminho temático (v1)**: infraestrutura para textura de caminho via SVG pattern (`path-texture-floresta`), com stroke sólido (opacity removido), fallback de cor sólida e preparação para futuros caminhos por mundo
+- **ART-002 (v2) — Caminho sólido**: opacity removido de todos os paths (caminho 100% opaco), drop-shadow ajustado para compensar traço sem transparência, textura via pattern com fallback de cor
+- **ART-003 — Background do Vale dos Dinossauros**: pasta `src/assets/worlds/dinossauros/` criada, CSS de background com overlay + `url(background.webp)` + gradiente arenoso fallback, pattern `path-texture-dinossauros` no HTML, e `stroke: url(#path-texture-dinossauros)` no CSS do caminho
+- **Assets pipeline consolidada**: estrutura `src/assets/worlds/` com floresta/ e dinossauros/, cada um com `.gitkeep` para versionamento e suporte a `background.webp` + `path.webp`
 
 ### Adicionado
-- `src/assets/worlds/floresta/.gitkeep` — placeholder para versionar estrutura de assets
-- `src/index.html` — adicionados `<defs>` com SVG patterns (`path-texture` e `path-texture-floresta`) para texturização do caminho
+- `src/assets/worlds/floresta/.gitkeep` — placeholder para versionar estrutura de assets da Floresta
+- `src/assets/worlds/dinossauros/.gitkeep` — placeholder para versionar estrutura de assets do Vale
+- `src/index.html` — adicionados `<defs>` com SVG patterns (`path-texture`, `path-texture-floresta`, `path-texture-dinossauros`) para texturização do caminho
 
 ### Alterado
 - `src/style.css`:
   - UX-1.1: redesign completo (2066 linhas) — multi-radial gradient no body, células maiores com sombra 3D, botões com shine, overlays com blur, glass card no menu, vitória com glow/firework, toques finais no tema floresta e dinossauros, responsivo refinado
   - ASSET-001: regra `body[data-world="floresta-encantada"] #track-container, #track-container.mundo-floresta` com background-image + overlay + fallback verde
   - ART-002: `#trail-path` ganhou `stroke: url(#path-texture)` com fallback sólido; floresta com `stroke: url(#path-texture-floresta)`; opacity removido de todos os paths (caminho sólido)
-- README.md: seção "Identidade Visual", v0.11.0-preview como versão ativa
+  - ART-003: regra `body[data-world="dinossauros"] #track-container:not(.mundo-floresta)` com background-image + overlay + fallback arenoso; `#trail-path` com `stroke: url(#path-texture-dinossauros)`; pattern adicionado no HTML
+- `src/index.html`: adicionados patterns `path-texture` (default), `path-texture-floresta` e `path-texture-dinossauros` no SVG `<defs>`
+- `src/assets/worlds/dinossauros/.gitkeep` — criado para versionar estrutura de assets do Vale
+- README.md: seção "Identidade Visual" expandida com estrutura completa, decisões de UX e descobertas dos testes
 
 ### Notas Técnicas
 - Background ilustrado aplicado apenas no `#track-container` (tabuleiro), não no body
 - Fundo do body permanece com gradiente neutro (multi-radial UX-1.1)
 - Fallback nativo do CSS: se `background.webp` ou `path.webp` não existirem, gradiente/cor sólida mantém o funcionamento
 - SVG pattern com `<rect fill>` + `<image>` garante fallback sólido mesmo com imagem ausente
+- Caminhos temáticos usam `stroke: url(#pattern-id)` com fallback de cor sólida na linha anterior
 - Nenhuma engine, world config, game.js ou gameplay alterados — todas as mudanças são exclusivamente visuais (CSS + HTML)
 - Estrutura preparada para expansão: novos mundos só precisam adicionar seus assets em `src/assets/worlds/<mundo>/` e criar patterns CSS correspondentes
+- Backgrounds Floresta e Dinossauros seguem o mesmo padrão de 3 camadas (overlay + url + gradiente fallback)
+- Decisão aprovada: cenário aplicado apenas no tabuleiro (nunca no body), centro livre para as casas, elementos visuais nas bordas
 
 ## [0.10.0-preview] - 2026-07-06
 

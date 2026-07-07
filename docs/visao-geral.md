@@ -18,8 +18,13 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 
 ## Principais Funcionalidades
 
-### v0.10.0-preview (Atual) — Primeiro Ecossistema Multi-Mundos ✅
+### v0.11.0-preview (Atual) — Evolução Visual (UX 2.0) ✅
 
+- **UX-1.1 — Overhaul visual completo**: redesign cartoon com multi-radial gradient, células 98×64px com border-radius 20px, botões com shine 3D, overlays com blur, vitória com glow dourado, glass card no menu, scrollbar temática
+- **Background ilustrado por mundo**: Floresta Encantada e Vale dos Dinossauros com `background.webp` + overlay de contraste + gradiente fallback, aplicados apenas no `#track-container`
+- **Caminhos temáticos**: infraestrutura SVG pattern para textura de caminho por mundo, com fallback de cor sólida (Floresta #6d8f5e, Dinossauros #c48a3a)
+- **Assets pipeline consolidada**: estrutura `src/assets/worlds/` com pastas por mundo (floresta/, dinossauros/), cada um preparado para `background.webp` e `path.webp`
+- **Decorações emoji removidas**: elementos decorativos antigos do HTML removidos (ART-004) — background ilustrado assume papel de cenário
 - **Vale dos Dinossauros** — segundo mundo completo (20 casas, portal na casa 10, eventos temáticos)
 - **Caverna dos Fósseis** — segunda Área Especial (8 casas, risco x recompensa: saída rápida sem bônus ou saída completa com +3)
 - **Floresta Encantada** — primeiro mundo (20 casas, portal, Floresta Misteriosa como Área Especial)
@@ -154,16 +159,20 @@ O jogo possuía uma base técnica sólida (engine modular, dois mundos completos
 - ✓ Cada área especial (submundo) também possuirá assets próprios no futuro
 - ✓ Assets são reutilizáveis entre mundos quando aplicável
 - ✓ Sistema preparado para expansão para novos mundos
+- ✓ Caminhos temáticos são tratados como uma camada independente do background
+- ✓ O centro do cenário permanece livre para o tabuleiro
 
 ### Estrutura de Assets
 
 ```
 src/assets/
-├── worlds/
-│   └── floresta/
-│       ├── background.webp   # Background ilustrado do tabuleiro (asset pendente)
-│       └── path.webp          # Textura do caminho (asset pendente)
-└── subworlds/                 # Assets para áreas especiais (futuro)
+└── worlds/
+    ├── floresta/
+    │   ├── background.webp   # Background ilustrado do tabuleiro (asset pendente)
+    │   └── path.webp          # Textura do caminho (asset pendente)
+    └── dinossauros/
+        ├── background.webp   # Background ilustrado do tabuleiro (asset pendente)
+        └── path.webp          # Textura do caminho (asset pendente)
 ```
 
 ### Finalidade dos Assets
@@ -175,17 +184,36 @@ src/assets/
 
 ### Testes Realizados
 
-**Floresta Encantada — Background**
+**Floresta Encantada — Background** (ASSET-001 / ART-002)
 - Primeiro background ilustrado integrado ao tabuleiro
 - Teste mostrou ganho significativo de identidade visual
 - Aplicação no body (teste inicial) foi descartada — o fundo da página não deve usar a ilustração
 - Aplicação apenas na área do tabuleiro foi aprovada como decisão arquitetural
 
-**Caminho Temático**
+**Vale dos Dinossauros — Background** (ART-003)
+- Segundo background integrado, seguindo o mesmo padrão da Floresta
+- Gradiente fallback em tons de terra/areia (#f4c97a → #8b6914)
+- Overlay rgba(0,0,0,0.35) mantém contraste das casas sobre o background
+- Estrutura idêntica à Floresta, validando a arquitetura de assets por mundo
+
+**Caminho Temático** (ART-002 / ART-003)
 - Infraestrutura preparada para textura de caminho via SVG pattern
 - Primeira implementação usava `opacity` no stroke — resultado artificial, caminho translúcido
 - Correção: caminho sólido (opacity removido), textura via pattern com fallback de cor sólida
-- Textura definitiva (`path.webp`) ainda pendente de criação por IA
+- Caminhos temáticos implementados para Floresta (`path-texture-floresta`, fallback #6d8f5e) e Dinossauros (`path-texture-dinossauros`, fallback #c48a3a)
+- Textura definitiva (`path.webp`) ainda pendente de criação por IA para ambos os mundos
+
+**Decorações Emoji**
+- Backgrounds ilustrados tornaram redundantes os emojis decorativos fixos no HTML
+- Elementos removidos na ART-004 para que o background assuma o papel de cenário
+
+### Descobertas dos Testes
+
+- Backgrounds muito carregados prejudicam a leitura do tabuleiro
+- O cenário não deve competir com as casas e jogadores
+- Grandes elementos visuais (dinossauros, árvores, vulcões, fósseis) devem permanecer nas laterais
+- O caminho ainda passará por refinamento visual em futuras sprints
+- Decorações emoji antigas removidas — background ilustrado agora é o cenário principal
 
 ## Próximos Passos
 

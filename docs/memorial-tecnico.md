@@ -225,6 +225,64 @@ Iniciar a fase de identidade visual do Lara World, preparando a infraestrutura p
 - SVG pattern com `<rect>` + `<image>` é a abordagem SVG-nativa para textura em stroke, equivalente funcional a `background-image`
 - Futuras texturas de caminho para outros mundos: adicionar `<pattern>` no HTML + regra CSS + asset na pasta do mundo
 
+## Marco 7 — Consolidação da Direção de Arte
+
+### Objetivo
+
+Consolidar a pipeline de identidade visual do Lara World, completando a infraestrutura de backgrounds e caminhos temáticos para os dois mundos disponíveis (Floresta Encantada e Vale dos Dinossauros), validando a arquitetura de assets por mundo, e removendo elementos decorativos antigos que conflitavam com os novos backgrounds ilustrados.
+
+### Arquivos Alterados
+
+| Arquivo | Tipo de Alteração |
+|---------|-------------------|
+| `src/style.css` | **ART-003**: regra `body[data-world="dinossauros"] #track-container:not(.mundo-floresta)` com background-image (overlay + url + gradiente arenoso); caminho com `stroke: url(#path-texture-dinossauros)`. **ART-004**: remoção de ~90 linhas de CSS morto (`.deco`, default positioning, floresta deco toggle, dino deco toggle, responsive font-sizes). **Ajuste visual**: caminho Dinossauros com `opacity: 0.75`, `stroke-width: 12`, sombra mais suave |
+| `src/index.html` | **ART-002**: adicionados `<defs>` com SVG patterns (`path-texture`, `path-texture-floresta`). **ART-003**: adicionado `path-texture-dinossauros`. **ART-004**: removidas 19 divs decorativas (clouds, trees, flowers, sun, floresta decos) |
+| `src/assets/worlds/floresta/.gitkeep` | **Criado** — placeholder para assets da Floresta |
+| `src/assets/worlds/dinossauros/.gitkeep` | **Criado** — placeholder para assets do Vale |
+| `README.md` | Seção "Identidade Visual" expandida com estrutura completa dos dois mundos, decisões de UX aprovadas, e descobertas dos testes |
+| `CHANGELOG.md` | Entrada v0.11.0-preview expandida com ART-002, ART-003, ART-004 |
+| `docs/visao-geral.md` | Seção "Evolução Visual" atualizada com background Dinossauros, estrutura completa, descobertas dos testes |
+| `docs/roadmap.md` | Trilha ART atualizada com sprints concluídas e pendentes |
+| `docs/arquitetura.md` | Estrutura de diretórios atualizada com dinossauros/ |
+| `docs/memorial-tecnico.md` | Adicionada entrada Marco 7 |
+
+### Impacto Técnico
+
+**ART-002/003 — Backgrounds e Caminhos**
+- Floresta Encantada: CSS `body[data-world="floresta-encantada"] #track-container, #track-container.mundo-floresta` com 3 camadas de background: overlay rgba(0,0,0,0.35) + `url(background.webp)` + gradiente verde fallback
+- Vale dos Dinossauros: CSS `body[data-world="dinossauros"] #track-container:not(.mundo-floresta)` com 3 camadas de background: overlay rgba(0,0,0,0.35) + `url(background.webp)` + gradiente arenoso fallback (#f4c97a → #8b6914)
+- Ambos usam `background-size: cover, cover, auto` e `background-position: center, center, 0 0`
+- Se `background.webp` não existir: camada do meio é transparente, gradiente fallback aparece, overlay mantém contraste
+- Caminhos temáticos: SVG patterns no HTML (`<pattern>` com `<rect fill>` + `<image>`), CSS com `stroke: url(#pattern-id)` + fallback cor sólida
+- Floresta: pattern `path-texture-floresta` com fill #6d8f5e, fallback `#6d8f5e`
+- Dinossauros: pattern `path-texture-dinossauros` com fill #c48a3a, fallback `#c48a3a`
+- Dinossauros path refinado: `stroke-width: 12` (era 14), `opacity: 0.75`, `filter: drop-shadow(0 2px 5px ...)` (mais compacto)
+
+**ART-004 — Remoção de Decorações**
+- HTML: removidas 19 divs decorativas (10 default + 9 floresta) que ficavam soltas sobre o tabuleiro
+- CSS: removidas ~90 linhas — classe `.deco` base, regras de posicionamento default (.deco-cloud-*, .deco-tree-*, .deco-flower-*, .deco-sun), toggle floresta (.floresta-deco, .floresta-deco-*), toggle dinossauros (.deco-palm-*, .deco-volcano, .deco-rock-*, .deco-dino, `body[data-world="dinossauros"] .theme-deco { display: block; }`), font-sizes responsivos
+- Mantido: `.theme-deco { display: none; }` para esconder permanentemente decorações injetadas por JS (Floresta, Dinossauros e Caverna)
+- Nenhum arquivo de engine, world config ou game.js foi alterado
+
+### Impacto Funcional
+
+- **Floresta Encantada**: tabuleiro com fundo temático (fallback gradiente verde enquanto asset não existir), caminho com textura própria
+- **Vale dos Dinossauros**: tabuleiro com fundo temático (fallback gradiente arenoso enquanto asset não existir), caminho semi-transparente com textura própria
+- **Tabuleiro mais limpo**: sem emojis decorativos soltos sobre o mapa — background ilustrado assume o papel de cenário
+- **Caminho do Dinossauros mais leve**: opacity 0.75 permite ver o cenário através do traço, stroke 12 mais fino, sombra mais discreta
+- **Backgrounds independentes**: cada mundo pode ter seu próprio cenário sem conflitos
+- **Floresta intacta**: seletores `body[data-world="floresta-encantada"]` e `.mundo-floresta` não foram alterados
+- **Nenhuma regressão funcional**: todas as mecânicas (dado, movimento, desafios, portal, vitória, bot, single player, debug) continuam idênticas
+
+### Notas Técnicas
+
+- A Regra de Ouro foi mantida: **zero alterações em engine, world configs, game.js ou gameplay**
+- Todos os backgrounds seguem o mesmo padrão: overlay + url + gradiente fallback
+- Todos os caminhos seguem o mesmo padrão: fallback cor sólida + pattern URL
+- Caminho Dinossauros é o único com `opacity` (0.75) para efeito semi-transparente
+- Decorações injetadas via JS (Floresta, Dinossauros, Caverna) continuam sendo criadas mas ficam ocultas por `.theme-deco { display: none; }`
+- Adicionar um novo mundo: criar pasta em `src/assets/worlds/<mundo>/`, adicionar `<pattern>` no HTML, criar regras CSS de background + path
+
 ### Objetivo
 
 Implementar um menu inicial (Main Menu) com duas opções de entrada ("⚡ Jogo Rápido" e "🏆 Modo Carreira (Em Breve)"), refatorar a tela de vitória para oferecer duas saídas distintas (Jogar Novamente / Voltar ao Menu), e extrair `resetGameState()` para reúso entre reinício e retorno ao menu.
