@@ -259,8 +259,8 @@ export const cavernaDosFosseis = {
       8: { x: 18, y: 66 },
     },
     cellIcons: [
-      '\uD83D\uDEAA', '\uD83D\uDC8E', '\uD83E\uDEB4', '\uD83E\uDD5A',
-      '\uD83E\uDEA8', '\uD83E\uDD96', '\uD83C\uDFC6', '\uD83C\uDFC1',
+      '\uD83D\uDEAA', '\uD83D\uDC8E', '\uD83E\uDEB4', '\uD83E\uDEA8',
+      '\uD83E\uDEA8', '\uD83D\uDC80', '\u2620\uFE0F', '\uD83D\uDEAA',
     ],
   },
 
@@ -314,23 +314,17 @@ export const cavernaDosFosseis = {
 
   events: {
     2: [
-      { type: 'move', params: { delta: 1 }, description: '\uD83D\uDC8E Avance 1' },
+      { type: 'move', params: { delta: 1 }, description: '\uD83D\uDC8E Avance 1 casa' },
     ],
     3: [
       { type: 'challenge', description: '\uD83E\uDEB4 Desafio' },
     ],
-     4: [
-        { type: 'challenge', description: '\uD83D\uDC8E Desafio' },
-      ],
     5: [
-      { type: 'move', params: { delta: -2 }, description: '\uD83E\uDEA8 Volte 2' },
+      { type: 'move', params: { delta: -1 }, description: '\uD83E\uDEA8 Volte 1 casa' },
     ],
-    6: [
-      { type: 'challenge', description: '\uD83E\uDD96 Desafio' },
+    7: [
+      { type: 'worldExit', params: { bonusCells: 0 }, description: '\u2620\uFE0F Sa\u00edda r\u00e1pida' },
     ],
-     7: [
-        { type: 'worldExit', params: { bonusCells: 0 }, description: '\uD83D\uDD73\uFE0F Sa\u00edda r\u00e1pida' },
-      ],
     8: [
       { type: 'worldExit', params: { bonusCells: 3 }, description: '\uD83D\uDEAA Sa\u00edda' },
     ],
