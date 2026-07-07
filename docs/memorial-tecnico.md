@@ -154,7 +154,76 @@ Completar o primeiro ecossistema multi-mundos do Lara World: integrar o Vale dos
 - Caverna dos Fósseis tem 5 eventos (vs 4 da Floresta), estruturados em risco x recompensa: `move` (c2, c5), `challenge` (c3), `worldExit` com +0 (c7 — saída rápida/armadilha) e `worldExit` com +3 (c8 — saída completa). Casas 4 e 6 são normais (sem evento), criando pausas na mini-trilha. A mudança reduziu de 7 para 5 eventos, tornando a Caverna mais curta e intuitiva
 - Cache-busting via `?v=20260706` com `no-cache, must-revalidate` no Nginx
 
-## [0.8.0] - 2026-07-05
+## Marco 6 — Evolução Visual (UX 2.0)
+
+### Objetivo
+
+Iniciar a fase de identidade visual do Lara World, preparando a infraestrutura para assets gráficos por mundo. As sprints UX-1.1 (overhaul CSS), ASSET-001 (background ilustrado) e ART-002 (caminhos temáticos) estabeleceram a pipeline artística do projeto, mantendo a regra de ouro de não alterar engine, gameplay ou world configs.
+
+### Arquivos Alterados
+
+| Arquivo | Tipo de Alteração |
+|---------|-------------------|
+| `src/style.css` | **UX-1.1**: redesign completo (~2066 linhas) — multi-radial gradient no body, células 98×64px com border-radius 20px e bottom shadow 6px, botões com shine pseudo-element e shadow 3D, overlays com backdrop-filter blur(6px), vitória com glow dourado animado e firework pseudo-elements, glass card no menu principal com blur(12px), scrollbar temática no histórico. **ASSET-001**: regra `body[data-world="floresta-encantada"] #track-container, #track-container.mundo-floresta` com background-image + overlay rgba(0,0,0,0.35) + fallback gradiente verde. **ART-002**: `#trail-path` com `stroke: url(#path-texture)` + fallback sólido; floresta com `stroke: url(#path-texture-floresta)`; opacity removido de todos os paths — caminho sólido |
+| `src/index.html` | Adicionados `<defs>` com SVG patterns (`path-texture` e `path-texture-floresta`) para texturização do caminho |
+| `src/assets/worlds/floresta/.gitkeep` | **Criado** — placeholder para versionar estrutura de assets |
+| `README.md` | Adicionada seção "Identidade Visual" com estrutura de assets, princípios e status; versão atualizada para v0.11.0-preview |
+| `CHANGELOG.md` | Adicionada entrada v0.11.0-preview |
+| `docs/visao-geral.md` | Adicionada seção "Evolução Visual (UX 2.0)" com motivação, decisões aprovadas, estrutura de assets, finalidade dos assets e testes realizados |
+| `docs/roadmap.md` | Adicionada trilha "ART — Direção de Arte" com 8 etapas (ART-001 a ART-008) |
+| `docs/arquitetura.md` | Atualizada estrutura de diretórios com `src/assets/`, seção de identidade visual |
+| `docs/memorial-tecnico.md` | Adicionada entrada Marco 6 |
+
+### Impacto Técnico
+
+**UX-1.1 — Overhaul Visual**
+- Body: multi-radial gradient com 4 elipses (rosa, ciano, amarelo, lilás) criando profundidade
+- `#app`: border-radius 40px, borda branca 3px, shadow rosa suave
+- Células (.casa): 98×64px (+11%), border-radius 20px, bottom shadow 6px, ícones e textos maiores
+- Células especiais: gradientes suaves e colored shadows (ex: `#fce4ec→#f8bbd0` para volta, `#fff8e1→#fff3cd` para jogar-novamente)
+- Casa-ativada: scale 1.1, outline 5px rosa com `!important` para sobrescrever sombras de células especiais
+- Avatares: 62×62px, colored shadow (rosa/azul) para destacar do fundo
+- Botões: bottom shadow 6px, pseudo-element `::after` com gradiente branco para efeito shine, hover com 8px de shadow
+- Overlays (challenge, portal, victory, setup, world-selector): `backdrop-filter: blur(6px)`, fundo `rgba(0,0,0,0.35-0.4)` mais transparente
+- Vitória: glow dourado animado (`text-shadow` pulsante), firework pseudo-elements (`::before`/`::after` com confetes), animação `golden-glow`
+- Draw overlay: fundo gradiente, vencedor com glow dourado
+- Painel lateral: cards com borda esquerda colorida (4px rosa `#e91e63`, dourado `#ff8f00`, roxo `#7b1fa2`)
+- Menu principal: glass card com `backdrop-filter: blur(12px)`, botões com shine
+- Tema dinossauros: células com gradiente e shadows consistentes
+- Responsivo: breakpoints mantidos, células adaptadas proporcionalmente (72×50px em ≤840px, 62×44px em ≤600px, 52×38px em ≤400px)
+
+**ASSET-001 — Background Ilustrado**
+- Seletor CSS: `body[data-world="floresta-encantada"] #track-container, #track-container.mundo-floresta`
+- 3 camadas de background: overlay rgba(0,0,0,0.35) + `url(background.webp)` + gradiente verde fallback
+- `background-size: cover` na imagem, `background-position: center`
+- Se `background.webp` não existir: camada do meio é transparente, gradiente fallback aparece, overlay escurece levemente o fundo
+- Aplicação no body foi testada e descartada — o fundo geral deve permanecer neutro
+
+**ART-002 — Caminho Temático**
+- SVG patterns adicionados no HTML (`<defs>` dentro do `<svg class="path-line">`)
+- `patternUnits="userSpaceOnUse" width="16" height="16"` para textura tileável
+- Padrão contém `<rect fill="cor_fallback">` + `<image href="path.webp">` para fallback sólido
+- CSS `#trail-path` com `stroke: cor_sólida; stroke: url(#pattern)` — navegador sem suporte a URL em stroke usa a cor
+- `opacity` removido de todos os paths — caminho 100% sólido, sem transparência
+- Drop-shadow alpha ajustado de 0.08 para 0.12 para compensar o traço opaco
+- Floresta: cor fallback `#6d8f5e` (verde terra), pattern `path-texture-floresta`
+- Dinossauros inalterado: `stroke: #c48a3a` (cor sólida, sem pattern)
+
+### Impacto Funcional
+
+- **Visual cartoon e infantil**: o jogo agora possui aparência lúdica com cores vibrantes, sombras profundas e cantos arredondados
+- **Background ilustrado**: Floresta Encantada tem tabuleiro com fundo temático (fallback gradiente verde enquanto asset não existir)
+- **Caminho sólido**: o traço do caminho não é mais translúcido — parece um elemento físico do cenário
+- **Nenhuma regressão funcional**: todas as mecânicas (dado, movimento, desafios, portal, vitória, bot, single player, debug) continuam idênticas
+- **Expansão preparada**: novos mundos precisam apenas de assets na pasta correspondente e patterns CSS
+
+### Notas Técnicas
+
+- A Regra de Oro foi mantida: **zero alterações em engine, world configs, game.js ou gameplay**
+- UX-1.1 (CSS overhaul) foi a maior alteração no style.css desde a criação do projeto (~2066 linhas finais)
+- A decisão de aplicar background no `#track-container` (não no body) foi validada após teste prático
+- SVG pattern com `<rect>` + `<image>` é a abordagem SVG-nativa para textura em stroke, equivalente funcional a `background-image`
+- Futuras texturas de caminho para outros mundos: adicionar `<pattern>` no HTML + regra CSS + asset na pasta do mundo
 
 ### Objetivo
 

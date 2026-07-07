@@ -96,6 +96,27 @@
 
 ## Futuro
 
+### v0.11.0-preview — Evolução Visual (UX 2.0)
+- **UX-1.1** — Overhaul CSS completo (cartoon, arredondado, 3D, profundidade)
+- **ASSET-001** — Sistema de backgrounds por mundo (estrutura + CSS)
+- **ART-002** — Caminhos temáticos (infraestrutura SVG pattern)
+- **Estrutura `src/assets/worlds/`** criada
+
+## ART — Direção de Arte
+
+Nova trilha de desenvolvimento focada exclusivamente na identidade visual do projeto.
+
+| Etapa | Status | Descrição |
+|-------|--------|-----------|
+| **ART-001** | ✅ Concluído | Sistema de backgrounds por mundo — estrutura, CSS, overlay de contraste, fallback |
+| **ART-002** | ⏳ Em andamento | Caminhos temáticos — textura no stroke do SVG, fallback sólido, preparado para expansão |
+| **ART-003** | 🔲 Pendente | Casas ilustradas — substituir células CSS por assets visuais por tipo de casa |
+| **ART-004** | 🔲 Pendente | HUD ilustrada — painel lateral, botões, dados e indicadores com assets próprios |
+| **ART-005** | 🔲 Pendente | Logo oficial — identidade visual do título Lara World |
+| **ART-006** | 🔲 Pendente | Personagens — sprites dos jogadores com design próprio (não apenas emojis) |
+| **ART-007** | 🔲 Pendente | Ícones próprios — substituir emojis por iconografia original do jogo |
+| **ART-008** | 🔲 Pendente | Animações — movimentos, transições e efeitos visuais refinados |
+
 ### A7 — Theme Engine Completa
 - Temas visuais completos para todos os mundos atuais
 - Decorações dinâmicas por configuração (não mais injetadas via JS)
@@ -110,9 +131,3 @@
 - Criar `worlds/galaxia/config.js`
 - Terceiro mundo completo com eventos espaciais
 - Validar processo de adição de novo mundo
-
-### UX 2.0 — Redesign Visual Completo
-- Sprites PNG para personagens
-- Sons e músicas
-- Animações refinadas
-- Suporte mobile-first completo

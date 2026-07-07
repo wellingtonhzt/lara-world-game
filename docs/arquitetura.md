@@ -24,6 +24,11 @@ lara-world/
 │   ├── index.html       # Página principal
 │   ├── style.css        # Estilos do jogo
 │   ├── game.js          # Lógica do jogo (ES Module)
+│   ├── assets/          # Recursos visuais do jogo
+│   │   └── worlds/      # Assets por mundo
+│   │       └── floresta/
+│   │           ├── background.webp  # Background ilustrado do tabuleiro (pendente)
+│   │           └── path.webp        # Textura do caminho (pendente)
 │   ├── core/            # Módulos fundamentais do motor
 │   │   ├── constants.js # Constantes do motor
 │   │   ├── types.js     # Tipos JSDoc
@@ -47,7 +52,7 @@ lara-world/
 └── docker-compose.yml   # Orquestração Docker
 ```
 
-> Nota: as pastas `src/assets/images/` e `src/assets/sounds/` estão previstas para versões futuras.
+> Nota: a pasta `src/assets/` foi criada na v0.11.0-preview para iniciar a fase de identidade visual. A subpasta `worlds/` abriga assets por mundo (`background.webp`, `path.webp`). `src/assets/sounds/` está prevista para versões futuras.
 
 ## Arquitetura do Frontend
 
@@ -81,11 +86,11 @@ Estrutura semântica dividida em:
   - Overlay exibido entre o menu e o setup
   - Grid 3×2 com 6 cards: 🌳 Floresta, 🦖 Dinossauros, 3 "Em breve", 🎲 Aleatório
 - **Board Area** (esquerda):
-  - `#track-container`: container com gradiente de céu/grama, decorações (nuvens, árvores, flores, dinossauros)
+  - `#track-container`: container com gradiente de céu/grama (ou background temático por mundo), decorações (nuvens, árvores, flores, dinossauros, floresta)
   - SVG `#trail-path`: caminho suave que conecta as casas (Catmull-Rom spline)
   - `#track`: container das células `.casa` com posicionamento absoluto (20 no principal, 8 na área especial)
   - `#lara` e `#lara-p2`: personagens posicionados dinamicamente (apenas o ativo na área especial)
-  - Tema visual aplicado via `data-world` no `<body>`
+  - Tema visual aplicado via `data-world` no `<body>`, com background temático opcional no `#track-container` (ASSET-001)
 - **Panel Area** (direita):
   - `#dice-display`: dado virtual com emoji
   - Status: indicador de turno e posições de ambos os jogadores
@@ -104,7 +109,7 @@ Estrutura semântica dividida em:
 - **Emoji Grid** (`.emoji-grid`): `display: flex` com `flex-wrap: wrap`, gaps entre os itens. Cada emoji (`.emoji-option`): 48×48px, cursor pointer, borda transparente. Selecionado: borda azul com fundo claro
 - **Tabuleiro**: `#track-container` com `position: relative` e gradiente de fundo
 - **Células** (`.casa`): `position: absolute` com `transform: translate(-50%,-50%)` para centralização. Cada casa recebe `left` e `top` em percentual via JS
-- **Caminho SVG**: `#trail-path` com `stroke-width: 10`, cor bege/marrom, opacidade 0.6
+- **Caminho SVG**: `#trail-path` com `stroke-width: 14`, pattern via SVG (`url(#path-texture)`), sólido sem opacidade, drop-shadow 0.12
 - **Personagens**: círculos brancos com borda rosa (Lara) ou azul (Amigo), `z-index: 20`, 58×58px
 - **Casa especial**: cores por `data-position` (3 amarela, 4 roxa desafio, 5 rosa, 7 roxa desafio, 8 laranja, 10 roxa, 12 roxa desafio, 15 vermelha, 16 roxa desafio, 18 roxa desafio, 20 verde com glow)
 - **Animações**: `pulse` (movimento), `bounce` (dado), `celebrar` (vitória)

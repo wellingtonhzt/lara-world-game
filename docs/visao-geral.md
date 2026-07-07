@@ -136,6 +136,57 @@ Vitória → Jogar Novamente / Voltar ao Menu
 
 Cada mundo do Lara World pode conter uma ou mais Áreas Especiais (submundos), acessadas através de portais posicionados em casas específicas do tabuleiro. Uma Área Especial é uma mini-trilha com eventos, regras e visual próprios. Ao entrar, a posição do jogador é salva. Ao completar ou sair, o jogador retorna ao mundo principal com um bônus de casas definido na configuração da área. A engine é genérica — não conhece nomes de mundos — e toda navegação entre mundos e áreas é baseada em WorldConfigs.
 
+## Evolução Visual (UX 2.0)
+
+Após a consolidação da engine, gameplay e arquitetura nas sprints anteriores, o Lara World iniciou oficialmente sua **fase de identidade visual** na v0.11.0-preview.
+
+### Motivação
+
+O jogo possuía uma base técnica sólida (engine modular, dois mundos completos, áreas especiais, modo single player) mas ainda carecia de identidade visual própria. A interface era funcional mas genérica — sem personalidade, profundidade ou apelo infantil.
+
+### Decisões Arquiteturais Aprovadas
+
+- ✓ Background ilustrado é aplicado apenas na área do tabuleiro (`#track-container`)
+- ✓ O fundo geral da aplicação permanece neutro (gradiente multi-radial)
+- ✓ Cada mundo possuirá seu próprio:
+  - `background.webp` — background temático do tabuleiro
+  - `path.webp` — textura do caminho
+- ✓ Cada área especial (submundo) também possuirá assets próprios no futuro
+- ✓ Assets são reutilizáveis entre mundos quando aplicável
+- ✓ Sistema preparado para expansão para novos mundos
+
+### Estrutura de Assets
+
+```
+src/assets/
+├── worlds/
+│   └── floresta/
+│       ├── background.webp   # Background ilustrado do tabuleiro (asset pendente)
+│       └── path.webp          # Textura do caminho (asset pendente)
+└── subworlds/                 # Assets para áreas especiais (futuro)
+```
+
+### Finalidade dos Assets
+
+| Asset | Onde é aplicado | Função |
+|-------|----------------|--------|
+| `background.webp` | `#track-container` via `background-image` | Ilustração de fundo do tabuleiro, coberta por overlay semitransparente para contraste |
+| `path.webp` | SVG `#trail-path` via SVG pattern (`stroke: url(#...)`) | Textura aplicada ao traço do caminho, mantendo largura, sombra e formato SVG |
+
+### Testes Realizados
+
+**Floresta Encantada — Background**
+- Primeiro background ilustrado integrado ao tabuleiro
+- Teste mostrou ganho significativo de identidade visual
+- Aplicação no body (teste inicial) foi descartada — o fundo da página não deve usar a ilustração
+- Aplicação apenas na área do tabuleiro foi aprovada como decisão arquitetural
+
+**Caminho Temático**
+- Infraestrutura preparada para textura de caminho via SVG pattern
+- Primeira implementação usava `opacity` no stroke — resultado artificial, caminho translúcido
+- Correção: caminho sólido (opacity removido), textura via pattern com fallback de cor sólida
+- Textura definitiva (`path.webp`) ainda pendente de criação por IA
+
 ## Próximos Passos
 
 Ver [roadmap.md](./roadmap.md) para as evoluções planejadas.

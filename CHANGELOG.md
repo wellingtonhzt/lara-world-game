@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.11.0-preview] - 2026-07-07
+
+### Início da Evolução Visual (UX 2.0)
+- **UX-1.1 — Overhaul visual completo**: redesign ousado de todo o CSS com estilo cartoon, arredondado, colorido e com profundidade. Inclui: body com multi-radial gradient, células 98×64px com border-radius 20px e bottom shadow 6px, botões com shine pseudo-element e shadow 3D, overlays com backdrop-filter blur(6px), vitória com glow dourado animado e firework pseudo-elements, glass card no menu principal, scrollbar temática no histórico
+- **ASSET-001 — Background ilustrado por mundo**: criada estrutura `src/assets/worlds/` e preparado CSS para aplicar `background.webp` apenas na área do tabuleiro (`#track-container`), com fallback de gradiente verde e overlay semitransparente para contraste. Aplicação no body foi descartada em favor da área do tabuleiro
+- **ART-002 — Caminho temático**: infraestrutura para textura de caminho via SVG pattern (`path-texture-floresta`), com stroke sólido (opacity removido), fallback de cor sólida e preparação para futuros caminhos por mundo
+- **Assets pipeline**: estrutura `src/assets/worlds/` criada com `.gitkeep` para versionamento
+
+### Adicionado
+- `src/assets/worlds/floresta/.gitkeep` — placeholder para versionar estrutura de assets
+- `src/index.html` — adicionados `<defs>` com SVG patterns (`path-texture` e `path-texture-floresta`) para texturização do caminho
+
+### Alterado
+- `src/style.css`:
+  - UX-1.1: redesign completo (2066 linhas) — multi-radial gradient no body, células maiores com sombra 3D, botões com shine, overlays com blur, glass card no menu, vitória com glow/firework, toques finais no tema floresta e dinossauros, responsivo refinado
+  - ASSET-001: regra `body[data-world="floresta-encantada"] #track-container, #track-container.mundo-floresta` com background-image + overlay + fallback verde
+  - ART-002: `#trail-path` ganhou `stroke: url(#path-texture)` com fallback sólido; floresta com `stroke: url(#path-texture-floresta)`; opacity removido de todos os paths (caminho sólido)
+- README.md: seção "Identidade Visual", v0.11.0-preview como versão ativa
+
+### Notas Técnicas
+- Background ilustrado aplicado apenas no `#track-container` (tabuleiro), não no body
+- Fundo do body permanece com gradiente neutro (multi-radial UX-1.1)
+- Fallback nativo do CSS: se `background.webp` ou `path.webp` não existirem, gradiente/cor sólida mantém o funcionamento
+- SVG pattern com `<rect fill>` + `<image>` garante fallback sólido mesmo com imagem ausente
+- Nenhuma engine, world config, game.js ou gameplay alterados — todas as mudanças são exclusivamente visuais (CSS + HTML)
+- Estrutura preparada para expansão: novos mundos só precisam adicionar seus assets em `src/assets/worlds/<mundo>/` e criar patterns CSS correspondentes
+
 ## [0.10.0-preview] - 2026-07-06
 
 ### Adicionado
