@@ -139,28 +139,6 @@ header h1 {
   filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.12));
 }
 
-/* ── Decorative Elements ── */
-.deco {
-  position: absolute;
-  z-index: 0;
-  pointer-events: none;
-  user-select: none;
-  line-height: 1;
-}
-
-.deco-cloud-1 { top: 6px; left: 10%; font-size: 2.4rem; opacity: 0.85; }
-.deco-cloud-2 { top: 14px; left: 55%; font-size: 2rem; opacity: 0.75; }
-.deco-cloud-3 { top: 4px; left: 78%; font-size: 2.8rem; opacity: 0.7; }
-.deco-sun { top: 8px; right: 12%; font-size: 2rem; }
-
-.deco-tree-1 { bottom: 4%; left: 2%; font-size: 3rem; }
-.deco-tree-2 { bottom: 8%; right: 3%; font-size: 2.6rem; }
-
-.deco-flower-1 { bottom: 16%; left: 14%; font-size: 1.5rem; transform: rotate(-10deg); }
-.deco-flower-2 { bottom: 22%; right: 16%; font-size: 1.4rem; transform: rotate(15deg); }
-.deco-flower-3 { bottom: 10%; left: 8%; font-size: 1.3rem; }
-.deco-flower-4 { bottom: 28%; right: 8%; font-size: 1.6rem; transform: rotate(-5deg); }
-
 /* ═══════════════════════════════════════
    TRACK — Absolute-positioned cells
    ═══════════════════════════════════════ */
@@ -1719,32 +1697,6 @@ body[data-world="floresta-encantada"] #trail-path,
   filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.12));
 }
 
-#track-container.mundo-floresta .deco:not(.floresta-deco) {
-  display: none;
-}
-
-.floresta-deco {
-  display: none;
-  position: absolute;
-  z-index: 0;
-  pointer-events: none;
-  user-select: none;
-  line-height: 1;
-}
-
-#track-container.mundo-floresta .floresta-deco {
-  display: block;
-}
-
-.floresta-deco-tree-1 { top: 4%; left: 2%; font-size: 2.8rem; opacity: 0.7; }
-.floresta-deco-tree-2 { top: 8%; right: 3%; font-size: 2.4rem; opacity: 0.6; }
-.floresta-deco-tree-3 { bottom: 2%; right: 6%; font-size: 3rem; opacity: 0.65; }
-.floresta-deco-mushroom-1 { top: 40%; left: 6%; font-size: 1.6rem; opacity: 0.7; }
-.floresta-deco-mushroom-2 { bottom: 20%; left: 12%; font-size: 1.4rem; opacity: 0.6; }
-.floresta-deco-leaf-1 { top: 18%; right: 8%; font-size: 1.8rem; opacity: 0.55; transform: rotate(30deg); }
-.floresta-deco-leaf-2 { bottom: 30%; right: 18%; font-size: 1.6rem; opacity: 0.5; transform: rotate(-20deg); }
-.floresta-deco-flower { bottom: 12%; right: 4%; font-size: 1.5rem; opacity: 0.7; }
-
 /* ── Forest Houses ── */
 
 #track-container.mundo-floresta .casa[data-position="3"],
@@ -1786,45 +1738,26 @@ body[data-world="dinossauros"] {
 }
 
 body[data-world="dinossauros"] #track-container:not(.mundo-floresta) {
-  background: linear-gradient(
-    to bottom,
-    #f4c97a 0%,
-    #e8b85a 20%,
-    #d4a055 40%,
-    #c48a3a 60%,
-    #8b6914 100%
-  );
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
+    url("assets/worlds/dinossauros/background.webp"),
+    linear-gradient(to bottom, #f4c97a 0%, #e8b85a 20%, #d4a055 40%, #c48a3a 60%, #8b6914 100%);
+  background-size: cover, cover, auto;
+  background-position: center, center, 0 0;
+  background-repeat: no-repeat, no-repeat, repeat;
   box-shadow:
     inset 0 0 40px rgba(139, 90, 43, 0.15),
     0 6px 30px rgba(0, 0, 0, 0.07);
 }
 
-body[data-world="dinossauros"] #track-container:not(.mundo-floresta) .deco:not(.theme-deco) {
-  display: none;
-}
-
-body[data-world="dinossauros"] .theme-deco {
-  display: block;
-  position: absolute;
-  z-index: 0;
-  pointer-events: none;
-  user-select: none;
-  line-height: 1;
-}
-
 .theme-deco { display: none; }
-
-.deco-palm-1 { bottom: 6%; right: 2%; font-size: 2.8rem; }
-.deco-palm-2 { bottom: 14%; left: 3%; font-size: 2.2rem; }
-.deco-volcano { top: 2%; right: 4%; font-size: 2.6rem; opacity: 0.8; }
-.deco-rock-1 { bottom: 8%; left: 14%; font-size: 1.6rem; }
-.deco-rock-2 { bottom: 20%; right: 12%; font-size: 1.4rem; }
-.deco-dino { bottom: 2%; left: 10%; font-size: 2rem; }
 
 body[data-world="dinossauros"] #track-container:not(.mundo-floresta) #trail-path {
   stroke: #c48a3a;
-  stroke-width: 14;
-  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.12));
+  stroke: url(#path-texture-dinossauros);
+  stroke-width: 12;
+  opacity: 0.75;
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.12));
 }
 
 body[data-world="dinossauros"] #track-container:not(.mundo-floresta) .casa {
@@ -1894,17 +1827,6 @@ body[data-world="dinossauros"] .casa-vitoria {
   }
 
   #trail-path { stroke-width: 8; }
-
-  .deco-cloud-1 { font-size: 1.4rem; }
-  .deco-cloud-2 { font-size: 1.2rem; }
-  .deco-cloud-3 { font-size: 1.6rem; }
-  .deco-tree-1 { font-size: 2rem; }
-  .deco-tree-2 { font-size: 1.6rem; }
-  .deco-flower-1 { font-size: 1rem; }
-  .deco-flower-2 { font-size: 0.9rem; }
-  .deco-flower-3 { font-size: 0.9rem; }
-  .deco-flower-4 { font-size: 1rem; }
-  .deco-sun { font-size: 1.2rem; }
 }
 
 /* ── Phone Medium (≤600px) ── */
@@ -1921,17 +1843,6 @@ body[data-world="dinossauros"] .casa-vitoria {
   #trail-path { stroke-width: 7; }
 
   header h1 { font-size: 1.3rem; }
-
-  .deco-cloud-1 { font-size: 1.2rem; }
-  .deco-cloud-2 { font-size: 1rem; }
-  .deco-cloud-3 { font-size: 1.3rem; }
-  .deco-tree-1 { font-size: 1.6rem; }
-  .deco-tree-2 { font-size: 1.3rem; }
-  .deco-flower-1 { font-size: 0.85rem; }
-  .deco-flower-2 { font-size: 0.8rem; }
-  .deco-flower-3 { font-size: 0.8rem; }
-  .deco-flower-4 { font-size: 0.85rem; }
-  .deco-sun { font-size: 1rem; }
 
   /* Draw overlay vertical */
   .draw-content {
