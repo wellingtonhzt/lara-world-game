@@ -1,5 +1,76 @@
 # Memorial Técnico
 
+## Sprint — Sistema de Avatares e Tokens + Reprocessamento de lara.webp — UX-015 + ART-010 (v0.12.0-preview)
+
+### Objetivo
+
+Implementar o sistema de avatares e tokens do Lara World, separando personagens oficiais (Lara, Léo, Dino, Byte) de emojis clássicos na galeria de seleção. Cada personagem oficial possui asset próprio em `assets/avatars/` (preview no setup) e `assets/tokens/` (representação em jogo), com fallback automático para emoji quando o asset não existir. Reprocessar lara.webp para ambas as categorias com canvas 512×512 e altura ~86.9% para cobertura ideal.
+
+### Arquivos Alterados
+
+| Arquivo | Tipo de Alteração |
+|---------|-------------------|
+| `src/index.html` | Setup screen reformulada: cada `.setup-player-card` ganhou `.avatar-preview` com `.avatar-frame` (108×108px circular contendo `.avatar-emoji` + `<img class="avatar-img">`), `.avatar-player-name`. Grade de seleção dividida em duas seções: `.avatar-grid` para "🧑 Avatares" (lara, leo, dino, byte) e `<details class="emoji-section">` com `summary` "😊 Emojis clássicos" para os 19 emojis restantes. Título do botão `emoji-btn` consiste no emoji original. Todos os botões ganharam `data-avatar` e `data-token`. Draw overlay: `.draw-player-visual` ampliado, `.draw-player-emoji` e `.draw-player-img` com fallback |
+| `src/style.css` | **Setup preview**: `.avatar-preview`, `.avatar-frame` (108×108, circular, box-shadow com cor do jogador), `.avatar-emoji` (3.6rem), `.avatar-img` (absolute, object-fit contain), `.avatar-player-name` (0.85rem). **Grid**: `.avatar-grid` (grid 5 colunas, gap 6px), `.emoji-section` (collapsível com borda, background). **Botões**: `.emoji-btn` (40×40, border-radius 12px, overflow hidden), `.btn-emoji` (span dentro do botão), `.btn-img` (absolute, inset 0, object-fit cover). Hover/selected por jogador (rosa P1, azul P2). **Draw**: `.draw-player-visual` 76×76 (era 52px), `.draw-player-img` com object-fit cover. **Visual fallback pattern**: `.visual-emoji` e `.visual-img` compartilhados entre status, vitória e draw |
+| `src/game.js` | Adicionado: `player.tokenId` no array `players[]`, `initGalleryTokens()` (converte emoji-btn em span+img), `applyVisualFallback()` (mecanismo central de fallback), `renderBoardToken()` (carrega token no tabuleiro), `updateAvatarPreview()` (atualiza preview ao selecionar). Modificado: `startGame()` e `prepareAndDraw()` leem `data-token` do botão selecionado, `updateUI()` chama `applyVisualFallback` para turno/status/tabuleiro, `showDrawScreen()` usa `applyVisualFallback` para visuais do sorteio, `handleVictory()` aplica fallback no overlay de vitória, `init()` chama `initGalleryTokens()` no bootstrap |
+| `assets/avatars/lara.webp` | **Reprocessado**: canvas 512×512, altura 445px (~86.9%), centralizado |
+| `assets/tokens/lara.webp` | **Criado/reprocessado**: canvas 512×512, altura 445px (~86.9%), centralizado, `object-fit: cover` circular |
+
+### Documentação
+
+| Arquivo | Tipo de Alteração |
+|---------|-------------------|
+| `CHANGELOG.md` | Adicionadas entradas UX-015 e ART-010 na v0.12.0-preview |
+| `docs/roadmap.md` | UX-015 e ART-010 marcados como concluídos |
+| `docs/arquitetura.md` | Diretórios `assets/avatars/` e `assets/tokens/` adicionados; seção Setup Screen atualizada com galeria dividida; seção game.js documentada com initGalleryTokens, applyVisualFallback, renderBoardToken |
+| `docs/memorial-tecnico.md` | Adicionada esta entrada |
+
+### Impacto Técnico
+
+**UX-015 — Avatar/Token System**
+- `initGalleryTokens()`: itera todos `.emoji-btn`, verifica `data-avatar`, extrai o texto do botão como fallback, cria `<span class="btn-emoji">` e `<img class="btn-img">`, chama `applyVisualFallback()` para tentar carregar `assets/tokens/{avatar}.webp`. Executada no `init()` antes de qualquer outra inicialização.
+- `applyVisualFallback(emojiEl, imgEl, emoji, imgSrc)`: função central de fallback visual. Se `imgSrc` é válido, seta `onload` (oculta emoji, mostra img) e `onerror` (oculta img, mostra emoji); se `imgSrc` é nulo/vazio, mostra emoji e oculta img. Usada em 6 pontos: galeria, status turno, status P1, status P2, tabuleiro P1, tabuleiro P2, draw overlay, vitória.
+- `renderBoardToken(idx)`: obtém `#lara` ou `#lara-p2`, encontra `.token-emoji` e `.token-img`, chama `applyVisualFallback` com `assets/tokens/{player.tokenId}.webp`.
+- `player.tokenId`: novo campo no objeto player, populado em `startGame()` e `prepareAndDraw()` via `p1Selected.dataset.token` (fallback `"lara"`) e `p2Selected.dataset.token` (fallback `"leo"`). Para single player, máquina recebe `tokenId: ""`.
+- `updateAvatarPreview(playerIndex, emoji, name, avatarId)`: atualiza `.avatar-emoji`, `.avatar-player-name` e carrega `assets/avatars/{avatarId}.webp` no `.avatar-img`. Se `avatarId` é nulo/vazio, limpa `src` e oculta a imagem.
+- `.avatar-frame`: 108×108px circular com overflow hidden. Box-shadow diferenciado por jogador — P1 com glow rosa, P2 com glow azul.
+- `.avatar-img`: posicionado absolutamente, `object-fit: contain` para não distorcer o asset.
+- `.emoji-section`: `<details>` com `summary` estilizado (cor #b8956a, 0.78rem, letter-spacing 0.3px). Padding interno reduzido (4px 6px 6px), grid da seção com gap 4px.
+- `.emoji-btn`: 40×40px, border-radius 12px, overflow hidden, posição relativa. Hover/selected com cor do jogador.
+- `.btn-img`: absolute inset 0, `object-fit: cover`, `border-radius: inherit`, `display: none` por padrão.
+- Draw overlay: `.draw-player-visual` ampliado de 52×52 para 76×76. `.draw-player-img` com `object-fit: cover` circular. `.draw-player-emoji` com 3.4rem.
+
+**ART-010 — Reprocessamento de lara.webp**
+- lara.webp (avatar): canvas 512×512, altura 445px (~86.9%), centralizado XY
+- lara.webp (token): canvas 512×512, altura 445px (~86.9%), centralizado XY — garante preenchimento total no container circular com `object-fit: cover`
+
+### Impacto Funcional
+
+- **Galeria visualmente dividida**: 4 avatares oficiais sempre visíveis no topo; 19 emojis clássicos em seção collapsível (`<details>`)
+- **Preview do avatar**: ao selecionar um personagem, o preview circular acima da grade exibe o asset oficial com nome do personagem
+- **Token no tabuleiro**: personagens no tabuleiro exibem asset token em vez de emoji, com fallback visual transparente
+- **Token no status**: barra de status, draw screen e tela de vitória também exibem o token asset com fallback
+- **Draw screen**: visual do jogador ampliado (76px) com melhor proporção
+- **Status panel**: nome do jogador movido para fora do container visual (antes causava overflow)
+- **Fallback universal**: se qualquer asset `.webp` não existir ou falhar ao carregar, o emoji correspondente aparece automaticamente — sem quebra visual
+- **Nenhuma regressão funcional**: Jogo Rápido, seleção de mundos, setup, gameplay — tudo idêntico
+
+### Lições Aprendidas
+
+- O padrão `applyVisualFallback()` com `onload`/`onerror` provou ser robusto: único ponto de verdade para toda a lógica de fallback visual, reutilizado em 6 contextos diferentes sem duplicação
+- Separar avatares (assets de preview, 108×108 circular) de tokens (assets in-game, 62×62 circular com `object-fit: cover`) foi acertado — o preview precisa de `contain` para mostrar o asset inteiro, enquanto o token precisa de `cover` para preencher o círculo
+- A escolha de `<details>` para a seção de emojis clássicos evitou JS adicional para toggle e manteve a semântica HTML pura
+- O campo `data-token` nos botões permitiu associar cada emoji a um token asset sem alterar a estrutura de dados dos jogadores — apenas adicionando `player.tokenId`
+- O reprocessamento de lara.webp em canvas 512×512 com 86.9% de altura foi necessário porque `object-fit: contain` no preview e `object-fit: cover` no token exigem proporções diferentes — centralizar com altura generosa garantiu boa aparência em ambos os contextos
+
+### Notas Técnicas
+
+- Nenhum arquivo de engine, world config ou game.js (núcleo) foi alterado — apenas o setup screen, style.css e game.js (UI)
+- Cache-busting não foi alterado — assets .webp carregam sem parâmetro de versão, usando fallback para emoji
+- `player.tokenId` é string vazia para a máquina (single player), resultando em `applyVisualFallback` sem imgSrc → mostra emoji 🤖
+- A seção de emojis clássicos vem com `open` por padrão no HTML para boa primeira experiência
+- O avatar preview é independente do token — um pode falhar enquanto o outro funciona, sem efeito colateral
+
 ## Sprint — Seleção de Mundos v2 + Ilustrações Oficiais — UX-014 + ART-009 (v0.12.0-preview)
 
 ### Objetivo

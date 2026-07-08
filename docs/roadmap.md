@@ -1,6 +1,6 @@
 # Roadmap Lara World
 
-### v0.12.0-preview — Board Layout 2.0 + path.webp Infrastructure + Hero Screen + Seleção v2
+### v0.12.0-preview — Board Layout 2.0 + path.webp Infrastructure + Hero Screen + Seleção v2 + Avatares/Tokens
 
 **Board Layout 2.0:**
 - Novo formato `board.cells` (`[{id, x, y}]`) para posicionamento individual de células por mundo, com fallback automático para `board.positions`
@@ -34,6 +34,20 @@
 - Fallback de emoji via `onerror` — quando asset existir, substitui automaticamente
 - 6 assets previstos em `src/assets/world-icons/`: floresta.webp, dinossauros.webp, galaxia.webp, oceanos.webp, castelo.webp, aleatorio.webp
 - Cache-busting permanece em `?v=0.12.0-preview` (sem alteração de código)
+
+**Sistema de Avatares e Tokens (UX-015):**
+- Galeria dividida em duas seções: Avatares (lara, leo, dino, byte) e Emojis clássicos (collapsível)
+- `assets/avatars/` — 4 avatares oficiais para preview circular no setup (108×108px, object-fit: contain)
+- `assets/tokens/` — 4 tokens oficiais para representação in-game (object-fit: cover circular)
+- `initGalleryTokens()` — transforma cada botão da galeria em span+img com fallback visual
+- `applyVisualFallback()` — mecanismo central de fallback (onload/onerror) usado em 6 contextos
+- `player.tokenId` — novo campo para associar token ao jogador
+- Status panel: nome movido para fora do container visual de 28px
+- Draw screen: visual do jogador ampliado de 52px para 76px
+
+**ART-010 — Reprocessamento de lara.webp:**
+- lara.webp (avatar): canvas 512×512, altura ~86.9%, centralizado
+- lara.webp (token): canvas 512×512, altura ~86.9%, centralizado — cobertura ideal em container circular
 
 ## Concluído
 
@@ -144,6 +158,19 @@
 - 6 assets previstos: floresta, dinossauros, galaxia, oceanos, castelo, aleatorio
 - Diretório `src/assets/world-icons/` criado
 
+### UX-015 — Sistema de Avatares e Tokens ✅
+- Galeria dividida em Avatares (Lara, Léo, Dino, Byte) + Emojis clássicos (collapsível)
+- `assets/avatars/` — preview circular no setup (108×108px, object-fit: contain)
+- `assets/tokens/` — representação in-game (object-fit: cover circular)
+- `initGalleryTokens()` — cada botão vira span+img com fallback visual
+- `applyVisualFallback()` — fallback central usado em 6 contextos (galeria, status, tabuleiro, draw, vitória)
+- `player.tokenId` — associado via `data-token` do botão selecionado
+- `updateAvatarPreview()` — preview em tempo real no setup
+
+### ART-010 — Reprocessamento de lara.webp ✅
+- Avatar: canvas 512×512, 86.9% altura, centralizado
+- Token: canvas 512×512, 86.9% altura, centralizado
+
 ## Futuro
 
 ### 🎯 Próximas Prioridades
@@ -180,11 +207,12 @@ Trilha de desenvolvimento focada exclusivamente na identidade visual do projeto.
 | **ART-007** | 🔲 Pendente | Background Floresta Misteriosa — assets e CSS para o submundo da Floresta |
 | **ART-008** | 🔲 Pendente | Background Caverna dos Fósseis — assets e CSS para o submundo do Vale |
 | **ART-009** | ✅ Concluído | Ilustrações oficiais dos mundos — container 96×96px em cada card, fallback de emoji, 6 assets em `src/assets/world-icons/` |
-| **ART-010** | 🔲 Pendente | Casas ilustradas — substituir células CSS por assets visuais por tipo de casa |
+| **ART-010** | ✅ Concluído | Reprocessamento de lara.webp — canvas 512×512, 86.9% altura para avatar e token |
 | **ART-011** | 🔲 Pendente | Ícones próprios — substituir emojis por iconografia original do jogo |
-| **ART-012** | 🔲 Pendente | Personagens — sprites dos jogadores com design próprio (não apenas emojis) |
-| **ART-013** | 🔲 Pendente | Hero Screen background — criar `menu-background.webp` asset (UX-015) |
-| **ART-014** | 🔲 Pendente | Lara character asset — criar `lara-hero.webp` ilustração (UX-015) |
+| **ART-012** | ✅ Concluído | Personagens oficiais — Lara, Léo, Dino, Byte com avatares e tokens (UX-015) |
+| **ART-013** | 🔲 Pendente | Hero Screen background — criar `menu-background.webp` asset |
+| **ART-014** | 🔲 Pendente | Lara character asset — criar `lara-hero.webp` ilustração |
+| **ART-015** | 🔲 Pendente | Demais personagens — criar assets leo.webp, dino.webp, byte.webp |
 
 ### A7 — Board Layout 2.0 e Refinamentos
 - **Board Layout 2.0** — ✅ Concluído — `board.cells` implementado, Vale dos Dinossauros adotado

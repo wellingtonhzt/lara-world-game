@@ -2,6 +2,24 @@
 
 ## [0.12.0-preview] - 2026-07-08
 
+### Sistema de Avatares e Tokens — UX-015
+
+- **Galeria dividida em duas seções**: "🧑 Avatares" (topo) com 4 personagens oficiais (Lara, Léo, Dino, Byte) e "😊 Emojis clássicos" (collapsível via `<details>`) com 19 emojis adicionais
+- **initGalleryTokens()**: função executada no bootstrap que transforma cada `.emoji-btn` em um container `<span class="btn-emoji">` + `<img class="btn-img">`, carregando `assets/tokens/{avatar}.webp` com fallback visual para o emoji original
+- **applyVisualFallback()**: mecanismo central de fallback — tenta carregar o `.webp`; se carrega (`onload`), oculta o emoji e exibe a imagem; se falha (`onerror`), oculta a imagem e exibe o emoji. Aplicado em: galeria de botões, barra de status (`#turn-emoji`/`#turn-img`), tokens no tabuleiro (`#lara`/`#lara-p2`), tela de sorteio inicial, tela de vitória
+- **Avatar Preview**: cada player card ganhou preview circular (`.avatar-frame`, 108×108px) com `<span class="avatar-emoji">` + `<img class="avatar-img">`, exibindo o asset `assets/avatars/{avatarId}.webp` com `object-fit: contain` e fallback para emoji
+- **Atualização de preview**: `updateAvatarPreview()` no clique do botão — altera emoji, nome e imagem do preview simultaneamente
+- **Token no tabuleiro**: `.token-img` (absolute, inset 0, `object-fit: cover`, circular) sobreposto ao emoji, ativado via `renderBoardToken()` que carrega `assets/tokens/{player.tokenId}.webp`
+- **Status panel**: nome do jogador movido para fora do container de 28px do visual (antes dentro, causando overflow)
+- **Draw screen**: visual do jogador ampliado de 52px para 76px, `object-fit: cover` no container
+- **`player.tokenId`**: novo campo no objeto `players[]`, populado via `data-token` do botão selecionado (e.g. `"lara"` para assets/tokens/lara.webp)
+- **Cache-busting**: assets carregados sem cache-busting adicional — fallback para emoji nativo do SVG/emoji
+
+### ART-010 — Reprocessamento de lara.webp
+
+- **lara.webp (avatar)**: reprocessado em canvas 512×512, altura do asset ~86.9% do canvas (445px), centralizado horizontal e verticalmente
+- **lara.webp (token)**: mesma especificação 512×512, altura ~86.9%, centralizado — garante cobertura total no `object-fit: cover` circular
+
 ### Seleção de Mundos v2 — UX-014
 
 - **Painel remodelado**: mesmo visual da Hero Screen — fundo com 7 gradientes radiais + `menu-background.webp` (opacity 0.60) + shapes flutuantes + sparkles animados. Card central glass com `backdrop-filter: blur(24px)`, borda branca 3px, glow rosa

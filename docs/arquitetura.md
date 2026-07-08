@@ -28,6 +28,16 @@ lara-world/
 │   │   ├── ui/          # Assets da Hero Screen (menu inicial)
 │   │   │   ├── lara-hero.webp       # Ilustração da personagem Lara (pendente)
 │   │   │   └── menu-background.webp # Fundo temático do menu (pendente)
+│   │   ├── avatars/     # Avatares oficiais (preview no setup)
+│   │   │   ├── lara.webp            # Lara — protagonista
+│   │   │   ├── leo.webp             # Léo — personagem oficial
+│   │   │   ├── dino.webp            # Dino — personagem oficial
+│   │   │   └── byte.webp            # Byte — personagem oficial
+│   │   ├── tokens/      # Tokens dos personagens (in-game)
+│   │   │   ├── lara.webp            # Token da Lara (circular, object-fit cover)
+│   │   │   ├── leo.webp             # Token do Léo
+│   │   │   ├── dino.webp            # Token do Dino
+│   │   │   └── byte.webp            # Token do Byte
 │   │   ├── world-icons/  # Ilustrações oficiais dos mundos
 │   │   │   ├── floresta.webp        # Floresta Encantada (pendente)
 │   │   │   ├── dinossauros.webp     # Vale dos Dinossauros (pendente)
@@ -65,7 +75,7 @@ lara-world/
 └── docker-compose.yml   # Orquestração Docker
 ```
 
-> Nota: a pasta `src/assets/` foi criada na v0.11.0-preview para iniciar a fase de identidade visual. A subpasta `worlds/` abriga assets por mundo (`background.webp`, `path.webp`), atualmente com floresta/ e dinossauros/. Cada mundo possui seu próprio background e textura de caminho, com fallback CSS garantido se o asset não existir. A infraestrutura do `path.webp` foi preparada na v0.12.0-preview (background-image no `.path-line`, seletores por mundo). A subpasta `ui/` foi criada na UX-013 para abrigar assets da Hero Screen (`lara-hero.webp`, `menu-background.webp`), também com fallback CSS. A subpasta `world-icons/` foi criada na UX-014/ART-009 para abrigar as ilustrações oficiais dos mundos (6 assets previstos), com container 96×96px e fallback de emoji. `src/assets/sounds/` está prevista para versões futuras.
+> Nota: a pasta `src/assets/` foi criada na v0.11.0-preview para iniciar a fase de identidade visual. A subpasta `worlds/` abriga assets por mundo (`background.webp`, `path.webp`), atualmente com floresta/ e dinossauros/. Cada mundo possui seu próprio background e textura de caminho, com fallback CSS garantido se o asset não existir. A infraestrutura do `path.webp` foi preparada na v0.12.0-preview (background-image no `.path-line`, seletores por mundo). A subpasta `ui/` foi criada na UX-013 para abrigar assets da Hero Screen (`lara-hero.webp`, `menu-background.webp`), também com fallback CSS. A subpasta `world-icons/` foi criada na UX-014/ART-009 para abrigar as ilustrações oficiais dos mundos (6 assets previstos), com container 96×96px e fallback de emoji. As subpastas `avatars/` e `tokens/` foram criadas na UX-015/ART-010 para abrigar os assets de personagens oficiais — `avatars/` para preview circular no setup (108×108px, `object-fit: contain`) e `tokens/` para representação in-game (62×62px circular, `object-fit: cover`), ambos com fallback para emoji. `src/assets/sounds/` está prevista para versões futuras.
 
 ## Arquitetura do Frontend
 
@@ -84,7 +94,12 @@ Estrutura semântica dividida em:
   - Escondido quando uma partida é iniciada; reexibido via "Voltar ao Menu"
 - **Setup Modal** (`#setup-screen`):
   - Overlay fixo com `z-index: 1000`, exibido após clicar em "Jogo Rápido"
-  - Card do Jogador 1 com campo de nome (`<input>`) e grade de emojis (`.emoji-grid`)
+  - Card do Jogador 1 e Jogador 2, cada um com:
+    - `.avatar-preview`: preview circular 108×108px (`.avatar-frame`) com `<span class="avatar-emoji">` + `<img class="avatar-img">` para o asset `assets/avatars/{id}.webp` e `.avatar-player-name`
+    - Campo de nome (`<input>`) e label "Personagem:"
+    - Grade "🧑 Avatares" (`.avatar-grid`) com 4 botões oficiais: Lara (`🧒`), Léo (`🧑`), Dino (`🦖`), Byte (`💻`)
+    - Seção collapsível "😊 Emojis clássicos" (`<details class="emoji-section">`) com 19 emojis adicionais
+    - Cada botão (`.emoji-btn`) possui `data-emoji`, `data-avatar` e `data-token`; no bootstrap, `initGalleryTokens()` transforma cada botão em span + img com fallback visual para `assets/tokens/{avatar}.webp`
   - Botão **"Iniciar Jogo"** — esconde o modal e renderiza o tabuleiro
 - **Victory Overlay** (`#victory-overlay`):
   - Overlay fixo com confetes animados (`.confetti-piece`) e fogos serpentina (`.serpentine`)
@@ -150,7 +165,7 @@ constantes / configuração
   ├── selectedWorldId     → string | null (ID do mundo escolhido no seletor)
   ├── subworldConfigs     → { florestaMisteriosa, cavernaDosFosseis } — lookup de áreas especiais
   ├── PLAYER_COUNT (2)
-  ├── players[]           → array de objetos {id, name, emoji, posicao, rodadasPerdidas, element, isBot}
+  ├── players[]           → array de objetos {id, name, emoji, posicao, rodadasPerdidas, element, isBot, tokenId}
   ├── gameState           → {currentPlayerIndex, jogoAtivo, jogoFinalizado, isMoving, questoesUsadas,
   │                         activeSubworldId, subworldEntry, entrouNoPortal}
   ├── modoJogo            → string | null ("rapido" no Jogo Rápido, null no menu)
@@ -177,7 +192,9 @@ Player Helpers
   ├── getCurrentPlayer()   → retorna o jogador ativo
   ├── getPlayerElement(p)  → retorna o elemento DOM do jogador
   ├── switchTurn()         → alterna currentPlayerIndex (bloqueado se activeSubworldId !== null)
-  └── updateUI()           → atualiza indicador de turno e posições
+  ├── updateUI()           → atualiza indicador de turno e posições (aplica fallback visual com token)
+  ├── renderBoardToken(idx) → carrega token asset no tabuleiro para o jogador
+  └── applyVisualFallback(emojiEl, imgEl, emoji, imgSrc) → carrega img com fallback para emoji (usada em UI, tabuleiro, draw, vitória, galeria)
 
 SVG Path / Board
   ├── renderSvgPath(posicoes?) → gera curva Catmull-Rom no SVG (usa getPosicoes() por padrão)
@@ -252,13 +269,16 @@ Setup Screen
   ├── showSetupScreen() → exibe modal, popula grade de emojis, foca P1
   ├── hideSetupScreen() → esconde modal
   ├── setupModalEvents() → registra eventos de clique nas grades e botão
-  └── startGame() → lê nomes/emojis dos inputs, inicia partida
+  ├── startGame() → lê nomes/emojis/tokenId dos inputs, inicia partida
+  ├── prepareAndDraw() → lê nomes/emojis/tokenId, inicia sequência de sorteio
+  └── updateAvatarPreview(idx, emoji, name, avatarId) → atualiza preview do avatar
 
 Challenge Modal
   └── showChallengeModal(desafio) → exibe pergunta/opções, retorna Promise<boolean>
 
 Inicialização
-  └── init() → WorldRegistry.init([florestaEncantada, valeDinossauros]), chama showMainMenu()
+  ├── initGalleryTokens() → transforma emoji-btn em span+img com fallback visual
+  └── init() → initGalleryTokens(), WorldRegistry.init([florestaEncantada, valeDinossauros]), chama showMainMenu()
 ```
 
 #### Sistema de Movimentação

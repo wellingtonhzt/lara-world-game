@@ -68,6 +68,16 @@ Este documento define as diretrizes visuais do Lara World. Todo novo asset, tela
 - Botão "← Menu Principal" com gradiente e sombra 3D (mesmo padrão dos botões da Hero Screen)
 - Hover com elevação, active com afundamento
 
+### Galeria de Seleção (Setup)
+- Dividida em duas seções visuais: "🧑 Avatares" (personagens oficiais) e "😊 Emojis clássicos" (collapsível via `<details>`)
+- **Preview circular**: `.avatar-frame` 108×108px com `border-radius: 50%`, box-shadow colorido por jogador (rosa P1, azul P2)
+- **Avatar-img**: `object-fit: contain` para mostrar o asset completo sem cortes
+- **Avatar-emoji**: fallback de 3.6rem, oculto quando o asset carrega
+- **Botões**: 40×40px, `border-radius: 12px`, hover scale 1.12 com cor do jogador, selected com gradiente e glow
+- **Seção de emojis**: `border-radius: 10px`, padding reduzido, summary com cor #b8956a e letter-spacing
+- **Token nos botões**: cada botão exibe o token asset (object-fit cover circular) via `initGalleryTokens()` com fallback para emoji
+- **Regra**: a galeria nunca deve mostrar broken image — sempre cai para emoji
+
 ## 5. Personagens
 
 ### Lara (Protagonista)
@@ -85,6 +95,17 @@ Este documento define as diretrizes visuais do Lara World. Todo novo asset, tela
 - Não deve ser replicada em outras telas para evitar poluição visual
 - Todos os personagens e ilustrações do jogo devem seguir o mesmo padrão artístico
 
+### Personagens Oficiais
+| Personagem | ID | Emoji | Descrição |
+|------------|----|-------|-----------|
+| **Lara** | `lara` | 🧒 | Protagonista, guia do jogador |
+| **Léo** | `leo` | 🧑 | Amigo, segundo personagem |
+| **Dino** | `dino` | 🦖 | Personagem temático de dinossauro |
+| **Byte** | `byte` | 💻 | Personagem temático de tecnologia |
+
+- Cada personagem oficial possui dois assets: `assets/avatars/<id>.webp` (preview, object-fit contain) e `assets/tokens/<id>.webp` (in-game, object-fit cover circular)
+- O emoji original serve como fallback universal para ambos os assets
+
 ## 6. Assets
 
 ### Estrutura de Diretórios
@@ -92,6 +113,8 @@ Este documento define as diretrizes visuais do Lara World. Todo novo asset, tela
 ```
 src/assets/
 ├── ui/             # Assets da Hero Screen
+├── avatars/        # Avatares oficiais — preview circular no setup (108×108px)
+├── tokens/         # Tokens oficiais — representação in-game (62×62px circular)
 ├── world-icons/    # Ilustrações oficiais dos mundos (96×96px)
 └── worlds/         # Backgrounds e texturas por mundo
 ```
@@ -103,6 +126,10 @@ src/assets/
 - Fallback visual obrigatório: se o asset não existir, o jogo deve continuar funcional com CSS
 - Assets devem ser preparados em formato `.webp` para performance
 - Ilustrações dos mundos devem ser 96×96px (ou proporcionais)
+- Avatares (setup preview) devem ser 108×108px (ou proporcionais em canvas 512×512), com `object-fit: contain`
+- Tokens (in-game) devem ser 62×62px (ou proporcionais em canvas 512×512), com `object-fit: cover` circular
+- Personagens oficiais devem ter ambos os assets: avatar (`assets/avatars/<id>.webp`) e token (`assets/tokens/<id>.webp`)
+- O emoji original serve como fallback universal — o jogo nunca deve exibir broken image
 
 ## 7. Exemplos de Consistência Visual
 
@@ -124,4 +151,4 @@ src/assets/
 
 ---
 
-*Documento criado na Sprint UX-014 + ART-009 — v0.12.0-preview*
+*Documento criado na Sprint UX-014 + ART-009 — v0.12.0-preview | Atualizado na UX-015 + ART-010*

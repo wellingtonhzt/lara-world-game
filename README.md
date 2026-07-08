@@ -18,7 +18,7 @@
 
 | Versão | Data | Status |
 |--------|------|--------|
-| **v0.12.0-preview** | Jul/2026 | ✅ **Ativo** — Hero Screen + Seleção de Mundos v2 + Ilustrações |
+| **v0.12.0-preview** | Jul/2026 | ✅ **Ativo** — Hero Screen + Seleção de Mundos v2 + Ilustrações + Avatares/Tokens |
 | v0.11.0-preview | Jul/2026 | ✅ Concluído |
 | v0.10.0-preview | Jul/2026 | ✅ Concluído |
 | v0.9.0-preview | Jul/2026 | ✅ Concluído |
@@ -46,6 +46,17 @@
 - **Decorações animadas** — formas flutuantes abstratas e sparkles ✦ via CSS
 - **Assets UI** — estrutura `src/assets/ui/` preparada para `lara-hero.webp` e `menu-background.webp`
 - **Responsivo** — adaptação para mobile com escalonamento de Lara e do card
+
+### Sistema de Avatares e Tokens — UX-015
+
+- **Galeria dividida em duas seções**: "🧑 Avatares" com 4 personagens oficiais (Lara, Léo, Dino, Byte) e "😊 Emojis clássicos" em seção collapsível (`<details>`) com 19 emojis adicionais
+- **Avatares oficiais** (`assets/avatars/`): cada personagem possui asset próprio para preview circular (108×108px) no setup, exibido via `<img class="avatar-img">` com `object-fit: contain` e fallback para emoji
+- **Tokens in-game** (`assets/tokens/`): representação do personagem no tabuleiro, status panel, draw screen e tela de vitória — carregados via `applyVisualFallback()` com `object-fit: cover` circular e fallback para emoji
+- **initGalleryTokens()**: no bootstrap, cada botão da galeria ganha `<span class="btn-emoji">` + `<img class="btn-img">`, tentando carregar `assets/tokens/{avatar}.webp` com fallback automático
+- **applyVisualFallback()**: mecanismo único de fallback visual — `onload` oculta emoji e exibe imagem, `onerror` oculta imagem e exibe emoji. Reutilizado em 6 contextos: galeria, status turno, status P1/P2, tabuleiro, draw screen, vitória
+- **TokenId**: novo campo `player.tokenId` populado via `data-token` do botão selecionado (ex: `"lara"` para `assets/tokens/lara.webp`)
+- **Preview interativo**: `updateAvatarPreview()` altera em tempo real o emoji, nome e imagem do preview ao selecionar um personagem
+- **Fallback universal**: se qualquer asset `.webp` não existir ou falhar ao carregar, o emoji correspondente aparece automaticamente — sem quebra visual
 
 ### Board Layout 2.0 — Posicionamento Personalizado
 
@@ -140,7 +151,7 @@
 
 ## 🎨 Identidade Visual
 
-Iniciada na **v0.11.0-preview** e expandida na **v0.12.0-preview**, a fase de identidade visual estabeleceu a pipeline de produção artística baseada em assets separados por mundo, além dos assets da Hero Screen (`src/assets/ui/`).
+Iniciada na **v0.11.0-preview** e expandida na **v0.12.0-preview**, a fase de identidade visual estabeleceu a pipeline de produção artística baseada em assets separados por mundo, assets da Hero Screen (`src/assets/ui/`) e assets de personagens oficiais (`src/assets/avatars/` e `src/assets/tokens/`).
 
 ### Estrutura de Assets
 
@@ -149,6 +160,16 @@ src/assets/
 ├── ui/
 │   ├── lara-hero.webp       # Ilustração da personagem Lara na tela inicial (asset pendente)
 │   └── menu-background.webp  # Fundo temático do menu principal (asset pendente)
+├── avatars/
+│   ├── lara.webp            # Avatar da Lara — preview circular no setup ✅
+│   ├── leo.webp             # Avatar do Léo — preview circular no setup (pendente)
+│   ├── dino.webp            # Avatar do Dino — preview circular no setup (pendente)
+│   └── byte.webp            # Avatar do Byte — preview circular no setup (pendente)
+├── tokens/
+│   ├── lara.webp            # Token da Lara — representação in-game circular ✅
+│   ├── leo.webp             # Token do Léo — in-game (pendente)
+│   ├── dino.webp            # Token do Dino — in-game (pendente)
+│   └── byte.webp            # Token do Byte — in-game (pendente)
 ├── world-icons/
 │   ├── floresta.webp        # Ilustração oficial do mundo Floresta Encantada (asset pendente)
 │   ├── dinossauros.webp     # Ilustração oficial do mundo Vale dos Dinossauros (asset pendente)
@@ -171,6 +192,9 @@ src/assets/
 - Assets são aplicados apenas na área do tabuleiro (`#track-container`)
 - O fundo geral da aplicação permanece com gradiente neutro (não recebe ilustração)
 - Fallback visual garantido: se o asset não existir, o jogo continua com o estilo CSS atual
+- Fallback visual para personagens: `applyVisualFallback()` tenta carregar token `.webp`; se falha, exibe emoji
+- Avatares (`assets/avatars/`) são para preview no setup (108×108, `object-fit: contain`)
+- Tokens (`assets/tokens/`) são para representação in-game (62×62, `object-fit: cover`)
 - Sistema preparado para expansão para novos mundos (Galáxia, Oceanos, Castelo)
 
 ### Status Atual
@@ -179,6 +203,11 @@ src/assets/
 |-------|----------------|--------|
 | `lara-hero.webp` | Hero Screen (UI) | 🟡 Infraestrutura concluída — HTML/CSS prontos (asset pendente de criação) |
 | `menu-background.webp` | Hero Screen (UI) | 🟡 Infraestrutura concluída — CSS via `::before` + fallback gradiente (asset pendente) |
+| `lara.webp` | Avatar oficial (avatar) | ✅ Concluído — 512×512, 86.9% altura, centralizado |
+| `lara.webp` | Token oficial (token) | ✅ Concluído — 512×512, 86.9% altura, object-fit cover |
+| `leo.webp` | Avatar/token (personagem) | 🟡 Estrutura preparada — asset pendente de criação |
+| `dino.webp` | Avatar/token (personagem) | 🟡 Estrutura preparada — asset pendente de criação |
+| `byte.webp` | Avatar/token (personagem) | 🟡 Estrutura preparada — asset pendente de criação |
 | `floresta.webp` | Floresta Encantada (world-icon) | 🟡 Estrutura preparada — container 96×96px + fallback emoji (asset pendente) |
 | `dinossauros.webp` | Vale dos Dinossauros (world-icon) | 🟡 Estrutura preparada — container 96×96px + fallback emoji (asset pendente) |
 | `oceanos.webp` | Reino dos Oceanos (world-icon) | 🟡 Estrutura preparada — container 96×96px + fallback emoji (asset pendente) |
@@ -379,7 +408,7 @@ docker compose down
 
 ## 🗺️ Roadmap
 
-- **v0.12.0-preview** — ✅ **Ativo** — Board Layout 2.0, path.webp, Hero Screen (UX-013), Seleção de Mundos v2 (UX-014), Ilustrações dos Mundos (ART-009)
+- **v0.12.0-preview** — ✅ **Ativo** — Board Layout 2.0, path.webp, Hero Screen (UX-013), Seleção de Mundos v2 (UX-014), Ilustrações dos Mundos (ART-009), Avatares/Tokens (UX-015 + ART-010)
 - **v0.13.0-preview** — Hero Screen v2, evolução dos cards dos mundos, assets próprios das casas especiais, ilustrações das áreas dos mundos
 - **v1.0.0** — Lançamento oficial com sistema de conquistas, Modo Aventura e animações da interface
 
