@@ -119,64 +119,94 @@
           </label>
         </div>
         <div class="setup-players">
-          <div class="setup-player-card">
-            <h3>👶 Jogador 1</h3>
-            <label for="player1-name">Nome:</label>
-            <input type="text" id="player1-name" value="Lara" maxlength="20">
-            <label>Sprite:</label>
-            <div class="emoji-grid" id="p1-emoji-grid">
-              <button class="emoji-btn" data-emoji="🧒">🧒</button>
-              <button class="emoji-btn" data-emoji="🌟">🌟</button>
-              <button class="emoji-btn" data-emoji="🌸">🌸</button>
-              <button class="emoji-btn" data-emoji="🌈">🌈</button>
-              <button class="emoji-btn" data-emoji="⭐">⭐</button>
-              <button class="emoji-btn" data-emoji="🦋">🦋</button>
-              <button class="emoji-btn" data-emoji="🍀">🍀</button>
-              <button class="emoji-btn" data-emoji="🎈">🎈</button>
-              <button class="emoji-btn" data-emoji="🐱">🐱</button>
-              <button class="emoji-btn" data-emoji="🍭">🍭</button>
-              <button class="emoji-btn" data-emoji="🎀">🎀</button>
-              <button class="emoji-btn" data-emoji="🌻">🌻</button>
-              <button class="emoji-btn" data-emoji="🐰">🐰</button>
-              <button class="emoji-btn" data-emoji="🍬">🍬</button>
-              <button class="emoji-btn" data-emoji="🦄">🦄</button>
-              <button class="emoji-btn" data-emoji="🎪">🎪</button>
-              <button class="emoji-btn" data-emoji="🐼">🐼</button>
-              <button class="emoji-btn" data-emoji="🍉">🍉</button>
-              <button class="emoji-btn" data-emoji="🐶">🐶</button>
-              <button class="emoji-btn" data-emoji="🎠">🎠</button>
+          <div class="setup-player-card card-p1">
+            <h3>👤 Jogador 1</h3>
+            <div class="avatar-preview">
+              <div class="avatar-frame" id="avatar-frame-p1">
+                <span class="avatar-emoji" id="avatar-emoji-p1">🧒</span>
+                <img class="avatar-img" src="" alt="" onload="this.previousElementSibling.style.display='none'" onerror="this.style.display='none';this.previousElementSibling.style.display=''" loading="lazy">
+              </div>
+              <span class="avatar-player-name" id="avatar-name-p1">Lara</span>
             </div>
+            <label for="player1-name">Personagem:</label>
+            <input type="text" id="player1-name" value="Lara" maxlength="20" placeholder="Nome do aventureiro">
+            <label>🧑 Avatares</label>
+            <div class="avatar-grid" id="p1-avatar-grid">
+              <button class="emoji-btn" data-emoji="🧒" data-avatar="lara" data-token="lara">🧒</button>
+              <button class="emoji-btn" data-emoji="🧑" data-avatar="leo" data-token="leo">🧑</button>
+              <button class="emoji-btn" data-emoji="🦖" data-avatar="dino" data-token="dino">🦖</button>
+              <button class="emoji-btn" data-emoji="💻" data-avatar="byte" data-token="byte">💻</button>
+            </div>
+            <details class="emoji-section" open>
+              <summary>😊 Emojis clássicos</summary>
+              <div class="avatar-grid" id="p1-emoji-grid">
+                <button class="emoji-btn" data-emoji="🌟" data-avatar="estrela" data-token="estrela">🌟</button>
+                <button class="emoji-btn" data-emoji="🌸" data-avatar="sakura" data-token="sakura">🌸</button>
+                <button class="emoji-btn" data-emoji="🌈" data-avatar="arco-iris" data-token="arco-iris">🌈</button>
+                <button class="emoji-btn" data-emoji="⭐" data-avatar="brilho" data-token="brilho">⭐</button>
+                <button class="emoji-btn" data-emoji="🦋" data-avatar="borboleta" data-token="borboleta">🦋</button>
+                <button class="emoji-btn" data-emoji="🍀" data-avatar="trevo" data-token="trevo">🍀</button>
+                <button class="emoji-btn" data-emoji="🎈" data-avatar="balao" data-token="balao">🎈</button>
+                <button class="emoji-btn" data-emoji="🐱" data-avatar="gato" data-token="gato">🐱</button>
+                <button class="emoji-btn" data-emoji="🍭" data-avatar="pirulito" data-token="pirulito">🍭</button>
+                <button class="emoji-btn" data-emoji="🎀" data-avatar="laco" data-token="laco">🎀</button>
+                <button class="emoji-btn" data-emoji="🌻" data-avatar="girassol" data-token="girassol">🌻</button>
+                <button class="emoji-btn" data-emoji="🐰" data-avatar="coelho" data-token="coelho">🐰</button>
+                <button class="emoji-btn" data-emoji="🍬" data-avatar="doce" data-token="doce">🍬</button>
+                <button class="emoji-btn" data-emoji="🦄" data-avatar="unicornio" data-token="unicornio">🦄</button>
+                <button class="emoji-btn" data-emoji="🎪" data-avatar="circo" data-token="circo">🎪</button>
+                <button class="emoji-btn" data-emoji="🐼" data-avatar="panda" data-token="panda">🐼</button>
+                <button class="emoji-btn" data-emoji="🍉" data-avatar="melancia" data-token="melancia">🍉</button>
+                <button class="emoji-btn" data-emoji="🐶" data-avatar="cachorro" data-token="cachorro">🐶</button>
+                <button class="emoji-btn" data-emoji="🎠" data-avatar="carrossel" data-token="carrossel">🎠</button>
+              </div>
+            </details>
           </div>
-          <div class="setup-player-card player2-card">
-            <h3>👥 Jogador 2</h3>
-            <label for="player2-name">Nome:</label>
-            <input type="text" id="player2-name" value="Amigo" maxlength="20">
-            <label>Sprite:</label>
-            <div class="emoji-grid" id="p2-emoji-grid">
-              <button class="emoji-btn" data-emoji="🧑">🧑</button>
-              <button class="emoji-btn" data-emoji="🌟">🌟</button>
-              <button class="emoji-btn" data-emoji="🌸">🌸</button>
-              <button class="emoji-btn" data-emoji="🌈">🌈</button>
-              <button class="emoji-btn" data-emoji="⭐">⭐</button>
-              <button class="emoji-btn" data-emoji="🦋">🦋</button>
-              <button class="emoji-btn" data-emoji="🍀">🍀</button>
-              <button class="emoji-btn" data-emoji="🎈">🎈</button>
-              <button class="emoji-btn" data-emoji="🐱">🐱</button>
-              <button class="emoji-btn" data-emoji="🍭">🍭</button>
-              <button class="emoji-btn" data-emoji="🎀">🎀</button>
-              <button class="emoji-btn" data-emoji="🌻">🌻</button>
-              <button class="emoji-btn" data-emoji="🐰">🐰</button>
-              <button class="emoji-btn" data-emoji="🍬">🍬</button>
-              <button class="emoji-btn" data-emoji="🦄">🦄</button>
-              <button class="emoji-btn" data-emoji="🎪">🎪</button>
-              <button class="emoji-btn" data-emoji="🐼">🐼</button>
-              <button class="emoji-btn" data-emoji="🍉">🍉</button>
-              <button class="emoji-btn" data-emoji="🐶">🐶</button>
-              <button class="emoji-btn" data-emoji="🎠">🎠</button>
+          <div class="setup-player-card card-p2 player2-card">
+            <h3>👤 Jogador 2</h3>
+            <div class="avatar-preview">
+              <div class="avatar-frame" id="avatar-frame-p2">
+                <span class="avatar-emoji" id="avatar-emoji-p2">🧑</span>
+                <img class="avatar-img" src="" alt="" onload="this.previousElementSibling.style.display='none'" onerror="this.style.display='none';this.previousElementSibling.style.display=''" loading="lazy">
+              </div>
+              <span class="avatar-player-name" id="avatar-name-p2">Amigo</span>
             </div>
+            <label for="player2-name">Personagem:</label>
+            <input type="text" id="player2-name" value="Amigo" maxlength="20" placeholder="Nome do aventureiro">
+            <label>🧑 Avatares</label>
+            <div class="avatar-grid" id="p2-avatar-grid">
+              <button class="emoji-btn" data-emoji="🧒" data-avatar="lara" data-token="lara">🧒</button>
+              <button class="emoji-btn" data-emoji="🧑" data-avatar="leo" data-token="leo">🧑</button>
+              <button class="emoji-btn" data-emoji="🦖" data-avatar="dino" data-token="dino">🦖</button>
+              <button class="emoji-btn" data-emoji="💻" data-avatar="byte" data-token="byte">💻</button>
+            </div>
+            <details class="emoji-section" open>
+              <summary>😊 Emojis clássicos</summary>
+              <div class="avatar-grid" id="p2-emoji-grid">
+                <button class="emoji-btn" data-emoji="🌟" data-avatar="estrela" data-token="estrela">🌟</button>
+                <button class="emoji-btn" data-emoji="🌸" data-avatar="sakura" data-token="sakura">🌸</button>
+                <button class="emoji-btn" data-emoji="🌈" data-avatar="arco-iris" data-token="arco-iris">🌈</button>
+                <button class="emoji-btn" data-emoji="⭐" data-avatar="brilho" data-token="brilho">⭐</button>
+                <button class="emoji-btn" data-emoji="🦋" data-avatar="borboleta" data-token="borboleta">🦋</button>
+                <button class="emoji-btn" data-emoji="🍀" data-avatar="trevo" data-token="trevo">🍀</button>
+                <button class="emoji-btn" data-emoji="🎈" data-avatar="balao" data-token="balao">🎈</button>
+                <button class="emoji-btn" data-emoji="🐱" data-avatar="gato" data-token="gato">🐱</button>
+                <button class="emoji-btn" data-emoji="🍭" data-avatar="pirulito" data-token="pirulito">🍭</button>
+                <button class="emoji-btn" data-emoji="🎀" data-avatar="laco" data-token="laco">🎀</button>
+                <button class="emoji-btn" data-emoji="🌻" data-avatar="girassol" data-token="girassol">🌻</button>
+                <button class="emoji-btn" data-emoji="🐰" data-avatar="coelho" data-token="coelho">🐰</button>
+                <button class="emoji-btn" data-emoji="🍬" data-avatar="doce" data-token="doce">🍬</button>
+                <button class="emoji-btn" data-emoji="🦄" data-avatar="unicornio" data-token="unicornio">🦄</button>
+                <button class="emoji-btn" data-emoji="🎪" data-avatar="circo" data-token="circo">🎪</button>
+                <button class="emoji-btn" data-emoji="🐼" data-avatar="panda" data-token="panda">🐼</button>
+                <button class="emoji-btn" data-emoji="🍉" data-avatar="melancia" data-token="melancia">🍉</button>
+                <button class="emoji-btn" data-emoji="🐶" data-avatar="cachorro" data-token="cachorro">🐶</button>
+                <button class="emoji-btn" data-emoji="🎠" data-avatar="carrossel" data-token="carrossel">🎠</button>
+              </div>
+            </details>
           </div>
         </div>
-        <button id="start-game-btn" class="btn btn-primary" disabled>🎮 Iniciar Jogo</button>
+        <button id="start-game-btn" class="btn btn-primary setup-start-btn" disabled>🎮 Iniciar Jogo</button>
       </div>
     </div>
 
@@ -189,7 +219,10 @@
         <div class="draw-players">
           <div class="draw-player" id="draw-player-0">
             <div class="draw-player-info">
-              <span class="draw-player-emoji" id="draw-emoji-0">🧒</span>
+              <div class="draw-player-visual">
+                <span class="draw-player-emoji" id="draw-emoji-0">🧒</span>
+                <img class="draw-player-img" id="draw-img-0" src="" alt="">
+              </div>
               <span class="draw-player-name" id="draw-name-0">Lara</span>
             </div>
             <div class="draw-dice-box" id="draw-dice-box-0">🎲</div>
@@ -201,7 +234,10 @@
           </div>
           <div class="draw-player" id="draw-player-1">
             <div class="draw-player-info">
-              <span class="draw-player-emoji" id="draw-emoji-1">🤖</span>
+              <div class="draw-player-visual">
+                <span class="draw-player-emoji" id="draw-emoji-1">🤖</span>
+                <img class="draw-player-img" id="draw-img-1" src="" alt="">
+              </div>
               <span class="draw-player-name" id="draw-name-1">Máquina</span>
             </div>
             <div class="draw-dice-box" id="draw-dice-box-1">🎲</div>
@@ -255,6 +291,10 @@
 
       <div class="victory-content">
         <h2 id="victory-title"><span id="victory-trophy">🏆</span> Vitória!</h2>
+        <div class="victory-player-visual">
+          <span class="visual-emoji" id="victory-emoji">🧒</span>
+          <img class="visual-img" id="victory-img" src="" alt="">
+        </div>
         <p id="victory-message"></p>
         <div class="victory-buttons">
           <button id="victory-play-again-btn" class="btn btn-primary">🔁 Jogar Novamente</button>
@@ -285,8 +325,8 @@
           </svg>
 
           <div id="track"></div>
-          <div id="lara">🧒</div>
-          <div id="lara-p2">🧑</div>
+          <div id="lara"><span class="token-emoji">🧒</span><img class="token-img" src="" alt=""></div>
+          <div id="lara-p2"><span class="token-emoji">🧑</span><img class="token-img" src="" alt=""></div>
         </div>
       </section>
 
@@ -302,13 +342,25 @@
         <div class="panel-card">
           <h2>📊 Status</h2>
           <p class="status-text turn-indicator">
-            ➡️ <strong><span id="current-player-name">🧒 Lara</span></strong>
+            ➡️ <span class="status-player-visual" id="turn-visual">
+              <span class="visual-emoji" id="turn-emoji">🧒</span>
+              <img class="visual-img" id="turn-img" src="" alt="">
+            </span>
+            <strong><span id="current-player-name">Lara</span></strong>
           </p>
           <p class="status-text pos-p1">
-            <span id="p1-label">🧒 Lara</span>: <strong><span id="p1-pos">0</span> / 20</strong>
+            <span class="status-player-visual" id="p1-visual">
+              <span class="visual-emoji" id="p1-status-emoji">🧒</span>
+              <img class="visual-img" id="p1-status-img" src="" alt="">
+            </span>
+            <span id="p1-label">Lara</span>: <strong><span id="p1-pos">0</span> / 20</strong>
           </p>
           <p class="status-text pos-p2">
-            <span id="p2-label">🧑 Amigo</span>: <strong><span id="p2-pos">0</span> / 20</strong>
+            <span class="status-player-visual" id="p2-visual">
+              <span class="visual-emoji" id="p2-status-emoji">🧒</span>
+              <img class="visual-img" id="p2-status-img" src="" alt="">
+            </span>
+            <span id="p2-label">Amigo</span>: <strong><span id="p2-pos">0</span> / 20</strong>
           </p>
         </div>
 

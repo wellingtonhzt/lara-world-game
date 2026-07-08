@@ -9,8 +9,8 @@ import { cavernaDosFosseis } from './worlds/dinossauros/config.js';
 
   /* ── Players ── */
   const players = [
-    { id: 1, name: 'Lara', emoji: '🧒', posicao: 0, rodadasPerdidas: 0, element: null, isBot: false },
-    { id: 2, name: 'Amigo', emoji: '🧑', posicao: 0, rodadasPerdidas: 0, element: null, isBot: false },
+    { id: 1, name: 'Lara', emoji: '🧒', posicao: 0, rodadasPerdidas: 0, element: null, isBot: false, tokenId: 'lara' },
+    { id: 2, name: 'Amigo', emoji: '🧑', posicao: 0, rodadasPerdidas: 0, element: null, isBot: false, tokenId: 'leo' },
   ];
 
   const gameState = {
@@ -218,14 +218,56 @@ import { cavernaDosFosseis } from './worlds/dinossauros/config.js';
   function updateUI() {
     const p = getCurrentPlayer();
     if (elements.currentPlayerName) {
-      elements.currentPlayerName.textContent = `${p.emoji} ${p.name}`;
+      elements.currentPlayerName.textContent = p.name;
     }
     if (elements.p1Pos) elements.p1Pos.textContent = players[0].posicao;
     if (elements.p2Pos) elements.p2Pos.textContent = players[1].posicao;
-    if (elements.p1Label) elements.p1Label.textContent = `${players[0].emoji} ${players[0].name}`;
-    if (elements.p2Label) elements.p2Label.textContent = `${players[1].emoji} ${players[1].name}`;
-    if (elements.lara) elements.lara.textContent = players[0].emoji;
-    if (elements.laraP2) elements.laraP2.textContent = players[1].emoji;
+    if (elements.p1Label) elements.p1Label.textContent = players[0].name;
+    if (elements.p2Label) elements.p2Label.textContent = players[1].name;
+
+    const turnEmoji = document.getElementById("turn-emoji");
+    const turnImg = document.getElementById("turn-img");
+    const p1Emoji = document.getElementById("p1-status-emoji");
+    const p1Img = document.getElementById("p1-status-img");
+    const p2Emoji = document.getElementById("p2-status-emoji");
+    const p2Img = document.getElementById("p2-status-img");
+    applyVisualFallback(turnEmoji, turnImg, p.emoji, p.tokenId ? `assets/tokens/${p.tokenId}.webp` : null);
+    applyVisualFallback(p1Emoji, p1Img, players[0].emoji, players[0].tokenId ? `assets/tokens/${players[0].tokenId}.webp` : null);
+    applyVisualFallback(p2Emoji, p2Img, players[1].emoji, players[1].tokenId ? `assets/tokens/${players[1].tokenId}.webp` : null);
+
+    renderBoardToken(0);
+    renderBoardToken(1);
+  }
+
+  function applyVisualFallback(emojiEl, imgEl, emoji, imgSrc) {
+    if (emojiEl) emojiEl.textContent = emoji;
+    if (!imgEl) return;
+
+    if (imgSrc) {
+      imgEl.onload = function () {
+        if (emojiEl) emojiEl.style.display = 'none';
+        imgEl.style.display = 'block';
+      };
+      imgEl.onerror = function () {
+        imgEl.style.display = 'none';
+        if (emojiEl) emojiEl.style.display = '';
+      };
+      imgEl.src = imgSrc;
+    } else {
+      imgEl.style.display = 'none';
+      if (emojiEl) emojiEl.style.display = '';
+    }
+  }
+
+  function renderBoardToken(idx) {
+    const el = idx === 0 ? elements.lara : elements.laraP2;
+    if (!el) return;
+    const player = players[idx];
+    const emojiSpan = el.querySelector('.token-emoji');
+    const imgEl = el.querySelector('.token-img');
+    if (!emojiSpan || !imgEl) return;
+    const imgSrc = player.tokenId ? `assets/tokens/${player.tokenId}.webp` : null;
+    applyVisualFallback(emojiSpan, imgEl, player.emoji, imgSrc);
   }
 
   const elements = {
@@ -653,8 +695,11 @@ import { cavernaDosFosseis } from './worlds/dinossauros/config.js';
 
     addHistory(`🎉🎉 PARABÉNS, ${player.name} venceu! 🎉🎉`, "vitoria");
 
+    const victoryEmoji = document.getElementById("victory-emoji");
+    const victoryImg = document.getElementById("victory-img");
+    applyVisualFallback(victoryEmoji, victoryImg, player.emoji, player.tokenId ? `assets/tokens/${player.tokenId}.webp` : null);
     if (elements.victoryMessage) {
-      elements.victoryMessage.textContent = `${player.emoji} ${player.name} venceu o jogo!`;
+      elements.victoryMessage.textContent = `${player.name} venceu o jogo!`;
     }
     if (elements.victoryOverlay) {
       elements.victoryOverlay.classList.remove("hidden");
@@ -942,22 +987,25 @@ import { cavernaDosFosseis } from './worlds/dinossauros/config.js';
 
   function startGame() {
     players[0].name = document.getElementById("player1-name").value.trim() || "Jogador 1";
-    const p1Selected = document.querySelector("#p1-emoji-grid .emoji-btn.selected");
+    const p1Selected = document.querySelector(".card-p1 .emoji-btn.selected");
     players[0].emoji = p1Selected ? p1Selected.dataset.emoji : "🧒";
+    players[0].tokenId = p1Selected ? p1Selected.dataset.token : "lara";
 
     if (isSinglePlayer) {
       players[1].name = "Máquina";
       players[1].emoji = "🤖";
       players[1].isBot = true;
+      players[1].tokenId = "";
     } else {
       players[1].name = document.getElementById("player2-name").value.trim() || "Jogador 2";
-      const p2Selected = document.querySelector("#p2-emoji-grid .emoji-btn.selected");
+      const p2Selected = document.querySelector(".card-p2 .emoji-btn.selected");
       players[1].emoji = p2Selected ? p2Selected.dataset.emoji : "🧑";
       players[1].isBot = false;
+      players[1].tokenId = p2Selected ? p2Selected.dataset.token : "leo";
     }
 
-    elements.lara.textContent = players[0].emoji;
-    elements.laraP2.textContent = players[1].emoji;
+    renderBoardToken(0);
+    renderBoardToken(1);
 
     botTurnScheduled = false;
     hideSetupScreen();
@@ -969,94 +1017,122 @@ import { cavernaDosFosseis } from './worlds/dinossauros/config.js';
     addHistory("🎮 Bem-vindos ao Lara World!", "info");
   }
 
-  function setupModalEvents() {
-    const p1Name = document.getElementById("player1-name");
-    const p2Name = document.getElementById("player2-name");
-    const startBtn = document.getElementById("start-game-btn");
-    const p1Grid = document.getElementById("p1-emoji-grid");
-    const p2Grid = document.getElementById("p2-emoji-grid");
-    const setupScreen = document.getElementById("setup-screen");
-
-    let p1Emoji = null;
-    let p2Emoji = null;
-
-    function checkReady() {
-      if (isSinglePlayer) {
-        startBtn.disabled = !(p1Name.value.trim() && p1Emoji);
-      } else {
-        startBtn.disabled = !(p1Name.value.trim() && p1Emoji && p2Name.value.trim() && p2Emoji);
+    function updateAvatarPreview(playerIndex, emoji, name, avatarId) {
+      const emojiEl = document.getElementById(`avatar-emoji-p${playerIndex + 1}`);
+      const nameEl = document.getElementById(`avatar-name-p${playerIndex + 1}`);
+      const imgEl = document.querySelector(`#avatar-frame-p${playerIndex + 1} .avatar-img`);
+      if (emojiEl && emoji) emojiEl.textContent = emoji;
+      if (nameEl && name) nameEl.textContent = name;
+      if (imgEl && arguments.length > 3) {
+        if (avatarId) {
+          imgEl.src = `assets/avatars/${avatarId}.webp`;
+          imgEl.style.display = '';
+        } else {
+          imgEl.src = '';
+          imgEl.style.display = 'none';
+        }
       }
     }
 
-    function updateModeUI() {
-      if (isSinglePlayer) {
-        setupScreen.classList.add("mode-1p");
-      } else {
-        setupScreen.classList.remove("mode-1p");
+    function setupModalEvents() {
+      const p1Name = document.getElementById("player1-name");
+      const p2Name = document.getElementById("player2-name");
+      const startBtn = document.getElementById("start-game-btn");
+      const p1Card = document.querySelector(".card-p1");
+      const p2Card = document.querySelector(".card-p2");
+      const setupScreen = document.getElementById("setup-screen");
+
+      let p1Emoji = null;
+      let p2Emoji = null;
+
+      function checkReady() {
+        if (isSinglePlayer) {
+          startBtn.disabled = !(p1Name.value.trim() && p1Emoji);
+        } else {
+          startBtn.disabled = !(p1Name.value.trim() && p1Emoji && p2Name.value.trim() && p2Emoji);
+        }
       }
-      checkReady();
+
+      function updateModeUI() {
+        if (isSinglePlayer) {
+          setupScreen.classList.add("mode-1p");
+        } else {
+          setupScreen.classList.remove("mode-1p");
+        }
+        checkReady();
+      }
+
+      document.querySelectorAll('.mode-option input[type="radio"]').forEach(radio => {
+        radio.addEventListener("change", function () {
+          document.querySelectorAll(".mode-option").forEach(opt => opt.classList.remove("selected"));
+          this.closest(".mode-option").classList.add("selected");
+          isSinglePlayer = this.value === "1p";
+          updateModeUI();
+        });
+      });
+
+      p1Name.addEventListener("input", function () {
+        checkReady();
+        updateAvatarPreview(0, null, this.value.trim() || "Jogador 1");
+      });
+      p2Name.addEventListener("input", function () {
+        checkReady();
+        updateAvatarPreview(1, null, this.value.trim() || "Jogador 2");
+      });
+
+      p1Card.querySelectorAll(".emoji-btn").forEach(btn => {
+        btn.addEventListener("click", function () {
+          p1Card.querySelectorAll(".emoji-btn").forEach(b => b.classList.remove("selected"));
+          this.classList.add("selected");
+          p1Emoji = this.dataset.emoji;
+          updateAvatarPreview(0, p1Emoji, null, this.dataset.avatar);
+          checkReady();
+        });
+      });
+
+      p2Card.querySelectorAll(".emoji-btn").forEach(btn => {
+        btn.addEventListener("click", function () {
+          p2Card.querySelectorAll(".emoji-btn").forEach(b => b.classList.remove("selected"));
+          this.classList.add("selected");
+          p2Emoji = this.dataset.emoji;
+          updateAvatarPreview(1, p2Emoji, null, this.dataset.avatar);
+          checkReady();
+        });
+      });
+
+      const p1Def = p1Card.querySelector('.emoji-btn[data-avatar="lara"]');
+      const p2Def = p2Card.querySelector('.emoji-btn[data-avatar="leo"]');
+      if (p1Def) { p1Def.classList.add("selected"); p1Emoji = "🧒"; updateAvatarPreview(0, "🧒", "Lara", "lara"); }
+      if (p2Def) { p2Def.classList.add("selected"); p2Emoji = "🧑"; updateAvatarPreview(1, "🧑", "Amigo", "leo"); }
+
+      startBtn.addEventListener("click", prepareAndDraw);
+      updateModeUI();
     }
-
-    document.querySelectorAll('.mode-option input[type="radio"]').forEach(radio => {
-      radio.addEventListener("change", function () {
-        document.querySelectorAll(".mode-option").forEach(opt => opt.classList.remove("selected"));
-        this.closest(".mode-option").classList.add("selected");
-        isSinglePlayer = this.value === "1p";
-        updateModeUI();
-      });
-    });
-
-    p1Name.addEventListener("input", checkReady);
-    p2Name.addEventListener("input", checkReady);
-
-    p1Grid.querySelectorAll(".emoji-btn").forEach(btn => {
-      btn.addEventListener("click", function () {
-        p1Grid.querySelectorAll(".emoji-btn").forEach(b => b.classList.remove("selected"));
-        this.classList.add("selected");
-        p1Emoji = this.dataset.emoji;
-        checkReady();
-      });
-    });
-
-    p2Grid.querySelectorAll(".emoji-btn").forEach(btn => {
-      btn.addEventListener("click", function () {
-        p2Grid.querySelectorAll(".emoji-btn").forEach(b => b.classList.remove("selected"));
-        this.classList.add("selected");
-        p2Emoji = this.dataset.emoji;
-        checkReady();
-      });
-    });
-
-    const p1Def = p1Grid.querySelector('.emoji-btn[data-emoji="🧒"]');
-    const p2Def = p2Grid.querySelector('.emoji-btn[data-emoji="🧑"]');
-    if (p1Def) { p1Def.classList.add("selected"); p1Emoji = "🧒"; }
-    if (p2Def) { p2Def.classList.add("selected"); p2Emoji = "🧑"; }
-
-    startBtn.addEventListener("click", prepareAndDraw);
-    updateModeUI();
-  }
 
   /* ── Sorteio Inicial (Draw) ── */
 
   function prepareAndDraw() {
     players[0].name = document.getElementById("player1-name").value.trim() || "Jogador 1";
-    const p1Sel = document.querySelector("#p1-emoji-grid .emoji-btn.selected");
+    const p1Sel = document.querySelector(".card-p1 .emoji-btn.selected");
     players[0].emoji = p1Sel ? p1Sel.dataset.emoji : "🧒";
     players[0].isBot = false;
+    players[0].tokenId = p1Sel ? p1Sel.dataset.token : "lara";
 
     if (isSinglePlayer) {
       players[1].name = "Máquina";
       players[1].emoji = "🤖";
       players[1].isBot = true;
+      players[1].tokenId = "";
     } else {
       players[1].name = document.getElementById("player2-name").value.trim() || "Jogador 2";
-      const p2Sel = document.querySelector("#p2-emoji-grid .emoji-btn.selected");
+      const p2Sel = document.querySelector(".card-p2 .emoji-btn.selected");
       players[1].emoji = p2Sel ? p2Sel.dataset.emoji : "🧑";
       players[1].isBot = false;
+      players[1].tokenId = p2Sel ? p2Sel.dataset.token : "leo";
     }
 
-    elements.lara.textContent = players[0].emoji;
-    elements.laraP2.textContent = players[1].emoji;
+    renderBoardToken(0);
+    renderBoardToken(1);
 
     botTurnScheduled = false;
     hideSetupScreen();
@@ -1064,9 +1140,13 @@ import { cavernaDosFosseis } from './worlds/dinossauros/config.js';
   }
 
   function showDrawScreen() {
-    document.getElementById("draw-emoji-0").textContent = players[0].emoji;
+    const emoji0 = document.getElementById("draw-emoji-0");
+    const img0 = document.getElementById("draw-img-0");
+    const emoji1 = document.getElementById("draw-emoji-1");
+    const img1 = document.getElementById("draw-img-1");
+    applyVisualFallback(emoji0, img0, players[0].emoji, players[0].tokenId ? `assets/tokens/${players[0].tokenId}.webp` : null);
+    applyVisualFallback(emoji1, img1, players[1].emoji, players[1].tokenId ? `assets/tokens/${players[1].tokenId}.webp` : null);
     document.getElementById("draw-name-0").textContent = players[0].name;
-    document.getElementById("draw-emoji-1").textContent = players[1].emoji;
     document.getElementById("draw-name-1").textContent = players[1].name;
 
     document.getElementById("draw-dice-box-0").textContent = "🎲";
@@ -1174,7 +1254,7 @@ import { cavernaDosFosseis } from './worlds/dinossauros/config.js';
 
       const winner = players[winnerIndex];
       document.getElementById("draw-status").textContent =
-        `🏆 ${winner.emoji} ${winner.name} começa a aventura!`;
+        `🏆 ${winner.name} começa a aventura!`;
       document.getElementById("draw-start-btn").classList.remove("hidden");
       document.getElementById("draw-start-btn").disabled = false;
       break;
@@ -1580,9 +1660,31 @@ import { cavernaDosFosseis } from './worlds/dinossauros/config.js';
     renderEventResult();
   }
 
+  /* ── Gallery Token Initialization ── */
+
+  function initGalleryTokens() {
+    document.querySelectorAll('.emoji-btn').forEach(btn => {
+      const avatar = btn.dataset.avatar;
+      if (!avatar) return;
+      const emoji = btn.dataset.emoji || '';
+      const imgSrc = `assets/tokens/${avatar}.webp`;
+      const emojiSpan = document.createElement('span');
+      emojiSpan.className = 'btn-emoji';
+      emojiSpan.textContent = btn.textContent;
+      btn.textContent = '';
+      btn.appendChild(emojiSpan);
+      const imgEl = document.createElement('img');
+      imgEl.className = 'btn-img';
+      imgEl.alt = '';
+      btn.appendChild(imgEl);
+      applyVisualFallback(emojiSpan, imgEl, emoji, imgSrc);
+    });
+  }
+
   /* ── Init ── */
 
   function init() {
+    initGalleryTokens();
     enableWorldCard('dinossauros');
 
     elements.rollBtn.addEventListener("click", jogarDado);
