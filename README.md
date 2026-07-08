@@ -18,7 +18,7 @@
 
 | Versão | Data | Status |
 |--------|------|--------|
-| **v0.12.0-preview** | Jul/2026 | ✅ **Ativo** |
+| **v0.12.0-preview** | Jul/2026 | ✅ **Ativo** — Hero Screen evolutiva |
 | v0.11.0-preview | Jul/2026 | ✅ Concluído |
 | v0.10.0-preview | Jul/2026 | ✅ Concluído |
 | v0.9.0-preview | Jul/2026 | ✅ Concluído |
@@ -34,6 +34,18 @@
 ---
 
 ## ✨ Funcionalidades Atuais (v0.12.0-preview)
+
+### Hero Screen — Tela Inicial com Estilo de Capa de Jogo
+
+- **Personagem Lara** — ilustração decorativa sobreposta ao card central, como se estivesse saindo do painel
+- **Fundo temático** — `menu-background.webp` com opacidade controlada, sem poluir a leitura
+- **Card central translúcido** — gradiente rosado/creme/azulado com vidro (`backdrop-filter: blur`), borda branca e glow rosa
+- **Logo vibrante** — emoji 🌍 + título gradiente pink-dourado com `background-clip: text`
+- **⚡ Jogo Rápido** — card/botão principal com glow pulsante e subtítulo descritivo
+- **🏆 Modo Aventura** — card secundário desabilitado com badge "EM BREVE..." e subtítulo
+- **Decorações animadas** — formas flutuantes abstratas e sparkles ✦ via CSS
+- **Assets UI** — estrutura `src/assets/ui/` preparada para `lara-hero.webp` e `menu-background.webp`
+- **Responsivo** — adaptação para mobile com escalonamento de Lara e do card
 
 ### Board Layout 2.0 — Posicionamento Personalizado
 
@@ -56,11 +68,17 @@
 - **Mundo Aleatório** — seleciona um mundo aleatório entre os disponíveis
 - **Cards "Em breve"** — visualmente bloqueados com badge "🔒 Em breve", sem ação ao clicar
 
-### Menu Inicial
+### Hero Screen (Menu Inicial)
 
-- **Tela inicial** — ao abrir o jogo, um menu principal com título e botões é exibido
-- **⚡ Jogo Rápido** — inicia uma partida no modo Single Player (Humano vs Máquina) com configuração simplificada
-- **🏆 Modo Carreira (Em Breve)** — botão desabilitado visualmente, reservado para futura progressão com fases e pontuação
+- **Tela de abertura estilo capa de jogo** — ao abrir o jogo, um menu principal visual com personagem Lara, fundo temático e card central é exibido
+- **Personagem Lara** — ilustração decorativa sobreposta ao topo do card, como se estivesse apresentando o jogo (asset: `src/assets/ui/lara-hero.webp`)
+- **Fundo temático** — imagem `menu-background.webp` sobreposta aos gradientes com opacidade suave, sem poluir a leitura
+- **Card central translúcido** — painel de vidro com gradiente rosado/creme/azulado, borda branca, glow rosa e `backdrop-filter: blur(24px)`
+- **Logo HTML** — emoji 🌍 grande + título "Lara World" com gradiente pink-dourado, `background-clip: text`
+- **⚡ Jogo Rápido** — card/botão principal grande com glow pulsante e subtítulo "Partida rápida e divertida"
+- **🏆 Modo Aventura** — card secundário desabilitado com subtítulo "Novos mundos aguardam você!" e badge "EM BREVE..."
+- **Decorações CSS** — formas flutuantes abstratas e sparkles animados (`✦`) sem poluir a composição
+- **Rodapé** — versão `v0.12.0-preview` exibida na parte inferior
 
 ### Modo Single Player (Humano vs Máquina)
 
@@ -101,12 +119,15 @@
 
 ## 🎨 Identidade Visual
 
-Iniciada na **v0.11.0-preview** e expandida na **v0.12.0-preview**, a fase de identidade visual estabeleceu a pipeline de produção artística baseada em assets separados por mundo.
+Iniciada na **v0.11.0-preview** e expandida na **v0.12.0-preview**, a fase de identidade visual estabeleceu a pipeline de produção artística baseada em assets separados por mundo, além dos assets da Hero Screen (`src/assets/ui/`).
 
 ### Estrutura de Assets
 
 ```
 src/assets/
+├── ui/
+│   ├── lara-hero.webp       # Ilustração da personagem Lara na tela inicial (asset pendente)
+│   └── menu-background.webp  # Fundo temático do menu principal (asset pendente)
 └── worlds/
     ├── floresta/
     │   ├── background.webp   # Background ilustrado do tabuleiro (asset pendente)
@@ -126,8 +147,10 @@ src/assets/
 
 ### Status Atual
 
-| Asset | Mundo | Status |
-|-------|-------|--------|
+| Asset | Mundo/Contexto | Status |
+|-------|----------------|--------|
+| `lara-hero.webp` | Hero Screen (UI) | 🟡 Infraestrutura concluída — HTML/CSS prontos (asset pendente de criação) |
+| `menu-background.webp` | Hero Screen (UI) | 🟡 Infraestrutura concluída — CSS via `::before` + fallback gradiente (asset pendente) |
 | `background.webp` | Floresta Encantada | ✅ Infraestrutura concluída — CSS e overlay prontos (asset pendente de criação por IA) |
 | `path.webp` | Floresta Encantada | ✅ Infraestrutura concluída — CSS via `background-image` + SVG stroke como fallback (asset pendente) |
 | `background.webp` | Vale dos Dinossauros | ✅ Infraestrutura concluída — CSS e overlay prontos (asset pendente de criação por IA) |
@@ -263,7 +286,7 @@ src/assets/
 
 ## 📜 História do Projeto
 
-O Lara World começou como um MVP de tabuleiro simples para 1 jogador. A primeira versão (v0.1.0) implementou a lógica básica do jogo com dados, casas especiais e Docker. Na sequência (v0.1.5) recebeu um tabuleiro visual com trilha serpentina, personagem animado e painel lateral. A versão v0.2.0 adicionou multiplayer local com alternância de turnos entre 2 jogadores. A v0.3.0 introduziu o modal de configuração inicial com nomes e sprites personalizáveis. A v0.4.0 adicionou 5 casas de desafios educativos com perguntas de múltipla escolha. A v0.5.0 substituiu as perguntas fixas por um **Banco de Questões** com 30 perguntas. A v0.6.0 adicionou o **Mundo da Floresta** com portal na casa 11, sistema de portais, mini-trilha de 8 casas com mecânicas exclusivas e modo debug. A v0.7.0 adicionou o **modo Single Player (Humano vs Máquina)** com bot inteligente, tela de vitória com confetes e correções de cascata. A v0.8.0 adicionou um **Menu Inicial** com opções "⚡ Jogo Rápido" (single player) e "🏆 Modo Carreira (Em Breve)", além de uma tela de vitória com dois botões de saída (Jogar Novamente e Voltar ao Menu). A v0.9.0-preview iniciou a **Fase de Mundos** com seletor de mundos, motor modular (SessionManager, StateManager, WorldRegistry, EventProcessor) e o primeiro WorldConfig (Floresta Encantada + Floresta Misteriosa). A versão v0.10.0-preview consolidou o **primeiro ecossistema multi-mundos** com a integração completa do Vale dos Dinossauros, da Caverna dos Fósseis, portal genérico baseado em configuração, Theme Engine em produção e debug independente para cada área. A v0.11.0-preview estabeleceu a **Evolução Visual (UX 2.0)**, com pipeline de assets, backgrounds Floresta e Dinossauros, caminhos temáticos, infraestrutura de padrões SVG, e remoção de elementos decorativos antigos. A versão atual (v0.12.0-preview) adiciona o **Board Layout 2.0** com posicionamento personalizado por mundo (`board.cells`), infraestrutura `path.webp` para textura de caminho, e refinamentos visuais no traço SVG.
+O Lara World começou como um MVP de tabuleiro simples para 1 jogador. A primeira versão (v0.1.0) implementou a lógica básica do jogo com dados, casas especiais e Docker. Na sequência (v0.1.5) recebeu um tabuleiro visual com trilha serpentina, personagem animado e painel lateral. A versão v0.2.0 adicionou multiplayer local com alternância de turnos entre 2 jogadores. A v0.3.0 introduziu o modal de configuração inicial com nomes e sprites personalizáveis. A v0.4.0 adicionou 5 casas de desafios educativos com perguntas de múltipla escolha. A v0.5.0 substituiu as perguntas fixas por um **Banco de Questões** com 30 perguntas. A v0.6.0 adicionou o **Mundo da Floresta** com portal na casa 11, sistema de portais, mini-trilha de 8 casas com mecânicas exclusivas e modo debug. A v0.7.0 adicionou o **modo Single Player (Humano vs Máquina)** com bot inteligente, tela de vitória com confetes e correções de cascata. A v0.8.0 adicionou um **Menu Inicial** com opções "⚡ Jogo Rápido" (single player) e "🏆 Modo Carreira (Em Breve)", além de uma tela de vitória com dois botões de saída (Jogar Novamente e Voltar ao Menu). A v0.9.0-preview iniciou a **Fase de Mundos** com seletor de mundos, motor modular (SessionManager, StateManager, WorldRegistry, EventProcessor) e o primeiro WorldConfig (Floresta Encantada + Floresta Misteriosa). A versão v0.10.0-preview consolidou o **primeiro ecossistema multi-mundos** com a integração completa do Vale dos Dinossauros, da Caverna dos Fósseis, portal genérico baseado em configuração, Theme Engine em produção e debug independente para cada área. A v0.11.0-preview estabeleceu a **Evolução Visual (UX 2.0)**, com pipeline de assets, backgrounds Floresta e Dinossauros, caminhos temáticos, infraestrutura de padrões SVG, e remoção de elementos decorativos antigos. A versão atual (v0.12.0-preview) adiciona o **Board Layout 2.0** com posicionamento personalizado por mundo (`board.cells`), infraestrutura `path.webp` para textura de caminho, e a **Hero Screen evolutiva (UX-013)** com personagem Lara, fundo temático, card translúcido, botões reformulados e composição visual de capa de jogo.
 
 ---
 
@@ -322,10 +345,8 @@ docker compose down
 
 ## 🗺️ Roadmap
 
-- **v0.9.0-preview** — ✅ Concluído — Seletor de mundos, motor modular, primeiro WorldConfig
-- **v0.10.0-preview** — ✅ Concluído — Vale dos Dinossauros, Caverna dos Fósseis, portal genérico, Theme Engine
-- **v0.11.0-preview** — ✅ Concluído — Evolução Visual (UX 2.0), assets pipeline, backgrounds Floresta e Dinossauros, caminhos temáticos, decorações removidas
-- **v0.12.0-preview** — ✅ **Ativo** — Board Layout 2.0 (board.cells), path.webp infrastructure, posicionamento refinado do Vale dos Dinossauros
+- **v0.12.0-preview** — ✅ **Ativo** — Board Layout 2.0 (board.cells), path.webp infrastructure, Hero Screen (UX-013) com Lara + fundo temático + card translúcido
+- **v0.13.0-preview** — Hero Screen v2 (UX-014), evolução das casas, Floresta Misteriosa + Caverna dos Fósseis, áreas secretas, animações, assets próprios
 - **v1.0.0** — Lançamento oficial
 
 Veja o [roadmap completo](docs/roadmap.md).

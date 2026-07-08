@@ -25,6 +25,9 @@ lara-world/
 │   ├── style.css        # Estilos do jogo
 │   ├── game.js          # Lógica do jogo (ES Module)
 │   ├── assets/          # Recursos visuais do jogo
+│   │   ├── ui/          # Assets da Hero Screen (menu inicial)
+│   │   │   ├── lara-hero.webp       # Ilustração da personagem Lara (pendente)
+│   │   │   └── menu-background.webp # Fundo temático do menu (pendente)
 │   │   └── worlds/      # Assets por mundo
 │   │       ├── floresta/
 │   │       │   ├── background.webp  # Background ilustrado do tabuleiro (pendente)
@@ -55,7 +58,7 @@ lara-world/
 └── docker-compose.yml   # Orquestração Docker
 ```
 
-> Nota: a pasta `src/assets/` foi criada na v0.11.0-preview para iniciar a fase de identidade visual. A subpasta `worlds/` abriga assets por mundo (`background.webp`, `path.webp`), atualmente com floresta/ e dinossauros/. Cada mundo possui seu próprio background e textura de caminho, com fallback CSS garantido se o asset não existir. A infraestrutura do `path.webp` foi preparada na v0.12.0-preview (background-image no `.path-line`, seletores por mundo). `src/assets/sounds/` está prevista para versões futuras.
+> Nota: a pasta `src/assets/` foi criada na v0.11.0-preview para iniciar a fase de identidade visual. A subpasta `worlds/` abriga assets por mundo (`background.webp`, `path.webp`), atualmente com floresta/ e dinossauros/. Cada mundo possui seu próprio background e textura de caminho, com fallback CSS garantido se o asset não existir. A infraestrutura do `path.webp` foi preparada na v0.12.0-preview (background-image no `.path-line`, seletores por mundo). A subpasta `ui/` foi criada na UX-013 para abrigar assets da Hero Screen (`lara-hero.webp`, `menu-background.webp`), também com fallback CSS. `src/assets/sounds/` está prevista para versões futuras.
 
 ## Arquitetura do Frontend
 
@@ -64,9 +67,13 @@ lara-world/
 Estrutura semântica dividida em:
 
 - **Main Menu** (`#main-menu`):
-  - Container centralizado com `z-index: 1000`, exibido ao carregar o jogo
-  - Título "🌍 Lara World" com estilo decorativo
-  - Dois botões: "⚡ Jogo Rápido" (ativo) e "🏆 Modo Carreira" (desabilitado, "(Em Breve)")
+  - Container centralizado com `z-index: 2000`, exibido ao carregar o jogo
+  - Fundo com 7 gradientes radiais + shapes flutuantes animados + `menu-background.webp` (opacity 0.50) + sparkles decorativos
+  - Card central translúcido (`.menu-content`) com gradiente rosado/creme/azulado, `backdrop-filter: blur(24px)`, borda branca 3px e glow rosa
+  - Personagem Lara (`.menu-lara-hero`) sobreposta ao topo do card, como se estivesse saindo do painel
+  - Logo (`.menu-logo`) com emoji 🌍 grande + título "Lara World" gradiente pink-dourado via `background-clip: text`
+  - Dois botões: "⚡ Jogo Rápido" (ativo, glow pulsante) e "🏆 Modo Aventura" (desabilitado, badge "EM BREVE...")
+  - Footer com versão `v0.12.0-preview`
   - Escondido quando uma partida é iniciada; reexibido via "Voltar ao Menu"
 - **Setup Modal** (`#setup-screen`):
   - Overlay fixo com `z-index: 1000`, exibido após clicar em "Jogo Rápido"

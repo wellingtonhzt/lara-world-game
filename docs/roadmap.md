@@ -1,13 +1,24 @@
 # Roadmap Lara World
 
-### v0.12.0-preview — Board Layout 2.0 + path.webp Infrastructure
-- **Board Layout 2.0**: novo formato `board.cells` (`[{id, x, y}]`) para posicionamento individual de células por mundo, com fallback automático para `board.positions`
+### v0.12.0-preview — Board Layout 2.0 + path.webp Infrastructure + Hero Screen
+
+**Board Layout 2.0:**
+- Novo formato `board.cells` (`[{id, x, y}]`) para posicionamento individual de células por mundo, com fallback automático para `board.positions`
 - **Vale dos Dinossauros recelularizado**: primeiro mundo a usar `board.cells` — 20 células em 4 fileiras S-curve, shift +7pp X para centralização
+- Engine estendida: `WorldConfig.board.cells` documentado em types.js; world-registry valida cells[]; game.js normaliza ambos os formatos
+
+**Caminhos Temáticos (ART-005/006):**
 - **ART-005**: stroke do SVG reduzido de 14px → 5px, opacity ~0.25 — prepara traço para textura
 - **ART-006**: CSS do `.path-line` com `background-image` para `path.webp`, seletores por mundo, override de subworld — infraestrutura completa para textura de caminho
 - **Fallback ativo**: SVG stroke 5px mantido como fallback enquanto assets .webp não forem criados
-- **Engine estendida**: `WorldConfig.board.cells` documentado em types.js; world-registry valida cells[]; game.js normaliza ambos os formatos
-- Cache-busting permanece em `?v=0.11.0-preview` (sem alteração de código)
+
+**Hero Screen (UX-010 → UX-011 → UX-012 → UX-013):**
+- **UX-010**: Overhaul CSS do Main Menu — 7 gradientes radiais, shapes flutuantes, logo gradiente pink-dourado, card translúcido com backdrop-filter, glow pulse, footer
+- **UX-011**: Personagem Lara sobreposta ao card (max-w 200px, margin -60px para protrusão)
+- **UX-012**: Background image (menu-background.webp) com opacity 0.50 via `::before`, fallback CSS garantido
+- **UX-013.1/2**: Card 580px com 0.88 saturação e borda 3px, Lara 320px/280px com -130px margin, botões maiores com subtítulos e glow pulse 2.5s, badge "EM BREVE..." refinado, sparkles, responsivo ≤600px/≤400px
+- Assets `src/assets/ui/` criados com `lara-hero.webp` e `menu-background.webp` (pendentes)
+- Cache-busting permanece em `?v=0.12.0-preview` (sem alteração de código)
 
 ## Concluído
 
@@ -105,6 +116,17 @@
 
 ## Futuro
 
+### UX-014 — Hero Screen v2 ⬆️ PRÓXIMO
+- Reorganização completa da composição visual da tela inicial
+- Nova hierarquia de elementos (layout diferente do card central atual)
+- Possível uso de canvas ou componentes visuais mais complexos
+- Manter fallback CSS e assets pendentes
+
+### UX-015 — Assets Hero Screen
+- Criar `lara-hero.webp` — ilustração da personagem Lara
+- Criar `menu-background.webp` — fundo temático do menu principal
+- Substituir fallbacks CSS pelos assets reais
+
 ### v0.11.0-preview — Evolução Visual (UX 2.0) ✅
 - **UX-1.1** — Overhaul CSS completo (cartoon, arredondado, 3D, profundidade)
 - **ASSET-001** — Sistema de backgrounds por mundo (estrutura + CSS)
@@ -132,6 +154,8 @@ Trilha de desenvolvimento focada exclusivamente na identidade visual do projeto.
 | **ART-010** | 🔲 Pendente | HUD ilustrada — painel lateral, botões, dados e indicadores com assets próprios |
 | **ART-011** | 🔲 Pendente | Ícones próprios — substituir emojis por iconografia original do jogo |
 | **ART-012** | 🔲 Pendente | Personagens — sprites dos jogadores com design próprio (não apenas emojis) |
+| **ART-013** | 🔲 Pendente | Hero Screen background — criar `menu-background.webp` asset (UX-015) |
+| **ART-014** | 🔲 Pendente | Lara character asset — criar `lara-hero.webp` ilustração (UX-015) |
 
 ### A7 — Board Layout 2.0 e Refinamentos
 - **Board Layout 2.0** — ✅ Concluído — `board.cells` implementado, Vale dos Dinossauros adotado

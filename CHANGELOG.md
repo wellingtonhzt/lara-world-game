@@ -2,6 +2,18 @@
 
 ## [0.12.0-preview] - 2026-07-08
 
+### Hero Screen — Tela Inicial com Estilo de Capa de Jogo (UX-013)
+
+- **UX-010 — Hero Screen visual overhaul**: redesign completo do menu principal — fundo com 7 gradientes radiais, formas flutuantes abstratas animadas via CSS, logo com gradiente pink-dourado e `background-clip: text`, card central com gradiente rosado/creme/azulado e `backdrop-filter: blur(20px)`, botão "Jogo Rápido" com glow pulsante (`menu-glow-pulse`), badge "EM BREVE..." com `text-transform: uppercase`, footer com versão `v0.12.0-preview`, divisor decorativo gradiente
+- **UX-011 — Lara character asset support**: elemento `<img class="menu-lara-hero">` adicionado ao HTML, estilizado com `max-width: 200px`, `max-height: 180px`, `margin-top: -60px` para sobreposição ao card, `filter: drop-shadow` com glow rosa, `pointer-events: none` para não interferir nos cliques. Estrutura `src/assets/ui/` criada com `.gitkeep`
+- **UX-012 — Menu background image**: pseudo-elemento `.main-menu::before` com `url(assets/ui/menu-background.webp)` em `opacity: 0.35`, posicionado entre o fundo gradiente e o card, com fallback visual garantido (se a imagem não existir, o `::before` fica invisível e os gradientes permanecem intactos)
+- **UX-013.1 — Refinamento visual**: card mais largo (520px), Lara maior (max-h 200px, margin-top -78px), logo mais compacto (gap 0px, emoji 4.2rem, h1 3.6rem), subtítulo com margem reduzida, background image opacity 0.42, botões com subtítulo descritivo ("Partida rápida e divertida" / "Novos mundos aguardam você!"), sparkles decorativos CSS
+- **UX-013.2 — Refinamento visual forte**: card ainda mais largo (580px) com cores mais saturadas (0.88), borda 3px branca, glow rosa intensificado, Lara ampliada para 320px/280px com margin-top -130px (protrusão de 40px acima do card), background image opacity 0.50, Jogo Rápido com 420px de largura e glow pulse mais rápido (2.5s), Modo Aventura com opacidade 0.8 e badge "EM BREVE..." maior (padding 4px 16px, letter-spacing 1.5px), composição geral mais compacta com espaçamentos reduzidos
+- **"Modo Carreira" renomeado para "Modo Aventura"** no HTML — apenas texto visível, o modo string interno `"carreira"` permanece inalterado
+- **Decoração animada**: `.menu-sparkles` com dois pseudo-elementos `✦` flutuando suavemente (animation `sparkle-drift` 5s)
+- **Responsivo**: breakpoints ≤600px e ≤400px ajustam Lara (160px/120px), card padding, fontes dos botões e tamanho do logo
+- **Fallback de assets**: se `lara-hero.webp` não existir, o `<img>` colapsa sem quebrar layout; se `menu-background.webp` não existir, o `::before` fica invisível e os 7 gradientes de fundo permanecem visíveis
+
 ### Board Layout 2.0 — Layout Personalizado por Mundo
 - **board.cells**: novo formato de layout para o board do WorldConfig — array `[{id, x, y}]` que substitui o mapa `positions` (`{pos: [x%, y%]}`), permitindo posicionamento individual e preciso de cada célula
 - **Vale dos Dinossauros**: primeiro mundo a adotar `board.cells` — 20 células em 4 fileiras com curva orgânica em S, deslocado +7pp para direita para centralizar o tabuleiro no background

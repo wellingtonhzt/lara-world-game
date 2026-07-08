@@ -18,8 +18,11 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 
 ## Principais Funcionalidades
 
-### v0.12.0-preview (Atual) — Board Layout 2.0 + path.webp ✅
+### v0.12.0-preview (Atual) — Board Layout 2.0 + Hero Screen ✅
 
+- **Hero Screen (UX-013)** — tela inicial com estilo de capa de jogo: personagem Lara sobreposta ao card central, fundo temático via `menu-background.webp`, card translúcido com gradiente rosado/creme/azulado e `backdrop-filter: blur(24px)`, logo gradiente pink-dourado com `background-clip: text`, botão "Jogo Rápido" com glow pulsante e subtítulo, "Modo Aventura" como card secundário com badge "EM BREVE..." e subtítulo, decorações animadas CSS, rodapé com versão
+- **Assets UI**: estrutura `src/assets/ui/` preparada para `lara-hero.webp` e `menu-background.webp` com fallback CSS garantido
+- **Responsivo**: breakpoints ≤600px e ≤400px com escalonamento de Lara, card e botões
 - **Board Layout 2.0** — novo formato `board.cells` (`[{id, x, y}]`) que permite posicionamento individual de cada célula por mundo, substituindo o mapa fixo `positions`
 - **Fallback automático** — `getPosicoes()` normaliza ambos os formatos; mundos existentes (Floresta) seguem com `board.positions` inalterados
 - **Vale dos Dinossauros recelularizado** — primeiro mundo a usar `board.cells` (20 células, 4 fileiras S-curve, +7pp X para centralizar)
@@ -151,9 +154,9 @@ Vitória → Jogar Novamente / Voltar ao Menu
 
 Cada mundo do Lara World pode conter uma ou mais Áreas Especiais (submundos), acessadas através de portais posicionados em casas específicas do tabuleiro. Uma Área Especial é uma mini-trilha com eventos, regras e visual próprios. Ao entrar, a posição do jogador é salva. Ao completar ou sair, o jogador retorna ao mundo principal com um bônus de casas definido na configuração da área. A engine é genérica — não conhece nomes de mundos — e toda navegação entre mundos e áreas é baseada em WorldConfigs.
 
-## Evolução Visual (UX 2.0)
+## Evolução Visual (UX 2.0 + Hero Screen)
 
-Iniciada na **v0.11.0-preview** e expandida na **v0.12.0-preview**, a fase de identidade visual estabeleceu a pipeline de produção artística do projeto.
+Iniciada na **v0.11.0-preview** e expandida na **v0.12.0-preview**, a fase de identidade visual estabeleceu a pipeline de produção artística do projeto, incluindo a Hero Screen com assets próprios de UI.
 
 ### Motivação
 
@@ -177,6 +180,9 @@ O jogo possuía uma base técnica sólida (engine modular, dois mundos completos
 
 ```
 src/assets/
+├── ui/
+│   ├── lara-hero.webp       # Ilustração da personagem Lara na Hero Screen (asset pendente)
+│   └── menu-background.webp  # Fundo temático do menu principal (asset pendente)
 └── worlds/
     ├── floresta/
     │   ├── background.webp   # Background ilustrado do tabuleiro (asset pendente)
@@ -190,6 +196,8 @@ src/assets/
 
 | Asset | Onde é aplicado | Função |
 |-------|----------------|--------|
+| `lara-hero.webp` | `.menu-lara-hero` via `<img>` na Hero Screen | Ilustração decorativa da personagem Lara sobreposta ao card central |
+| `menu-background.webp` | `.main-menu::before` via CSS `background-image` | Fundo temático suave do menu principal, opacidade 0.50 |
 | `background.webp` | `#track-container` via `background-image` | Ilustração de fundo do tabuleiro, coberta por overlay semitransparente para contraste |
 | `path.webp` | SVG `#trail-path` via SVG pattern (`stroke: url(#...)`) | Textura aplicada ao traço do caminho, mantendo largura, sombra e formato SVG |
 

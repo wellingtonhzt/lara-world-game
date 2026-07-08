@@ -1,5 +1,95 @@
 # Memorial Técnico
 
+## Sprint — Hero Screen Evolutiva — UX-013 (v0.12.0-preview)
+
+### Objetivo
+
+Transformar o menu inicial do Lara World em uma tela de abertura com estilo de capa de jogo infantil, incorporando personagem Lara, fundo temático, card central translúcido, botões reformulados e composição visual premium — exclusivamente via CSS e HTML, sem alterar engine, gameplay ou JavaScript.
+
+### Arquivos Alterados
+
+| Arquivo | Tipo de Alteração |
+|---------|-------------------|
+| `src/index.html` | Adicionado: `<img class="menu-lara-hero">`, `.menu-logo` (wrapper), `.menu-divider`, `.menu-footer`, `.menu-sparkles`. Renomeado: "Modo Carreira" → "Modo Aventura". Botões reestruturados com spans internos (`.btn-main-text`, `.btn-subtitle`) |
+| `src/style.css` | **UX-010**: redesign do `.main-menu` — 7 gradientes radiais, `.menu-bg-shapes` flutuantes, `.menu-logo` com gradiente pink-dourado e `background-clip: text`, `.menu-divider` decorativo, card com gradiente e `backdrop-filter: blur(20px)`, botão primário com `menu-glow-pulse`, footer. **UX-011**: `.menu-lara-hero` — `max-w: 200px`, `margin-top: -60px`, `drop-shadow` rosa. **UX-012**: `.main-menu::before` com `url(menu-background.webp)` opacity 0.35 → 0.42 → 0.50. **UX-013.1/2**: card expandido para 580px, Lara para 320px/280px com `mt: -130px`, cores mais saturadas (0.88), borda 3px, glow intensificado, espaçamentos reduzidos, botões maiores com subtítulos, sparkles decorativos |
+| `src/assets/ui/.gitkeep` | Criado — placeholder para versionar estrutura de assets da Hero Screen |
+
+### Documentação
+
+| Arquivo | Tipo de Alteração |
+|---------|-------------------|
+| `README.md` | Atualizado: seção "Hero Screen" adicionada; assets/ui/ na estrutura de assets; "Modo Carreira" → "Modo Aventura"; histórico e roadmap atualizados |
+| `CHANGELOG.md` | Adicionadas entradas UX-010, UX-011, UX-012, UX-013.1, UX-013.2 na v0.12.0-preview |
+| `docs/visao-geral.md` | Seção v0.12.0-preview atualizada com Hero Screen; assets/ui/ adicionados à estrutura e tabela de finalidade |
+| `docs/arquitetura.md` | Diretório `src/assets/ui/` adicionado; seção Main Menu reescrita com descrição completa da Hero Screen |
+| `docs/roadmap.md` | Prioridades atualizadas: UX-014 Hero Screen v2 como próximo passo |
+| `docs/memorial-tecnico.md` | Adicionada esta entrada |
+
+### Impacto Técnico
+
+**UX-010 — Hero Screen CSS Overhaul**
+- `.main-menu`: 7 camadas de gradiente radial + linear criando profundidade visual infantil
+- `.menu-bg-shapes::before/::after`: dois círculos gradientes animados com `menu-float-a/b` (12s/15s)
+- `.menu-logo`: `flex-direction: column`, emoji 4.8rem, h1 com `background: linear-gradient(135deg, #e91e63, #ff8f00, #ffd54f)`, `background-clip: text` e `filter: drop-shadow`
+- `.menu-content`: background `linear-gradient(160deg, rgba(255,240,245,0.9)...)`, `border-radius: 48px`, `backdrop-filter: blur(20px)`, `box-shadow` com glow rosa
+- `.menu-btn-primary`: `max-width: 340px`, `padding: 22px 32px`, glow pulsante (`menu-glow-pulse` 3s)
+- `.menu-btn-secondary`: gradiente neutro, desabilitado com badge gradiente pink
+- `.menu-footer` + `.menu-version`: rodapé com `v0.12.0-preview`
+
+**UX-011 — Lara Character Asset**
+- `<img class="menu-lara-hero">` como primeiro filho de `.menu-content` com `aria-hidden="true"`
+- `max-width: 200px`, `max-height: 180px`, `margin: -60px auto 12px` — protrusão acima do card
+- `pointer-events: none`, `user-select: none` — sem interferência nos cliques
+- `filter: drop-shadow(0 8px 24px rgba(233,30,99,0.18))` — glow rosa integrador
+
+**UX-012 — Menu Background Image**
+- `.main-menu::before`: `position: absolute`, `inset: 0`, `background: url(assets/ui/menu-background.webp) center/cover no-repeat`, `opacity: 0.50`
+- `z-index: 0` — imagem fica entre o gradiente de fundo e as shapes flutuantes
+- Fallback nativo: se asset não existir, `::before` renderiza transparente; os 7 gradientes de fundo permanecem intactos
+
+**UX-013.1 — Refinamento Visual**
+- Card ampliado de 480px para 520px + padding mais compacto
+- Lara ampliada de 180px para 200px, `margin-top: -78px`
+- Logo compactado: `gap: 0px`, emoji 4.2rem, h1 3.6rem
+- Background image opacity: 0.42
+- Botões com `btn-main-text` + `btn-subtitle` spans
+- Sparkles decorativos: `.menu-sparkles` com pseudo-elementos `✦` animados
+
+**UX-013.2 — Refinamento Visual Forte**
+- Card: max-width 580px, gradient 0.88 saturação, borda 3px rgba(255,255,255,0.8), glow `0 0 72px(...0.1)` + `inset 0 0 80px(...0.04)`, `border-radius: 56px`
+- Lara: max-width 320px, max-height 280px, `margin-top: -130px` (40px acima do card), `drop-shadow(0 18px 48px 0.32)`
+- Background image opacity: 0.50
+- Jogo Rápido: max-width 420px, padding 24px 40px 18px, glow pulse 2.5s, pico 50% com `...0.55...0.28`
+- Modo Aventura: opacity 0.8, badge padding 4px 16px, letter-spacing 1.5px
+- Todos os espaçamentos reduzidos (subtitle mt 8px, divider mt 10, buttons gap 10)
+- Responsivo: ≤600px (Lara 160px/190px, card padding 80px 28px 22px), ≤400px (Lara 120px/140px, card padding 62px 16px 18px)
+
+### Impacto Funcional
+
+- **Tela inicial com personalidade**: o menu agora se assemelha a uma capa de jogo infantil, com Lara como personagem central, fundo temático e card premium
+- **Lara integrada**: a personagem aparece sobreposta ao card, como se estivesse saindo do painel e apresentando o jogo
+- **Botões com propósito**: "Jogo Rápido" é um card de ação com glow pulsante e subtítulo; "Modo Aventura" é um card secundário bonito com badge "EM BREVE..."
+- **Fallback seguro**: se `lara-hero.webp` ou `menu-background.webp` não existirem, o layout não quebra — a tela continua bonita com gradientes e CSS
+- **Responsivo mantido**: breakpoints ≤600px e ≤400px escalam Lara, card e botões proporcionalmente
+- **Nenhuma regressão funcional**: Jogo Rápido continua funcionando, Modo Aventura continua desabilitado, fluxo de jogo inalterado
+
+### Lições Aprendidas
+
+- A Hero Screen evoluiu significativamente ao longo de 3 sprints (UX-010 → UX-011 → UX-012 → UX-013), cada uma adicionando camadas visuais sem quebrar as anteriores
+- Os refinamentos em CSS atingiram um limite prático: a composição atual é o máximo que se pode extrair com CSS puro sem uma reorganização estrutural
+- A próxima etapa (UX-014 — Hero Screen v2) exigirá repensar a arquitetura visual: layout diferente, hierarquia de elementos revista, e possível uso de canvas ou componentes visuais mais complexos
+- A identidade visual do projeto está sendo consolidada: assets de UI (Hero Screen) e assets de mundo (backgrounds, caminhos) seguem padrões de fallback e estrutura de diretórios
+- Manter a Regra de Ouro (zero alterações em engine, JS, gameplay) foi possível em todas as sprints UX — todas as mudanças foram exclusivamente HTML + CSS
+
+### Notas Técnicas
+
+- Nenhum arquivo de engine (`src/engine/*`, `src/core/*`), world config ou game.js foi alterado
+- O "Modo Aventura" no HTML foi renomeado apenas no texto visível — a string de modo `"carreira"` usada internamente no game.js permanece inalterada
+- A estrutura `src/assets/ui/` segue o mesmo padrão de fallback dos assets de mundo: se o arquivo não existir, o visual degrada graciosamente
+- Os sparkles decorativos usam o caractere Unicode `✦` (U+2726) — sem dependência de fontes externas
+- O glow pulse do botão primário usa `box-shadow` animado — sem GPU overhead significativo
+- As formas flutuantes (`menu-bg-shapes`) usam `transform: translate` animado — sem `top/left` para melhor performance
+
 ## Sprint — Board Layout 2.0 + path.webp Infrastructure (v0.12.0-preview)
 
 ### Objetivo
