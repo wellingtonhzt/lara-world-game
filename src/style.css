@@ -1268,7 +1268,7 @@ header h1 {
 }
 
 /* ═══════════════════════════════════════
-   MAIN MENU — TITLE SCREEN
+   MAIN MENU — HERO SCREEN
    ═══════════════════════════════════════ */
 
 .main-menu {
@@ -1279,67 +1279,212 @@ header h1 {
   width: 100%;
   height: 100%;
   z-index: 2000;
-  background:
-    radial-gradient(ellipse at 20% 20%, #f8bbd0 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 20%, #b2ebf2 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 80%, #fff9c4 0%, transparent 50%),
-    linear-gradient(160deg, #fce4ec 0%, #fff3e0 50%, #e8f5e9 100%);
   justify-content: center;
   align-items: center;
+  background:
+    radial-gradient(ellipse at 50% 0%, #fce4ec 0%, transparent 50%),
+    radial-gradient(ellipse at 20% 30%, #f8bbd0 0%, transparent 45%),
+    radial-gradient(ellipse at 80% 25%, #b2ebf2 0%, transparent 45%),
+    radial-gradient(ellipse at 50% 70%, #fff9c4 0%, transparent 40%),
+    radial-gradient(ellipse at 30% 80%, #e1bee7 0%, transparent 35%),
+    radial-gradient(ellipse at 70% 75%, #c8e6c9 0%, transparent 35%),
+    linear-gradient(170deg, #fce4ec 0%, #fff3e0 30%, #e8f5e9 60%, #f3e5f5 100%);
+}
+
+.main-menu::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url(assets/ui/menu-background.webp) center / cover no-repeat;
+  opacity: 0.50;
+  z-index: 0;
+  pointer-events: none;
 }
 
 .main-menu.hidden {
   display: none;
 }
 
-.menu-content {
-  text-align: center;
-  background: rgba(255, 255, 255, 0.85);
-  border-radius: 40px;
-  padding: 52px 52px 44px;
-  max-width: 460px;
-  width: 90%;
-  box-shadow: 0 24px 80px rgba(233, 30, 99, 0.12), 0 6px 20px rgba(0, 0, 0, 0.06);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 2px solid rgba(255, 255, 255, 0.5);
+.menu-bg-shapes {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
 }
 
-.menu-content h1 {
-  font-size: 2.8rem;
-  color: #e91e63;
-  text-shadow: 4px 4px 0 #f8bbd0, 0 6px 20px rgba(233, 30, 99, 0.12);
-  margin-bottom: 8px;
+.menu-bg-shapes::before,
+.menu-bg-shapes::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.12;
+}
+
+.menu-bg-shapes::before {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, #f8bbd0, transparent 70%);
+  top: -120px;
+  right: -100px;
+  animation: menu-float-a 12s ease-in-out infinite alternate;
+}
+
+.menu-bg-shapes::after {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, #fff9c4, transparent 70%);
+  bottom: -80px;
+  left: -80px;
+  animation: menu-float-b 15s ease-in-out infinite alternate;
+}
+
+@keyframes menu-float-a {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(-40px, 30px) scale(1.08); }
+}
+
+@keyframes menu-float-b {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(30px, -40px) scale(1.05); }
+}
+
+.menu-sparkles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.menu-sparkles::before,
+.menu-sparkles::after {
+  content: '✦';
+  position: absolute;
+  color: rgba(233, 30, 99, 0.14);
+  animation: sparkle-drift 5s ease-in-out infinite alternate;
+}
+
+.menu-sparkles::before {
+  top: 18%;
+  left: 8%;
+  font-size: 1.1rem;
+}
+
+.menu-sparkles::after {
+  bottom: 25%;
+  right: 10%;
+  font-size: 0.85rem;
+  animation-delay: 2.5s;
+  color: rgba(255, 143, 0, 0.12);
+}
+
+@keyframes sparkle-drift {
+  0% { transform: translateY(0) rotate(0deg); opacity: 0.3; }
+  100% { transform: translateY(-14px) rotate(30deg); opacity: 0.7; }
+}
+
+@keyframes menu-glow-pulse {
+  0% { box-shadow: 0 6px 0 #880e4f, 0 10px 32px rgba(233, 30, 99, 0.4), 0 0 22px rgba(233, 30, 99, 0.12); }
+  50% { box-shadow: 0 6px 0 #880e4f, 0 14px 44px rgba(233, 30, 99, 0.55), 0 0 40px rgba(233, 30, 99, 0.28); }
+  100% { box-shadow: 0 6px 0 #880e4f, 0 10px 32px rgba(233, 30, 99, 0.4), 0 0 22px rgba(233, 30, 99, 0.12); }
+}
+
+.menu-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  background: linear-gradient(160deg, rgba(255, 210, 225, 0.88), rgba(255, 238, 210, 0.88), rgba(220, 235, 255, 0.88));
+  border-radius: 56px;
+  padding: 90px 52px 28px;
+  max-width: 580px;
+  width: 90%;
+  box-shadow:
+    0 36px 110px rgba(233, 30, 99, 0.2),
+    0 14px 48px rgba(0, 0, 0, 0.05),
+    0 0 0 1px rgba(233, 30, 99, 0.08),
+    0 0 72px rgba(233, 30, 99, 0.1),
+    inset 0 0 80px rgba(233, 30, 99, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 3px solid rgba(255, 255, 255, 0.8);
+}
+
+.menu-lara-hero {
+  display: block;
+  max-width: 320px;
+  max-height: 280px;
+  width: auto;
+  height: auto;
+  margin: -130px auto 4px;
+  pointer-events: none;
+  user-select: none;
+  filter: drop-shadow(0 18px 48px rgba(233, 30, 99, 0.32));
+}
+
+.menu-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0px;
+  margin-bottom: 0;
 }
 
 .menu-title-emoji {
-  font-size: 3.2rem;
+  font-size: 4.2rem;
+  line-height: 1;
+  margin-bottom: 0;
+}
+
+.menu-logo h1 {
+  font-size: 3.6rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #e91e63 0%, #ff8f00 60%, #ffd54f 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(3px 3px 0 #f8bbd0) drop-shadow(0 2px 12px rgba(233, 30, 99, 0.12));
+  letter-spacing: 2px;
+  margin: 0;
+  line-height: 1.1;
 }
 
 .menu-subtitle {
-  font-size: 1.2rem;
-  color: #6d4c41;
-  margin-bottom: 36px;
+  font-size: 1.05rem;
+  color: #8d6e63;
+  margin-top: 8px;
+  margin-bottom: 0;
   font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.menu-divider {
+  width: 120px;
+  height: 3px;
+  margin: 10px auto 16px;
+  background: linear-gradient(90deg, transparent, #e91e63, #ff8f00, #ffd54f, transparent);
+  border-radius: 4px;
+  opacity: 0.45;
 }
 
 .menu-buttons {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 10px;
   align-items: center;
 }
 
 .menu-btn {
   width: 100%;
-  max-width: 300px;
-  padding: 18px 28px;
+  max-width: 380px;
+  padding: 16px 28px;
   border: none;
-  border-radius: 18px;
-  font-size: 1.25rem;
+  border-radius: 22px;
+  font-size: 1.2rem;
   font-weight: 700;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
   font-family: inherit;
   position: relative;
   overflow: hidden;
@@ -1352,13 +1497,13 @@ header h1 {
   left: 0;
   width: 100%;
   height: 50%;
-  background: linear-gradient(to bottom, rgba(255,255,255,0.2), transparent);
-  border-radius: 18px 18px 0 0;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.25), transparent);
+  border-radius: 22px 22px 0 0;
   pointer-events: none;
 }
 
 .menu-btn:hover:not(:disabled) {
-  transform: scale(1.05);
+  transform: scale(1.04);
 }
 
 .menu-btn:active:not(:disabled) {
@@ -1366,25 +1511,56 @@ header h1 {
 }
 
 .menu-btn-primary {
-  background: linear-gradient(135deg, #e91e63, #ad1457);
+  max-width: 420px;
+  padding: 24px 40px 18px;
+  font-size: 1.4rem;
+  background: linear-gradient(135deg, #e91e63, #c2185b, #ad1457);
   color: #fff;
-  box-shadow: 0 6px 0 #880e4f, 0 8px 24px rgba(233, 30, 99, 0.35);
+  box-shadow:
+    0 6px 0 #880e4f,
+    0 10px 32px rgba(233, 30, 99, 0.4),
+    0 0 22px rgba(233, 30, 99, 0.12);
+  letter-spacing: 0.5px;
+  animation: menu-glow-pulse 2.5s ease-in-out infinite;
 }
 
 .menu-btn-primary:hover:not(:disabled) {
-  box-shadow: 0 8px 0 #880e4f, 0 10px 30px rgba(233, 30, 99, 0.45);
+  box-shadow:
+    0 8px 0 #880e4f,
+    0 14px 40px rgba(233, 30, 99, 0.5),
+    0 0 36px rgba(233, 30, 99, 0.25);
+  animation: none;
+  transform: scale(1.05);
+}
+
+.btn-main-text {
+  display: block;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: 1.3;
+}
+
+.btn-subtitle {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 500;
+  margin-top: 3px;
+  letter-spacing: 0.3px;
+  opacity: 0.85;
 }
 
 .menu-btn-secondary {
-  background: #f5f0eb;
-  color: #8d6e4a;
-  box-shadow: 0 4px 0 #d7ccc8, 0 6px 16px rgba(0, 0, 0, 0.08);
+  background: linear-gradient(135deg, #f5ebe5, #ede4dc);
+  color: #bcaaa4;
+  box-shadow: 0 3px 0 #d7ccc8, 0 6px 20px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255,255,255,0.7);
   cursor: default;
-  opacity: 0.7;
+  opacity: 0.8;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  padding: 18px 32px 16px;
 }
 
 .menu-btn-secondary:disabled {
-  opacity: 0.6;
+  opacity: 0.8;
   cursor: not-allowed;
 }
 
@@ -1392,16 +1568,51 @@ header h1 {
   display: none;
 }
 
-.badge-embreve {
+.menu-btn-secondary .btn-subtitle {
+  font-size: 0.72rem;
+  opacity: 0.7;
+  margin-top: 2px;
+}
+
+.menu-btn-secondary .badge-embreve {
   display: inline-block;
-  font-size: 0.7rem;
-  font-weight: 600;
-  background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
-  color: #2e7d32;
-  padding: 3px 12px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #fce4ec, #f48fb1);
+  color: #880e4f;
+  padding: 4px 16px;
   border-radius: 20px;
-  margin-left: 6px;
-  vertical-align: middle;
+  margin-top: 7px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.badge-embreve {
+  font-size: 0.6rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #fce4ec, #f48fb1);
+  color: #880e4f;
+  padding: 3px 14px;
+  border-radius: 20px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.menu-footer {
+  position: absolute;
+  bottom: 24px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.menu-version {
+  font-size: 0.75rem;
+  color: rgba(0, 0, 0, 0.2);
+  font-weight: 500;
+  letter-spacing: 1px;
 }
 
 /* ═══════════════════════════════════════
@@ -1940,6 +2151,17 @@ body[data-world="dinossauros"] .path-line {
   #lara, #lara-p2 { width: 42px; height: 42px; font-size: 1.7rem; }
   #trail-path { stroke-width: 3; }
 
+  .menu-lara-hero { max-height: 160px; max-width: 190px; margin-top: -70px; }
+
+  .menu-content { padding: 80px 28px 22px; max-width: 100%; border-radius: 44px; }
+  .menu-logo h1 { font-size: 2.4rem; }
+  .menu-title-emoji { font-size: 2.8rem; }
+  .menu-subtitle { font-size: 0.9rem; }
+  .menu-divider { width: 90px; }
+  .menu-btn { max-width: 100%; }
+  .menu-btn-primary { max-width: 100%; padding: 20px 28px 16px; font-size: 1.2rem; }
+  .menu-btn-secondary { max-width: 100%; padding: 16px 24px 14px; }
+
   header h1 { font-size: 1.3rem; }
 
   /* Draw overlay vertical */
@@ -2000,6 +2222,14 @@ body[data-world="dinossauros"] .path-line {
   .emoji-btn { width: 40px; height: 40px; font-size: 1.1rem; }
 
   .challenge-content { padding: 20px 16px; }
+
+  .menu-lara-hero { max-height: 120px; max-width: 140px; margin-top: -52px; }
+  .menu-content { padding: 62px 16px 18px; border-radius: 36px; }
+  .menu-logo h1 { font-size: 2rem; }
+  .menu-title-emoji { font-size: 2.2rem; }
+  .menu-subtitle { font-size: 0.8rem; margin-top: 6px; }
+  .menu-btn-primary { padding: 16px 20px 14px; font-size: 1rem; }
+  .menu-btn-secondary { padding: 14px 20px 12px; }
   .challenge-btn { font-size: 0.9rem; padding: 10px 14px; }
 }
 

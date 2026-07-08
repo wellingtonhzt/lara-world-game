@@ -14,13 +14,30 @@
     </header>
 
     <div id="main-menu" class="main-menu hidden">
+      <div class="menu-bg-shapes"></div>
+      <div class="menu-sparkles" aria-hidden="true"></div>
       <div class="menu-content">
-        <h1><span class="menu-title-emoji">🌍</span> Lara World</h1>
-        <p class="menu-subtitle">A aventura da Lara começa aqui!</p>
-        <div class="menu-buttons">
-          <button id="btn-rapido" class="menu-btn menu-btn-primary">⚡ Jogo Rápido</button>
-          <button id="btn-carreira" class="menu-btn menu-btn-secondary" disabled>🏆 Modo Carreira <span class="badge-embreve">Em breve</span></button>
+        <img class="menu-lara-hero" src="assets/ui/lara-hero.webp" alt="" aria-hidden="true">
+        <div class="menu-logo">
+          <span class="menu-title-emoji">🌍</span>
+          <h1>Lara World</h1>
         </div>
+        <p class="menu-subtitle">A aventura da Lara começa aqui!</p>
+        <div class="menu-divider"></div>
+        <div class="menu-buttons">
+          <button id="btn-rapido" class="menu-btn menu-btn-primary">
+            <span class="btn-main-text">⚡ Jogo Rápido</span>
+            <span class="btn-subtitle">Partida rápida e divertida</span>
+          </button>
+          <button id="btn-carreira" class="menu-btn menu-btn-secondary" disabled>
+            <span class="btn-main-text">🏆 Modo Aventura</span>
+            <span class="btn-subtitle">Novos mundos aguardam você!</span>
+            <span class="badge-embreve">EM BREVE...</span>
+          </button>
+        </div>
+      </div>
+      <div class="menu-footer">
+        <span class="menu-version">v0.12.0-preview</span>
       </div>
     </div>
 
