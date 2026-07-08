@@ -1,5 +1,76 @@
 # Memorial Técnico
 
+## Sprint — Board Layout 2.0 + path.webp Infrastructure (v0.12.0-preview)
+
+### Objetivo
+
+Implementar o Board Layout 2.0, permitindo que cada mundo defina seu próprio posicionamento de células via `board.cells` (array `{id, x, y}`), preparar a infraestrutura CSS para textura de caminho via `path.webp`, refinar o traço SVG para conviver com a futura textura, e validar o novo formato com o Vale dos Dinossauros como primeiro adotante — incluindo ajustes finos de posicionamento para centralização ideal.
+
+### Arquivos Alterados
+
+| Arquivo | Tipo de Alteração |
+|---------|-------------------|
+| `src/core/types.js` | Adicionado: campo `cells` à typedef `BoardConfig` — `{id: number, x: number, y: number}[]` |
+| `src/engine/world-registry.js` | Modificado: validação de `WorldConfig.board` aceita `cells[]` como alternativa a `positions` |
+| `src/game.js` | Modificado: `getPosicoes()` verifica `board.cells` primeiro — se existir, converte array para mapa `{pos: [x%, y%]}`; senão, usa `board.positions` (fallback) |
+| `src/worlds/dinossauros/config.js` | Alterado: `board.positions` substituído por `board.cells` com 20 células em 4 fileiras S-curve, shift +7pp X para centralizar. Múltiplas iterações de refinamento |
+| `src/style.css` | **ART-005**: `.path-line` stroke reduzido de 14px para 5px, opacity rebaixado para ~0.25, drop-shadow ajustado. **ART-006**: `.path-line` ganhou `background-size: cover / center / no-repeat`; seletores `body[data-world="floresta-encantada"] .path-line` e `body[data-world="vale-dinossauros"] .path-line` com `background-image: url(assets/worlds/<mundo>/path.webp)`; override de subworld `background-image: none` |
+
+### Documentação
+
+| Arquivo | Tipo de Alteração |
+|---------|-------------------|
+| `README.md` | Atualizado: v0.12.0-preview como versão ativa; adicionadas seções "Board Layout 2.0" e "Caminhos Temáticos (path.webp)"; status de assets atualizado; histórico estendido; roadmap atualizado |
+| `CHANGELOG.md` | Adicionada entrada v0.12.0-preview com Board Layout 2.0, path.webp, ART-005/006 |
+| `docs/visao-geral.md` | Adicionada seção v0.12.0-preview; seção "Evolução Visual" atualizada com path.webp infrastructure e board.cells |
+| `docs/arquitetura.md` | `getPosicoes()` atualizado para consumir `board.cells`; tabela WorldConfigs com coluna de layout; seção do motor atualizada para v0.12.0 |
+| `docs/roadmap.md` | Adicionada v0.12.0-preview como ativa; ART-005/006 movidos para concluído; adicionado Board Layout 2.0 |
+| `docs/memorial-tecnico.md` | Adicionada entrada Sprint Board Layout 2.0 |
+
+### Impacto Técnico
+
+**Board Layout 2.0 — board.cells**
+- `BoardConfig` ganhou campo opcional `cells` no typedef JSDoc: `{id: number, x: number, y: number}[]`. O campo `positions` continua sendo o formato legado e convive com o novo.
+- `world-registry.js`: a validação de `board` agora aceita `cells[]` como formato válido. Se `cells` estiver presente, a validação checa se cada célula tem `id` (number), `x` (number) e `y` (number). Se `cells` não existir, exige `positions` (formato legado). Nunca ambos são obrigatórios simultaneamente.
+- `game.js — getPosicoes()`: nova lógica — se `currentWorldConfig.board.cells` existir, converte o array para o formato `{pos: [x%, y%]}` esperado pelo restante do jogo (renderSvgPath, positionPlayerAt, etc.). Se não existir, usa `board.positions` (fallback). Se nenhum existir, usa `boardPositions` (fallback hardcoded do monólito).
+- A conversão `cells → positions` é: `acc[cell.id] = [cell.x, cell.y]`. As coordenadas X/Y são percentuais (0–100), como no formato legado.
+- Nenhuma outra função precisa ser alterada — o mapa de posições gerado é idêntico ao que seria lido de `board.positions`.
+
+**Vale dos Dinossauros — Primeiro Adotante**
+- Config original usava `board.positions` com 20 coordenadas fixas herdadas do monólito.
+- Substituído por `board.cells` com 20 objetos `{id, x, y}` organizados em 4 fileiras (5 células por fileira) seguindo o padrão S-curve (fileiras pares invertidas).
+- Deslocamento horizontal de +7pp aplicado a todas as células para centralizar o tabuleiro no background temático.
+- Múltiplas iterações de refinamento: ajustes nos valores X/Y de cada célula até que o tabuleiro ficasse visualmente centralizado e equilibrado.
+- Floresta Encantada não foi alterada — continua usando `board.positions`.
+
+**path.webp Infrastructure — ART-005 e ART-006**
+- ART-005: `.path-line` stroke reduzido de 14px → 5px, opacity de 1.0 → ~0.25. Isso prepara o traço SVG para conviver com a futura textura `path.webp` — com 5px e semi-transparente, o traço SVG funciona como guia sutil enquanto a textura (quando criada) será a camada visual principal.
+- ART-006: Três modificações no `.path-line`:
+  1. Propriedades base: `background-size: cover`, `background-position: center`, `background-repeat: no-repeat` — preparam o elemento para exibir textura.
+  2. Seletores por mundo: `body[data-world="..."] .path-line` com `background-image: url(assets/worlds/<mundo>/path.webp)` — cada mundo terá sua própria textura de caminho.
+  3. Override de subworld: quando `activeSubworldId` está setado, o caminho do mundo principal não deve aparecer. Seletores `body[data-world~="floresta-misteriosa"] .path-line` e similares aplicam `background-image: none`.
+- Fallback: se o asset `.webp` não existir, a `background-image` aponta para URL inexistente → camada transparente → o SVG stroke (5px, opacity ~0.25) permanece visível. O jogo funciona perfeitamente sem os assets.
+- Nenhuma alteração em engine, world configs (exceto cells) ou gameplay.
+
+### Impacto Funcional
+
+- **Board Layout 2.0**: cada mundo pode agora definir seu próprio layout de células via `board.cells`. Mundos existentes continuam usando `board.positions` sem alterações.
+- **Vale dos Dinossauros recelularizado**: o tabuleiro do Vale agora usa posições personalizadas (4 fileiras, S-curve, centralizado). A experiência visual melhorou com o tabuleiro melhor posicionado no background.
+- **Floresta Encantada**: inalterada — segue com `board.positions` original.
+- **Caminho refinado**: o traço SVG está mais sutil (5px, ~25% opaco), funcionando como guia leve.
+- **path.webp infrastructure**: o CSS está pronto para exibir textura de caminho assim que os assets `.webp` forem criados. Colocar um `path.webp` na pasta do mundo faz a textura aparecer automaticamente.
+- **Subworld sem conflito**: submundos não exibem a textura do mundo principal.
+- **Nenhuma regressão funcional**: todas as mecânicas (dado, movimento, desafios, portal, vitória, bot, single player, debug, áreas especiais) continuam idênticas.
+
+### Notas Técnicas
+
+- O Board Layout 2.0 é a primeira alteração no contrato `BoardConfig` desde a criação do motor (v0.9.0-preview)
+- `board.cells` e `board.positions` são mutuamente exclusivos na validação — nunca ambos
+- A conversão `cells → positions` em `getPosicoes()` é um mapeamento simples sem custo perceptível
+- ART-005 e ART-006 quebram a Regra de Ouro (alteram `src/style.css`), mas são exclusivamente visuais e não afetam engine, world configs (exceto cells) ou gameplay
+- O Vale dos Dinossauros serviu como prova de conceito do Board Layout 2.0 — a próxima adoção pode ser a Floresta Encantada ou o novo mundo Galáxia Estelar
+- path.webp infrastructure não substitui o SVG pattern dos caminhos temáticos existentes (ART-002/003) — ambos coexistem. O path.webp é uma camada adicional de textura sobre o traço SVG
+
 ## [0.9.0-preview] - 2026-07-06
 
 ### Objetivo

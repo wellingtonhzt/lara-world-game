@@ -18,7 +18,17 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 
 ## Principais Funcionalidades
 
-### v0.11.0-preview (Atual) — Evolução Visual (UX 2.0) ✅
+### v0.12.0-preview (Atual) — Board Layout 2.0 + path.webp ✅
+
+- **Board Layout 2.0** — novo formato `board.cells` (`[{id, x, y}]`) que permite posicionamento individual de cada célula por mundo, substituindo o mapa fixo `positions`
+- **Fallback automático** — `getPosicoes()` normaliza ambos os formatos; mundos existentes (Floresta) seguem com `board.positions` inalterados
+- **Vale dos Dinossauros recelularizado** — primeiro mundo a usar `board.cells` (20 células, 4 fileiras S-curve, +7pp X para centralizar)
+- **path.webp infrastructure** — CSS do `.path-line` preparado com `background-image`, `background-size: cover`, seletores por mundo e override de subworld
+- **ART-005** — stroke do SVG reduzido de 14px para 5px com opacity ~0.25, preparando o caminho para receber textura
+- **ART-006** — infraestrutura CSS completa para path.webp com fallback do traço SVG original
+- **Ajustes finos de posição** — múltiplas iterações de refinamento nas coordenadas do Vale dos Dinossauros
+
+### v0.11.0-preview — Evolução Visual (UX 2.0) ✅
 
 - **UX-1.1 — Overhaul visual completo**: redesign cartoon com multi-radial gradient, células 98×64px com border-radius 20px, botões com shine 3D, overlays com blur, vitória com glow dourado, glass card no menu, scrollbar temática
 - **Background ilustrado por mundo**: Floresta Encantada e Vale dos Dinossauros com `background.webp` + overlay de contraste + gradiente fallback, aplicados apenas no `#track-container`
@@ -143,7 +153,7 @@ Cada mundo do Lara World pode conter uma ou mais Áreas Especiais (submundos), a
 
 ## Evolução Visual (UX 2.0)
 
-Após a consolidação da engine, gameplay e arquitetura nas sprints anteriores, o Lara World iniciou oficialmente sua **fase de identidade visual** na v0.11.0-preview.
+Iniciada na **v0.11.0-preview** e expandida na **v0.12.0-preview**, a fase de identidade visual estabeleceu a pipeline de produção artística do projeto.
 
 ### Motivação
 
@@ -161,6 +171,7 @@ O jogo possuía uma base técnica sólida (engine modular, dois mundos completos
 - ✓ Sistema preparado para expansão para novos mundos
 - ✓ Caminhos temáticos são tratados como uma camada independente do background
 - ✓ O centro do cenário permanece livre para o tabuleiro
+- ✓ Cada mundo pode ter posicionamento personalizado de células via `board.cells`
 
 ### Estrutura de Assets
 
@@ -169,10 +180,10 @@ src/assets/
 └── worlds/
     ├── floresta/
     │   ├── background.webp   # Background ilustrado do tabuleiro (asset pendente)
-    │   └── path.webp          # Textura do caminho (asset pendente)
+    │   └── path.webp          # Textura do caminho — CSS com background-image pronto (v0.12.0)
     └── dinossauros/
         ├── background.webp   # Background ilustrado do tabuleiro (asset pendente)
-        └── path.webp          # Textura do caminho (asset pendente)
+        └── path.webp          # Textura do caminho — CSS com background-image pronto (v0.12.0)
 ```
 
 ### Finalidade dos Assets
@@ -196,12 +207,14 @@ src/assets/
 - Overlay rgba(0,0,0,0.35) mantém contraste das casas sobre o background
 - Estrutura idêntica à Floresta, validando a arquitetura de assets por mundo
 
-**Caminho Temático** (ART-002 / ART-003)
-- Infraestrutura preparada para textura de caminho via SVG pattern
+**Caminho Temático** (ART-002 / ART-003 / ART-005 / ART-006)
+- Infraestrutura preparada para textura de caminho via SVG pattern (ART-002)
 - Primeira implementação usava `opacity` no stroke — resultado artificial, caminho translúcido
-- Correção: caminho sólido (opacity removido), textura via pattern com fallback de cor sólida
-- Caminhos temáticos implementados para Floresta (`path-texture-floresta`, fallback #6d8f5e) e Dinossauros (`path-texture-dinossauros`, fallback #c48a3a)
-- Textura definitiva (`path.webp`) ainda pendente de criação por IA para ambos os mundos
+- Correção: caminho sólido (opacity removido), textura via pattern com fallback de cor sólida (ART-002 v2)
+- Caminhos temáticos implementados para Floresta (`path-texture-floresta`, fallback #6d8f5e) e Dinossauros (`path-texture-dinossauros`, fallback #c48a3a) (ART-002/003)
+- ART-005: stroke do SVG reduzido de 14px para 5px e opacity rebaixado para ~0.25, preparando o traço para receber textura sem conflito visual
+- ART-006 (v0.12.0-preview): infraestrutura via `background-image` adicionada ao `.path-line`, com seletores por mundo e override de subworld; SVG stroke mantido como fallback
+- Textura definitiva (`path.webp`) ainda pendente de criação por IA para ambos os mundos — quando criada, será exibida automaticamente sobre o fallback
 
 **Decorações Emoji**
 - Backgrounds ilustrados tornaram redundantes os emojis decorativos fixos no HTML
@@ -212,8 +225,9 @@ src/assets/
 - Backgrounds muito carregados prejudicam a leitura do tabuleiro
 - O cenário não deve competir com as casas e jogadores
 - Grandes elementos visuais (dinossauros, árvores, vulcões, fósseis) devem permanecer nas laterais
-- O caminho ainda passará por refinamento visual em futuras sprints
+- O caminho foi refinado para stroke 5px com opacity ~0.25, deixando o traço leve enquanto aguarda textura path.webp
 - Decorações emoji antigas removidas — background ilustrado agora é o cenário principal
+- O posicionamento do tabuleiro pode variar por mundo — `board.cells` permite ajuste individual por célula no eixo X/Y
 
 ## Próximos Passos
 

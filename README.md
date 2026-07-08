@@ -18,7 +18,8 @@
 
 | Versão | Data | Status |
 |--------|------|--------|
-| **v0.11.0-preview** | Jul/2026 | ✅ **Ativo** |
+| **v0.12.0-preview** | Jul/2026 | ✅ **Ativo** |
+| v0.11.0-preview | Jul/2026 | ✅ Concluído |
 | v0.10.0-preview | Jul/2026 | ✅ Concluído |
 | v0.9.0-preview | Jul/2026 | ✅ Concluído |
 | v0.8.0 | Jul/2026 | ✅ Concluído |
@@ -32,13 +33,24 @@
 
 ---
 
-## ✨ Funcionalidades Atuais (v0.11.0-preview)
+## ✨ Funcionalidades Atuais (v0.12.0-preview)
+
+### Board Layout 2.0 — Posicionamento Personalizado
+
+- **board.cells** — novo formato de layout que permite definir coordenadas X/Y individuais para cada célula (array `{id, x, y}`), substituindo o mapa fixo `positions`
+- **Fallback automático** — mundos com `board.cells` são convertidos para o formato esperado em tempo de execução; mundos com `board.positions` (ex: Floresta Encantada) continuam funcionando sem alterações
+- **🦖 Vale dos Dinossauros** — primeiro mundo a usar `board.cells`: 20 células em 4 fileiras com curva orgânica em S, deslocado +7pp para direita para melhor centralização no background
+
+### Caminhos Temáticos (path.webp)
+
+- **Infraestrutura CSS para path.webp** — o caminho das casas está preparado para exibir textura via `background-image` com seletores por mundo
+- **Fallback SVG ativo** — enquanto os assets `.webp` não são criados, o traço SVG (5px, opacity ~0.25) mantém a trilha visível
+- **Override de subworld** — áreas especiais não exibem a textura do mundo principal
 
 ### Seletor de Mundos
 
 - **Tela de seleção de mundo** — após clicar em "⚡ Jogo Rápido", 6 cards de mundos são exibidos (Floresta, Dinossauros, 3 "Em breve" bloqueados, Aleatório)
 - **🌳 Floresta Encantada** — mundo com 20 casas, desafios educativos e portal para Área Especial (Floresta Misteriosa)
-- **🦖 Vale dos Dinossauros** — segundo mundo disponível, com 20 casas, desafios educativos e portal para Área Especial (Caverna dos Fósseis)
 - **🌲 Área Especial (Floresta Misteriosa)** — submundo de 8 casas acessado pelo portal da Floresta, com desafios próprios e retorno parametrizado
 - **🦴 Área Especial (Caverna dos Fósseis)** — submundo curto de 8 casas com filosofia risco x recompensa: saída antecipada sem bônus (casa 7) ou saída completa com bônus +3 (casa 8)
 - **Mundo Aleatório** — seleciona um mundo aleatório entre os disponíveis
@@ -89,7 +101,7 @@
 
 ## 🎨 Identidade Visual
 
-A partir da **v0.11.0-preview** o Lara World iniciou oficialmente sua fase de identidade visual, com uma pipeline própria de produção artística baseada em assets separados por mundo.
+Iniciada na **v0.11.0-preview** e expandida na **v0.12.0-preview**, a fase de identidade visual estabeleceu a pipeline de produção artística baseada em assets separados por mundo.
 
 ### Estrutura de Assets
 
@@ -117,9 +129,9 @@ src/assets/
 | Asset | Mundo | Status |
 |-------|-------|--------|
 | `background.webp` | Floresta Encantada | ✅ Infraestrutura concluída — CSS e overlay prontos (asset pendente de criação por IA) |
-| `path.webp` | Floresta Encantada | ✅ Infraestrutura concluída — SVG pattern e CSS prontos (asset pendente) |
+| `path.webp` | Floresta Encantada | ✅ Infraestrutura concluída — CSS via `background-image` + SVG stroke como fallback (asset pendente) |
 | `background.webp` | Vale dos Dinossauros | ✅ Infraestrutura concluída — CSS e overlay prontos (asset pendente de criação por IA) |
-| `path.webp` | Vale dos Dinossauros | ✅ Infraestrutura concluída — SVG pattern e CSS prontos (asset pendente) |
+| `path.webp` | Vale dos Dinossauros | ✅ Infraestrutura concluída — CSS via `background-image` + SVG stroke como fallback (asset pendente) |
 
 ### Decisões de UX Aprovadas
 
@@ -135,8 +147,9 @@ src/assets/
 - Backgrounds muito carregados prejudicam a leitura do tabuleiro
 - O cenário não deve competir com as casas e jogadores
 - Grandes elementos visuais devem permanecer nas laterais
-- O caminho atual ainda será refinado em futuras sprints
-- Antigos elementos decorativos do HTML entraram em processo de remoção (ART-004)
+- O caminho atual (SVG stroke + background-image preparado) refinado para 5px com opacity ~0.25, deixando o traço leve enquanto aguarda textura definitiva (path.webp)
+- Antigos elementos decorativos do HTML removidos na ART-004
+- O posicionamento do tabuleiro pode variar por mundo — `board.cells` permite ajuste individual por célula
 
 ---
 
@@ -250,7 +263,7 @@ src/assets/
 
 ## 📜 História do Projeto
 
-O Lara World começou como um MVP de tabuleiro simples para 1 jogador. A primeira versão (v0.1.0) implementou a lógica básica do jogo com dados, casas especiais e Docker. Na sequência (v0.1.5) recebeu um tabuleiro visual com trilha serpentina, personagem animado e painel lateral. A versão v0.2.0 adicionou multiplayer local com alternância de turnos entre 2 jogadores. A v0.3.0 introduziu o modal de configuração inicial com nomes e sprites personalizáveis. A v0.4.0 adicionou 5 casas de desafios educativos com perguntas de múltipla escolha. A v0.5.0 substituiu as perguntas fixas por um **Banco de Questões** com 30 perguntas. A v0.6.0 adicionou o **Mundo da Floresta** com portal na casa 11, sistema de portais, mini-trilha de 8 casas com mecânicas exclusivas e modo debug. A v0.7.0 adicionou o **modo Single Player (Humano vs Máquina)** com bot inteligente, tela de vitória com confetes e correções de cascata. A v0.8.0 adicionou um **Menu Inicial** com opções "⚡ Jogo Rápido" (single player) e "🏆 Modo Carreira (Em Breve)", além de uma tela de vitória com dois botões de saída (Jogar Novamente e Voltar ao Menu). A v0.9.0-preview iniciou a **Fase de Mundos** com seletor de mundos, motor modular (SessionManager, StateManager, WorldRegistry, EventProcessor) e o primeiro WorldConfig (Floresta Encantada + Floresta Misteriosa). A versão v0.10.0-preview consolidou o **primeiro ecossistema multi-mundos** com a integração completa do Vale dos Dinossauros, da Caverna dos Fósseis, portal genérico baseado em configuração, Theme Engine em produção e debug independente para cada área. A versão atual (v0.11.0-preview) é a **Evolução Visual (UX 2.0)**, com pipeline de assets, backgrounds Floresta e Dinossauros, caminhos temáticos, infraestrutura de padrões SVG, e remoção de elementos decorativos antigos — estabelecendo a direção de arte do projeto.
+O Lara World começou como um MVP de tabuleiro simples para 1 jogador. A primeira versão (v0.1.0) implementou a lógica básica do jogo com dados, casas especiais e Docker. Na sequência (v0.1.5) recebeu um tabuleiro visual com trilha serpentina, personagem animado e painel lateral. A versão v0.2.0 adicionou multiplayer local com alternância de turnos entre 2 jogadores. A v0.3.0 introduziu o modal de configuração inicial com nomes e sprites personalizáveis. A v0.4.0 adicionou 5 casas de desafios educativos com perguntas de múltipla escolha. A v0.5.0 substituiu as perguntas fixas por um **Banco de Questões** com 30 perguntas. A v0.6.0 adicionou o **Mundo da Floresta** com portal na casa 11, sistema de portais, mini-trilha de 8 casas com mecânicas exclusivas e modo debug. A v0.7.0 adicionou o **modo Single Player (Humano vs Máquina)** com bot inteligente, tela de vitória com confetes e correções de cascata. A v0.8.0 adicionou um **Menu Inicial** com opções "⚡ Jogo Rápido" (single player) e "🏆 Modo Carreira (Em Breve)", além de uma tela de vitória com dois botões de saída (Jogar Novamente e Voltar ao Menu). A v0.9.0-preview iniciou a **Fase de Mundos** com seletor de mundos, motor modular (SessionManager, StateManager, WorldRegistry, EventProcessor) e o primeiro WorldConfig (Floresta Encantada + Floresta Misteriosa). A versão v0.10.0-preview consolidou o **primeiro ecossistema multi-mundos** com a integração completa do Vale dos Dinossauros, da Caverna dos Fósseis, portal genérico baseado em configuração, Theme Engine em produção e debug independente para cada área. A v0.11.0-preview estabeleceu a **Evolução Visual (UX 2.0)**, com pipeline de assets, backgrounds Floresta e Dinossauros, caminhos temáticos, infraestrutura de padrões SVG, e remoção de elementos decorativos antigos. A versão atual (v0.12.0-preview) adiciona o **Board Layout 2.0** com posicionamento personalizado por mundo (`board.cells`), infraestrutura `path.webp` para textura de caminho, e refinamentos visuais no traço SVG.
 
 ---
 
@@ -311,7 +324,8 @@ docker compose down
 
 - **v0.9.0-preview** — ✅ Concluído — Seletor de mundos, motor modular, primeiro WorldConfig
 - **v0.10.0-preview** — ✅ Concluído — Vale dos Dinossauros, Caverna dos Fósseis, portal genérico, Theme Engine
-- **v0.11.0-preview** — ✅ **Ativo** — Evolução Visual (UX 2.0), assets pipeline, backgrounds Floresta e Dinossauros, caminhos temáticos, decorações removidas
+- **v0.11.0-preview** — ✅ Concluído — Evolução Visual (UX 2.0), assets pipeline, backgrounds Floresta e Dinossauros, caminhos temáticos, decorações removidas
+- **v0.12.0-preview** — ✅ **Ativo** — Board Layout 2.0 (board.cells), path.webp infrastructure, posicionamento refinado do Vale dos Dinossauros
 - **v1.0.0** — Lançamento oficial
 
 Veja o [roadmap completo](docs/roadmap.md).

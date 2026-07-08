@@ -1,5 +1,14 @@
 # Roadmap Lara World
 
+### v0.12.0-preview — Board Layout 2.0 + path.webp Infrastructure
+- **Board Layout 2.0**: novo formato `board.cells` (`[{id, x, y}]`) para posicionamento individual de células por mundo, com fallback automático para `board.positions`
+- **Vale dos Dinossauros recelularizado**: primeiro mundo a usar `board.cells` — 20 células em 4 fileiras S-curve, shift +7pp X para centralização
+- **ART-005**: stroke do SVG reduzido de 14px → 5px, opacity ~0.25 — prepara traço para textura
+- **ART-006**: CSS do `.path-line` com `background-image` para `path.webp`, seletores por mundo, override de subworld — infraestrutura completa para textura de caminho
+- **Fallback ativo**: SVG stroke 5px mantido como fallback enquanto assets .webp não forem criados
+- **Engine estendida**: `WorldConfig.board.cells` documentado em types.js; world-registry valida cells[]; game.js normaliza ambos os formatos
+- Cache-busting permanece em `?v=0.11.0-preview` (sem alteração de código)
+
 ## Concluído
 
 ### v0.1.0
@@ -96,7 +105,7 @@
 
 ## Futuro
 
-### v0.11.0-preview — Evolução Visual (UX 2.0)
+### v0.11.0-preview — Evolução Visual (UX 2.0) ✅
 - **UX-1.1** — Overhaul CSS completo (cartoon, arredondado, 3D, profundidade)
 - **ASSET-001** — Sistema de backgrounds por mundo (estrutura + CSS)
 - **ART-002** — Caminhos temáticos (infraestrutura SVG pattern, Floresta)
@@ -115,24 +124,32 @@ Trilha de desenvolvimento focada exclusivamente na identidade visual do projeto.
 | **ART-002** | ✅ Concluído | Background Floresta Encantada + Caminho temático Floresta — CSS, SVG pattern, overlay, fallback |
 | **ART-003** | ✅ Concluído | Background Vale dos Dinossauros + Caminho temático Dinossauros — CSS, SVG pattern, overlay, fallback |
 | **ART-004** | ✅ Concluído | Remoção dos elementos decorativos antigos — emojis fixos do HTML removidos, CSS limpo |
-| **ART-005** | 🔲 Pendente | Background Floresta Misteriosa — assets e CSS para o submundo da Floresta |
-| **ART-006** | 🔲 Pendente | Background Caverna dos Fósseis — assets e CSS para o submundo do Vale |
-| **ART-007** | 🔲 Pendente | Casas ilustradas — substituir células CSS por assets visuais por tipo de casa |
-| **ART-008** | 🔲 Pendente | HUD ilustrada — painel lateral, botões, dados e indicadores com assets próprios |
-| **ART-009** | 🔲 Pendente | Ícones próprios — substituir emojis por iconografia original do jogo |
-| **ART-010** | 🔲 Pendente | Personagens — sprites dos jogadores com design próprio (não apenas emojis) |
+| **ART-005** | ✅ Concluído | Refinamento do traço SVG — stroke 14px→5px, opacity ~0.25, preparação para path.webp |
+| **ART-006** | ✅ Concluído | Infraestrutura path.webp — background-image no `.path-line`, seletores por mundo, subworld override |
+| **ART-007** | 🔲 Pendente | Background Floresta Misteriosa — assets e CSS para o submundo da Floresta |
+| **ART-008** | 🔲 Pendente | Background Caverna dos Fósseis — assets e CSS para o submundo do Vale |
+| **ART-009** | 🔲 Pendente | Casas ilustradas — substituir células CSS por assets visuais por tipo de casa |
+| **ART-010** | 🔲 Pendente | HUD ilustrada — painel lateral, botões, dados e indicadores com assets próprios |
+| **ART-011** | 🔲 Pendente | Ícones próprios — substituir emojis por iconografia original do jogo |
+| **ART-012** | 🔲 Pendente | Personagens — sprites dos jogadores com design próprio (não apenas emojis) |
 
-### A7 — Theme Engine Completa
+### A7 — Board Layout 2.0 e Refinamentos
+- **Board Layout 2.0** — ✅ Concluído — `board.cells` implementado, Vale dos Dinossauros adotado
+- Expandir `board.cells` para a Floresta Encantada (unificação do formato)
+- Documentar guia de criação de layout para novos mundos
+
+### A8 — Theme Engine Completa
 - Temas visuais completos para todos os mundos atuais
 - Decorações dinâmicas por configuração (não mais injetadas via JS)
 - Transições suaves entre temas
 
-### A8 — Question Engine
+### A9 — Question Engine
 - Extrair bancoQuestoes para `data/questions/*.js`
 - ChallengeSystem como módulo independente
 - Categorias de perguntas reutilizáveis entre mundos
 
-### A9 — Galáxia Estelar
+### A10 — Galáxia Estelar
 - Criar `worlds/galaxia/config.js`
 - Terceiro mundo completo com eventos espaciais
+- Usar `board.cells` para layout personalizado
 - Validar processo de adição de novo mundo

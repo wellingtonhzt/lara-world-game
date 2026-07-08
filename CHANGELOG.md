@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.12.0-preview] - 2026-07-08
+
+### Board Layout 2.0 — Layout Personalizado por Mundo
+- **board.cells**: novo formato de layout para o board do WorldConfig — array `[{id, x, y}]` que substitui o mapa `positions` (`{pos: [x%, y%]}`), permitindo posicionamento individual e preciso de cada célula
+- **Vale dos Dinossauros**: primeiro mundo a adotar `board.cells` — 20 células em 4 fileiras com curva orgânica em S, deslocado +7pp para direita para centralizar o tabuleiro no background
+- **Fallback automático**: `getPosicoes()` normaliza `board.cells` para o formato de mapa esperado pelo restante do jogo; mundos existentes (Floresta Encantada) seguem usando `board.positions` inalterados
+- **Engine estendida**: `WorldConfig.board.cells` documentado em `src/core/types.js`; `world-registry.js` valida `cells[]` quando presente; `game.js` consome ambos os formatos
+- **Ajustes finos de posição**: múltiplas iterações de refinamento nas coordenadas do Vale dos Dinossauros até centralização ideal do tabuleiro
+
+### path.webp — Infraestrutura para Textura de Caminho
+- **ART-006**: CSS de `.path-line` preparado para exibir `path.webp` via `background-image` — `background-size: cover`, `background-position: center`, `background-repeat: no-repeat`
+- **Seletores por mundo**: regras para `body[data-world="floresta-encantada"] .path-line` e `body[data-world="vale-dinossauros"] .path-line` com `background-image: url(...)`
+- **Override de subworld**: submundos recebem `background-image: none` para não exibir a textura do mundo principal durante a navegação em áreas especiais
+- **SVG stroke mantido como fallback**: o traço SVG original (5px, opacity ~0.25) permanece ativo como fallback visual enquanto os assets `.webp` não forem criados
+- **ART-005 — Preparação do caminho**: stroke do SVG reduzido de 14px para 5px, opacity reduzido de sólido (1.0) para ~0.25, preparando o caminho para receber textura sem conflito visual
+
+### Adicionado
+- `src/core/types.js`: campo `cells` adicionado à typedef `BoardConfig` — `{id: number, x: number, y: number}[]`
+
+### Alterado
+- `src/game.js`: `getPosicoes()` verifica `board.cells` primeiro — se existir, converte para posições; senão, usa `board.positions` (fallback)
+- `src/engine/world-registry.js`: validação de `WorldConfig.board` aceita `cells[]` como alternativa válida a `positions`
+- `src/worlds/dinossauros/config.js`: `board.positions` substituído por `board.cells` com 20 células em 4 fileiras S-curve, deslocamento +7pp X
+- `src/style.css`:
+  - ART-005: `.path-line` stroke reduzido para 5px, opacity ~0.25, drop-shadow refinado
+  - ART-006: `.path-line` com `background-size: cover / center / no-repeat`; seletores por mundo para `background-image: url(assets/worlds/.../path.webp)`; subworld override `background-image: none`
+
 ## [0.11.0-preview] - 2026-07-07
 
 ### Consolidação da Direção de Arte (Sprint ART)

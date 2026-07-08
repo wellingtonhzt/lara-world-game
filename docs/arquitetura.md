@@ -55,7 +55,7 @@ lara-world/
 └── docker-compose.yml   # Orquestração Docker
 ```
 
-> Nota: a pasta `src/assets/` foi criada na v0.11.0-preview para iniciar a fase de identidade visual. A subpasta `worlds/` abriga assets por mundo (`background.webp`, `path.webp`), atualmente com floresta/ e dinossauros/. Cada mundo possui seu próprio background e textura de caminho, com fallback CSS garantido se o asset não existir. `src/assets/sounds/` está prevista para versões futuras.
+> Nota: a pasta `src/assets/` foi criada na v0.11.0-preview para iniciar a fase de identidade visual. A subpasta `worlds/` abriga assets por mundo (`background.webp`, `path.webp`), atualmente com floresta/ e dinossauros/. Cada mundo possui seu próprio background e textura de caminho, com fallback CSS garantido se o asset não existir. A infraestrutura do `path.webp` foi preparada na v0.12.0-preview (background-image no `.path-line`, seletores por mundo). `src/assets/sounds/` está prevista para versões futuras.
 
 ## Arquitetura do Frontend
 
@@ -112,7 +112,7 @@ Estrutura semântica dividida em:
 - **Emoji Grid** (`.emoji-grid`): `display: flex` com `flex-wrap: wrap`, gaps entre os itens. Cada emoji (`.emoji-option`): 48×48px, cursor pointer, borda transparente. Selecionado: borda azul com fundo claro
 - **Tabuleiro**: `#track-container` com `position: relative` e gradiente de fundo
 - **Células** (`.casa`): `position: absolute` com `transform: translate(-50%,-50%)` para centralização. Cada casa recebe `left` e `top` em percentual via JS
-- **Caminho SVG**: `#trail-path` com `stroke-width: 14`, pattern via SVG (`url(#path-texture)`), sólido sem opacidade, drop-shadow 0.12
+- **Caminho SVG**: `#trail-path` com `stroke-width: 5` (ART-005), opacity ~0.25, `background-image` preparado para path.webp com seletores por mundo (ART-006), SVG stroke como fallback ativo
 - **Personagens**: círculos brancos com borda rosa (Lara) ou azul (Amigo), `z-index: 20`, 58×58px
 - **Casa especial**: cores por `data-position` (3 amarela, 4 roxa desafio, 5 rosa, 7 roxa desafio, 8 laranja, 10 roxa, 12 roxa desafio, 15 vermelha, 16 roxa desafio, 18 roxa desafio, 20 verde com glow)
 - **Animações**: `pulse` (movimento), `bounce` (dado), `celebrar` (vitória)
@@ -138,14 +138,14 @@ constantes / configuração
   ├── isSinglePlayer      → boolean global
   ├── botTurnScheduled    → boolean
   ├── casasEspeciais[]    → mapa de configuração do mundo principal (12 casas)
-  ├── boardPositions{}    → coordenadas percentuais do mundo principal
+  ├── boardPositions{}    → coordenadas percentuais do mundo principal (fallback se board.positions não existir)
   ├── icons[]             → emoji por casa no principal
   ├── bancoQuestoes{}     → banco categorizado {categoria: [{pergunta, opcoes[], resposta}]}
   └── questoesDisponiveis[] → flat pool construído de bancoQuestoes
 
 Getters World-Aware
   ├── getTotalCasas()      → currentWorldConfig.board.totalCells ou TOTAL_CASAS (fallback)
-  ├── getPosicoes()        → currentWorldConfig.board.positions ou boardPositions
+  ├── getPosicoes()        → board.cells (se existir, converte array para mapa) ou board.positions ou boardPositions
   ├── getIcones()          → currentWorldConfig.board.cellIcons ou icons
   ├── getCasasEspeciais()  → eventsToSpecialCells(currentWorldConfig.events) ou casasEspeciais
   └── getSubworldConfig()  → subworldConfigs[activeSubworldId] ou null
@@ -357,9 +357,9 @@ unlockTurn → scheduleBotTurnIfNeeded()
   └── Não → aguarda clique humano
 ```
 
-## Motor de Mundos (v0.10.0-preview)
+## Motor de Mundos (v0.12.0-preview)
 
-A partir da v0.9.0-preview, o Lara World iniciou a **Fase de Mundos** com a criação de um motor modular. Na Sprint A5.1 o motor entrou em produção: o WorldRegistry é inicializado no bootstrap e o `currentWorldConfig` é populado na seleção do mundo. O game.js foi migrado para ES Module e consome `currentWorldConfig.board` diretamente (Sprint A5.2). Na v0.10.0-preview, o motor foi consolidado com a integração do segundo mundo e do sistema de portais genérico.
+A partir da v0.9.0-preview, o Lara World iniciou a **Fase de Mundos** com a criação de um motor modular. Na Sprint A5.1 o motor entrou em produção: o WorldRegistry é inicializado no bootstrap e o `currentWorldConfig` é populado na seleção do mundo. O game.js foi migrado para ES Module e consome `currentWorldConfig.board` diretamente (Sprint A5.2). Na v0.10.0-preview, o motor foi consolidado com a integração do segundo mundo e do sistema de portais genérico. Na v0.12.0-preview, o **Board Layout 2.0** estendeu o contrato `BoardConfig` com o formato `cells[]`, permitindo posicionamento individual por célula.
 
 ### Módulos do Engine
 
@@ -380,12 +380,12 @@ A partir da v0.9.0-preview, o Lara World iniciou a **Fase de Mundos** com a cria
 
 ### WorldConfigs
 
-| Mundo | Arquivo | Células | Eventos | Portais |
-|-------|---------|---------|---------|---------|
-| **🌳 Floresta Encantada** (principal) | `src/worlds/floresta/config.js` | 20 | 12 | 1 (para Floresta Misteriosa) |
-| **🌲 Floresta Misteriosa** (subworld) | (mesmo arquivo) | 8 | 4 | — |
-| **🦖 Vale dos Dinossauros** (principal) | `src/worlds/dinossauros/config.js` | 20 | 12 | 1 (para Caverna dos Fósseis) |
-| **🦴 Caverna dos Fósseis** (subworld) | (mesmo arquivo) | 8 | 6 | — |
+| Mundo | Arquivo | Células | Eventos | Portais | Layout |
+|-------|---------|---------|---------|---------|--------|
+| **🌳 Floresta Encantada** (principal) | `src/worlds/floresta/config.js` | 20 | 12 | 1 | `board.positions` (original) |
+| **🌲 Floresta Misteriosa** (subworld) | (mesmo arquivo) | 8 | 4 | — | `board.positions` |
+| **🦖 Vale dos Dinossauros** (principal) | `src/worlds/dinossauros/config.js` | 20 | 12 | 1 | `board.cells` (Board Layout 2.0) |
+| **🦴 Caverna dos Fósseis** (subworld) | (mesmo arquivo) | 8 | 6 | — | `board.positions` |
 
 ### Seletor de Mundos
 
