@@ -67,10 +67,14 @@ import { cavernaDosFosseis } from './worlds/dinossauros/config.js';
     return casasEspeciais;
   }
   function getPosicoes() {
-    const sw = getSubworldConfig();
-    if (sw) return sw.board.positions;
-    const cfg = currentWorldConfig;
-    return (cfg && cfg.board && cfg.board.positions) || boardPositions;
+    const board = getSubworldConfig()?.board || currentWorldConfig?.board;
+    if (!board) return boardPositions;
+    if (board.cells) {
+      const map = {};
+      for (const c of board.cells) map[c.id] = { x: c.x, y: c.y };
+      return map;
+    }
+    return board.positions || boardPositions;
   }
   function getIcones() {
     const sw = getSubworldConfig();

@@ -98,27 +98,57 @@ function validateWorldConfig(config) {
     );
   }
 
-  if (!config.board.positions || typeof config.board.positions !== 'object') {
-    throw new InvalidWorldConfigError('Missing required field "board.positions"');
+  const hasPositions = !!config.board.positions;
+  const hasCells = !!config.board.cells;
+
+  if (!hasPositions && !hasCells) {
+    throw new InvalidWorldConfigError('Missing required field "board.positions" or "board.cells"');
   }
 
   const total = config.board.totalCells;
-  const posKeys = Object.keys(config.board.positions)
-    .map(Number)
-    .filter(k => Number.isInteger(k) && k >= 1 && k <= total);
 
-  if (posKeys.length === 0) {
-    throw new InvalidWorldConfigError(
-      `board.positions must cover at least one cell in range 1..${total}`
-    );
+  if (hasPositions) {
+    const posKeys = Object.keys(config.board.positions)
+      .map(Number)
+      .filter(k => Number.isInteger(k) && k >= 1 && k <= total);
+
+    if (posKeys.length === 0) {
+      throw new InvalidWorldConfigError(
+        `board.positions must cover at least one cell in range 1..${total}`
+      );
+    }
+
+    for (let cell = 1; cell <= total; cell++) {
+      const pos = config.board.positions[cell];
+      if (!pos || typeof pos.x !== 'number' || typeof pos.y !== 'number') {
+        console.warn(
+          `[WorldRegistry] World "${config.id}": board.positions[${cell}] is missing or has no x/y coordinates`
+        );
+      }
+    }
   }
 
-  for (let cell = 1; cell <= total; cell++) {
-    const pos = config.board.positions[cell];
-    if (!pos || typeof pos.x !== 'number' || typeof pos.y !== 'number') {
-      console.warn(
-        `[WorldRegistry] World "${config.id}": board.positions[${cell}] is missing or has no x/y coordinates`
-      );
+  if (hasCells) {
+    if (!Array.isArray(config.board.cells)) {
+      throw new InvalidWorldConfigError('"board.cells" must be an array');
+    }
+    const seen = new Set();
+    for (const c of config.board.cells) {
+      if (!Number.isInteger(c.id) || c.id < 1 || c.id > total) {
+        throw new InvalidWorldConfigError(
+          `board.cells: each cell must have an integer id in 1..${total}`
+        );
+      }
+      if (seen.has(c.id)) throw new InvalidWorldConfigError(`board.cells: duplicate cell id ${c.id}`);
+      seen.add(c.id);
+      if (typeof c.x !== 'number' || typeof c.y !== 'number') {
+        throw new InvalidWorldConfigError(
+          `board.cells[${c.id}]: x and y must be numbers`
+        );
+      }
+    }
+    if (seen.size === 0) {
+      throw new InvalidWorldConfigError('board.cells must contain at least one cell');
     }
   }
 

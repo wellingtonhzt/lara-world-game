@@ -40,7 +40,8 @@
  * @property {number} totalCells - Total de casas
  * @property {number} startCell - Casa inicial
  * @property {number} finishCell - Casa final (vitória)
- * @property {Object.<number, {x: number, y: number}>} positions - Posições % das casas
+ * @property {Object.<number, {x: number, y: number}>} [positions] - Posições % das casas (formato mapa)
+ * @property {Array<{id: number, x: number, y: number}>} [cells] - Posições % das casas (formato array, alternativa ao positions)
  * @property {string[]} cellIcons - Emoji/ícone por casa
  * @property {"linear"|"circular"|"branched"} pathType - Tipo da trilha
  */
