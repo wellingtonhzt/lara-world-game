@@ -42,42 +42,65 @@
     </div>
 
     <div id="world-selector" class="world-selector hidden">
+      <div class="world-selector-bg-shapes"></div>
+      <div class="world-selector-sparkles" aria-hidden="true"></div>
       <div class="world-selector-content">
-        <h2>🌍 Escolha seu mundo</h2>
+        <div class="world-selector-header">
+          <h2>🌍 Escolha seu Mundo</h2>
+          <p class="world-selector-subtitle">Cada mundo guarda uma aventura diferente.</p>
+        </div>
         <div class="world-grid">
           <button class="world-card" data-world="floresta-encantada">
-            <span class="world-card-emoji">🌳</span>
+            <div class="world-card-illustration">
+              <span class="world-card-emoji">🌳</span>
+              <img class="world-card-img" src="assets/world-icons/floresta.webp" alt="" onerror="this.style.display='none'" loading="lazy">
+            </div>
             <span class="world-card-name">Floresta Encantada</span>
             <span class="world-card-badge badge-available">Disponível</span>
           </button>
           <button class="world-card" data-world="dinossauros" disabled>
-            <span class="world-card-emoji">🦖</span>
+            <div class="world-card-illustration">
+              <span class="world-card-emoji">🦖</span>
+              <img class="world-card-img" src="assets/world-icons/dinossauros.webp" alt="" onerror="this.style.display='none'" loading="lazy">
+            </div>
             <span class="world-card-name">Vale dos Dinossauros</span>
             <span class="world-card-badge badge-locked">🔒 Em breve</span>
           </button>
           <button class="world-card" data-world="galaxia" disabled>
-            <span class="world-card-emoji">🚀</span>
+            <div class="world-card-illustration">
+              <span class="world-card-emoji">🚀</span>
+              <img class="world-card-img" src="assets/world-icons/galaxia.webp" alt="" onerror="this.style.display='none'" loading="lazy">
+            </div>
             <span class="world-card-name">Galáxia Estelar</span>
             <span class="world-card-badge badge-locked">🔒 Em breve</span>
           </button>
           <button class="world-card" data-world="oceanos" disabled>
-            <span class="world-card-emoji">🌊</span>
+            <div class="world-card-illustration">
+              <span class="world-card-emoji">🌊</span>
+              <img class="world-card-img" src="assets/world-icons/oceanos.webp" alt="" onerror="this.style.display='none'" loading="lazy">
+            </div>
             <span class="world-card-name">Reino dos Oceanos</span>
             <span class="world-card-badge badge-locked">🔒 Em breve</span>
           </button>
           <button class="world-card" data-world="castelo" disabled>
-            <span class="world-card-emoji">🏰</span>
+            <div class="world-card-illustration">
+              <span class="world-card-emoji">🏰</span>
+              <img class="world-card-img" src="assets/world-icons/castelo.webp" alt="" onerror="this.style.display='none'" loading="lazy">
+            </div>
             <span class="world-card-name">Castelo dos Dragões</span>
             <span class="world-card-badge badge-locked">🔒 Em breve</span>
           </button>
-          <button class="world-card" data-world="random">
-            <span class="world-card-emoji">🎲</span>
+          <button class="world-card world-card-random" data-world="random">
+            <div class="world-card-illustration">
+              <span class="world-card-emoji">🎲</span>
+              <img class="world-card-img" src="assets/world-icons/aleatorio.webp" alt="" onerror="this.style.display='none'" loading="lazy">
+            </div>
             <span class="world-card-name">Mundo Aleatório</span>
             <span class="world-card-badge badge-random">🎲 Surpresa!</span>
           </button>
         </div>
         <div class="world-selector-footer">
-          <button id="world-back-btn" class="btn btn-secondary">⬅ Voltar ao Menu</button>
+          <button id="world-back-btn" class="world-back-btn">← Menu Principal</button>
         </div>
       </div>
     </div>
