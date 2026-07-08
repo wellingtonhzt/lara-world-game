@@ -2,6 +2,26 @@
 
 ## [0.12.0-preview] - 2026-07-08
 
+### Seleção de Mundos v2 — UX-014
+
+- **Painel remodelado**: mesmo visual da Hero Screen — fundo com 7 gradientes radiais + `menu-background.webp` (opacity 0.60) + shapes flutuantes + sparkles animados. Card central glass com `backdrop-filter: blur(24px)`, borda branca 3px, glow rosa
+- **Subtítulo**: "Cada mundo guarda uma aventura diferente." abaixo do título "🌍 Escolha seu Mundo"
+- **Cards maiores e com identidade**: border-radius 24px, padding 16px, hover com elevação -5px + glow colorido. Cada mundo recebe cor de borda via `data-world` — Floresta (verde #66bb6a), Dinossauros (âmbar #ffb300), Galáxia (roxo #b388ff), Oceanos (azul #64b5f6), Castelo (lilás #ce93d8)
+- **Mundo Aleatório em destaque**: glow pulsante roxo (`random-glow` 3s), gradiente mágico, hover acelera para 1.5s
+- **Mundos bloqueados elegantes**: mantêm identidade de cor com opacidade 0.75, sem grayscale, sem filter — parecem mundos futuros
+- **Botão "← Menu Principal" premium**: gradiente pink-dourado (#e91e63 → #ff8f00), sombra 3D (0 4px 0 #880e4f), hover sobre -3px, active afunda 2px
+- **Lara removida**: personagem permanece exclusiva da Hero Screen
+- **Responsivo**: breakpoints ≤600px e ≤400px com grid adaptável, padding reduzido
+- **Fallback**: `menu-background.webp` via `::before` (opacity 0.60); se asset não existir, gradientes do overlay mantêm a tela funcional
+
+### Ilustrações Oficiais dos Mundos — ART-009
+
+- **Container de ilustração**: cada card de mundo ganhou `.world-card-illustration` — área 96×96px (`≤600px: 76×76`, `≤400px: 64×64`) com flexbox centralizado
+- **Estrutura img + emoji**: `<img class="world-card-img">` posicionado absolutamente sobre o `<span class="world-card-emoji">`. Quando o asset .webp não existe (agora), `onerror="this.style.display='none'"` oculta o img e o emoji permanece visível como fallback
+- **6 assets previstos**: `floresta.webp`, `dinossauros.webp`, `galaxia.webp`, `oceanos.webp`, `castelo.webp`, `aleatorio.webp` em `src/assets/world-icons/`
+- **Diretório criado**: `src/assets/world-icons/.gitkeep` para versionamento da estrutura
+- **Atualização automática futura**: quando a ilustração for criada na pasta, o `<img>` carrega e substitui o emoji sem alteração de código
+
 ### Hero Screen — Tela Inicial com Estilo de Capa de Jogo (UX-013)
 
 - **UX-010 — Hero Screen visual overhaul**: redesign completo do menu principal — fundo com 7 gradientes radiais, formas flutuantes abstratas animadas via CSS, logo com gradiente pink-dourado e `background-clip: text`, card central com gradiente rosado/creme/azulado e `backdrop-filter: blur(20px)`, botão "Jogo Rápido" com glow pulsante (`menu-glow-pulse`), badge "EM BREVE..." com `text-transform: uppercase`, footer com versão `v0.12.0-preview`, divisor decorativo gradiente

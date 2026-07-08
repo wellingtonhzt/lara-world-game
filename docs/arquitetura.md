@@ -28,6 +28,13 @@ lara-world/
 │   │   ├── ui/          # Assets da Hero Screen (menu inicial)
 │   │   │   ├── lara-hero.webp       # Ilustração da personagem Lara (pendente)
 │   │   │   └── menu-background.webp # Fundo temático do menu (pendente)
+│   │   ├── world-icons/  # Ilustrações oficiais dos mundos
+│   │   │   ├── floresta.webp        # Floresta Encantada (pendente)
+│   │   │   ├── dinossauros.webp     # Vale dos Dinossauros (pendente)
+│   │   │   ├── galaxia.webp         # Galáxia Estelar (pendente)
+│   │   │   ├── oceanos.webp         # Reino dos Oceanos (pendente)
+│   │   │   ├── castelo.webp         # Castelo dos Dragões (pendente)
+│   │   │   └── aleatorio.webp       # Mundo Aleatório (pendente)
 │   │   └── worlds/      # Assets por mundo
 │   │       ├── floresta/
 │   │       │   ├── background.webp  # Background ilustrado do tabuleiro (pendente)
@@ -58,7 +65,7 @@ lara-world/
 └── docker-compose.yml   # Orquestração Docker
 ```
 
-> Nota: a pasta `src/assets/` foi criada na v0.11.0-preview para iniciar a fase de identidade visual. A subpasta `worlds/` abriga assets por mundo (`background.webp`, `path.webp`), atualmente com floresta/ e dinossauros/. Cada mundo possui seu próprio background e textura de caminho, com fallback CSS garantido se o asset não existir. A infraestrutura do `path.webp` foi preparada na v0.12.0-preview (background-image no `.path-line`, seletores por mundo). A subpasta `ui/` foi criada na UX-013 para abrigar assets da Hero Screen (`lara-hero.webp`, `menu-background.webp`), também com fallback CSS. `src/assets/sounds/` está prevista para versões futuras.
+> Nota: a pasta `src/assets/` foi criada na v0.11.0-preview para iniciar a fase de identidade visual. A subpasta `worlds/` abriga assets por mundo (`background.webp`, `path.webp`), atualmente com floresta/ e dinossauros/. Cada mundo possui seu próprio background e textura de caminho, com fallback CSS garantido se o asset não existir. A infraestrutura do `path.webp` foi preparada na v0.12.0-preview (background-image no `.path-line`, seletores por mundo). A subpasta `ui/` foi criada na UX-013 para abrigar assets da Hero Screen (`lara-hero.webp`, `menu-background.webp`), também com fallback CSS. A subpasta `world-icons/` foi criada na UX-014/ART-009 para abrigar as ilustrações oficiais dos mundos (6 assets previstos), com container 96×96px e fallback de emoji. `src/assets/sounds/` está prevista para versões futuras.
 
 ## Arquitetura do Frontend
 
@@ -92,9 +99,14 @@ Estrutura semântica dividida em:
   - Título "Desafio!", pergunta (`#challenge-question`) e opções (`#challenge-options`)
   - Botões de alternativa criados dinamicamente via JS
 - **Header**: Título com emoji decorativo, `#world-indicator` mostrando mundo/área atual (texto dinâmico)
-- **World Selector Overlay** (`#world-selector-overlay`):
+- **World Selector Overlay** (`#world-selector`):
   - Overlay exibido entre o menu e o setup
-  - Grid 3×2 com 6 cards: 🌳 Floresta, 🦖 Dinossauros, 3 "Em breve", 🎲 Aleatório
+  - Fundo com 7 gradientes radiais + `menu-background.webp` (opacity 0.60) + shapes flutuantes + sparkles (mesmo visual da Hero Screen)
+  - Card central glass com gradiente rosado/creme/azulado, `backdrop-filter: blur(24px)`, borda 3px, glow rosa
+  - Subtítulo "Cada mundo guarda uma aventura diferente."
+  - Grid com 6 cards: 🌳 Floresta, 🦖 Dinossauros, 3 futuros (🔒), 🎲 Aleatório
+  - Cards com identidade por mundo (bordas coloridas via data-world) e container 96×96px para ilustrações futuras
+  - Botão "← Menu Principal" premium (gradiente pink-dourado + sombra 3D)
 - **Board Area** (esquerda):
   - `#track-container`: container com gradiente de céu/grama (ou background temático por mundo), decorações (nuvens, árvores, flores, dinossauros, floresta)
   - SVG `#trail-path`: caminho suave que conecta as casas (Catmull-Rom spline)
@@ -394,13 +406,18 @@ A partir da v0.9.0-preview, o Lara World iniciou a **Fase de Mundos** com a cria
 | **🦖 Vale dos Dinossauros** (principal) | `src/worlds/dinossauros/config.js` | 20 | 12 | 1 | `board.cells` (Board Layout 2.0) |
 | **🦴 Caverna dos Fósseis** (subworld) | (mesmo arquivo) | 8 | 6 | — | `board.positions` |
 
-### Seletor de Mundos
+### Seletor de Mundos (UX-014 v2)
 
-O seletor de mundos é uma tela intermediária entre o clique em "⚡ Jogo Rápido" e o modal de configuração. Exibe 6 cards em grid:
-- **🌳 Floresta Encantada** — selecionável
-- **🦖 Vale dos Dinossauros** — selecionável
-- **3 cards "Em breve"** — bloqueados visualmente (badge 🔒), sem ação
-- **🎲 Mundo Aleatório** — seleciona um mundo aleatório entre os disponíveis
+O seletor de mundos é uma tela intermediária entre o clique em "⚡ Jogo Rápido" e o modal de configuração. Exibe 6 cards em grid com visual remodelado:
+
+- **Painel glass** — mesmo estilo da Hero Screen: gradiente rosado/creme/azulado, `backdrop-filter: blur(24px)`, borda branca 3px, glow rosa
+- **Fundo temático** — 7 gradientes radiais + `menu-background.webp` (opacity 0.60) + shapes flutuantes + sparkles
+- **🌳 Floresta Encantada** — selecionável, borda verde
+- **🦖 Vale dos Dinossauros** — selecionável, borda âmbar
+- **3 cards "Em breve"** — bloqueados com identidade de cor (sem grayscale)
+- **🎲 Mundo Aleatório** — destaque visual com glow pulsante roxo
+
+Cada card possui container `.world-card-illustration` de 96×96px preparado para futuras ilustrações, com fallback de emoji via `onerror`.
 
 A variável `selectedWorldId` é definida no escopo do game.js. `WorldRegistry.init()` é chamado no bootstrap com ambos os mundos, `selectWorld()` consulta o registry via `WorldRegistry.get(id)` e popula `currentWorldConfig`. Os cards do seletor exibem descrição e nome vindos do WorldConfig.
 

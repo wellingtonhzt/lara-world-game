@@ -1,6 +1,6 @@
 # Roadmap Lara World
 
-### v0.12.0-preview — Board Layout 2.0 + path.webp Infrastructure + Hero Screen
+### v0.12.0-preview — Board Layout 2.0 + path.webp Infrastructure + Hero Screen + Seleção v2
 
 **Board Layout 2.0:**
 - Novo formato `board.cells` (`[{id, x, y}]`) para posicionamento individual de células por mundo, com fallback automático para `board.positions`
@@ -18,6 +18,21 @@
 - **UX-012**: Background image (menu-background.webp) com opacity 0.50 via `::before`, fallback CSS garantido
 - **UX-013.1/2**: Card 580px com 0.88 saturação e borda 3px, Lara 320px/280px com -130px margin, botões maiores com subtítulos e glow pulse 2.5s, badge "EM BREVE..." refinado, sparkles, responsivo ≤600px/≤400px
 - Assets `src/assets/ui/` criados com `lara-hero.webp` e `menu-background.webp` (pendentes)
+
+**Seleção de Mundos v2 (UX-014):**
+- Painel remodelado no visual da Hero Screen — fundo gradiente + menu-background.webp + shapes flutuantes + sparkles
+- Card central glass com `backdrop-filter: blur(24px)`, borda branca 3px, glow rosa
+- Subtítulo "Cada mundo guarda uma aventura diferente."
+- Cards com identidade por mundo (bordas coloridas via data-world)
+- Mundo Aleatório em destaque (glow pulsante roxo)
+- Mundos bloqueados elegantes (sem grayscale, com cor temática)
+- Botão "← Menu Principal" premium (gradiente pink-dourado + sombra 3D)
+- Lara removida — exclusiva da Hero Screen
+
+**Ilustrações dos Mundos (ART-009):**
+- Container 96×96px preparado em cada card para ilustração futura
+- Fallback de emoji via `onerror` — quando asset existir, substitui automaticamente
+- 6 assets previstos em `src/assets/world-icons/`: floresta.webp, dinossauros.webp, galaxia.webp, oceanos.webp, castelo.webp, aleatorio.webp
 - Cache-busting permanece em `?v=0.12.0-preview` (sem alteração de código)
 
 ## Concluído
@@ -114,18 +129,32 @@
 - **Arquitetura consolidada** — dois mundos, duas áreas, zero alterações na engine
 - Cache-busting via `?v=20260706`
 
+### UX-014 — Seleção de Mundos v2 ✅
+- Painel remodelado: fundo Hero Screen + glass + shapes flutuantes + sparkles
+- Subtítulo discreto abaixo do título
+- Cards com identidade por mundo (bordas coloridas via data-world)
+- Mundo Aleatório com destaque especial (glow roxo pulsante)
+- Mundos bloqueados elegantes (sem grayscale, com cor temática)
+- Botão "← Menu Principal" premium (gradiente + sombra 3D)
+- Lara removida (exclusiva da Hero Screen)
+
+### ART-009 — Ilustrações Oficiais dos Mundos ✅
+- Container 96×96px em cada card para ilustração futura
+- Fallback de emoji via `onerror` + `display: none` no img
+- 6 assets previstos: floresta, dinossauros, galaxia, oceanos, castelo, aleatorio
+- Diretório `src/assets/world-icons/` criado
+
 ## Futuro
 
-### UX-014 — Hero Screen v2 ⬆️ PRÓXIMO
-- Reorganização completa da composição visual da tela inicial
-- Nova hierarquia de elementos (layout diferente do card central atual)
-- Possível uso de canvas ou componentes visuais mais complexos
-- Manter fallback CSS e assets pendentes
+### 🎯 Próximas Prioridades
 
-### UX-015 — Assets Hero Screen
-- Criar `lara-hero.webp` — ilustração da personagem Lara
-- Criar `menu-background.webp` — fundo temático do menu principal
-- Substituir fallbacks CSS pelos assets reais
+- **Hero Screen v2** — reorganização completa da composição visual da tela inicial
+- **Evolução dos cards dos mundos** — refinamento visual contínuo da seleção de mundos
+- **Assets próprios das casas especiais** — substituir células CSS por assets visuais por tipo de casa
+- **Ilustrações das áreas dos mundos** — backgrounds e caminhos para submundos (Floresta Misteriosa, Caverna dos Fósseis)
+- **Sistema de conquistas** — medalhas e progressão do jogador
+- **Modo Aventura** — campanha com progressão entre mundos
+- **Animações da interface** — transições e micro-interações
 
 ### v0.11.0-preview — Evolução Visual (UX 2.0) ✅
 - **UX-1.1** — Overhaul CSS completo (cartoon, arredondado, 3D, profundidade)
@@ -150,8 +179,8 @@ Trilha de desenvolvimento focada exclusivamente na identidade visual do projeto.
 | **ART-006** | ✅ Concluído | Infraestrutura path.webp — background-image no `.path-line`, seletores por mundo, subworld override |
 | **ART-007** | 🔲 Pendente | Background Floresta Misteriosa — assets e CSS para o submundo da Floresta |
 | **ART-008** | 🔲 Pendente | Background Caverna dos Fósseis — assets e CSS para o submundo do Vale |
-| **ART-009** | 🔲 Pendente | Casas ilustradas — substituir células CSS por assets visuais por tipo de casa |
-| **ART-010** | 🔲 Pendente | HUD ilustrada — painel lateral, botões, dados e indicadores com assets próprios |
+| **ART-009** | ✅ Concluído | Ilustrações oficiais dos mundos — container 96×96px em cada card, fallback de emoji, 6 assets em `src/assets/world-icons/` |
+| **ART-010** | 🔲 Pendente | Casas ilustradas — substituir células CSS por assets visuais por tipo de casa |
 | **ART-011** | 🔲 Pendente | Ícones próprios — substituir emojis por iconografia original do jogo |
 | **ART-012** | 🔲 Pendente | Personagens — sprites dos jogadores com design próprio (não apenas emojis) |
 | **ART-013** | 🔲 Pendente | Hero Screen background — criar `menu-background.webp` asset (UX-015) |

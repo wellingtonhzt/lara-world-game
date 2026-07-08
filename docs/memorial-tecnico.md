@@ -1,5 +1,82 @@
 # Memorial Técnico
 
+## Sprint — Seleção de Mundos v2 + Ilustrações Oficiais — UX-014 + ART-009 (v0.12.0-preview)
+
+### Objetivo
+
+Remodelar o seletor de mundos para corresponder visualmente à Hero Screen (painel glass, fundo temático, identidade por mundo, botão premium) e preparar a infraestrutura de ilustrações oficiais dos mundos (container 96×96px com fallback de emoji e diretório de assets). Lara é removida do seletor — permanece exclusiva da Hero Screen.
+
+### Arquivos Alterados
+
+| Arquivo | Tipo de Alteração |
+|---------|-------------------|
+| `src/index.html` | Card do seletor de mundos reestruturado: wrapper `.world-card-header` removido, emojis movidos para `<span class="world-card-icon world-card-emoji">` dentro de novo `.world-card-illustration`. Adicionado `<img class="world-card-img">` com `onerror="this.style.display='none'"`. Seção de mundos bloqueados refatorada. `#world-selector-overlay` renomeado para `#world-selector`. Botão "← Voltar" → "← Menu Principal". Title/descrição do overlay atualizados |
+| `src/style.css` | **UX-014** (~200 linhas): Background do `#world-selector` copiado da Hero Screen (7 gradientes + `.menu-bg-shapes` + sparkles + `::before` com `menu-background.webp`). Card central `.world-selector-content` com gradiente rosado/creme/azulado, `backdrop-filter: blur(24px)`, borda 3px, glow rosa. Subtítulo `.world-selector-subtitle`. Cards `.world-card` reformulados: `border-radius: 24px`, `padding: 16px`, identidade por `data-world` (verde, âmbar, roxo, azul, lilás). `.world-card.disabled` sem grayscale — mantém cor temática com `opacity: 0.75`. `.world-card[data-world="aleatorio"]` com `random-glow` pulsante (3s, roxo mágico). Botão `.back-button` premium gradiente pink-dourado, sombra 3D, hover/active. Removido: Lara (`#world-card-lara`), `.world-card-header`, `.world-card-lara-img`. Responsivo ≤600px e ≤400px. **UX-015/ART-009** (~50 linhas): `.world-card-illustration` — container 96×96px flex centralizado; `.world-card-img` — absoluto, 100% object-fit contain; `.world-card-emoji` — font-size 3rem |
+| `src/assets/world-icons/.gitkeep` | Criado — placeholder para versionar diretório de ilustrações dos mundos |
+
+### Documentação
+
+| Arquivo | Tipo de Alteração |
+|---------|-------------------|
+| `README.md` | Atualizado: Seção "Seletor de Mundos v2" adicionada; "Ilustrações dos Mundos" adicionada; assets tree com world-icons/; tabela de asset status; roadmap e história atualizados |
+| `CHANGELOG.md` | Adicionadas entradas UX-014 e ART-009 na v0.12.0-preview |
+| `docs/roadmap.md` | UX-014 e ART-009 marcados como concluídos; novos objetivos futuros adicionados |
+| `docs/arquitetura.md` | Diretório `src/assets/world-icons/` adicionado; seção Seletor de Mundos reescrita com descrição UX-014 |
+| `docs/ui-style-guide.md` | Criado — guia de estilo oficial com diretrizes visuais, paleta, tipografia, componentes |
+| `docs/memorial-tecnico.md` | Adicionada esta entrada |
+
+### Impacto Técnico
+
+**UX-014 — World Selector Visual Overhaul**
+- `#world-selector` copia completamente o layout da Hero Screen: `position: fixed`, `inset: 0`, `z-index: 1100`, 7 gradientes radiais + 2 shapes flutuantes (`::before`/`::after`) + `::before` com `url(assets/ui/menu-background.webp)` opacity 0.60 + sparkles
+- `.world-selector-content`: `max-width: 680px`, `background: linear-gradient(160deg, rgba(255,240,245,0.92)...)`, `backdrop-filter: blur(24px)`, `border: 3px solid rgba(255,255,255,0.8)`, `border-radius: 48px`, `box-shadow` com múltiplas camadas (glow rosa, profundidade, inset highlight)
+- Subtítulo: `color: #a07a8a`, `font-size: 0.95rem`, `font-weight: 500`, `margin: -8px 0 18px`
+- `.world-selector-grid`: `grid-template-columns: repeat(3, 1fr)`, `gap: 14px`, `margin-top: 4px`
+- Cards reformulados com `border-radius: 24px`, `padding: 16px`, `background: rgba(255,255,255,0.35)`, hover `translateY(-5px)` + glow colorido via `data-world`
+- Cada `data-world` recebe `border-color` específica: floresta `#66bb6a`, dinossauros `#ffb300`, galaxia `#b388ff`, oceanos `#64b5f6`, castelo `#ce93d8`, aleatorio `#e91e63`
+- `.world-card.disabled`: `opacity: 0.75`, `filter: none`, `cursor: not-allowed` — sem grayscale, mantém cor temática com leve transparência
+- `.world-card[data-world="aleatorio"]`: glow pulsante `random-glow` (3s infinite, roxo `#e91e63` → `#ce93d8` → `#b388ff`), hover acelera para 1.5s
+- `.back-button`: `background: linear-gradient(135deg, #e91e63, #ff8f00)`, `padding: 14px 36px`, `border-radius: 30px`, `box-shadow: 0 4px 0 #880e4f`, hover `translateY(-3px)`, active `translateY(2px)` com `box-shadow: 0 1px 0 #880e4f`
+- Responsivo ≤600px: content 500px, grid 2 columns, illustration 76×76, gap 12px; ≤400px: 340px, 2 columns, illustration 64×64, padding reduzido
+- Lara removida: `.world-card-lara`, `.world-card-header`, `.world-card-lara-img` deletados — personagem não aparece mais no seletor
+
+**UX-015 / ART-009 — World Illustrations**
+- `.world-card-illustration`: `width: 96px`, `height: 96px`, `display: flex`, `align-items: center`, `justify-content: center`, `position: relative`, `margin: 0 auto 4px`
+- `.world-card-img`: `position: absolute`, `width: 100%`, `height: 100%`, `object-fit: contain`, carrega `src="assets/world-icons/<world>.webp?v=0.12.0-preview"`
+- `.world-card-emoji`: `font-size: 3rem`, `line-height: 1` — emoji original movido do card para dentro do container de ilustração
+- `onerror="this.style.display='none'"` no `<img>` — quando asset existir, img carrega e oculta o emoji; quando não existir, img some e emoji aparece
+- 6 assets previstos: `floresta.webp`, `dinossauros.webp`, `galaxia.webp`, `oceanos.webp`, `castelo.webp`, `aleatorio.webp`
+- Cache-busting permanece `?v=0.12.0-preview` — asset pipeline sem alteração
+
+### Impacto Funcional
+
+- **Seletor de mundos com personalidade**: o seletor agora parece parte do ecossistema da Hero Screen — mesmo fundo, mesmo estilo glass, mesma atmosfera
+- **Cards com identidade**: cada mundo tem sua cor de borda característica, incluindo os bloqueados — que em vez de "cinza genérico" parecem mundos adormecidos aguardando liberação
+- **Aleatório em destaque**: o card "🎲 Mundo Aleatório" tem glow roxo pulsante, atraindo o olhar do jogador
+- **Botão premium**: "← Menu Principal" segue o mesmo padrão dos botões da Hero Screen (gradiente pink-dourado, sombra 3D)
+- **Ilustrações preparadas**: quando um `world-icons/<mundo>.webp` for criado, o img carrega e substitui o emoji automaticamente — sem alteração de código
+- **Fallback seguro**: se a ilustração não existir, o emoji permanece visível; se `menu-background.webp` não existir, gradientes mantêm a tela bonita
+- **Lara removida**: a personagem não aparece mais no seletor — foco total nos mundos
+- **Nenhuma regressão funcional**: Jogo Rápido, seleção de mundos, setup, gameplay — tudo idêntico
+
+### Lições Aprendidas
+
+- Copiar o layout visual da Hero Screen para o seletor de mundos criou consistência visual imediata — repetir os mesmos gradientes, shapes e sparkles gerou uma experiência coesa
+- A decisão de remover Lara do seletor foi acertada: a Hero Screen é o palco dela, e o seletor deve ser sobre os mundos
+- A infraestrutura de ilustrações com `onerror` é uma solução zero-código para futura substituição de emojis por assets — um dos padrões mais eficientes adotados
+- Mundos bloqueados sem grayscale foram um refinamento importante: o jogador vê que existem mundos futuros com identidade própria, não apenas "espaços vazios"
+- O glow pulsante do card aleatório precisou de ajuste fino (3s, roxo suave) para não competir com o glow principal do card glass
+- Manter a Regra de Ouro (zero alterações em engine, JS, gameplay) foi possível — todas as mudanças foram HTML + CSS + asset placeholder
+
+### Notas Técnicas
+
+- Nenhum arquivo de engine, world config ou game.js foi alterado
+- Cache-busting permanece `?v=0.12.0-preview` (já estava atualizado da sprint anterior)
+- O JS do seletor de mundos (`showWorldSelector`, card click handlers, etc.) não foi alterado — apenas HTML e CSS
+- O mesmo `menu-background.webp` da Hero Screen é reutilizado como background do seletor — zero duplicação de assets
+- As cores de identidade dos mundos seguem a mesma lógica de `data-world` que o CSS do tabuleiro usa — padrão consistente
+- O diretório `src/assets/world-icons/` segue a mesma estrutura de fallback que `worlds/` e `ui/`
+
 ## Sprint — Hero Screen Evolutiva — UX-013 (v0.12.0-preview)
 
 ### Objetivo
