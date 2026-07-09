@@ -18,7 +18,9 @@
 
 | Versão | Data | Status |
 |--------|------|--------|
-| **v0.16.0-preview** | Jul/2026 | ✅ **Ativo** — Visual da Galáxia Estelar (background + path) |
+| **v0.18.0-preview** | Jul/2026 | ✅ **Ativo** — Revisão e melhorias do sistema de perguntas |
+| v0.17.0-preview | Jul/2026 | ✅ Correção de cascata pós-desafio |
+| v0.16.0-preview | Jul/2026 | ✅ Concluído |
 | v0.15.0-preview | Jul/2026 | ✅ Concluído |
 | v0.14.0-preview | Jul/2026 | ✅ Concluído |
 | v0.13.0-preview | Jul/2026 | ✅ Concluído |
@@ -37,7 +39,19 @@
 
 ---
 
-## ✨ Funcionalidades Atuais (v0.16.0-preview)
+## ✨ Funcionalidades Atuais (v0.18.0-preview)
+
+### Sistema de Perguntas Temáticas — QST-001
+
+- **Banco expandido**: 128 perguntas em 9 categorias (Matemática, Português, Animais, Espaço, Natureza, Dinossauros, Lógica, Cores e Formas, Conhecimentos Gerais) — módulo separado em `src/data/questions.js`
+- **Perguntas temáticas por mundo**:
+  - 🌌 Galáxia Estelar → Espaço, Lógica, Conhecimentos Gerais
+  - 🌳 Floresta (principal + misteriosa) → Animais, Natureza, Cores e Formas, Lógica
+  - 🦕 Dinossauros (Vale + Caverna) → Dinossauros, Animais, Natureza, Matemática
+- **Sem repetição na mesma partida**: o algoritmo evita repetir perguntas até que todo o pool seja usado
+- **Fallback automático**: se o tema do mundo não tiver perguntas suficientes, usa o banco geral
+- **Painel de auditoria**: modo debug (`?debug=1`) com botão "📚 Mostrar" que lista todas as perguntas por categoria, com indicador de usadas, dificuldade e mundo atual
+- **Cascata corrigida**: acertar/errar desafio não dispara mais a casa destino
 
 ### Visual da Galáxia Estelar — ART-011
 

@@ -18,7 +18,19 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 
 ## Principais Funcionalidades
 
-### v0.16.0-preview (Atual) — Visual da Galáxia Estelar ✅
+### v0.18.0-preview (Atual) — Revisão do Sistema de Perguntas ✅
+
+- **Banco expandido para 128 perguntas**: 9 categorias (Matemática, Português, Animais, Espaço, Natureza, Dinossauros, Lógica, Cores e Formas, Conhecimentos Gerais), extraído para módulo próprio `src/data/questions.js`
+- **Seleção temática**: perguntas filtradas por mundo — Galáxia (Espaço/Lógica), Floresta (Animais/Natureza/Cores/Lógica), Dinossauros (Dinossauros/Animais/Natureza/Matemática)
+- **Auditoria em debug (`?debug=1`)**: botão "📚 Mostrar" exibe todas as perguntas com categoria, dificuldade, opções, resposta e indicador de usadas
+- **Cascata pós-desafio removida**: acertar ou errar não dispara mais o efeito da casa seguinte
+
+### v0.17.0-preview — Correção de Cascata Pós-Desafio ✅
+
+- **Bug corrigido**: jogador que acertava desafio na casa 4 da Floresta avançava para casa 5 e o efeito "volte 1" era indevidamente disparado
+- **Regra**: movimento por resposta de desafio nunca cascateia casas especiais
+
+### v0.16.0-preview — Visual da Galáxia Estelar ✅
 
 - **Infraestrutura visual da Galáxia**: pasta `src/assets/worlds/galaxia/` com suporte a `background.webp` e `path.webp`, seguindo padrão Floresta/Dinossauros
 - **Background no #track-container**: overlay semitransparente + `url(background.webp)` + gradiente fallback escuro

@@ -499,6 +499,22 @@
       </div>
       <div id="debug-log-container" class="debug-log-container"></div>
     </div>
+
+    <!-- Banco de Perguntas -->
+    <div class="debug-section">
+      <div class="debug-section-title debug-section-title-row">
+        <span>❓ Banco de Perguntas</span>
+        <button class="debug-btn debug-btn-sm" data-debug="toggle-questions">📚 Mostrar</button>
+      </div>
+      <div id="debug-questions" class="hidden">
+        <div class="debug-questions-summary">
+          <span>Total: <strong id="dq-total">-</strong></span>
+          <span>Usadas: <strong id="dq-usadas">-</strong></span>
+          <span>Mundo atual: <strong id="dq-mundo">-</strong></span>
+        </div>
+        <div id="dq-list"></div>
+      </div>
+    </div>
   </div>
 
   <script type="module" src="game.js?v=20260706"></script>

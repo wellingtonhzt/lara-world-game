@@ -4,7 +4,7 @@ import { florestaMisteriosa } from './worlds/floresta/config.js';
 import { cavernaDosFosseis } from './worlds/dinossauros/config.js';
 import { audioManager } from './audio/index.js';
 import { MeteoroGame } from './minigames/meteoro/MeteoroGame.js';
-import { bancoQuestoes, questoesDisponiveis } from './data/questions.js';
+import { bancoQuestoes, questoesDisponiveis, categoryIndices, worldCategoryMap, getIndicesPorMundo, getCategoriasPorMundo } from './data/questions.js';
 
 (function () {
   const TOTAL_CASAS = 20;
@@ -456,15 +456,23 @@ import { bancoQuestoes, questoesDisponiveis } from './data/questions.js';
   /* ── Special Cells ── */
 
   function sortearQuestao() {
+    const mundoId = gameState.activeSubworldId || selectedWorldId;
+    const eligibleIndices = getIndicesPorMundo(mundoId) ?? questoesDisponiveis.map((_, i) => i);
     const usadas = gameState.questoesUsadas;
-    const total = questoesDisponiveis.length;
-    if (usadas.size >= total) {
+    let pool = eligibleIndices.filter(i => !usadas.has(i));
+    if (pool.length === 0) {
       usadas.clear();
+      if (eligibleIndices.length < 5) {
+        pool = questoesDisponiveis.map((_, i) => i).filter(i => !usadas.has(i));
+        if (pool.length === 0) {
+          usadas.clear();
+          pool = questoesDisponiveis.map((_, i) => i);
+        }
+      } else {
+        pool = eligibleIndices;
+      }
     }
-    let idx;
-    do {
-      idx = Math.floor(Math.random() * total);
-    } while (usadas.has(idx));
+    const idx = pool[Math.floor(Math.random() * pool.length)];
     usadas.add(idx);
     return questoesDisponiveis[idx];
   }
@@ -1745,6 +1753,16 @@ import { bancoQuestoes, questoesDisponiveis } from './data/questions.js';
             debugLog.length = 0;
             renderLogs();
             break;
+          case "toggle-questions": {
+            const dq = document.getElementById('debug-questions');
+            const btn = document.querySelector('[data-debug="toggle-questions"]');
+            if (dq && btn) {
+              dq.classList.toggle('hidden');
+              btn.textContent = dq.classList.contains('hidden') ? '📚 Mostrar' : '📚 Ocultar';
+              if (!dq.classList.contains('hidden')) renderQuestions();
+            }
+            break;
+          }
         }
       } catch (err) {
         addLog(`\u274C Erro: ${err.message}`);
@@ -1754,9 +1772,44 @@ import { bancoQuestoes, questoesDisponiveis } from './data/questions.js';
       }
     });
 
+    function renderQuestions() {
+      const totalEl = document.getElementById('dq-total');
+      const usadasEl = document.getElementById('dq-usadas');
+      const mundoEl = document.getElementById('dq-mundo');
+      const listEl = document.getElementById('dq-list');
+      if (!listEl) return;
+      const total = questoesDisponiveis.length;
+      const usadas = gameState.questoesUsadas.size;
+      if (totalEl) totalEl.textContent = `${total}`;
+      if (usadasEl) usadasEl.textContent = `${usadas}/${total}`;
+      if (mundoEl) {
+        const mid = gameState.activeSubworldId || selectedWorldId;
+        const cats = getCategoriasPorMundo(mid);
+        mundoEl.textContent = cats.length > 0 ? `${mid} (${cats.join(', ')})` : `${mid || 'nenhum'} (geral)`;
+      }
+      const html = [];
+      for (const [cat, questoes] of Object.entries(bancoQuestoes)) {
+        html.push(`<div class="debug-dq-cat"><strong>${cat}</strong> (${questoes.length})</div>`);
+        questoes.forEach((q, i) => {
+          const realIdx = categoryIndices[cat][i];
+          const usada = usadas > 0 && gameState.questoesUsadas.has(realIdx);
+          const difLabel = q.dificuldade ? ` [${q.dificuldade}]` : '';
+          html.push(`<div class="debug-dq-item${usada ? ' debug-dq-usada' : ''}">`);
+          html.push(`<span class="debug-dq-idx">#${realIdx}</span>`);
+          html.push(`<span class="debug-dq-pergunta">${q.pergunta}</span>`);
+          html.push(`<span class="debug-dq-opcoes">${q.opcoes.join(', ')}</span>`);
+          html.push(`<span class="debug-dq-resposta">${q.resposta}${difLabel}</span>`);
+          html.push(`</div>`);
+        });
+      }
+      listEl.innerHTML = html.join('');
+    }
+
     renderState();
     renderLogs();
     renderEventResult();
+    renderQuestions();
+    setInterval(renderQuestions, 1000);
   }
 
   /* ── Gallery Token Initialization ── */

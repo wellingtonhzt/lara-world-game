@@ -1,5 +1,33 @@
 # Roadmap Lara World
 
+### v0.18.0-preview — Revisão e Melhorias do Sistema de Perguntas — QST-001 ✅
+
+**Banco de Perguntas:**
+- [x] Extrair bancoQuestoes para `src/data/questions.js`
+- [x] Expandir de 30 para 128 perguntas
+- [x] Adicionar 9 categorias (Matemática, Português, Animais, Espaço, Natureza, Dinossauros, Lógica, Cores e Formas, Conhecimentos Gerais)
+- [x] Campo `dificuldade` (facil, media, dificil)
+- [x] Mapeamento temático por mundo (worldCategoryMap)
+- [x] Funções `getIndicesPorMundo`, `getCategoriasPorMundo`, `categoryIndices`
+
+**Seleção Temática:**
+- [x] Floresta → Animais, Natureza, Cores e Formas, Lógica
+- [x] Dinossauros → Dinossauros, Animais, Natureza, Matemática
+- [x] Galáxia → Espaço, Lógica, Conhecimentos Gerais
+- [x] Fallback geral se pool temático for insuficiente
+
+**Algoritmo de Sorteio:**
+- [x] Filtrar por mundo atual (activeSubworldId || selectedWorldId)
+- [x] Evitar repetição na mesma partida (Set de índices)
+- [x] Reinício automático quando pool esgota
+- [x] Mesmo algoritmo para humano e bot
+
+**Debug:**
+- [x] Painel de auditoria com `?debug=1`
+- [x] Botão "📚 Mostrar/Ocultar" no debug
+- [x] Exibir total, usadas, mundo atual, categorias, dificuldade
+- [x] Indicador visual de perguntas já usadas
+
 ### v0.12.0-preview — Board Layout 2.0 + path.webp Infrastructure + Hero Screen + Seleção v2 + Avatares/Tokens
 
 **Board Layout 2.0:**

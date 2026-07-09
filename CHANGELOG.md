@@ -1,5 +1,31 @@
 # Changelog
 
+## [0.18.0-preview] - 2026-07-09
+
+### Revisão e Melhorias do Sistema de Perguntas — QST-001 (Parte 2)
+
+- **Expansão do banco de perguntas**: de 30 para 128 perguntas distribuídas em 9 categorias (Matemática, Português, Animais, Espaço, Natureza, Dinossauros, Lógica, Cores e Formas, Conhecimentos Gerais)
+- **Banco extraído para módulo próprio**: `src/data/questions.js` com `bancoQuestoes`, `questoesDisponiveis`, `categoryIndices`, `worldCategoryMap`, `getIndicesPorMundo`, `getCategoriasPorMundo`
+- **Campo `dificuldade` adicionado**: `"facil"`, `"media"` ou `"dificil"` em todas as 128 perguntas — compatível com versões anteriores (ignorado se ausente)
+- **Seleção temática por mundo**:
+  - Galáxia Estelar → Espaço, Lógica, Conhecimentos Gerais
+  - Floresta (principal + misteriosa) → Animais, Natureza, Cores e Formas, Lógica
+  - Dinossauros (Vale + Caverna) → Dinossauros, Animais, Natureza, Matemática
+  - Fallback geral se o pool temático acabar
+- **Algoritmo de sorteio (sortearQuestao)**: agora filtra por mundo, evita repetição na mesma partida, reinicia automaticamente quando o pool acaba, funciona igual para humano e bot
+- **Painel de auditoria**: nova seção "Banco de Perguntas" no debug (`?debug=1`) com total, usadas, categorias, dificuldade e mundo atual — botão `📚 Mostrar/Ocultar`
+- **Cascata pós-desafio corrigida**: acertar/errar desafio não dispara mais a casa destino (bug reportado na Floresta casa 4 → casa 5)
+- **Documentação**: README, CHANGELOG, docs atualizados com o novo sistema
+
+## [0.17.0-preview] - 2026-07-09
+
+### Correção de Cascata Pós-Desafio — HOTFIX
+
+- **Bug corrigido**: ao acertar um desafio na casa 4 da Floresta, o jogador avançava para casa 5 e o efeito "volte 1" da casa 5 era disparado indevidamente
+- **Arquivo**: `src/game.js` — removidas linhas 621-623 (cascade após acerto)
+- **Regra**: movimento causado por resposta de desafio NÃO cascateia casas especiais — vale para acerto e erro, humano e bot, todos os mundos
+- **Efeitos normais** (avance/volte automático) continuam cascateando
+
 ## [0.16.0-preview] - 2026-07-09
 
 ### Visual da Galáxia Estelar — ART-011

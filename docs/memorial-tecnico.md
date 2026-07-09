@@ -1,5 +1,134 @@
 # Memorial Técnico
 
+## Sprint — Revisão do Sistema de Perguntas — QST-001 (v0.18.0-preview)
+
+### Objetivo
+
+Revisar e melhorar o sistema de perguntas educativas do Lara World — expandir o banco, implementar seleção temática por mundo, criar painel de auditoria em debug e corrigir a cascata indevida pós-desafio, sem refatorar a engine principal nem alterar regras de movimento, dado, turnos, portais ou minigame.
+
+### Arquivos Criados
+
+| Arquivo | Descrição |
+|---------|-----------|
+| `src/data/questions.js` | Módulo do banco de perguntas — 128 perguntas, 9 categorias, `categoryIndices`, `worldCategoryMap`, `getIndicesPorMundo`, `getCategoriasPorMundo` |
+
+### Arquivos Alterados
+
+| Arquivo | Tipo de Alteração |
+|---------|-------------------|
+| `src/game.js` | **Modificado** — Import do novo módulo `./data/questions.js`. `sortearQuestao()` refatorado para filtrar por mundo temático, com fallback geral e reset automático. Removida a cascata pós-desafio (linhas 621-623). `setupDebugMode()` estendido com `renderQuestions()` e handler `toggle-questions` |
+| `src/style.css` | **Modificado** — Estilos `.debug-questions-summary`, `.debug-dq-cat`, `.debug-dq-item`, `.debug-dq-usada`, `.debug-dq-idx`, `.debug-dq-pergunta`, `.debug-dq-opcoes`, `.debug-dq-resposta` adicionados |
+| `src/index.html` | **Modificado** — Seção "Banco de Perguntas" adicionada no painel de debug, com botão `📚 Mostrar/Ocultar` |
+| `README.md` | **Modificado** — Versão v0.18.0, tabela de status, funcionalidades atuais |
+| `CHANGELOG.md` | **Modificado** — Entrada v0.18.0 e v0.17.0 adicionadas |
+| `docs/visao-geral.md` | **Modificado** — Sessão v0.18.0 e v0.17.0 adicionadas |
+| `docs/arquitetura.md` | **Modificado** — `src/data/` adicionado na árvore, seções de constantes e sorteio atualizadas |
+| `docs/regras-do-jogo.md` | **Modificado** — Sorteio temático por mundo documentado, contagem de perguntas atualizada |
+| `docs/roadmap.md` | **Modificado** — Sessão v0.18.0 com checklist QST-001 adicionada |
+| `docs/memorial-tecnico.md` | **Modificado** — Sprint QST-001 adicionada |
+
+### Decisões Técnicas
+
+| Decisão | Alternativas | Motivo |
+|---------|-------------|--------|
+| Manter `bancoQuestoes` como objeto de categorias + `questoesDisponiveis` como flat array | Migrar para JSON ou SQLite | Compatibilidade retroativa total — o formato `{ pergunta, opcoes, resposta }` não mudou. O campo opcional `dificuldade` é ignorado por funções que não o usam |
+| `categoryIndices` mapeia categoria → índices no flat pool | Adicionar `categoria` em cada pergunta | Evita modificar as 128 perguntas individuais. O mapeamento é computado uma vez na carga |
+| `worldCategoryMap` por ID de mundo (ex: `'floresta-encantada'`) | Tag `mundos` em cada pergunta | Agrupamento por categoria é mais simples e escalável. O mapeamento centralizado permite ajustes sem editar perguntas |
+| Fallback geral se pool temático < 5 itens | Sempre usar pool temático | Evita que um mundo com poucas perguntas temáticas fique preso em repetições |
+| `gameState.questoesUsadas` global (não por mundo) | Set separado por mundo | Como o jogador só está em um mundo por vez, o Set global é suficiente. Se mudar de mundo, as usadas anteriores não interferem (índices não se sobrepõem entre categorias diferentes) |
+| `renderQuestions()` com `setInterval(1000)` no debug | Apenas no toggle | A atualização periódica garante que o contador de usadas reflita o estado atual sem recarregar |
+
+### Estrutura do Banco
+
+```
+src/data/questions.js
+├── bancoQuestoes (objeto)
+│   ├── Matematica           (15 perguntas, facil/media)
+│   ├── Portugues            (17 perguntas, facil/media)
+│   ├── Animais              (17 perguntas, facil/media)
+│   ├── Espaco               (16 perguntas, facil/media)
+│   ├── Natureza             (15 perguntas, facil/media)
+│   ├── Dinossauros          (12 perguntas, facil/media)
+│   ├── Logica               (12 perguntas, facil)
+│   ├── CoresEFormas         (12 perguntas, facil/media)
+│   └── ConhecimentosGerais  (12 perguntas, facil/media)
+├── questoesDisponiveis (array flat, 128 itens)
+├── categoryIndices (objeto: categoria → indices[])
+├── worldCategoryMap (objeto: mundoId → categorias[])
+├── getIndicesPorMundo(mundoId) → indices[] | null
+└── getCategoriasPorMundo(mundoId) → string[]
+```
+
+### Mapeamento Temático
+
+| Mundo | Categorias | Total Disponível |
+|-------|-----------|-----------------|
+| Galáxia Estelar (`galaxia-estelar`) | Espaço, Lógica, Conhecimentos Gerais | 40 |
+| Floresta Encantada (`floresta-encantada`) + Floresta Misteriosa (`floresta-misteriosa`) | Animais, Natureza, Cores e Formas, Lógica | 56 |
+| Vale dos Dinossauros (`dinossauros`) + Caverna dos Fósseis (`caverna-dos-fosseis`) | Dinossauros, Animais, Natureza, Matemática | 59 |
+
+### Algoritmo Final (sortearQuestao)
+
+```
+1. Determinar mundo atual: gameState.activeSubworldId || selectedWorldId
+2. Obter índices elegíveis via getIndicesPorMundo(mundoId)
+   → se null, usar todos os índices (fallback geral)
+3. Filtrar índices não usados (gameState.questoesUsadas)
+4. Se pool vazio:
+   a. Limpar Set de usadas
+   b. Se pool temático < 5: usar fallback geral
+   c. Senão: recomeçar com pool temático completo
+5. Sortear índice aleatório do pool
+6. Marcar como usado
+7. Retornar questoesDisponiveis[índice]
+```
+
+### Como Acessar a Visualização no Debug
+
+1. Abrir o jogo com `?debug=1` na URL
+2. O painel de debug aparece no final da página
+3. Rolar até a seção "Banco de Perguntas"
+4. Clicar em "📚 Mostrar"
+5. A lista exibe: categoria, índice global, pergunta, opções, resposta e dificuldade
+6. Perguntas já usadas na partida aparecem tachadas com opacidade reduzida
+7. O cabeçalho mostra total, usadas e mundo atual com categorias temáticas
+
+### Como Adicionar Novas Perguntas
+
+1. Abrir `src/data/questions.js`
+2. Localizar a categoria desejada (ex: `Matematica: [ ... ]`)
+3. Adicionar novo objeto no array:
+   ```js
+   { pergunta: "Sua pergunta aqui?", opcoes: ["A", "B", "C"], resposta: "A", dificuldade: "facil" }
+   ```
+4. `opcoes` deve ter exatamente 3 strings
+5. `resposta` deve ser idêntica a uma das opções (comparação exata)
+6. `dificuldade` é opcional: `"facil"`, `"media"` ou `"dificil"`
+7. Para criar nova categoria, adicionar nova chave em `bancoQuestoes`:
+   ```js
+   NovaCategoria: [
+     { pergunta: "...", opcoes: ["A", "B", "C"], resposta: "A" },
+   ],
+   ```
+8. Para associar a categoria a um mundo, adicionar entrada em `worldCategoryMap`
+
+### Testes Realizados
+
+| Cenário | Resultado |
+|---------|-----------|
+| Floresta: casa 4 (desafio) → acerta → casa 5 ("volte 1") | Casa 5 NÃO é processada ✅ |
+| Floresta: casa N (desafio) → erra → casa N-1 | Casa N-1 NÃO é processada ✅ |
+| `avancar` normal (casa 3 "avance 2") → vai p/ casa 5 | Casa 5 continua cascateando ✅ |
+| `voltar` normal | Continua cascateando ✅ |
+| Galáxia: desafio sorteia de Espaço, Lógica, ConhecimentosGerais | Pool temático respeitado ✅ |
+| Floresta: desafio sorteia de Animais, Natureza, Cores e Formas, Lógica | Pool temático respeitado ✅ |
+| Dinossauros: desafio sorteia de Dinossauros, Animais, Natureza, Matemática | Pool temático respeitado ✅ |
+| Mundo sem mapeamento temático | Fallback para banco geral (128 perguntas) ✅ |
+| Todas as perguntas temáticas usadas | Reset automático do Set ✅ |
+| Bot: mesmo sortearQuestao() | Bot segue a mesma regra ✅ |
+| Debug `?debug=1`: seção "Banco de Perguntas" | Exibe total, usadas, categorias, mundo, dificuldade ✅ |
+| Regressão em portal, minigame, vitória | Código inalterado, sem regressão ✅ |
+
 ## Sprint — Visual da Galáxia Estelar — ART-011 (v0.16.0-preview)
 
 ### Objetivo

@@ -24,6 +24,8 @@ lara-world/
 │   ├── index.html       # Página principal
 │   ├── style.css        # Estilos do jogo
 │   ├── game.js          # Lógica do jogo (ES Module)
+│   ├── data/            # Dados estruturados do jogo
+│   │   └── questions.js # Banco de perguntas (128 perguntas, 9 categorias)
 │   ├── audio/           # Módulo de áudio
 │   │   ├── AudioManager.js    # Gerenciador central (Web Audio API)
 │   │   ├── sounds.js          # Catálogo de sons (chaves simbólicas)
@@ -193,8 +195,13 @@ constantes / configuração
   ├── casasEspeciais[]    → mapa de configuração do mundo principal (12 casas)
   ├── boardPositions{}    → coordenadas percentuais do mundo principal (fallback se board.positions não existir)
   ├── icons[]             → emoji por casa no principal
-  ├── bancoQuestoes{}     → banco categorizado {categoria: [{pergunta, opcoes[], resposta}]}
-  └── questoesDisponiveis[] → flat pool construído de bancoQuestoes
+  └── Importado de `./data/questions.js`:
+       ├── bancoQuestoes{}         → banco categorizado (9 categorias, 128 perguntas)
+       ├── questoesDisponiveis[]   → flat pool do banco
+       ├── categoryIndices{}       → categoria → índices no flat pool
+       ├── worldCategoryMap{}      → mundo → categorias temáticas
+       ├── getIndicesPorMundo(id)  → retorna índices temáticos ou null (fallback geral)
+       └── getCategoriasPorMundo(id) → retorna categorias do mundo
 
 Getters World-Aware
   ├── getTotalCasas()      → currentWorldConfig.board.totalCells ou TOTAL_CASAS (fallback)
@@ -250,10 +257,13 @@ Casas Especiais
        ├── "move" → executado via delta/target
        └── "vitoria" (casa 20) → handleVictory()
 
-Sorteio de Perguntas
-  ├── sortearQuestao() → sorteia índice não usado de questoesDisponiveis[]
-  ├── gameState.questoesUsadas (Set) → rastreia índices já sorteados
-  └── Se todas usadas → limpa o Set e recomeça
+Sorteio de Perguntas (temático por mundo)
+  ├── sortearQuestao() → filtra por mundo (activeSubworldId || selectedWorldId)
+  ├── Pool temático via getIndicesPorMundo() → se <5 itens, fallback geral
+  ├── gameState.questoesUsadas (Set) → rastreia índices já sorteados (global)
+  ├── Remove usados do pool → se pool vazio, limpa Set e recomeça
+  ├── Bot (60% acerto) e humano usam o mesmo sortearQuestao()
+  └── Mundo sem mapeamento → usa banco geral (128 perguntas)
 
 Main Menu
   ├── showMainMenu() → exibe menu inicial, esconde tabuleiro/painel/victory

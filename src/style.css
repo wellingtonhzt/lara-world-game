@@ -3212,3 +3212,35 @@ body[data-world="galaxia-estelar"] .path-line {
 .debug-log-item { border-bottom: 1px solid rgba(0, 255, 0, 0.08); padding: 1px 0; }
 
 .debug-separator { border: none; border-top: 1px solid #0f0; margin: 4px 0; opacity: 0.4; }
+
+.debug-questions-summary {
+  display: flex;
+  gap: 12px;
+  font-size: 0.65rem;
+  margin-bottom: 4px;
+  padding: 3px 4px;
+  background: rgba(0, 255, 0, 0.06);
+  border-radius: 3px;
+}
+.debug-dq-cat {
+  font-size: 0.7rem;
+  margin: 4px 0 2px;
+  padding: 2px 4px;
+  background: rgba(0, 255, 0, 0.1);
+  border-radius: 2px;
+}
+.debug-dq-item {
+  display: flex;
+  gap: 6px;
+  font-size: 0.6rem;
+  padding: 1px 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+.debug-dq-item.debug-dq-usada {
+  opacity: 0.45;
+  text-decoration: line-through;
+}
+.debug-dq-idx { color: #888; min-width: 28px; }
+.debug-dq-pergunta { flex: 1; }
+.debug-dq-opcoes { color: #8af; min-width: 120px; }
+.debug-dq-resposta { color: #0f0; min-width: 60px; }

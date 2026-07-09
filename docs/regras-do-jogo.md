@@ -81,7 +81,7 @@ A escolha do modo determina quais campos são exibidos no modal e como o Jogador
 | Casa | Efeito | Descrição |
 |------|--------|-----------|
 | 3 | ⭐ Avance 2 casas | O personagem anda 2 casas adicionais. Se cair em outra casa especial, o efeito cascateia. |
-| 4 | ❓ Desafio educativo | Abre um modal com pergunta sorteada do Banco de Questões (6 categorias, 30 perguntas). A pergunta é aleatória e não se repete na mesma partida. Acertar: avança 1 casa. Errar: volta 1 casa. O movimento não cascateia. |
+| 4 | ❓ Desafio educativo | Abre um modal com pergunta sorteada do Banco de Questões (9 categorias, 128 perguntas). A pergunta é temática por mundo e não se repete na mesma partida. Acertar: avança 1 casa. Errar: volta 1 casa. O movimento não cascateia. |
 | 5 | 🐢 Volte 1 casa | O personagem volta 1 casa. Se estiver na casa 1, vai para a posição 0 (fora do tabuleiro). |
 | 7 | ❓ Desafio educativo | Mesmo efeito da casa 4. |
 | 8 | 🎯 Jogue novamente | O jogador ganha uma jogada extra imediatamente. O turno não alterna. |
@@ -121,7 +121,13 @@ A escolha do modo determina quais campos são exibidos no modal e como o Jogador
 - **Efeito cascata**: ao cair na casa 3 (avance 2), se a nova casa também for especial, o efeito é aplicado novamente. Isso pode encadear múltiplos eventos.
 - **Exceção — desafios não cascateiam**: ao acertar ou errar um desafio (casas 4, 7, 12, 16, 18 e floresta 3, 7), o movimento de +1 ou -1 ocorre sem cascatear para outras casas especiais, evitando loops infinitos.
 - **Exceção — saída da floresta não cascateia**: o bônus de +2 (atalho) ou +3 (saída) ao retornar do Mundo da Floresta não ativa casas especiais.
-- **Sorteio de perguntas**: a cada desafio, uma pergunta é sorteada aleatoriamente do Banco de Questões. O jogo evita repetir a mesma pergunta durante a mesma partida. Quando todas as 30 perguntas forem utilizadas, o ciclo recomeça.
+- **Sorteio de perguntas**: a cada desafio, uma pergunta é sorteada do Banco de Questões (128 perguntas, 9 categorias). O sorteio é temático por mundo:
+  - 🌌 **Galáxia Estelar**: prioriza Espaço, Lógica e Conhecimentos Gerais
+  - 🌳 **Floresta** (principal + misteriosa): prioriza Animais, Natureza, Cores e Formas, Lógica
+  - 🦕 **Dinossauros** (Vale + Caverna): prioriza Dinossauros, Animais, Natureza, Matemática
+  - Se o pool temático acabar, usa o banco geral como fallback
+- O jogo evita repetir a mesma pergunta durante a mesma partida (controle via `gameState.questoesUsadas`). Quando todas as perguntas do pool temático forem utilizadas, o ciclo recomeça.
+- O bot usa o mesmo algoritmo de sorteio (60% de acerto).
 - **Casa 5 na posição 1**: se estiver na casa 1 e cair na casa 5, o personagem volta para a posição 0 e fica fora do tabuleiro. Na próxima jogada, avançará para a casa 1 ou além.
 - **Após a vitória**: o jogo é encerrado, o botão "Jogar Dado" é desabilitado e um overlay de vitória com confetes animados, fogos serpentina e troféu é exibido. Duas opções estão disponíveis: **"🔁 Jogar Novamente"** (reinicia no mesmo modo) ou **"🏠 Voltar ao Menu"** (retorna à tela inicial).
 - **Reinício**: o botão "Reiniciar" exibe o modal de configuração novamente, permitindo que os jogadores alterem seus nomes e sprites antes de iniciar uma nova partida.
