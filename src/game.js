@@ -2,6 +2,7 @@ import { get, getDefault } from './engine/world-registry.js';
 import { loadAllWorlds } from './worlds/loader.js';
 import { florestaMisteriosa } from './worlds/floresta/config.js';
 import { cavernaDosFosseis } from './worlds/dinossauros/config.js';
+import { audioManager } from './audio/index.js';
 
 (function () {
   const TOTAL_CASAS = 20;
@@ -442,6 +443,7 @@ import { cavernaDosFosseis } from './worlds/dinossauros/config.js';
         el.classList.remove("animar-lara-pos");
         void el.offsetWidth;
         el.classList.add("animar-lara-pos");
+        audioManager.play('playerMove');
       }
       await delay(180);
     }
@@ -520,6 +522,7 @@ import { cavernaDosFosseis } from './worlds/dinossauros/config.js';
     switch (info.tipo) {
       case "avancar": {
         const destino = Math.min(posicao + info.valor, getTotalCasas());
+        audioManager.play('specialAdvance');
         addHistory(`\u2B50 ${info.descricao} \u2192 casa ${destino}`, "especial");
         await animatePlayerMovement(posicao, destino);
         player.posicao = destino;
@@ -534,6 +537,7 @@ import { cavernaDosFosseis } from './worlds/dinossauros/config.js';
       }
       case "voltar": {
         const destino = Math.max(posicao - info.valor, 0);
+        audioManager.play('specialBack');
         addHistory(`\uD83D\uDC22 ${info.descricao} \u2192 casa ${destino}`, "especial");
         if (destino > 0) {
           await animatePlayerMovement(posicao, destino);
@@ -550,6 +554,7 @@ import { cavernaDosFosseis } from './worlds/dinossauros/config.js';
         return true;
       }
       case "portal": {
+        audioManager.play('portal');
         const entrou = await resolvePortal();
         if (entrou) {
           const portalCfg = getPortalConfigForCell(player.posicao);
@@ -640,9 +645,11 @@ import { cavernaDosFosseis } from './worlds/dinossauros/config.js';
       case "desafio": {
         const desafio = sortearQuestao();
         if (!desafio) return false;
+        audioManager.play('challengeOpen');
         addHistory(`\u2753 ${player.name} caiu em um desafio!`, "especial");
         const acertou = await resolveChallenge(desafio);
         if (acertou) {
+          audioManager.play('correctAnswer');
           const destino = Math.min(posicao + 1, getTotalCasas());
           if (destino > posicao) {
             await animatePlayerMovement(posicao, destino);
@@ -658,6 +665,7 @@ import { cavernaDosFosseis } from './worlds/dinossauros/config.js';
             return await processSpecialCell(player.posicao, _cascadeVisited);
           }
         } else {
+          audioManager.play('wrongAnswer');
           const destino = Math.max(posicao - 1, 0);
           if (destino > 0 && destino < posicao) {
             await animatePlayerMovement(posicao, destino);
@@ -680,6 +688,7 @@ import { cavernaDosFosseis } from './worlds/dinossauros/config.js';
   /* ── Victory ── */
 
   async function handleVictory() {
+    audioManager.play('victory');
     const player = getCurrentPlayer();
     const el = getPlayerElement(player);
     const total = getTotalCasas();
@@ -759,7 +768,9 @@ import { cavernaDosFosseis } from './worlds/dinossauros/config.js';
     }
 
     const resultado = Math.floor(Math.random() * 6) + 1;
+    audioManager.play('diceRoll');
     await animateDice(resultado);
+    audioManager.play('diceResult');
 
     const from = player.posicao;
     const target = Math.min(from + resultado, getTotalCasas());
@@ -910,6 +921,7 @@ import { cavernaDosFosseis } from './worlds/dinossauros/config.js';
 
   function setupMenuEvents() {
     document.getElementById("btn-rapido").addEventListener("click", () => {
+      audioManager.play('buttonClick');
       modoJogo = "rapido";
       hideMainMenu();
       showWorldSelector();
@@ -965,11 +977,13 @@ import { cavernaDosFosseis } from './worlds/dinossauros/config.js';
   function setupWorldSelectorEvents() {
     document.querySelectorAll(".world-card:not(:disabled)").forEach(card => {
       card.addEventListener("click", function () {
+        audioManager.play('buttonClick');
         selectWorld(this.dataset.world);
       });
     });
 
     document.getElementById("world-back-btn").addEventListener("click", () => {
+      audioManager.play('buttonClick');
       hideWorldSelector();
       showMainMenu();
     });
@@ -1105,7 +1119,7 @@ import { cavernaDosFosseis } from './worlds/dinossauros/config.js';
       if (p1Def) { p1Def.classList.add("selected"); p1Emoji = "🧒"; updateAvatarPreview(0, "🧒", "Lara", "lara"); }
       if (p2Def) { p2Def.classList.add("selected"); p2Emoji = "🧑"; updateAvatarPreview(1, "🧑", "Amigo", "leo"); }
 
-      startBtn.addEventListener("click", prepareAndDraw);
+      startBtn.addEventListener("click", () => { audioManager.play('buttonClick'); prepareAndDraw(); });
       updateModeUI();
     }
 
@@ -1184,10 +1198,14 @@ import { cavernaDosFosseis } from './worlds/dinossauros/config.js';
     return new Promise(resolve => {
       const btn = document.getElementById(`draw-roll-btn-${playerIndex}`);
       btn.onclick = function handler() {
+        audioManager.play('diceRoll');
         btn.disabled = true;
         btn.onclick = null;
         const value = Math.floor(Math.random() * 6) + 1;
-        animateDrawDice(playerIndex, value).then(() => resolve(value));
+        animateDrawDice(playerIndex, value).then(() => {
+          audioManager.play('diceResult');
+          resolve(value);
+        });
       };
     });
   }
@@ -1686,11 +1704,20 @@ import { cavernaDosFosseis } from './worlds/dinossauros/config.js';
   function init() {
     initGalleryTokens();
     enableWorldCard('dinossauros');
+    audioManager.init();
+
+    document.addEventListener('click', function firstInteraction() {
+      document.removeEventListener('click', firstInteraction);
+      if (audioManager._ctx && audioManager._ctx.state === 'suspended') {
+        audioManager._ctx.resume();
+      }
+    }, { once: true });
 
     elements.rollBtn.addEventListener("click", jogarDado);
     elements.resetBtn.addEventListener("click", reiniciarJogo);
     if (elements.victoryPlayAgainBtn) {
       elements.victoryPlayAgainBtn.addEventListener("click", () => {
+        audioManager.play('buttonClick');
         if (elements.victoryOverlay) {
           elements.victoryOverlay.classList.add("hidden");
         }
@@ -1704,6 +1731,7 @@ import { cavernaDosFosseis } from './worlds/dinossauros/config.js';
     }
     if (elements.victoryMainMenuBtn) {
       elements.victoryMainMenuBtn.addEventListener("click", () => {
+        audioManager.play('buttonClick');
         if (elements.victoryOverlay) {
           elements.victoryOverlay.classList.add("hidden");
         }
