@@ -618,9 +618,6 @@ import { bancoQuestoes, questoesDisponiveis } from './data/questions.js';
             await handleVictory();
             return false;
           }
-          if (getCasasEspeciais()[player.posicao]) {
-            return await processSpecialCell(player.posicao, _cascadeVisited);
-          }
         } else {
           audioManager.play('wrongAnswer');
           const destino = Math.max(posicao - 1, 0);
