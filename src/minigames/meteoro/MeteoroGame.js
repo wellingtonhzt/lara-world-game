@@ -20,6 +20,8 @@ export class MeteoroGame {
     this.keys = { left: false, right: false, up: false, down: false };
     this.touchX = null;
     this.touchY = null;
+    this.isMobile = window.innerWidth < 768;
+    this.shipBottomMargin = this.isMobile ? 56 : 24;
 
     this.invulnerableUntil = 0;
     this.flashTimer = 0;
@@ -135,8 +137,12 @@ export class MeteoroGame {
       this.canvas.style.height = this.height + 'px';
       this.ctx = this.canvas.getContext('2d');
     }
-    this.ship.x = this.width / 2 - this.ship.width / 2;
-    this.ship.y = this.height - this.ship.height - 16;
+    const shipW = Math.max(28, Math.round(this.width * 0.068));
+    const shipH = Math.round(shipW * 0.8);
+    this.ship.width = shipW;
+    this.ship.height = shipH;
+    this.ship.x = this.width / 2 - shipW / 2;
+    this.ship.y = this.height - shipH - this.shipBottomMargin;
   }
 
   _initStars() {
@@ -153,8 +159,10 @@ export class MeteoroGame {
   }
 
   _spawnMeteoro() {
-    const size = Math.random() * 18 + 12;
-    const speed = Math.random() * 1.8 + 1.2;
+    const baseSize = Math.max(8, this.width * 0.025);
+    const size = Math.random() * baseSize * 1.5 + baseSize;
+    const baseSpeed = (Math.random() * 1.8 + 1.2) * (this.isMobile ? 0.82 : 1.0);
+    const speed = baseSpeed * (400 / Math.max(this.height, 300));
     this.meteoros.push({
       x: Math.random() * (this.width - size * 2) + size,
       y: -size,
@@ -233,7 +241,7 @@ export class MeteoroGame {
       return;
     }
 
-    const shipSpeed = 260;
+    const shipSpeed = 260 * (this.isMobile ? 1.15 : 1.0) * (this.width / 600);
     const halfW = this.width / 2;
     const halfH = this.height / 2;
 
@@ -405,23 +413,25 @@ export class MeteoroGame {
     ctx.restore();
     ctx.globalAlpha = 1;
 
+    const hudSize = Math.max(12, Math.round(this.width * 0.032));
+    const hudY = Math.max(18, Math.round(this.height * 0.05));
     ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 18px sans-serif';
+    ctx.font = `bold ${hudSize}px sans-serif`;
     ctx.textAlign = 'left';
-    ctx.fillText('\u2764\uFE0F '.repeat(Math.max(0, this.lives)), 14, 30);
+    ctx.fillText('\u2764\uFE0F '.repeat(Math.max(0, this.lives)), Math.max(8, this.width * 0.025), hudY);
 
     ctx.textAlign = 'right';
     const timeColor = this.timeLeft < 5 ? '#ff4444' : '#ffffff';
     ctx.fillStyle = timeColor;
-    ctx.font = 'bold 22px monospace';
-    ctx.fillText(Math.ceil(this.timeLeft) + 's', this.width - 14, 30);
+    ctx.font = `bold ${Math.round(hudSize * 1.2)}px monospace`;
+    ctx.fillText(Math.ceil(this.timeLeft) + 's', this.width - Math.max(8, this.width * 0.025), hudY);
 
     if (!isTerminal && this.lifeLostTextTimer > 0) {
       this.lifeLostTextTimer -= 16;
       ctx.textAlign = 'center';
       ctx.fillStyle = '#ff4444';
-      ctx.font = 'bold 28px sans-serif';
-      ctx.fillText(this.lifeLostText, this.width / 2, this.height / 2 - 20);
+      ctx.font = `bold ${Math.round(hudSize * 1.8)}px sans-serif`;
+      ctx.fillText(this.lifeLostText, this.width / 2, this.height / 2 - this.height * 0.04);
     }
   }
 

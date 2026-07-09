@@ -2786,6 +2786,7 @@ body[data-world="galaxia-estelar"] .path-line {
   font-size: 1.6rem;
   color: #b388ff;
   text-shadow: 0 0 20px rgba(179, 136, 255, 0.3);
+  margin: 0;
 }
 
 .minigame-header p {
@@ -2805,6 +2806,92 @@ body[data-world="galaxia-estelar"] .path-line {
   overflow: hidden;
   border: 1px solid rgba(179, 136, 255, 0.15);
   position: relative;
+}
+
+/* ── Mobile Responsive ── */
+@media (max-width: 768px) {
+  .minigame-overlay {
+    padding: 0;
+    align-items: stretch;
+  }
+  .minigame-content {
+    max-width: 100%;
+    padding: 10px;
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+  }
+  #minigame-phase-play {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+  .minigame-header {
+    margin-bottom: 6px;
+    flex-shrink: 0;
+  }
+  .minigame-header h2 {
+    font-size: 1.1rem;
+  }
+  .minigame-header p {
+    font-size: 0.75rem;
+    margin-top: 2px;
+  }
+  .minigame-container {
+    aspect-ratio: auto;
+    flex: 1;
+    min-height: 0;
+    border-radius: 12px;
+  }
+  .minigame-result-card {
+    border-radius: 12px;
+  }
+  .minigame-card-content {
+    padding: 20px 24px;
+    max-width: 300px;
+  }
+  .minigame-card-icon {
+    font-size: 2.6rem;
+  }
+  .minigame-card-title {
+    font-size: 1.2rem;
+  }
+  .minigame-card-desc {
+    font-size: 0.85rem;
+  }
+  .minigame-bot-bar {
+    flex-shrink: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .minigame-content {
+    padding: 6px;
+  }
+  .minigame-header {
+    margin-bottom: 4px;
+  }
+  .minigame-header h2 {
+    font-size: 0.95rem;
+  }
+  .minigame-header p {
+    font-size: 0.65rem;
+    display: none;
+  }
+  .minigame-card-content {
+    padding: 14px 16px;
+    max-width: 260px;
+  }
+  .minigame-card-icon {
+    font-size: 2.2rem;
+  }
+  .minigame-card-title {
+    font-size: 1rem;
+  }
 }
 
 .meteoro-canvas {
