@@ -4,6 +4,7 @@ import { florestaMisteriosa } from './worlds/floresta/config.js';
 import { cavernaDosFosseis } from './worlds/dinossauros/config.js';
 import { audioManager } from './audio/index.js';
 import { MeteoroGame } from './minigames/meteoro/MeteoroGame.js';
+import { bancoQuestoes, questoesDisponiveis } from './data/questions.js';
 
 (function () {
   const TOTAL_CASAS = 20;
@@ -133,53 +134,6 @@ import { MeteoroGame } from './minigames/meteoro/MeteoroGame.js';
     "🌻", "🐰", "🍬", "🦄", "🎪",
     "🐼", "🍉", "🐶", "🎠", "👑",
   ];
-
-  const bancoQuestoes = {
-    Matematica: [
-      { pergunta: "Quanto é 2 + 2?", opcoes: ["3", "4", "5"], resposta: "4" },
-      { pergunta: "Quanto é 5 - 3?", opcoes: ["1", "2", "3"], resposta: "2" },
-      { pergunta: "Quanto é 3 + 4?", opcoes: ["6", "7", "8"], resposta: "7" },
-      { pergunta: "Quanto é 10 - 6?", opcoes: ["3", "4", "5"], resposta: "4" },
-      { pergunta: "Quanto é 2 × 3?", opcoes: ["5", "6", "7"], resposta: "6" },
-    ],
-    Portugues: [
-      { pergunta: "Qual é a primeira letra do alfabeto?", opcoes: ["A", "B", "C"], resposta: "A" },
-      { pergunta: "Quantas vogais existem?", opcoes: ["3", "5", "7"], resposta: "5" },
-      { pergunta: "Qual palavra está no plural?", opcoes: ["Gato", "Gatos", "Gatinho"], resposta: "Gatos" },
-      { pergunta: "Complete: 'O ___ comeu a maçã.'", opcoes: ["menino", "menina", "meninos"], resposta: "menino" },
-      { pergunta: "Qual letra inicia a palavra 'Bola'?", opcoes: ["A", "B", "C"], resposta: "B" },
-    ],
-    Animais: [
-      { pergunta: "Qual animal faz 'miau'?", opcoes: ["Cachorro", "Gato", "Pato"], resposta: "Gato" },
-      { pergunta: "Qual animal tem listras pretas e laranja?", opcoes: ["Leão", "Tigre", "Zebra"], resposta: "Tigre" },
-      { pergunta: "Qual animal vive na água?", opcoes: ["Gato", "Peixe", "Pássaro"], resposta: "Peixe" },
-      { pergunta: "Qual animal voa?", opcoes: ["Cachorro", "Peixe", "Pássaro"], resposta: "Pássaro" },
-      { pergunta: "Qual animal late?", opcoes: ["Cachorro", "Gato", "Pato"], resposta: "Cachorro" },
-    ],
-    Espaco: [
-      { pergunta: "Qual planeta é conhecido como planeta vermelho?", opcoes: ["Marte", "Terra", "Júpiter"], resposta: "Marte" },
-      { pergunta: "O que é o Sol?", opcoes: ["Um planeta", "Uma estrela", "Uma lua"], resposta: "Uma estrela" },
-      { pergunta: "Qual é o maior planeta do sistema solar?", opcoes: ["Marte", "Saturno", "Júpiter"], resposta: "Júpiter" },
-      { pergunta: "O que a Lua faz ao redor da Terra?", opcoes: ["Gira", "Para", "Explode"], resposta: "Gira" },
-      { pergunta: "Quantos planetas existem no sistema solar?", opcoes: ["7", "8", "9"], resposta: "8" },
-    ],
-    Natureza: [
-      { pergunta: "Qual cor mistura azul e amarelo?", opcoes: ["Verde", "Roxo", "Laranja"], resposta: "Verde" },
-      { pergunta: "O que as plantas precisam para crescer?", opcoes: ["Sombra", "Luz do sol", "Gelo"], resposta: "Luz do sol" },
-      { pergunta: "Qual estação vem depois do inverno?", opcoes: ["Verão", "Primavera", "Outono"], resposta: "Primavera" },
-      { pergunta: "Onde vivem os peixes?", opcoes: ["No céu", "Na água", "Na terra"], resposta: "Na água" },
-      { pergunta: "Qual é o maior animal do mundo?", opcoes: ["Elefante", "Baleia", "Girafa"], resposta: "Baleia" },
-    ],
-    Dinossauros: [
-      { pergunta: "Qual dinossauro é conhecido como 'rei dos dinossauros'?", opcoes: ["Triceratops", "T-Rex", "Estegossauro"], resposta: "T-Rex" },
-      { pergunta: "Qual dinossauro tem placas nas costas?", opcoes: ["T-Rex", "Estegossauro", "Pterodáctilo"], resposta: "Estegossauro" },
-      { pergunta: "Qual dinossauro tem três chifres?", opcoes: ["Triceratops", "T-Rex", "Estegossauro"], resposta: "Triceratops" },
-      { pergunta: "Como os dinossauros desapareceram?", opcoes: ["Meteorito", "Frio", "Fome"], resposta: "Meteorito" },
-      { pergunta: "Qual dinossauro tem pescoço muito comprido?", opcoes: ["T-Rex", "Braquiossauro", "Triceratops"], resposta: "Braquiossauro" },
-    ],
-  };
-
-  const questoesDisponiveis = Object.values(bancoQuestoes).flat();
 
   const boardPositions = {
     1:  { x: 10, y: 10 },
