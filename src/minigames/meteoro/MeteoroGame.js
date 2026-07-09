@@ -20,7 +20,9 @@ export class MeteoroGame {
     this.keys = { left: false, right: false, up: false, down: false };
     this.touchX = null;
     this.touchY = null;
+    this.touchActive = false;
     this.isMobile = window.innerWidth < 768;
+    this.debugMode = /[?&]debug=1/.test(location.search);
     this.shipBottomMargin = this.isMobile ? 56 : 24;
 
     this.invulnerableUntil = 0;
@@ -34,9 +36,9 @@ export class MeteoroGame {
     this._onTouchStart = this._onTouchStart.bind(this);
     this._onTouchMove = this._onTouchMove.bind(this);
     this._onTouchEnd = this._onTouchEnd.bind(this);
-    this._onMouseDown = this._onMouseDown.bind(this);
-    this._onMouseMove = this._onMouseMove.bind(this);
-    this._onMouseUp = this._onMouseUp.bind(this);
+    this._onPointerDown = this._onPointerDown.bind(this);
+    this._onPointerMove = this._onPointerMove.bind(this);
+    this._onPointerUp = this._onPointerUp.bind(this);
     this._loop = this._loop.bind(this);
   }
 
@@ -62,12 +64,12 @@ export class MeteoroGame {
 
     document.addEventListener('keydown', this._onKeyDown);
     document.addEventListener('keyup', this._onKeyUp);
-    this.canvas.addEventListener('touchstart', this._onTouchStart, { passive: false });
-    this.canvas.addEventListener('touchend', this._onTouchEnd, { passive: false });
-    this.canvas.addEventListener('touchmove', this._onTouchMove, { passive: false });
-    this.canvas.addEventListener('mousedown', this._onMouseDown);
-    this.canvas.addEventListener('mouseup', this._onMouseUp);
-    this.canvas.addEventListener('mousemove', this._onMouseMove);
+    document.addEventListener('touchstart', this._onTouchStart, { passive: false });
+    document.addEventListener('touchend', this._onTouchEnd, { passive: false });
+    document.addEventListener('touchmove', this._onTouchMove, { passive: false });
+    document.addEventListener('pointerdown', this._onPointerDown);
+    document.addEventListener('pointermove', this._onPointerMove);
+    document.addEventListener('pointerup', this._onPointerUp);
 
     this._loop(performance.now());
   }
@@ -81,14 +83,12 @@ export class MeteoroGame {
     }
     document.removeEventListener('keydown', this._onKeyDown);
     document.removeEventListener('keyup', this._onKeyUp);
-    if (this.canvas) {
-      this.canvas.removeEventListener('touchstart', this._onTouchStart);
-      this.canvas.removeEventListener('touchend', this._onTouchEnd);
-      this.canvas.removeEventListener('touchmove', this._onTouchMove);
-      this.canvas.removeEventListener('mousedown', this._onMouseDown);
-      this.canvas.removeEventListener('mouseup', this._onMouseUp);
-      this.canvas.removeEventListener('mousemove', this._onMouseMove);
-    }
+    document.removeEventListener('touchstart', this._onTouchStart);
+    document.removeEventListener('touchend', this._onTouchEnd);
+    document.removeEventListener('touchmove', this._onTouchMove);
+    document.removeEventListener('pointerdown', this._onPointerDown);
+    document.removeEventListener('pointermove', this._onPointerMove);
+    document.removeEventListener('pointerup', this._onPointerUp);
     if (this.canvas && this.canvas.parentNode) {
       this.canvas.parentNode.removeChild(this.canvas);
     }
@@ -111,14 +111,12 @@ export class MeteoroGame {
   _cleanup() {
     document.removeEventListener('keydown', this._onKeyDown);
     document.removeEventListener('keyup', this._onKeyUp);
-    if (this.canvas) {
-      this.canvas.removeEventListener('touchstart', this._onTouchStart);
-      this.canvas.removeEventListener('touchend', this._onTouchEnd);
-      this.canvas.removeEventListener('touchmove', this._onTouchMove);
-      this.canvas.removeEventListener('mousedown', this._onMouseDown);
-      this.canvas.removeEventListener('mouseup', this._onMouseUp);
-      this.canvas.removeEventListener('mousemove', this._onMouseMove);
-    }
+    document.removeEventListener('touchstart', this._onTouchStart);
+    document.removeEventListener('touchend', this._onTouchEnd);
+    document.removeEventListener('touchmove', this._onTouchMove);
+    document.removeEventListener('pointerdown', this._onPointerDown);
+    document.removeEventListener('pointermove', this._onPointerMove);
+    document.removeEventListener('pointerup', this._onPointerUp);
     if (this.canvas && this.canvas.parentNode) {
       this.canvas.parentNode.removeChild(this.canvas);
     }
@@ -137,7 +135,9 @@ export class MeteoroGame {
       this.canvas.style.height = this.height + 'px';
       this.ctx = this.canvas.getContext('2d');
     }
-    const shipW = Math.max(28, Math.round(this.width * 0.068));
+    const shipW = this.isMobile
+      ? Math.round(Math.min(this.width * 0.18, 80))
+      : Math.max(28, Math.round(this.width * 0.068));
     const shipH = Math.round(shipW * 0.8);
     this.ship.width = shipW;
     this.ship.height = shipH;
@@ -191,45 +191,59 @@ export class MeteoroGame {
     }
   }
 
-  _onTouchStart(e) {
-    e.preventDefault();
-    const touch = e.touches[0];
+  _posFromEvent(e) {
     const rect = this.canvas.getBoundingClientRect();
-    this.touchX = touch.clientX - rect.left;
-    this.touchY = touch.clientY - rect.top;
+    return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+  }
+
+  _onTouchStart(e) {
+    if (!this.canvas) return;
+    e.preventDefault();
+    const t = this._posFromEvent(e.touches[0]);
+    this.touchX = t.x;
+    this.touchY = t.y;
+    this.touchActive = true;
   }
 
   _onTouchMove(e) {
+    if (!this.canvas || !this.touchActive) return;
     e.preventDefault();
-    const touch = e.touches[0];
-    const rect = this.canvas.getBoundingClientRect();
-    this.touchX = touch.clientX - rect.left;
-    this.touchY = touch.clientY - rect.top;
+    const t = this._posFromEvent(e.touches[0]);
+    this.touchX = t.x;
+    this.touchY = t.y;
   }
 
   _onTouchEnd(e) {
     e.preventDefault();
     this.touchX = null;
     this.touchY = null;
+    this.touchActive = false;
   }
 
-  _onMouseDown(e) {
-    const rect = this.canvas.getBoundingClientRect();
-    this.touchX = e.clientX - rect.left;
-    this.touchY = e.clientY - rect.top;
+  _onPointerDown(e) {
+    if (!this.canvas || e.pointerType === 'touch') return;
+    e.preventDefault();
+    this.canvas.setPointerCapture(e.pointerId);
+    const t = this._posFromEvent(e);
+    this.touchX = t.x;
+    this.touchY = t.y;
+    this.touchActive = true;
   }
 
-  _onMouseMove(e) {
-    if (this.touchX !== null) {
-      const rect = this.canvas.getBoundingClientRect();
-      this.touchX = e.clientX - rect.left;
-      this.touchY = e.clientY - rect.top;
-    }
+  _onPointerMove(e) {
+    if (!this.canvas || !this.touchActive || e.pointerType === 'touch') return;
+    e.preventDefault();
+    const t = this._posFromEvent(e);
+    this.touchX = t.x;
+    this.touchY = t.y;
   }
 
-  _onMouseUp() {
+  _onPointerUp(e) {
+    if (e.pointerType === 'touch') return;
+    e.preventDefault();
     this.touchX = null;
     this.touchY = null;
+    this.touchActive = false;
   }
 
   _update(dt) {
@@ -241,25 +255,32 @@ export class MeteoroGame {
       return;
     }
 
-    const shipSpeed = 260 * (this.isMobile ? 1.15 : 1.0) * (this.width / 600);
     const halfW = this.width / 2;
     const halfH = this.height / 2;
 
-    if (this.keys.left || (this.touchX !== null && this.touchX < halfW)) {
-      this.ship.x -= shipSpeed * dt;
-    }
-    if (this.keys.right || (this.touchX !== null && this.touchX >= halfW)) {
-      this.ship.x += shipSpeed * dt;
-    }
-    if (this.keys.up || (this.touchX !== null && this.touchY !== null && this.touchY < halfH)) {
-      this.ship.y -= shipSpeed * dt;
-    }
-    if (this.keys.down || (this.touchX !== null && this.touchY !== null && this.touchY >= halfH)) {
-      this.ship.y += shipSpeed * dt;
+    if (this.touchActive && this.touchX !== null) {
+      if (this.isMobile) {
+        const targetX = this.touchX - this.ship.width / 2;
+        const targetY = this.touchY - this.ship.height / 2;
+        this.ship.x += (targetX - this.ship.x) * 0.3;
+        this.ship.y += (targetY - this.ship.y) * 0.3;
+      } else {
+        const shipSpeed = 260 * (this.width / 600);
+        if (this.touchX < halfW) this.ship.x -= shipSpeed * dt;
+        if (this.touchX >= halfW) this.ship.x += shipSpeed * dt;
+        if (this.touchY !== null && this.touchY < halfH) this.ship.y -= shipSpeed * dt;
+        if (this.touchY !== null && this.touchY >= halfH) this.ship.y += shipSpeed * dt;
+      }
     }
 
-    this.ship.x = Math.max(0, Math.min(this.width - this.ship.width, this.ship.x));
-    this.ship.y = Math.max(0, Math.min(this.height - this.ship.height, this.ship.y));
+    if (this.keys.left) this.ship.x -= 260 * (this.width / 600) * dt;
+    if (this.keys.right) this.ship.x += 260 * (this.width / 600) * dt;
+    if (this.keys.up) this.ship.y -= 260 * (this.width / 600) * dt;
+    if (this.keys.down) this.ship.y += 260 * (this.width / 600) * dt;
+
+    const pad = Math.max(2, this.ship.width * 0.08);
+    this.ship.x = Math.max(pad, Math.min(this.width - this.ship.width - pad, this.ship.x));
+    this.ship.y = Math.max(pad, Math.min(this.height - this.ship.height - pad, this.ship.y));
 
     this.timeLeft -= dt;
     if (this.timeLeft <= 0) {
@@ -288,21 +309,22 @@ export class MeteoroGame {
 
     if (this.invulnerableUntil > now) return;
 
+    const hitboxInset = 0.1;
     const shipRect = {
-      x: this.ship.x + 4,
-      y: this.ship.y + 4,
-      w: this.ship.width - 8,
-      h: this.ship.height - 8,
+      x: this.ship.x + this.ship.width * hitboxInset,
+      y: this.ship.y + this.ship.height * hitboxInset,
+      w: this.ship.width * (1 - hitboxInset * 2),
+      h: this.ship.height * (1 - hitboxInset * 2),
     };
 
     for (let i = this.meteoros.length - 1; i >= 0; i--) {
       const m = this.meteoros[i];
-      const shrink = m.size * 0.3;
+      const meteorR = m.size * 0.5;
       if (
-        m.x + shrink < shipRect.x + shipRect.w &&
-        m.x - shrink > shipRect.x &&
-        m.y + shrink < shipRect.y + shipRect.h &&
-        m.y - shrink > shipRect.y
+        m.x - meteorR < shipRect.x + shipRect.w &&
+        m.x + meteorR > shipRect.x &&
+        m.y - meteorR < shipRect.y + shipRect.h &&
+        m.y + meteorR > shipRect.y
       ) {
         this.meteoros.splice(i, 1);
         this.lives--;
@@ -324,11 +346,13 @@ export class MeteoroGame {
   }
 
   _removeNearbyMeteoros(shipRect) {
-    const clearZone = 80;
+    const clearZone = Math.max(60, this.width * 0.18);
+    const cx = shipRect.x + shipRect.w / 2;
+    const cy = shipRect.y + shipRect.h / 2;
     for (let i = this.meteoros.length - 1; i >= 0; i--) {
       const m = this.meteoros[i];
-      const dx = m.x - (shipRect.x + shipRect.w / 2);
-      const dy = m.y - (shipRect.y + shipRect.h / 2);
+      const dx = m.x - cx;
+      const dy = m.y - cy;
       if (Math.sqrt(dx * dx + dy * dy) < clearZone) {
         this.meteoros.splice(i, 1);
       }
@@ -408,10 +432,28 @@ export class MeteoroGame {
     ctx.fill();
     ctx.fillStyle = '#b388ff';
     ctx.beginPath();
-    ctx.arc(this.ship.width / 2, this.ship.height * 0.3, 6, 0, Math.PI * 2);
+    ctx.arc(this.ship.width / 2, this.ship.height * 0.3, Math.max(4, this.ship.width * 0.12), 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
     ctx.globalAlpha = 1;
+
+    if (this.debugMode) {
+      const hi = 0.1;
+      const sx = this.ship.x + this.ship.width * hi;
+      const sy = this.ship.y + this.ship.height * hi;
+      const sw = this.ship.width * (1 - hi * 2);
+      const sh = this.ship.height * (1 - hi * 2);
+      ctx.strokeStyle = 'rgba(0, 255, 0, 0.6)';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(sx, sy, sw, sh);
+      for (const m of this.meteoros) {
+        const mr = m.size * 0.5;
+        ctx.strokeStyle = 'rgba(255, 0, 0, 0.6)';
+        ctx.beginPath();
+        ctx.arc(m.x, m.y, mr, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+    }
 
     const hudSize = Math.max(12, Math.round(this.width * 0.032));
     const hudY = Math.max(18, Math.round(this.height * 0.05));
@@ -432,6 +474,13 @@ export class MeteoroGame {
       ctx.fillStyle = '#ff4444';
       ctx.font = `bold ${Math.round(hudSize * 1.8)}px sans-serif`;
       ctx.fillText(this.lifeLostText, this.width / 2, this.height / 2 - this.height * 0.04);
+    }
+
+    if (this.debugMode) {
+      ctx.textAlign = 'left';
+      ctx.fillStyle = '#88ff88';
+      ctx.font = `${Math.max(9, Math.round(this.width * 0.022))}px monospace`;
+      ctx.fillText('DEBUG HITBOX', 6, this.height - 8);
     }
   }
 
