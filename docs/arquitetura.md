@@ -305,6 +305,18 @@ Setup Screen
 Challenge Modal
   └── showChallengeModal(desafio) → exibe pergunta/opções, retorna Promise<boolean>
 
+Sorteio Inicial
+  ├── showDrawScreen() → exibe overlay com nomes, emojis/tokens, dados
+  ├── startDrawSequence() → orquestra rolagem dos dois jogadores
+  │   ├── waitForPlayerRoll(idx) → aguarda clique em "🎲 Rolar", retorna valor 1-6
+  │   ├── autoBotRoll(idx) → modo 1P: rolagem automática do bot após 800ms
+  │   ├── animateDrawDice(idx, valor) → anima dado (12 frames, 60ms cada)
+  │   ├── Empate: re-rola (máx. 2 empates consecutivos)
+  │   ├── 3º empate: desempate automático aleatório com mensagem divertida
+  │   └── Maior valor vence → winnerIndex 0 ou 1
+  ├── continueAfterDraw() → define gameState.currentPlayerIndex, inicia partida
+  └── drawState = { rolls: [null, null], drawWinnerIndex: null }
+
 Inicialização
   ├── initGalleryTokens() → transforma emoji-btn em span+img com fallback visual
   └── init() → initGalleryTokens(), WorldRegistry.init([florestaEncantada, valeDinossauros]), chama showMainMenu()

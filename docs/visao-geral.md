@@ -18,7 +18,14 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 
 ## Principais Funcionalidades
 
-### v0.18.0-preview (Atual) — Revisão do Sistema de Perguntas ✅
+### v0.19.0-preview (Atual) — Limite de Empates no Sorteio Inicial ✅
+
+- **Máximo de 2 empates** no sorteio inicial; no 3º, desempate automático aleatório
+- **Mensagens divertidas**: "Empate cósmico!", "Depois de tantos empates, a sorte decidiu!", "Tanto empate que o destino tomou a frente!"
+- **Válido para**: 2 jogadores e 1 jogador vs máquina
+- **Dado da partida inalterado**
+
+### v0.18.0-preview — Revisão do Sistema de Perguntas ✅
 
 - **Banco expandido para 128 perguntas**: 9 categorias (Matemática, Português, Animais, Espaço, Natureza, Dinossauros, Lógica, Cores e Formas, Conhecimentos Gerais), extraído para módulo próprio `src/data/questions.js`
 - **Seleção temática**: perguntas filtradas por mundo — Galáxia (Espaço/Lógica), Floresta (Animais/Natureza/Cores/Lógica), Dinossauros (Dinossauros/Animais/Natureza/Matemática)

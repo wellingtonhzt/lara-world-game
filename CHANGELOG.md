@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.19.0-preview] - 2026-07-09
+
+### Limite de Empates no Sorteio Inicial
+
+- **Problema**: o sorteio inicial permitia empates indefinidos, causando repetições chatas
+- **Solução**: contador `tieCount` limita a 2 empates consecutivos; no 3º, desempate automático escolhe um jogador aleatoriamente
+- **Mensagens divertidas**: "Empate cósmico! O jogo escolheu quem começa.", "Depois de tantos empates, a sorte decidiu!", "Tanto empate que o destino tomou a frente!" — uma sorteada aleatoriamente
+- **Funciona em**: modo 2 jogadores e 1 jogador vs máquina
+- **Dado da partida não foi alterado**: a regra vale apenas para o sorteio inicial
+
 ## [0.18.0-preview] - 2026-07-09
 
 ### Revisão e Melhorias do Sistema de Perguntas — QST-001 (Parte 2)

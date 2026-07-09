@@ -18,7 +18,8 @@
 
 | Versão | Data | Status |
 |--------|------|--------|
-| **v0.18.0-preview** | Jul/2026 | ✅ **Ativo** — Revisão e melhorias do sistema de perguntas |
+| **v0.19.0-preview** | Jul/2026 | ✅ **Ativo** — Limite de empates no sorteio inicial |
+| v0.18.0-preview | Jul/2026 | ✅ Revisão do sistema de perguntas |
 | v0.17.0-preview | Jul/2026 | ✅ Correção de cascata pós-desafio |
 | v0.16.0-preview | Jul/2026 | ✅ Concluído |
 | v0.15.0-preview | Jul/2026 | ✅ Concluído |
@@ -39,7 +40,15 @@
 
 ---
 
-## ✨ Funcionalidades Atuais (v0.18.0-preview)
+## ✨ Funcionalidades Atuais (v0.19.0-preview)
+
+### Limite de Empates no Sorteio Inicial
+
+- **Problema corrigido**: o sorteio inicial permitia empates infinitos, causando repetições chatas
+- **Máximo de 2 empates**: após o 3º empate consecutivo, o jogo aplica desempate automático
+- **Desempate aleatório**: escolhe um jogador aleatoriamente com mensagem divertida
+- **Mensagens**: "Empate cósmico! O jogo escolheu quem começa.", "Depois de tantos empates, a sorte decidiu!", "Tanto empate que o destino tomou a frente!"
+- **Apenas no sorteio inicial**: o dado da partida não foi alterado
 
 ### Sistema de Perguntas Temáticas — QST-001
 

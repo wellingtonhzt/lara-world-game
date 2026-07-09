@@ -48,6 +48,16 @@ A escolha do modo determina quais campos são exibidos no modal e como o Jogador
 9. Se os dois jogadores estiverem na mesma casa, os personagens aparecem lado a lado.
 10. **O primeiro jogador a atingir ou ultrapassar a casa 20 vence** — a partida é encerrada imediatamente.
 
+## Sorteio Inicial (Quem Começa)
+
+1. Após configurar os jogadores, um sorteio decide quem joga primeiro.
+2. Cada jogador rola um dado clicando em "🎲 Rolar".
+3. Quem tirar o maior valor começa.
+4. **Empate**: os dados são rolados novamente (máximo de 2 empates consecutivos).
+5. **3º empate**: desempate automático — o jogo escolhe um jogador aleatoriamente e exibe uma mensagem divertida.
+6. A regra vale para modo 2 jogadores e 1 jogador vs máquina.
+7. O dado da partida não é alterado — esta regra vale apenas para o sorteio inicial.
+
 ## Portal da Floresta (Casa 11)
 
 - Ao cair exatamente na **casa 11**, um modal é exibido com duas opções:

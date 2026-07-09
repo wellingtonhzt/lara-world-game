@@ -1,5 +1,13 @@
 # Roadmap Lara World
 
+### v0.19.0-preview — Limite de Empates no Sorteio Inicial ✅
+
+- [x] Contador de empates consecutivos (máx. 2)
+- [x] 3º empate: desempate automático aleatório
+- [x] Mensagens divertidas no desempate
+- [x] Funciona em 2 jogadores e 1 jogador vs máquina
+- [x] Dado da partida não alterado
+
 ### v0.18.0-preview — Revisão e Melhorias do Sistema de Perguntas — QST-001 ✅
 
 **Banco de Perguntas:**

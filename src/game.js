@@ -1234,6 +1234,7 @@ import { bancoQuestoes, questoesDisponiveis, categoryIndices, worldCategoryMap, 
 
   async function startDrawSequence() {
     showDrawScreen();
+    let tieCount = 0;
 
     while (true) {
       drawState.rolls = [null, null];
@@ -1251,13 +1252,31 @@ import { bancoQuestoes, questoesDisponiveis, categoryIndices, worldCategoryMap, 
       if (v1 === v2) {
         drawState.drawWinnerIndex = null;
         document.getElementById("draw-start-btn").disabled = true;
+        document.getElementById("draw-player-0").classList.remove("winner");
+        document.getElementById("draw-player-1").classList.remove("winner");
+
+        if (tieCount >= 2) {
+          const winnerIndex = Math.random() < 0.5 ? 0 : 1;
+          drawState.drawWinnerIndex = winnerIndex;
+          const msgs = [
+            "Empate cósmico! O jogo escolheu quem começa.",
+            "Depois de tantos empates, a sorte decidiu!",
+            "Tanto empate que o destino tomou a frente!",
+          ];
+          document.getElementById("draw-status").textContent =
+            msgs[Math.floor(Math.random() * msgs.length)];
+          document.getElementById(`draw-player-${winnerIndex}`).classList.add("winner");
+          document.getElementById("draw-start-btn").classList.remove("hidden");
+          document.getElementById("draw-start-btn").disabled = false;
+          break;
+        }
+
+        tieCount++;
         document.getElementById("draw-status").textContent = "🤝 Empate! Vamos rolar novamente!";
         document.getElementById("draw-dice-box-0").textContent = "🎲";
         document.getElementById("draw-dice-box-1").textContent = "🎲";
         document.getElementById("draw-value-0").textContent = "-";
         document.getElementById("draw-value-1").textContent = "-";
-        document.getElementById("draw-player-0").classList.remove("winner");
-        document.getElementById("draw-player-1").classList.remove("winner");
         document.getElementById("draw-roll-btn-0").disabled = false;
         if (!isSinglePlayer) {
           document.getElementById("draw-roll-btn-1").disabled = false;

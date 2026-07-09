@@ -1,5 +1,65 @@
 # Memorial Técnico
 
+## Sprint — Limite de Empates no Sorteio Inicial (v0.19.0-preview)
+
+### Objetivo
+
+Corrigir a experiência do sorteio inicial que permitia empates consecutivos ilimitados, causando repetições chatas. Aplicar um limite de 2 empates com desempate automático no 3º.
+
+### Arquivos Alterados
+
+| Arquivo | Tipo de Alteração |
+|---------|-------------------|
+| `src/game.js` | **Modificado** — `startDrawSequence()` ganhou contador `tieCount`; no 3º empate consecutivo, escolhe vencedor aleatório com mensagem divertida |
+| `CHANGELOG.md` | **Modificado** — Entrada v0.19.0 adicionada |
+| `README.md` | **Modificado** — Versão v0.19.0, funcionalidades atuais |
+| `docs/visao-geral.md` | **Modificado** — Sessão v0.19.0 |
+| `docs/arquitetura.md` | **Modificado** — Seção "Sorteio Inicial" adicionada |
+| `docs/regras-do-jogo.md` | **Modificado** — Regras do sorteio inicial documentadas |
+| `docs/roadmap.md` | **Modificado** — Sessão v0.19.0 adicionada |
+| `docs/memorial-tecnico.md` | **Modificado** — Sprint adicionada |
+
+### Decisões Técnicas
+
+| Decisão | Alternativas | Motivo |
+|---------|-------------|--------|
+| Contador `tieCount` local em `startDrawSequence()` | Variável global ou em `drawState` | Apenas o sorteio inicial precisa do contador — não há motivo para expor globalmente. A função é chamada uma vez por partida |
+| Limite de 2 empates (3º é auto) | Limite de 1 ou 3 empates | 2 empates dá chance justa de desempate por dado; o 3º evita frustração |
+| Mensagens aleatórias de um array | Mensagem fixa | Variedade torna a experiência mais divertida para crianças |
+
+### Fluxo do Sorteio com Desempate
+
+```
+startDrawSequence()
+  ├── tieCount = 0
+  ├── [loop]
+  │   ├── Jogador 0 rola dado (ou bot aguarda 800ms)
+  │   ├── Jogador 1 rola dado (ou bot automático)
+  │   ├── Se v1 === v2:
+  │   │   ├── tieCount++
+  │   │   ├── Se tieCount > 2 (3º empate):
+  │   │   │   ├── Sorteia winnerIndex (0 ou 1) aleatório
+  │   │   │   ├── Mostra mensagem divertida
+  │   │   │   └── break (fim do sorteio)
+  │   │   └── Senão:
+  │   │       ├── Mostra "🤝 Empate! Vamos rolar novamente!"
+  │   │       └── continue (re-rolar)
+  │   └── Se v1 !== v2:
+  │       ├── winnerIndex = v1 > v2 ? 0 : 1
+  │       └── break (fim do sorteio)
+  └── continueAfterDraw() → aplica winnerIndex ao jogo
+```
+
+### Como Testar
+
+1. Abrir o jogo e iniciar uma partida (2 jogadores ou 1 jogador vs máquina)
+2. No sorteio inicial, ambos os jogadores rolarem o mesmo valor (simular mentalmente)
+3. Observar a mensagem "Empate! Vamos rolar novamente!" e os dados resetarem
+4. Repetir o empate mais uma vez (2º empate)
+5. No 3º empate, observar o desempate automático com uma das mensagens divertidas
+6. Verificar que o jogador escolhido começa corretamente
+7. Verificar que durante a partida, o dado normal continua sem alteração
+
 ## Sprint — Revisão do Sistema de Perguntas — QST-001 (v0.18.0-preview)
 
 ### Objetivo
