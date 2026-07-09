@@ -2,10 +2,12 @@ import { registerAll } from '../engine/world-registry.js';
 import { WORLD_IDS } from '../data/world-manifest.js';
 import { florestaEncantada } from './floresta/config.js';
 import { valeDosDinossauros } from './dinossauros/config.js';
+import { galaxiaEstelar } from './galaxia/config.js';
 
 const worldConfigMap = {
   'floresta-encantada': florestaEncantada,
   'dinossauros': valeDosDinossauros,
+  'galaxia-estelar': galaxiaEstelar,
 };
 
 export function loadAllWorlds() {

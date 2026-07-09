@@ -13,7 +13,7 @@
 export const WORLD_IDS = [
   'floresta-encantada',
   'dinossauros',
-  // 'galaxia-estelar',
+  'galaxia-estelar',
   // 'reino-oceanos',
   // 'castelo-dragoes',
 ];

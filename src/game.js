@@ -3,6 +3,7 @@ import { loadAllWorlds } from './worlds/loader.js';
 import { florestaMisteriosa } from './worlds/floresta/config.js';
 import { cavernaDosFosseis } from './worlds/dinossauros/config.js';
 import { audioManager } from './audio/index.js';
+import { MeteoroGame } from './minigames/meteoro/MeteoroGame.js';
 
 (function () {
   const TOTAL_CASAS = 20;
@@ -104,6 +105,7 @@ import { audioManager } from './audio/index.js';
         case 'finishWorld': result[cell] = { tipo: 'vitoria', valor: 0, descricao: d }; break;
         case 'shortcut': result[cell] = { tipo: 'atalho', valor: ev.params?.bonusCells ?? 0, descricao: d }; break;
         case 'worldExit': result[cell] = { tipo: 'saida-mundo', valor: ev.params?.bonusCells ?? 0, descricao: d }; break;
+        case 'buraco-minhoca': result[cell] = { tipo: 'buraco-minhoca', descricao: d }; break;
       }
     }
     return result;
@@ -673,6 +675,27 @@ import { audioManager } from './audio/index.js';
           player.posicao = destino;
           positionPlayerAt(destino);
           addHistory(`\u274C ${player.name} errou! Voltou para casa ${destino}`, "especial");
+        }
+        return false;
+      }
+      case "buraco-minhoca": {
+        addHistory(`\uD83D\uDE80 ${info.descricao}`, "especial");
+        const resultado = await launchMeteoroGame();
+        if (resultado.status === "success") {
+          const destino = Math.min(player.posicao + resultado.bonus, getTotalCasas());
+          audioManager.play('specialAdvance');
+          if (destino > player.posicao) {
+            await animatePlayerMovement(player.posicao, destino);
+          }
+          player.posicao = destino;
+          addHistory(`\uD83C\uDF1F ${player.name} atravessou o Buraco de Minhoca e avan\u00E7ou +${resultado.bonus} casas!`, "especial");
+          if (player.posicao >= getTotalCasas()) {
+            await handleVictory();
+            return false;
+          }
+        } else {
+          audioManager.play('wrongAnswer');
+          addHistory(`\uD83D\uDCA5 ${player.name} foi atingido por meteoros! B\u00F4nus: 0`, "especial");
         }
         return false;
       }
@@ -1659,6 +1682,82 @@ import { audioManager } from './audio/index.js';
             break;
           }
 
+          // ── Testes Rápidos: Galáxia ──
+          case "galaxia-casa9": {
+            if (currentWorldConfig?.id !== 'galaxia-estelar') { addLog('\u26A0\uFE0F Teste v\u00E1lido apenas na Gal\u00E1xia Estelar'); break; }
+            if (gameState.activeSubworldId) { addLog('\u26A0\uFE0F Est\u00E1 em submundo. Use o bot\u00E3o de sair primeiro.'); break; }
+            await debugMoveAndProcess(9);
+            break;
+          }
+          case "galaxia-casa10": {
+            if (currentWorldConfig?.id !== 'galaxia-estelar') { addLog('\u26A0\uFE0F Teste v\u00E1lido apenas na Gal\u00E1xia Estelar'); break; }
+            if (gameState.activeSubworldId) { addLog('\u26A0\uFE0F Est\u00E1 em submundo. Use o bot\u00E3o de sair primeiro.'); break; }
+            await debugMoveAndProcess(10);
+            break;
+          }
+          case "galaxia-minigame": {
+            if (currentWorldConfig?.id !== 'galaxia-estelar') { addLog('\u26A0\uFE0F Teste v\u00E1lido apenas na Gal\u00E1xia Estelar'); break; }
+            const p = getCurrentPlayer();
+            addLog('\uD83C\uDFAE Abrindo minigame manualmente...');
+            gameState.isMoving = true;
+            elements.rollBtn.disabled = true;
+            const resultado = await launchMeteoroGame();
+            gameState.isMoving = false;
+            elements.rollBtn.disabled = false;
+            if (resultado.status === "success") {
+              const destino = Math.min(p.posicao + resultado.bonus, getTotalCasas());
+              if (destino > p.posicao) {
+                await animatePlayerMovement(p.posicao, destino);
+              }
+              p.posicao = destino;
+              addLog(`\u2705 Minigame vencido! Avan\u00E7ou +${resultado.bonus} \u2192 casa ${destino}`);
+            } else {
+              addLog(`\uD83D\uDCA5 Minigame perdido! B\u00F4nus: 0`);
+            }
+            updateUI();
+            setEventResult({ eventType: 'minigame (debug)', posBefore: p.posicao, posAfter: p.posicao });
+            break;
+          }
+          case "galaxia-vitoria": {
+            if (currentWorldConfig?.id !== 'galaxia-estelar') { addLog('\u26A0\uFE0F Teste v\u00E1lido apenas na Gal\u00E1xia Estelar'); break; }
+            const pWin = getCurrentPlayer();
+            const posicaoOriginal = pWin.posicao;
+            const BONUS = 3;
+            const destino = Math.min(posicaoOriginal + BONUS, getTotalCasas());
+            addLog('\u2705 Simulando vit\u00F3ria no minigame...');
+            gameState.isMoving = true;
+            elements.rollBtn.disabled = true;
+            if (destino > posicaoOriginal) {
+              await animatePlayerMovement(posicaoOriginal, destino);
+            }
+            pWin.posicao = destino;
+            gameState.isMoving = false;
+            elements.rollBtn.disabled = false;
+            updateUI();
+            addLog(`\u2705 B\u00F4nus aplicado: +${BONUS} \u2192 casa ${destino} (sem cascata)`);
+            if (pWin.posicao >= getTotalCasas()) {
+              await handleVictory();
+            }
+            setEventResult({ eventType: 'minigame vit\u00F3ria (simulado)', posBefore: posicaoOriginal, posAfter: destino, cascaded: 'N\u00E3o (debug)' });
+            break;
+          }
+          case "galaxia-derrota": {
+            if (currentWorldConfig?.id !== 'galaxia-estelar') { addLog('\u26A0\uFE0F Teste v\u00E1lido apenas na Gal\u00E1xia Estelar'); break; }
+            addLog('\u274C Simulando derrota no minigame...');
+            addLog('\uD83D\uDCA5 Nave destru\u00EDda! B\u00F4nus: 0');
+            setEventResult({ eventType: 'minigame derrota (simulado)', posBefore: getCurrentPlayer().posicao, posAfter: getCurrentPlayer().posicao, cascaded: 'N\u00E3o' });
+            break;
+          }
+          case "galaxia-retornar": {
+            if (currentWorldConfig?.id !== 'galaxia-estelar') { addLog('\u26A0\uFE0F Teste v\u00E1lido apenas na Gal\u00E1xia Estelar'); break; }
+            document.getElementById('minigame-overlay').classList.add('hidden');
+            gameState.isMoving = false;
+            elements.rollBtn.disabled = false;
+            addLog('\u21A9\uFE0F Overlay do minigame fechado. Estado restaurado.');
+            setEventResult({ eventType: 'retorno (debug)', posBefore: getCurrentPlayer().posicao, posAfter: getCurrentPlayer().posicao });
+            break;
+          }
+
           // ── Limpar Logs ──
           case "clear-logs":
             debugLog.length = 0;
@@ -1701,9 +1800,24 @@ import { audioManager } from './audio/index.js';
 
   /* ── Init ── */
 
+  async function launchMeteoroGame() {
+    const overlay = document.getElementById('minigame-overlay');
+    const container = document.getElementById('minigame-container');
+    overlay.classList.remove('hidden');
+
+    return new Promise((resolve) => {
+      const game = new MeteoroGame(container, (result) => {
+        overlay.classList.add('hidden');
+        setTimeout(() => resolve(result), 300);
+      });
+      game.start();
+    });
+  }
+
   function init() {
     initGalleryTokens();
     enableWorldCard('dinossauros');
+    enableWorldCard('galaxia-estelar');
     audioManager.init();
 
     document.addEventListener('click', function firstInteraction() {

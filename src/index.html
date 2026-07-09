@@ -66,7 +66,7 @@
             <span class="world-card-name">Vale dos Dinossauros</span>
             <span class="world-card-badge badge-locked">🔒 Em breve</span>
           </button>
-          <button class="world-card" data-world="galaxia" disabled>
+          <button class="world-card" data-world="galaxia-estelar">
             <div class="world-card-illustration">
               <span class="world-card-emoji">🚀</span>
               <img class="world-card-img" src="assets/world-icons/galaxia.webp" alt="" onerror="this.style.display='none'" loading="lazy">
@@ -269,6 +269,16 @@
       </div>
     </div>
 
+    <div id="minigame-overlay" class="minigame-overlay hidden">
+      <div class="minigame-content">
+        <div class="minigame-header">
+          <h2 id="minigame-title">🚀 Desvie dos Meteoros!</h2>
+          <p id="minigame-instructions">Use as setas ← → para desviar dos meteoros!</p>
+        </div>
+        <div id="minigame-container" class="minigame-container"></div>
+      </div>
+    </div>
+
     <div id="victory-overlay" class="victory-overlay hidden">
       <div class="confetti-piece" style="left: 2%; background: #e91e63; animation-delay: 0s; width: 10px; height: 14px;"></div>
       <div class="confetti-piece" style="left: 10%; background: #ffd700; animation-delay: 0.3s; width: 6px; height: 10px; border-radius: 50%;"></div>
@@ -429,6 +439,19 @@
         <button class="debug-btn debug-btn-test" data-debug="floresta-casa5">Flor C5</button>
         <button class="debug-btn debug-btn-test" data-debug="floresta-portal">Flor Portal</button>
         <button class="debug-btn debug-btn-test" data-debug="floresta-saida">Flor Sda</button>
+      </div>
+    </div>
+
+    <!-- Galáxia Estelar -->
+    <div class="debug-section">
+      <div class="debug-section-title">🌌 Galáxia Estelar</div>
+      <div class="debug-btn-group">
+        <button class="debug-btn debug-btn-test" data-debug="galaxia-casa9">Gal C9</button>
+        <button class="debug-btn debug-btn-test" data-debug="galaxia-casa10">Gal C10 🚪</button>
+        <button class="debug-btn debug-btn-test" data-debug="galaxia-minigame">🎮 Abrir</button>
+        <button class="debug-btn debug-btn-test" data-debug="galaxia-vitoria">✅ Vencer</button>
+        <button class="debug-btn debug-btn-test" data-debug="galaxia-derrota">❌ Perder</button>
+        <button class="debug-btn debug-btn-test" data-debug="galaxia-retornar">↩️ Retornar</button>
       </div>
     </div>
 
