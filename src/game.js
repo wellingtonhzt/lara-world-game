@@ -105,6 +105,7 @@ import { MeteoroGame } from './minigames/meteoro/MeteoroGame.js';
         case 'finishWorld': result[cell] = { tipo: 'vitoria', valor: 0, descricao: d }; break;
         case 'shortcut': result[cell] = { tipo: 'atalho', valor: ev.params?.bonusCells ?? 0, descricao: d }; break;
         case 'worldExit': result[cell] = { tipo: 'saida-mundo', valor: ev.params?.bonusCells ?? 0, descricao: d }; break;
+        case 'swap-positions': result[cell] = { tipo: 'swap-positions', descricao: d }; break;
         case 'buraco-minhoca': result[cell] = { tipo: 'buraco-minhoca', descricao: d }; break;
       }
     }
@@ -427,7 +428,7 @@ import { MeteoroGame } from './minigames/meteoro/MeteoroGame.js';
 
   /* ── Animation ── */
 
-  async function animatePlayerMovement(from, to) {
+  async function animatePlayerMovement(from, to, customPlayer) {
     if (from === to) return;
 
     const step = from < to ? 1 : -1;
@@ -436,12 +437,12 @@ import { MeteoroGame } from './minigames/meteoro/MeteoroGame.js';
       positions.push(p);
     }
 
-    const player = getCurrentPlayer();
+    const player = customPlayer || getCurrentPlayer();
     const el = getPlayerElement(player);
 
     for (const pos of positions) {
       if (pos >= 1 && pos <= getTotalCasas()) {
-        positionPlayerAt(pos);
+        positionPlayerAt(pos, player);
         el.classList.remove("animar-lara-pos");
         void el.offsetWidth;
         el.classList.add("animar-lara-pos");
@@ -678,9 +679,27 @@ import { MeteoroGame } from './minigames/meteoro/MeteoroGame.js';
         }
         return false;
       }
+      case "swap-positions": {
+        const otherPlayer = players[1 - gameState.currentPlayerIndex];
+        if (player.posicao !== otherPlayer.posicao) {
+          const fromA = player.posicao;
+          const fromB = otherPlayer.posicao;
+          player.posicao = fromB;
+          otherPlayer.posicao = fromA;
+          await animatePlayerMovement(fromA, fromB, player);
+          await animatePlayerMovement(fromB, fromA, otherPlayer);
+          positionPlayerAt(player.posicao, player);
+          positionPlayerAt(otherPlayer.posicao, otherPlayer);
+          updateUI();
+          addHistory(`\uD83C\uDF00 ${player.name} trocou de posi\u00E7\u00E3o com ${otherPlayer.name}!`, "especial");
+        } else {
+          addHistory(`\uD83C\uDF00 ${info.descricao} — ambos na mesma casa, nada acontece.`, "info");
+        }
+        return false;
+      }
       case "buraco-minhoca": {
         addHistory(`\uD83D\uDE80 ${info.descricao}`, "especial");
-        const resultado = await launchMeteoroGame();
+        const resultado = await launchMeteoroGame({ isBot: player.isBot });
         if (resultado.status === "success") {
           const destino = Math.min(player.posicao + resultado.bonus, getTotalCasas());
           audioManager.play('specialAdvance');
@@ -1683,16 +1702,28 @@ import { MeteoroGame } from './minigames/meteoro/MeteoroGame.js';
           }
 
           // ── Testes Rápidos: Galáxia ──
+          case "galaxia-casa7": {
+            if (currentWorldConfig?.id !== 'galaxia-estelar') { addLog('\u26A0\uFE0F Teste v\u00E1lido apenas na Gal\u00E1xia Estelar'); break; }
+            if (gameState.activeSubworldId) { addLog('\u26A0\uFE0F Est\u00E1 em submundo. Use o bot\u00E3o de sair primeiro.'); break; }
+            await debugMoveAndProcess(7);
+            break;
+          }
           case "galaxia-casa9": {
             if (currentWorldConfig?.id !== 'galaxia-estelar') { addLog('\u26A0\uFE0F Teste v\u00E1lido apenas na Gal\u00E1xia Estelar'); break; }
             if (gameState.activeSubworldId) { addLog('\u26A0\uFE0F Est\u00E1 em submundo. Use o bot\u00E3o de sair primeiro.'); break; }
             await debugMoveAndProcess(9);
             break;
           }
-          case "galaxia-casa10": {
+          case "galaxia-casa14": {
             if (currentWorldConfig?.id !== 'galaxia-estelar') { addLog('\u26A0\uFE0F Teste v\u00E1lido apenas na Gal\u00E1xia Estelar'); break; }
             if (gameState.activeSubworldId) { addLog('\u26A0\uFE0F Est\u00E1 em submundo. Use o bot\u00E3o de sair primeiro.'); break; }
-            await debugMoveAndProcess(10);
+            await debugMoveAndProcess(14);
+            break;
+          }
+          case "galaxia-casa15": {
+            if (currentWorldConfig?.id !== 'galaxia-estelar') { addLog('\u26A0\uFE0F Teste v\u00E1lido apenas na Gal\u00E1xia Estelar'); break; }
+            if (gameState.activeSubworldId) { addLog('\u26A0\uFE0F Est\u00E1 em submundo. Use o bot\u00E3o de sair primeiro.'); break; }
+            await debugMoveAndProcess(15);
             break;
           }
           case "galaxia-minigame": {
@@ -1798,21 +1829,126 @@ import { MeteoroGame } from './minigames/meteoro/MeteoroGame.js';
     });
   }
 
-  /* ── Init ── */
+  /* ── Minigame helpers ── */
 
-  async function launchMeteoroGame() {
+  function showMinigameResult(result) {
+    const icon = document.getElementById('minigame-card-icon');
+    const title = document.getElementById('minigame-card-title');
+    const desc = document.getElementById('minigame-card-desc');
+    const bonusEl = document.getElementById('minigame-card-bonus');
+    const bonusValue = document.getElementById('minigame-card-bonus-value');
+
+    if (result.status === 'success') {
+      icon.textContent = '\uD83D\uDE80';
+      title.textContent = 'MISS\u00C3O COMPLETA!';
+      desc.textContent = 'Voc\u00EA atravessou a chuva de meteoros.';
+      bonusEl.classList.remove('hidden');
+      bonusValue.textContent = `+${result.bonus} ${result.bonus > 1 ? 'casas' : 'casa'}`;
+    } else {
+      icon.textContent = '\uD83D\uDCA5';
+      title.textContent = 'MISS\u00C3O FALHOU';
+      desc.textContent = 'Sua nave sofreu muitos danos.';
+      bonusEl.classList.add('hidden');
+      bonusValue.textContent = 'Sem b\u00F4nus';
+    }
+  }
+
+  function launchMeteoroGame(options = {}) {
+    const isBot = options.isBot || false;
     const overlay = document.getElementById('minigame-overlay');
     const container = document.getElementById('minigame-container');
+    const playPhase = document.getElementById('minigame-phase-play');
+    const header = document.querySelector('#minigame-phase-play .minigame-header');
+    const botBar = document.getElementById('minigame-bot-bar');
+    const skipBtn = document.getElementById('minigame-skip-btn');
+    const card = document.getElementById('minigame-result-card');
+    const cardBtn = document.getElementById('minigame-card-btn');
+    const countdownEl = document.getElementById('minigame-card-countdown');
+
+    playPhase.classList.remove('hidden');
+    header.classList.remove('hidden');
+    botBar.classList.add('hidden');
+    card.classList.add('hidden');
     overlay.classList.remove('hidden');
+    container.innerHTML = '';
+    container.appendChild(card);
+
+    let autoTimer = null;
+    let countdownInterval = null;
 
     return new Promise((resolve) => {
-      const game = new MeteoroGame(container, (result) => {
+      let game = null;
+      let resolved = false;
+
+      function resolveWith(result) {
+        if (resolved) return;
+        resolved = true;
+        if (autoTimer) { clearTimeout(autoTimer); autoTimer = null; }
+        if (countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
+        if (game) { game.stop(); game = null; }
+        card.classList.add('hidden');
+        header.classList.remove('hidden');
         overlay.classList.add('hidden');
-        setTimeout(() => resolve(result), 300);
-      });
+        resolve(result);
+      }
+
+      function startReturnCountdown(result) {
+        let count = 5;
+        countdownEl.textContent = `Voltando ao tabuleiro em ${count}...`;
+        countdownEl.classList.remove('hidden');
+        cardBtn.textContent = 'Voltar agora';
+        cardBtn.onclick = () => {
+          if (countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
+          countdownEl.classList.add('hidden');
+          resolveWith(result);
+        };
+        countdownInterval = setInterval(() => {
+          count--;
+          if (count <= 0) {
+            clearInterval(countdownInterval);
+            countdownInterval = null;
+            countdownEl.classList.add('hidden');
+            resolveWith(result);
+          } else {
+            countdownEl.textContent = `Voltando ao tabuleiro em ${count}...`;
+          }
+        }, 1000);
+      }
+
+      function onGameComplete(result) {
+        if (resolved) return;
+        header.classList.add('hidden');
+        botBar.classList.add('hidden');
+        showMinigameResult(result);
+        card.classList.remove('hidden');
+        startReturnCountdown(result);
+      }
+
+      function autoResolveBot() {
+        if (resolved) return;
+        const sucesso = Math.random() < 0.4;
+        const result = { status: sucesso ? 'success' : 'fail', bonus: sucesso ? 3 : 0, lives: sucesso ? 2 : 0, timeLeft: sucesso ? 6 : 0 };
+        if (game) { game.stop(); game = null; }
+        header.classList.add('hidden');
+        botBar.classList.add('hidden');
+        showMinigameResult(result);
+        card.classList.remove('hidden');
+        startReturnCountdown(result);
+      }
+
+      game = new MeteoroGame(container, onGameComplete);
+
+      if (isBot) {
+        botBar.classList.remove('hidden');
+        skipBtn.onclick = () => autoResolveBot();
+        autoTimer = setTimeout(() => autoResolveBot(), 6000);
+      }
+
       game.start();
     });
   }
+
+  /* ── Init ── */
 
   function init() {
     initGalleryTokens();

@@ -171,6 +171,31 @@
 - Avatar: canvas 512×512, 86.9% altura, centralizado
 - Token: canvas 512×512, 86.9% altura, centralizado
 
+### v0.16.0-preview — Visual da Galáxia Estelar ✅
+- **Infraestrutura visual completa**: pasta `src/assets/worlds/galaxia/` criada com suporte a `background.webp` e `path.webp`
+- **CSS do #track-container**: overlay + `url("assets/worlds/galaxia/background.webp")` + gradiente fallback escuro
+- **Path.webp**: regra existente com fallback SVG stroke
+- **Fallback garantido**: se assets não existirem, gradiente e SVG mantêm o visual funcional
+
+### ART-011 — Background e Path da Galáxia ✅
+- ✅ **Criado** `src/assets/worlds/galaxia/` com `.gitkeep`
+- ✅ **CSS atualizado**: `body[data-world="galaxia-estelar"] #track-container` com 3 camadas (overlay + url + gradiente)
+- ✅ **Documentação**: README, CHANGELOG, visão-geral, arquitetura, roadmap, memorial-técnico atualizados
+- ✅ **Seletor usado**: `body[data-world="galaxia-estelar"] #track-container`
+
+### v0.14.0-preview — Galáxia Estelar + Minigame do Buraco de Minhoca ✅
+- **Mundo Galáxia**: terceiro mundo completo com 20 casas, textos enxutos seguindo padrão visual (ícone + descrição curta)
+- **Buraco de Minhoca movido para casa 15**: casa especial `buraco-minhoca` removida da casa 10, adicionada na casa 15
+- **Minigame MeteoroGame**: jogo interno com nave 4-dir (↑↓←→ + WASD), meteoros, 3 vidas, flash/invulnerabilidade, tela de resultado
+- **Fluxo do Bot**: overlay com barra de progresso e botão "Pular", auto-resolve após 6s
+- **Painel Debug**: seção Galáxia (C9, C14, C15🚪) + seção minigame (Abrir, Vencer, Perder, Retornar)
+
+### A10 — Galáxia Estelar ✅
+- ✅ **Criado** `worlds/galaxia/config.js` — terceiro mundo completo com layaway espacial
+- ✅ **20 casas** com eventos espaciais temáticos (nomes de estrelas, casas especiais)
+- ✅ **`board.cells`** utilizado para layout personalizado
+- ✅ **Processo de adição de novo mundo validado** — Floresta → Dinossauros → Galáxia
+
 ## Futuro
 
 ### 🎯 Próximas Prioridades
@@ -183,6 +208,7 @@
 - **Evolução dos cards dos mundos** — refinamento visual contínuo da seleção de mundos
 - **Assets próprios das casas especiais** — substituir células CSS por assets visuais por tipo de casa
 - **Ilustrações das áreas dos mundos** — backgrounds e caminhos para submundos (Floresta Misteriosa, Caverna dos Fósseis)
+- **Assets da Galáxia** — criar `background.webp` e `path.webp` em `src/assets/worlds/galaxia/` (infraestrutura CSS pronta)
 - **Sistema de conquistas** — medalhas e progressão do jogador
 - **Modo Aventura** — campanha com progressão entre mundos
 - **Animações da interface** — transições e micro-interações

@@ -41,7 +41,7 @@ export const galaxiaEstelar = {
     cellIcons: [
       '\u2B50', '\uD83C\uDF1F', '\uD83C\uDF20', '\uD83D\uDE80', '\uD83C\uDF0D',
       '\uD83C\uDF0E', '\u2604\uFE0F', '\uD83C\uDF12', '\uD83D\uDD2D', '\uD83E\uDE90',
-      '\uD83C\uDF1B', '\uD83C\uDF1E', '\u2728', '\uD83C\uDF15', '\uD83C\uDF14',
+      '\uD83C\uDF1B', '\uD83C\uDF1E', '\u2728', '\uD83C\uDF15', '\uD83D\uDE80',
       '\uD83C\uDF0A', '\uD83C\uDF1C', '\uD83D\uDE80', '\uD83C\uDF0C', '\uD83D\uDC51',
     ],
   },
@@ -99,34 +99,34 @@ export const galaxiaEstelar = {
 
   events: {
     3: [
-      { type: 'move', params: { delta: 2 }, description: 'Empurr\u00E3o c\u00F3smico! Avance 2 casas!' },
+      { type: 'move', params: { delta: 2 }, description: '\uD83C\uDF0A Avance 2' },
     ],
     5: [
-      { type: 'challenge', description: 'Enigma estelar!' },
+      { type: 'challenge', description: '\u2B50 Desafio' },
     ],
-    7: [
-      { type: 'move', params: { delta: -2 }, description: 'Campo gravitacional! Volte 2 casas!' },
-    ],
+     7: [
+        { type: 'swap-positions', params: {}, description: '\uD83C\uDF00 Troca' },
+      ],
     9: [
-      { type: 'extraTurn', description: 'Nebulosa energizante! Jogue novamente!' },
-    ],
-    10: [
-      { type: 'buraco-minhoca', description: 'Buraco de Minhoca!' },
+      { type: 'extraTurn', description: '\u26A1 Jogue novamente' },
     ],
     12: [
-      { type: 'challenge', description: 'Desafio espacial!' },
+      { type: 'challenge', description: '\uD83C\uDF20 Desafio' },
     ],
     14: [
-      { type: 'move', params: { delta: -3 }, description: 'Chuva de asteroides! Volte 3 casas!' },
+      { type: 'move', params: { delta: -3 }, description: '\u2604\uFE0F Volte 3' },
+    ],
+    15: [
+      { type: 'buraco-minhoca', description: '\uD83D\uDE80 Buraco de Minhoca!' },
     ],
     16: [
-      { type: 'skipTurn', params: { count: 1 }, description: 'Congelamento criog\u00EAnico! Perdeu uma rodada!' },
+      { type: 'skipTurn', params: { count: 1 }, description: '\u2744\uFE0F Perde 1 rodada' },
     ],
     18: [
-      { type: 'challenge', description: 'Desafio das estrelas!' },
+      { type: 'challenge', description: '\uD83C\uDF1F Desafio' },
     ],
     20: [
-      { type: 'finishWorld', description: 'Chegada na Gal\u00E1xia!' },
+      { type: 'finishWorld', description: '\uD83C\uDFC1 Chegada!' },
     ],
   },
 

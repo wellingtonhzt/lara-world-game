@@ -18,7 +18,28 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 
 ## Principais Funcionalidades
 
-### v0.13.0-preview (Atual) — Infraestrutura de Áudio ✅
+### v0.16.0-preview (Atual) — Visual da Galáxia Estelar ✅
+
+- **Infraestrutura visual da Galáxia**: pasta `src/assets/worlds/galaxia/` com suporte a `background.webp` e `path.webp`, seguindo padrão Floresta/Dinossauros
+- **Background no #track-container**: overlay semitransparente + `url(background.webp)` + gradiente fallback escuro
+- **Path.webp**: regra CSS existente com fallback SVG stroke
+- **Fallback garantido**: se assets não existirem, gradiente e SVG mantêm o visual funcional
+
+### v0.15.0-preview — Troca Quântica + Result Card ✅
+
+- **Casa 7 — Troca Quântica**: evento `swap-positions` substitui `move -2` — jogador troca de posição com o adversário. Sem cascata. Debug com 🔄 Gal C7
+- **Result Card**: ao fim do MeteoroGame, card glass exibido sobre o canvas congelado (estrelas, nave, meteoros parados). Contador 5s + botão "Voltar agora". Header do minigame oculto durante exibição
+- **Documentação**: CHANGELOG, visão-geral, regras-do-jogo atualizados
+
+### v0.14.0-preview — Galáxia Estelar + Minigame do Buraco de Minhoca ✅
+
+- **Mundo Galáxia**: tabuleiro temático com 20 casas, textos enxutos seguindo padrão visual (ícone + descrição curta: `🌊 Avance 2`, `⭐ Desafio`, `🌀 Volte 2`, `⚡ Jogue novamente`, `🔀 Troca Quântica`)
+- **Buraco de Minhoca (casa 15)**: casa especial que transporta o jogador para o minigame MeteoroGame, com controles 4-direcionais (↑↓←→ + WASD)
+- **MeteoroGame**: jogo interno com nave, meteoros, 3 vidas, feedback visual (flash vermelho, invulnerabilidade, texto `💥 -1 Vida!`), tela de resultado com bônus e botão "Voltar ao tabuleiro"
+- **Fluxo do Bot**: se a máquina cair no Buraco de Minhoca, overlay com barra de progresso e botão "Pular", auto-resolve após 6s
+- **Debug**: painel Galáxia com botões para C9, C14, C15🚪 e minigame (Abrir, Vencer, Perder, Retornar)
+
+### v0.13.0-preview — Infraestrutura de Áudio ✅
 
 - **AudioManager centralizado**: classe `AudioManager` que encapsula a Web Audio API, com cadeia de ganho em cascata (`masterGain` → `musicGain` + `effectsGain`), criação lazy do `AudioContext` e tolerância total a assets ausentes. Documentação completa em [docs/audio.md](./audio.md)
 - **Catálogo de sons** (`src/audio/sounds.js`): 16 chaves simbólicas cobrindo UI, dados, tabuleiro, quiz, recompensas e música

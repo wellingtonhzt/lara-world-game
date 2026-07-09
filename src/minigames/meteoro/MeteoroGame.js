@@ -6,29 +6,48 @@ export class MeteoroGame {
     this.ctx = null;
     this.rafId = null;
     this.running = false;
+    this.state = 'IDLE';
 
     this.ship = { x: 0, y: 0, width: 40, height: 32 };
     this.meteoros = [];
     this.stars = [];
     this.lives = 3;
-    this.timeLeft = 15;
+    this.timeLeft = 20;
     this.lastSpawn = 0;
     this.score = 0;
     this.width = 0;
     this.height = 0;
-    this.keys = { left: false, right: false };
+    this.keys = { left: false, right: false, up: false, down: false };
     this.touchX = null;
+    this.touchY = null;
+
+    this.invulnerableUntil = 0;
+    this.flashTimer = 0;
+    this.lifeLostText = '';
+    this.lifeLostTextTimer = 0;
+    this.hitPauseTimer = 0;
 
     this._onKeyDown = this._onKeyDown.bind(this);
     this._onKeyUp = this._onKeyUp.bind(this);
     this._onTouchStart = this._onTouchStart.bind(this);
+    this._onTouchMove = this._onTouchMove.bind(this);
     this._onTouchEnd = this._onTouchEnd.bind(this);
     this._onMouseDown = this._onMouseDown.bind(this);
+    this._onMouseMove = this._onMouseMove.bind(this);
     this._onMouseUp = this._onMouseUp.bind(this);
     this._loop = this._loop.bind(this);
   }
 
   start() {
+    this.state = 'PLAYING';
+    this.lives = 3;
+    this.timeLeft = 20;
+    this.meteoros = [];
+    this.hitPauseTimer = 0;
+    this.invulnerableUntil = 0;
+    this.flashTimer = 0;
+    this.lifeLostText = '';
+    this.lifeLostTextTimer = 0;
     this.canvas = document.createElement('canvas');
     this.canvas.className = 'meteoro-canvas';
     this.canvas.setAttribute('tabindex', '0');
@@ -43,13 +62,16 @@ export class MeteoroGame {
     document.addEventListener('keyup', this._onKeyUp);
     this.canvas.addEventListener('touchstart', this._onTouchStart, { passive: false });
     this.canvas.addEventListener('touchend', this._onTouchEnd, { passive: false });
+    this.canvas.addEventListener('touchmove', this._onTouchMove, { passive: false });
     this.canvas.addEventListener('mousedown', this._onMouseDown);
     this.canvas.addEventListener('mouseup', this._onMouseUp);
+    this.canvas.addEventListener('mousemove', this._onMouseMove);
 
     this._loop(performance.now());
   }
 
   stop() {
+    this.state = 'IDLE';
     this.running = false;
     if (this.rafId) {
       cancelAnimationFrame(this.rafId);
@@ -60,8 +82,40 @@ export class MeteoroGame {
     if (this.canvas) {
       this.canvas.removeEventListener('touchstart', this._onTouchStart);
       this.canvas.removeEventListener('touchend', this._onTouchEnd);
+      this.canvas.removeEventListener('touchmove', this._onTouchMove);
       this.canvas.removeEventListener('mousedown', this._onMouseDown);
       this.canvas.removeEventListener('mouseup', this._onMouseUp);
+      this.canvas.removeEventListener('mousemove', this._onMouseMove);
+    }
+    if (this.canvas && this.canvas.parentNode) {
+      this.canvas.parentNode.removeChild(this.canvas);
+    }
+    this.canvas = null;
+    this.ctx = null;
+  }
+
+  stopEarly() {
+    if (this.state !== 'PLAYING') return;
+    this.state = 'FAIL';
+    this.running = false;
+    if (this.rafId) {
+      cancelAnimationFrame(this.rafId);
+      this.rafId = null;
+    }
+    this._cleanup();
+    this.onComplete({ status: 'fail', bonus: 0, lives: this.lives, timeLeft: Math.ceil(this.timeLeft) });
+  }
+
+  _cleanup() {
+    document.removeEventListener('keydown', this._onKeyDown);
+    document.removeEventListener('keyup', this._onKeyUp);
+    if (this.canvas) {
+      this.canvas.removeEventListener('touchstart', this._onTouchStart);
+      this.canvas.removeEventListener('touchend', this._onTouchEnd);
+      this.canvas.removeEventListener('touchmove', this._onTouchMove);
+      this.canvas.removeEventListener('mousedown', this._onMouseDown);
+      this.canvas.removeEventListener('mouseup', this._onMouseUp);
+      this.canvas.removeEventListener('mousemove', this._onMouseMove);
     }
     if (this.canvas && this.canvas.parentNode) {
       this.canvas.parentNode.removeChild(this.canvas);
@@ -112,22 +166,20 @@ export class MeteoroGame {
   }
 
   _onKeyDown(e) {
-    if (e.key === 'ArrowLeft' || e.key === 'a') {
-      this.keys.left = true;
-      e.preventDefault();
-    } else if (e.key === 'ArrowRight' || e.key === 'd') {
-      this.keys.right = true;
-      e.preventDefault();
+    switch (e.key) {
+      case 'ArrowLeft': case 'a': this.keys.left = true; e.preventDefault(); break;
+      case 'ArrowRight': case 'd': this.keys.right = true; e.preventDefault(); break;
+      case 'ArrowUp': case 'w': this.keys.up = true; e.preventDefault(); break;
+      case 'ArrowDown': case 's': this.keys.down = true; e.preventDefault(); break;
     }
   }
 
   _onKeyUp(e) {
-    if (e.key === 'ArrowLeft' || e.key === 'a') {
-      this.keys.left = false;
-      e.preventDefault();
-    } else if (e.key === 'ArrowRight' || e.key === 'd') {
-      this.keys.right = false;
-      e.preventDefault();
+    switch (e.key) {
+      case 'ArrowLeft': case 'a': this.keys.left = false; e.preventDefault(); break;
+      case 'ArrowRight': case 'd': this.keys.right = false; e.preventDefault(); break;
+      case 'ArrowUp': case 'w': this.keys.up = false; e.preventDefault(); break;
+      case 'ArrowDown': case 's': this.keys.down = false; e.preventDefault(); break;
     }
   }
 
@@ -136,33 +188,77 @@ export class MeteoroGame {
     const touch = e.touches[0];
     const rect = this.canvas.getBoundingClientRect();
     this.touchX = touch.clientX - rect.left;
+    this.touchY = touch.clientY - rect.top;
+  }
+
+  _onTouchMove(e) {
+    e.preventDefault();
+    const touch = e.touches[0];
+    const rect = this.canvas.getBoundingClientRect();
+    this.touchX = touch.clientX - rect.left;
+    this.touchY = touch.clientY - rect.top;
   }
 
   _onTouchEnd(e) {
     e.preventDefault();
     this.touchX = null;
+    this.touchY = null;
   }
 
   _onMouseDown(e) {
     const rect = this.canvas.getBoundingClientRect();
     this.touchX = e.clientX - rect.left;
+    this.touchY = e.clientY - rect.top;
+  }
+
+  _onMouseMove(e) {
+    if (this.touchX !== null) {
+      const rect = this.canvas.getBoundingClientRect();
+      this.touchX = e.clientX - rect.left;
+      this.touchY = e.clientY - rect.top;
+    }
   }
 
   _onMouseUp() {
     this.touchX = null;
+    this.touchY = null;
   }
 
   _update(dt) {
-    const shipSpeed = 260;
+    if (this.state !== 'PLAYING') return;
 
-    if (this.keys.left || (this.touchX !== null && this.touchX < this.width / 2)) {
+    if (this.hitPauseTimer > 0) {
+      this.hitPauseTimer -= dt * 1000;
+      if (this.hitPauseTimer < 0) this.hitPauseTimer = 0;
+      return;
+    }
+
+    const shipSpeed = 260;
+    const halfW = this.width / 2;
+    const halfH = this.height / 2;
+
+    if (this.keys.left || (this.touchX !== null && this.touchX < halfW)) {
       this.ship.x -= shipSpeed * dt;
     }
-    if (this.keys.right || (this.touchX !== null && this.touchX >= this.width / 2)) {
+    if (this.keys.right || (this.touchX !== null && this.touchX >= halfW)) {
       this.ship.x += shipSpeed * dt;
+    }
+    if (this.keys.up || (this.touchX !== null && this.touchY !== null && this.touchY < halfH)) {
+      this.ship.y -= shipSpeed * dt;
+    }
+    if (this.keys.down || (this.touchX !== null && this.touchY !== null && this.touchY >= halfH)) {
+      this.ship.y += shipSpeed * dt;
     }
 
     this.ship.x = Math.max(0, Math.min(this.width - this.ship.width, this.ship.x));
+    this.ship.y = Math.max(0, Math.min(this.height - this.ship.height, this.ship.y));
+
+    this.timeLeft -= dt;
+    if (this.timeLeft <= 0) {
+      this.timeLeft = 0;
+      this._end(true);
+      return;
+    }
 
     const now = performance.now();
     if (now - this.lastSpawn > 700) {
@@ -179,9 +275,10 @@ export class MeteoroGame {
       m.rotation += m.rotSpeed;
       if (m.y > this.height + m.size) {
         this.meteoros.splice(i, 1);
-        continue;
       }
     }
+
+    if (this.invulnerableUntil > now) return;
 
     const shipRect = {
       x: this.ship.x + 4,
@@ -201,37 +298,64 @@ export class MeteoroGame {
       ) {
         this.meteoros.splice(i, 1);
         this.lives--;
+
         if (this.lives <= 0) {
           this._end(false);
           return;
         }
+
+        this._removeNearbyMeteoros(shipRect);
+        this.hitPauseTimer = 800;
+        this.invulnerableUntil = performance.now() + 1000;
+        this.flashTimer = 200;
+        this.lifeLostText = '\uD83D\uDCA5 -1 Vida!';
+        this.lifeLostTextTimer = 800;
+        return;
       }
     }
+  }
 
-    this.timeLeft -= dt;
-    if (this.timeLeft <= 0) {
-      this._end(true);
+  _removeNearbyMeteoros(shipRect) {
+    const clearZone = 80;
+    for (let i = this.meteoros.length - 1; i >= 0; i--) {
+      const m = this.meteoros[i];
+      const dx = m.x - (shipRect.x + shipRect.w / 2);
+      const dy = m.y - (shipRect.y + shipRect.h / 2);
+      if (Math.sqrt(dx * dx + dy * dy) < clearZone) {
+        this.meteoros.splice(i, 1);
+      }
     }
   }
 
   _end(success) {
-    this.running = false;
-    if (success) {
-      this.onComplete({ status: 'success', bonus: 3 });
-    } else {
-      this.onComplete({ status: 'fail', bonus: 0 });
-    }
+    this.state = success ? 'SUCCESS' : 'FAIL';
+    this.flashTimer = 0;
+    this.lifeLostText = '';
+    this.lifeLostTextTimer = 0;
+    this._draw();
+    setTimeout(() => {
+      this.onComplete({ status: success ? 'success' : 'fail', bonus: success ? 3 : 0, lives: this.lives, timeLeft: Math.ceil(this.timeLeft) });
+    }, 1000);
   }
 
   _draw() {
     const ctx = this.ctx;
     if (!ctx) return;
 
+    const now = performance.now();
+    const isTerminal = this.state === 'SUCCESS' || this.state === 'FAIL';
+
+    if (!isTerminal && this.flashTimer > 0) {
+      ctx.fillStyle = 'rgba(255, 0, 0, 0.3)';
+      ctx.fillRect(0, 0, this.width, this.height);
+      this.flashTimer -= 16;
+    }
+
     ctx.fillStyle = '#05051a';
     ctx.fillRect(0, 0, this.width, this.height);
 
     for (const s of this.stars) {
-      ctx.globalAlpha = s.a + Math.sin(performance.now() * 0.001 * s.speed) * 0.15;
+      ctx.globalAlpha = s.a + Math.sin(now * 0.001 * s.speed) * 0.15;
       ctx.fillStyle = '#ffffff';
       ctx.beginPath();
       ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
@@ -260,6 +384,9 @@ export class MeteoroGame {
     }
 
     ctx.save();
+    if (!isTerminal && this.invulnerableUntil > now) {
+      ctx.globalAlpha = 0.5 + Math.sin(now * 0.02) * 0.3;
+    }
     ctx.translate(this.ship.x, this.ship.y);
     ctx.fillStyle = '#7c4dff';
     ctx.beginPath();
@@ -276,45 +403,45 @@ export class MeteoroGame {
     ctx.arc(this.ship.width / 2, this.ship.height * 0.3, 6, 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
+    ctx.globalAlpha = 1;
 
     ctx.fillStyle = '#ffffff';
     ctx.font = 'bold 18px sans-serif';
     ctx.textAlign = 'left';
-    ctx.fillText('\u2764\uFE0F '.repeat(this.lives), 14, 30);
+    ctx.fillText('\u2764\uFE0F '.repeat(Math.max(0, this.lives)), 14, 30);
 
     ctx.textAlign = 'right';
     const timeColor = this.timeLeft < 5 ? '#ff4444' : '#ffffff';
     ctx.fillStyle = timeColor;
     ctx.font = 'bold 22px monospace';
     ctx.fillText(Math.ceil(this.timeLeft) + 's', this.width - 14, 30);
+
+    if (!isTerminal && this.lifeLostTextTimer > 0) {
+      this.lifeLostTextTimer -= 16;
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#ff4444';
+      ctx.font = 'bold 28px sans-serif';
+      ctx.fillText(this.lifeLostText, this.width / 2, this.height / 2 - 20);
+    }
   }
 
   _loop(timestamp) {
-    if (!this.running) {
-      if (this.rafId) {
-        cancelAnimationFrame(this.rafId);
-        this.rafId = null;
-      }
+    const isTerminal = this.state === 'SUCCESS' || this.state === 'FAIL';
+
+    if (!isTerminal && !this.running) {
+      if (this.rafId) { cancelAnimationFrame(this.rafId); this.rafId = null; }
       return;
     }
 
-    if (!this._lastTime) {
+    if (!isTerminal) {
+      if (!this._lastTime) { this._lastTime = timestamp; }
+      const dt = Math.min((timestamp - this._lastTime) / 1000, 0.05);
       this._lastTime = timestamp;
+      this._update(dt);
     }
 
-    const dt = Math.min((timestamp - this._lastTime) / 1000, 0.05);
-    this._lastTime = timestamp;
-
-    this._update(dt);
-    if (this.running) {
-      this._draw();
-      this.rafId = requestAnimationFrame(this._loop);
-    } else {
-      if (this.rafId) {
-        cancelAnimationFrame(this.rafId);
-        this.rafId = null;
-      }
-    }
+    this._draw();
+    this.rafId = requestAnimationFrame(this._loop);
   }
 
   destroy() {

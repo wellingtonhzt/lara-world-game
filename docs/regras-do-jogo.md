@@ -91,7 +91,28 @@ A escolha do modo determina quais campos são exibidos no modal e como o Jogador
 | 15 | 🔙 Volte ao início | O personagem volta para a posição 0 (fora do tabuleiro). |
 | 16 | ❓ Desafio educativo | Mesmo efeito da casa 4. |
 | 18 | ❓ Desafio educativo | Mesmo efeito da casa 4. |
-| 20 | 🏆 Vitória! | O jogador vence a partida. |
+ | 20 | 🏆 Vitória! | O jogador vence a partida. |
+
+### Mundo Galáxia — Casas Especiais
+
+| Casa | Tipo | Efeito |
+|------|------|--------|
+| 4 | 🌊 Avance 2 | O personagem avança 2 casas. |
+| 7 | 🔀 Troca Quântica | O personagem troca de posição com o adversário. |
+| 10 | ⭐ Desafio educativo | Mesmo efeito da casa 4. |
+| 12 | 🌀 Volte 2 | O personagem volta 2 casas. |
+| **15** | **🚪 Buraco de Minhoca** | **Abre o minigame MeteoroGame. O jogador controla uma nave e precisa desviar de meteoros. Resultado: vitória (+3 bônus) ou derrota (-2 penalidade).** |
+| 18 | ⚡ Jogue novamente | O jogador ganha uma jogada extra. |
+
+### Minigame: MeteoroGame (Buraco de Minhoca)
+
+- **Acesso**: ao cair na casa 15 do Mundo Galáxia, um overlay de transição é exibido antes de iniciar o minigame
+- **Controles**: setas do teclado (↑ ↓ ← →) ou WASD. Touch/mouse: metade superior da tela sobe, inferior desce, laterais movem horizontalmente
+- **Vidas**: 3 vidas. Ao colidir com um meteoro, flash vermelho na tela, nave pisca invulnerável por 1s, texto `💥 -1 Vida!` aparece centralizado
+- **Condições de vitória**: sobreviver até o tempo acabar → +3 casas de bônus no tabuleiro
+- **Condições de derrota**: perder todas as 3 vidas → -2 casas de penalidade
+- **Tela de resultado**: ao fim, um card glass é exibido sobre o canvas do minigame congelado (cenário espacial visível ao fundo), com resultado (vitória/derrota), vidas restantes, bônus. Botão "Voltar agora" confirma e aplica o bônus/penalidade
+- **Fluxo do Bot**: se a máquina cair no Buraco de Minhoca, um overlay exibe a barra "🤖 Máquina está jogando..." com botão "⏭ Pular". Ao clicar, o resultado é simulado e exibido por 2s. Sem interação, auto-resolve após 6s
 
 ## Regras Adicionais
 
@@ -104,4 +125,4 @@ A escolha do modo determina quais campos são exibidos no modal e como o Jogador
 - **Casa 5 na posição 1**: se estiver na casa 1 e cair na casa 5, o personagem volta para a posição 0 e fica fora do tabuleiro. Na próxima jogada, avançará para a casa 1 ou além.
 - **Após a vitória**: o jogo é encerrado, o botão "Jogar Dado" é desabilitado e um overlay de vitória com confetes animados, fogos serpentina e troféu é exibido. Duas opções estão disponíveis: **"🔁 Jogar Novamente"** (reinicia no mesmo modo) ou **"🏠 Voltar ao Menu"** (retorna à tela inicial).
 - **Reinício**: o botão "Reiniciar" exibe o modal de configuração novamente, permitindo que os jogadores alterem seus nomes e sprites antes de iniciar uma nova partida.
-- **Modo debug**: adicione `?debug=1` à URL para ativar um painel com 5 botões de teste rápido (Casa 11, Entrar na Floresta, Casa 5 Atalho, Casa 8 Saída, Voltar ao Principal). O modo debug não afeta partidas normais.
+- **Modo debug**: adicione `?debug=1` à URL para ativar um painel com controles de teste. Seção Galáxia: Gal C9, Gal C14, Gal C15 🚪. Seção Minigame: 🎮 Abrir, ✅ Vencer, ❌ Perder, ↩️ Retornar. Demais seções: Casa 11, Entrar na Floresta, Casa 5 Atalho, Casa 8 Saída, Voltar ao Principal. O modo debug não afeta partidas normais.

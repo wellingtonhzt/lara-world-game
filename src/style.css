@@ -2665,6 +2665,11 @@ body[data-world="dinossauros"] .path-line {
 /* ═══════════════════════════════════════
    GALAXIA ESTELAR THEME
    ═══════════════════════════════════════ */
+/* Aplica imagem de fundo ilustrada apenas na área do tabuleiro (#track-container)
+   quando o mundo Galáxia Estelar estiver ativo.
+   O asset assets/worlds/galaxia/background.webp ainda será criado.
+   Enquanto não existir, o fallback de gradiente escuro mantém o funcionamento.
+   Uma camada overlay semitransparente garante contraste das casas sobre a imagem. */
 
 body[data-world="galaxia-estelar"] {
   background:
@@ -2676,9 +2681,11 @@ body[data-world="galaxia-estelar"] {
 body[data-world="galaxia-estelar"] #track-container {
   background-image:
     linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
+    url("assets/worlds/galaxia/background.webp"),
     linear-gradient(to bottom, #0a0a2e 0%, #1a1a4e 25%, #0d0d3b 50%, #1a0a2e 75%, #0a0a1e 100%);
-  background-size: cover;
-  background-position: center;
+  background-size: cover, cover, auto;
+  background-position: center, center, 0 0;
+  background-repeat: no-repeat, no-repeat, repeat;
   box-shadow:
     inset 0 0 60px rgba(124, 77, 255, 0.1),
     0 6px 30px rgba(0, 0, 0, 0.07);
@@ -2786,8 +2793,12 @@ body[data-world="galaxia-estelar"] .path-line {
   font-size: 0.95rem;
   margin-top: 4px;
 }
+.minigame-header.hidden {
+  display: none;
+}
 
 .minigame-container {
+  position: relative;
   width: 100%;
   aspect-ratio: 3 / 2;
   border-radius: 16px;
@@ -2801,6 +2812,151 @@ body[data-world="galaxia-estelar"] .path-line {
   width: 100%;
   height: 100%;
   cursor: pointer;
+}
+
+/* Minigame result card (overlay on frozen scene) */
+
+.minigame-result-card {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 5, 26, 0.65);
+  backdrop-filter: blur(4px);
+  border-radius: 16px;
+}
+.minigame-result-card.hidden {
+  display: none;
+}
+
+.minigame-card-content {
+  background: linear-gradient(160deg, rgba(26, 26, 78, 0.95), rgba(13, 13, 59, 0.95));
+  border: 2px solid rgba(179, 136, 255, 0.25);
+  border-radius: 20px;
+  padding: 32px 36px;
+  max-width: 360px;
+  width: 90%;
+  text-align: center;
+  box-shadow:
+    0 0 40px rgba(124, 77, 255, 0.15),
+    0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.minigame-card-icon {
+  font-size: 3.4rem;
+  margin-bottom: 6px;
+}
+
+.minigame-card-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #b388ff;
+  margin: 0 0 8px 0;
+  text-shadow: 0 0 20px rgba(179, 136, 255, 0.3);
+  letter-spacing: 0.5px;
+}
+
+.minigame-card-desc {
+  font-size: 0.95rem;
+  color: #ccccee;
+  margin: 0 0 20px 0;
+  line-height: 1.4;
+}
+
+.minigame-card-bonus {
+  background: rgba(124, 77, 255, 0.12);
+  border: 1px solid rgba(179, 136, 255, 0.2);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+}
+.minigame-card-bonus.hidden {
+  display: none;
+}
+
+.minigame-card-bonus-label {
+  display: block;
+  font-size: 0.8rem;
+  color: #b388ff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+.minigame-card-bonus-value {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #ffd700;
+  text-shadow: 0 0 16px rgba(255, 215, 0, 0.3);
+}
+
+.minigame-card-countdown {
+  font-size: 0.95rem;
+  color: #ffcc00;
+  margin: 0 0 16px 0;
+  font-weight: 600;
+  text-shadow: 0 0 10px rgba(255, 204, 0, 0.2);
+}
+.minigame-card-countdown.hidden {
+  display: none;
+}
+
+.minigame-card-btn {
+  background: linear-gradient(145deg, #7c4dff, #b388ff);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 32px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 4px 16px rgba(124, 77, 255, 0.3);
+}
+.minigame-card-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 24px rgba(124, 77, 255, 0.5);
+}
+
+/* Minigame bot skip bar */
+
+.minigame-bot-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 12px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  color: #aaaacc;
+  font-size: 0.9rem;
+}
+.minigame-bot-bar.hidden { display: none; }
+.minigame-skip-btn {
+  background: linear-gradient(145deg, #ff6b35, #ff8f00);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 16px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.minigame-skip-btn:hover { transform: scale(1.05); }
+
+/* Life loss flash on canvas */
+
+@keyframes meteoro-flash {
+  0% { background-color: rgba(255, 0, 0, 0.4); }
+  100% { background-color: transparent; }
+}
+.meteoro-life-lost {
+  animation: meteoro-flash 0.3s ease-out;
 }
 
 /* ═══════════════════════════════════════

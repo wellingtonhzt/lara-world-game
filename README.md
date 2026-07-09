@@ -18,7 +18,10 @@
 
 | Versão | Data | Status |
 |--------|------|--------|
-| **v0.13.0-preview** | Jul/2026 | ✅ **Ativo** — Infraestrutura de Áudio |
+| **v0.16.0-preview** | Jul/2026 | ✅ **Ativo** — Visual da Galáxia Estelar (background + path) |
+| v0.15.0-preview | Jul/2026 | ✅ Concluído |
+| v0.14.0-preview | Jul/2026 | ✅ Concluído |
+| v0.13.0-preview | Jul/2026 | ✅ Concluído |
 | v0.12.0-preview | Jul/2026 | ✅ Concluído |
 | v0.11.0-preview | Jul/2026 | ✅ Concluído |
 | v0.10.0-preview | Jul/2026 | ✅ Concluído |
@@ -34,7 +37,28 @@
 
 ---
 
-## ✨ Funcionalidades Atuais (v0.13.0-preview)
+## ✨ Funcionalidades Atuais (v0.16.0-preview)
+
+### Visual da Galáxia Estelar — ART-011
+
+- **Infraestrutura visual completa**: pasta `src/assets/worlds/galaxia/` criada com suporte a `background.webp` e `path.webp`, seguindo o mesmo padrão de Floresta e Dinossauros
+- **Background personalizado**: CSS do `#track-container` atualizado com overlay semitransparente + `url("assets/worlds/galaxia/background.webp")` + gradiente fallback escuro
+- **Path.webp**: regra CSS existente para `body[data-world="galaxia-estelar"] .path-line` com fallback SVG stroke
+- **Fallback garantido**: se os assets .webp não existirem, gradiente e SVG mantêm o visual funcional
+
+### Casa 7 — Troca Quântica (Galáxia) + Result Card do Minigame — GAL-002
+
+- **Casa 7 — Troca Quântica**: evento `swap-positions` substitui `move -2` — jogador troca de posição com o adversário
+- **Result Card sobre cenário congelado**: card glass sobre o canvas da Galáxia ao fim do MeteoroGame
+- **Minigame ajustado**: tempo aumentado para 20s
+
+### Galáxia Estelar + Minigame do Buraco de Minhoca — GAL-001
+
+- **Mundo Galáxia**: tabuleiro temático com 20 casas, textos enxutos seguindo padrão visual (ícone + descrição curta)
+- **Buraco de Minhoca (casa 15)**: casa especial que transporta para o minigame de desvio de meteoros
+- **MeteoroGame 4-dir**: nave com controles 4-direcionais (↑ ↓ ← → + WASD), 3 vidas, feedback visual
+- **Fluxo do Bot**: overlay com botão "Pular", auto-resolve após 6s
+- **Debug**: painel expandido com controles Galáxia e minigame
 
 ### Sistema de Áudio — AUD-001
 
@@ -204,7 +228,10 @@ src/assets/
     ├── floresta/
     │   ├── background.webp   # Background ilustrado do tabuleiro (asset pendente)
     │   └── path.webp          # Textura do caminho (asset pendente)
-    └── dinossauros/
+    ├── dinossauros/
+    │   ├── background.webp   # Background ilustrado do tabuleiro (asset pendente)
+    │   └── path.webp          # Textura do caminho (asset pendente)
+    └── galaxia/
         ├── background.webp   # Background ilustrado do tabuleiro (asset pendente)
         └── path.webp          # Textura do caminho (asset pendente)
 ```
@@ -241,6 +268,8 @@ src/assets/
 | `path.webp` | Floresta Encantada | ✅ Infraestrutura concluída — CSS via `background-image` + SVG stroke como fallback (asset pendente) |
 | `background.webp` | Vale dos Dinossauros | ✅ Infraestrutura concluída — CSS e overlay prontos (asset pendente de criação por IA) |
 | `path.webp` | Vale dos Dinossauros | ✅ Infraestrutura concluída — CSS via `background-image` + SVG stroke como fallback (asset pendente) |
+| `background.webp` | Galáxia Estelar | ✅ Infraestrutura concluída — CSS e overlay prontos (asset pendente de criação por IA) |
+| `path.webp` | Galáxia Estelar | ✅ Infraestrutura concluída — CSS via `background-image` + SVG stroke como fallback (asset pendente) |
 
 ### Decisões de UX Aprovadas
 
@@ -431,10 +460,13 @@ docker compose down
 
 ## 🗺️ Roadmap
 
-- **v0.13.0-preview** — ✅ **Ativo** — Infraestrutura de Áudio (AUD-001): AudioManager, catálogo de 16 sons, 21 pontos de integração, docs/audio.md
-- **v0.12.0-preview** — ✅ Concluído — Board Layout 2.0, path.webp, Hero Screen (UX-013), Seleção de Mundos v2 (UX-014), Ilustrações dos Mundos (ART-009), Avatares/Tokens (UX-015 + ART-010)
-- **v0.14.0-preview** — Hero Screen v2, evolução dos cards dos mundos, assets próprios das casas especiais, ilustrações das áreas dos mundos
-- **v1.0.0** — Lançamento oficial com sistema de conquistas, Modo Aventura e animações da interface
+- **v0.16.0-preview** — ✅ **Ativo** — Visual da Galáxia Estelar (ART-011): infraestrutura background.webp + path.webp para Galáxia
+- **v0.15.0-preview** — ✅ Concluído — Troca Quântica (GAL-002): Casa 7 swap-positions + result card do minigame
+- **v0.14.0-preview** — ✅ Concluído — Galáxia Estelar + MeteoroGame (GAL-001)
+- **v0.13.0-preview** — ✅ Concluído — Infraestrutura de Áudio (AUD-001)
+- **v0.12.0-preview** — ✅ Concluído — Board Layout 2.0, path.webp, Hero Screen, Seleção de Mundos v2, Avatares/Tokens
+- **v0.11.0-preview** — ✅ Concluído — Evolução Visual (UX 2.0)
+- **v0.10.0-preview** — ✅ Concluído — Vale dos Dinossauros + Caverna dos Fósseis
 
 Veja o [roadmap completo](docs/roadmap.md).
 

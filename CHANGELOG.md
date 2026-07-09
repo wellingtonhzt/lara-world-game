@@ -1,5 +1,38 @@
 # Changelog
 
+## [0.16.0-preview] - 2026-07-09
+
+### Visual da Galáxia Estelar — ART-011
+
+- **Estrutura de assets criada**: `src/assets/worlds/galaxia/` com `.gitkeep`, preparada para receber `background.webp` e `path.webp`
+- **Background personalizado**: CSS de `body[data-world="galaxia-estelar"] #track-container` atualizado para seguir o padrão Floresta/Dinossauros — overlay semitransparente + `url("assets/worlds/galaxia/background.webp")` + gradiente fallback escuro
+- **Path.webp já suportado**: regra `body[data-world="galaxia-estelar"] .path-line` existente com URL para o asset e fallback SVG stroke
+- **Fallback garantido**: se os assets .webp não existirem, gradiente e SVG mantêm o tabuleiro funcional e legível
+- **Documentação**: README, CHANGELOG, visão-geral atualizados com a nova infraestrutura
+
+## [0.15.0-preview] - 2026-07-09
+
+### Casa 7 — Troca Quântica (Galáxia) + Result Card do Minigame — GAL-002
+
+- **Casa 7 — Troca Quântica**: evento `swap-positions` substitui `move -2` — jogador troca de posição com o outro jogador (humano ou bot). Animação em ambos os tokens, UI/histórico atualizados, sem cascata. Botão debug `🔄 Gal C7` adicionado
+- **Result Card sobre cenário congelado**: ao fim do MeteoroGame, um card com visual glass (blur, borda roxa, gradiente escuro) aparece sobreposto ao canvas da Galáxia, que continua renderizado (estrelas piscando, nave/ meteoros parados). Nenhum modal separado — o cenário espacial permanece visível ao fundo
+- **Card de resultado**: ícone (🚀 sucesso / 💥 falha), título (MISSÃO COMPLETA / MISSÃO FALHOU), descrição, badge de recompensa com brilho dourado (oculto em derrota), contador regressivo de 5s e botão "Voltar agora"
+- **Fluxo de bot com card**: mesma interface de resultado (card + contagem + botão)
+- **Header oculto durante card**: título e instruções do minigame escondidos quando o card aparece, preservando apenas o cenário de fundo
+- **Container com `position: relative`**: `.minigame-container` ganha posicionamento relativo para suportar o card absolute
+
+## [0.14.0-preview] - 2026-07-09
+
+### Galáxia Estelar + Minigame do Buraco de Minhoca — GAL-001
+
+- **Mundo Galáxia**: textos das casas reduzidos para seguir padrão visual dos outros mundos (ícone + descrição curta). Ex: `'🌊 Avance 2'`, `'⭐ Desafio'`, `'🌀 Volte 2'`, `'⚡ Jogue novamente'`
+- **Buraco de Minhoca movido para casa 15**: casa especial `buraco-minhoca` removida da casa 10 e adicionada na casa 15. Config, debug e handlers atualizados
+- **MeteoroGame 4-dir**: nave agora move nas 4 direções (↑ ↓ ← → + WASD). Touch/mouse mantém controle horizontal + adiciona eixo Y (metade superior = sobe, inferior = desce)
+- **Feedback de perda de vida**: flash vermelho na tela, nave pisca invulnerável por 1s, texto `'💥 -1 Vida!'` aparece centralizado, 3 vidas totais com contador visível no canto
+- **Tela de resultado**: ao fim do minigame, overlay mostra resultado (vitória/derrota), vidas restantes, tempo, bônus ganho. Botão "Voltar ao tabuleiro" só fecha o overlay após clique. Bônus só é aplicado após confirmação
+- **Fluxo do bot**: se a máquina cair no Buraco de Minhoca, overlay aparece com barra "🤖 Máquina está jogando..." e botão "⏭ Pular". Ao pular, resultado simulado é exibido por 2s e aplicado. Auto-resolve após 6s sem interação
+- **Painel Debug**: seção Galáxia atualizada com botões: Gal C9, Gal C14 (perto do wormhole), Gal C15 🚪 (wormhole), 🎮 Abrir, ✅ Vencer, ❌ Perder, ↩️ Retornar. Todos os handlers refletem a nova casa 15
+
 ## [0.13.0-preview] - 2026-07-08
 
 ### Infraestrutura de Áudio — AUD-001

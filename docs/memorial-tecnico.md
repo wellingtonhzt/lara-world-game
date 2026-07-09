@@ -1,5 +1,113 @@
 # Memorial Técnico
 
+## Sprint — Visual da Galáxia Estelar — ART-011 (v0.16.0-preview)
+
+### Objetivo
+
+Adicionar infraestrutura visual de background e path para o mundo Galáxia Estelar, seguindo exatamente o mesmo padrão estabelecido para Floresta Encantada (v0.11.0) e Vale dos Dinossauros (v0.12.0): pasta de assets, CSS com overlay + url + gradiente fallback no `#track-container`, e regra de `path.webp` com fallback SVG.
+
+### Arquivos Criados
+
+| Arquivo | Descrição |
+|---------|-----------|
+| `src/assets/worlds/galaxia/.gitkeep` | Placeholder da estrutura de assets visuais da Galáxia |
+
+### Arquivos Alterados
+
+| Arquivo | Tipo de Alteração |
+|---------|-------------------|
+| `src/style.css` | **Modificado** — `body[data-world="galaxia-estelar"] #track-container` atualizado com `url("assets/worlds/galaxia/background.webp")` + overlay + gradiente fallback (padrão Floresta/Dinossauros). `background-size`, `background-position` e `background-repeat` ajustados para suportar 3 camadas. Comentário de documentação adicionado |
+| `README.md` | **Modificado** — Versão atualizada para v0.16.0, funcionalidades atuais, assets tree, tabela de status, roadmap |
+| `CHANGELOG.md` | **Modificado** — Entrada v0.16.0 adicionada |
+| `docs/visao-geral.md` | **Modificado** — Sessão v0.16.0 adicionada |
+| `docs/arquitetura.md` | **Modificado** — Galáxia adicionada na árvore de assets e na nota explicativa |
+| `docs/memorial-tecnico.md` | **Modificado** — Sprint ART-011 adicionada |
+
+### Decisões Técnicas
+
+| Decisão | Alternativas | Motivo |
+|---------|-------------|--------|
+| Reutilizar seletor `body[data-world="galaxia-estelar"] #track-container` | Criar nova classe | O seletor já existia e funcionava — só faltava adicionar a camada `background-image` com o asset |
+| Overlay com `linear-gradient(rgba(0,0,0,0.35))` | Opacidade no próprio asset | Mesmo padrão dos outros mundos: overlay separado para garantir contraste independente do asset |
+| `background-size: cover, cover, auto` | Apenas `cover` | O terceiro valor `auto` é necessário porque o fallback é um `linear-gradient`, não uma imagem |
+
+### Seletor CSS Utilizado
+
+```css
+body[data-world="galaxia-estelar"] #track-container
+```
+
+### Onde Salvar o background Gerado
+
+```
+src/assets/worlds/galaxia/background.webp
+```
+
+### Como Testar Localmente
+
+1. Execute `cd src && npx serve .` (ou `python3 -m http.server 8000`)
+2. Abra o jogo e selecione Galáxia Estelar no seletor de mundos
+3. Verifique:
+   - Galáxia abre normalmente (gradiente fallback aparece sem `background.webp`)
+   - Caminho SVG visível e funcional
+   - Casas e jogadores legíveis
+   - Se `background.webp` existir, ele aparece apenas dentro do `#track-container`
+   - Floresta e Dinossauros não foram afetados (verificar visualmente)
+
+## Sprint — Galáxia Estelar + Minigame do Buraco de Minhoca — GAL-001 (v0.14.0-preview)
+
+### Objetivo
+
+Implementar o terceiro mundo (Galáxia Estelar) com 20 casas temáticas e o minigame MeteoroGame integrado ao Buraco de Minhoca (casa 15). O minigame opera com controles 4-direcionais, sistema de 3 vidas com feedback visual, tela de resultado com confirmação e fluxo especial para o bot da máquina com auto-resolve.
+
+### Arquivos Alterados
+
+| Arquivo | Tipo de Alteração |
+|---------|-------------------|
+| `src/worlds/galaxia/config.js` | **Criado** — Config do terceiro mundo: 20 casas temáticas com células posicionadas individualmente (`board.cells`), textos enxutos, `buraco-minhoca` na casa 15 |
+| `src/minigames/meteoro/MeteoroGame.js` | **Criado** — Classe principal do minigame (~280 linhas). Gerencia canvas, loop de jogo, nave 4-dir, meteoros, colisão, vidas, flash/invulnerabilidade, contador regressivo (60s), tela de resultado. API: `start(callback)`, `abort()`. Callback retorna `{ venceu, vidasRestantes, bonus }` |
+| `src/minigames/meteoro/meteoroGame.css` | **Criado** — Estilos do overlay do minigame: flash vermelho, nave piscando, UI de vidas, texto de dano, tela de resultado com botão |
+| `src/minigames/meteoro/index.js` | **Criado** — Factory: `createMeteoroGame(containerId)` retorna instância do MeteoroGame |
+| `src/worlds/galaxia/handlers/buraco-minhoca.js` | **Criado** — Handler da casa especial: abre overlay de transição, inicia minigame, trata resultado (vitória +3, derrota -2), atualiza tabuleiro |
+| `src/worlds/galaxia/handlers/buraco-minhoca-bot.js` | **Criado** — Handler para o bot: overlay com barra "Máquina está jogando...", botão "Pular", simula resultado, auto-resolve após 6s com `setTimeout` |
+| `src/worlds/galaxia/index.js` | **Criado** — Export do mundo Galáxia registrando config e handlers |
+| `src/game.js` | **Modificado** — Adicionado `handleWormholeCell()`, `handleGalaxiaCell()`, integração do WorldRegistry com Galáxia, debug expandido (seção Galáxia + minigame) |
+| `src/types.js` | **Modificado** — Adicionado `buraco-minhoca` ao enum de tipos de casa |
+| `src/world-registry.js` | **Modificado** — Registro do mundo Galáxia |
+| `src/index.html` | **Modificado** — Inclusão do CSS do minigame (import condicional) |
+| `src/style.css` | **Modificado** — Estilos do debug Galáxia, overlay de transição do minigame |
+| `src/main.js` | **Modificado** — Setup do debug Galáxia, botão "Abrir" minigame para teste |
+
+### Decisões Técnicas
+
+| Decisão | Alternativas | Motivo |
+|---------|-------------|--------|
+| Buraco de Minhoca na casa 15 (não mais na 10) | Manter casa 10 | Casa 15 é mais equilibrada (meio-fim da trilha), evita sobrecarga no início da Galáxia |
+| MeteoroGame como classe independente (`MeteoroGame.js`) | Funções soltas em game.js | Encapsulamento: lógica do minigame isolada, ciclo de vida gerenciado, facilita testes |
+| Canvas 2D para o minigame | DOM + CSS | Performance: dezenas de meteoros simultâneos requerem renderização eficiente |
+| 4 direções (↑↓←→ + WASD) | Apenas horizontal | Mais engajamento e desafio; eixo Y metade superior/inferior via touch |
+| Invulnerabilidade por 1s pós-dano | Sem invulnerabilidade | Evita perda múltipla de vidas em colisões consecutivas; flash visual + piscar da nave como feedback |
+| Vida contada regressivamente (3 → 0) | Progressiva | MeteoroGame é punitivo por natureza; perder todas as vidas = derrota |
+| Bot com overlay "Pular" + auto-resolve 6s | Bot jogar sozinho | Usuário mantém controle da experiência; auto-resolve evita deadlock |
+| Bônus aplicado apenas após "Voltar ao tabuleiro" | Aplicar imediatamente | Usuário precisa ver o resultado e confirmar; evita confusão |
+
+### Estado Atual
+
+- **Mundo Galáxia**: config completo com 20 casas, textos padronizados (ícone + descrição curta)
+- **Minigame MeteoroGame**: 4-dir, 3 vidas, flash, invulnerabilidade, 60s, resultado com bônus
+- **Fluxo humano**: casa 15 → overlay transição → minigame → resultado → "Voltar ao tabuleiro" → bônus aplicado
+- **Fluxo bot**: casa 15 → overlay com barra → "Pular" ou 6s → resultado simulado 2s → bônus aplicado
+- **Debug**: 4 botões Galáxia (C9, C14, C15🚪), 4 botões minigame (Abrir, Vencer, Perder, Retornar)
+- **Código**: ~450 linhas totais (minigame + handlers + config + debug)
+- **Documentação**: 7 arquivos atualizados neste sprint
+
+### Pendências
+
+- [ ] Ilustração do background da Galáxia Estelar (`background.webp`)
+- [ ] Som do minigame (efeitos de meteoro, dano, vitória/derrota)
+- [ ] Animações de transição mais elaboradas (entrada/saída do minigame)
+- [ ] Dificuldade progressiva no MeteoroGame (meteoros aceleram com o tempo)
+
 ## Sprint — Sistema de Áudio — AUD-001 (v0.13.0-preview)
 
 ### Objetivo

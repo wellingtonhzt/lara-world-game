@@ -271,11 +271,32 @@
 
     <div id="minigame-overlay" class="minigame-overlay hidden">
       <div class="minigame-content">
-        <div class="minigame-header">
-          <h2 id="minigame-title">🚀 Desvie dos Meteoros!</h2>
-          <p id="minigame-instructions">Use as setas ← → para desviar dos meteoros!</p>
+        <!-- Play Phase -->
+        <div id="minigame-phase-play">
+          <div class="minigame-header">
+            <h2 id="minigame-title">🚀 Desvie dos Meteoros!</h2>
+            <p id="minigame-instructions">Use as setas ← → ↑ ↓ ou WASD para desviar!</p>
+          </div>
+          <div id="minigame-container" class="minigame-container">
+            <div id="minigame-result-card" class="minigame-result-card hidden">
+              <div class="minigame-card-content">
+                <div id="minigame-card-icon" class="minigame-card-icon">🚀</div>
+                <h2 id="minigame-card-title" class="minigame-card-title">MISSÃO COMPLETA!</h2>
+                <p id="minigame-card-desc" class="minigame-card-desc">Você atravessou a chuva de meteoros.</p>
+                <div id="minigame-card-bonus" class="minigame-card-bonus">
+                  <span class="minigame-card-bonus-label">⭐ Recompensa</span>
+                  <span id="minigame-card-bonus-value" class="minigame-card-bonus-value">+3 casas</span>
+                </div>
+                <p id="minigame-card-countdown" class="minigame-card-countdown hidden">Voltando ao tabuleiro em 5...</p>
+                <button id="minigame-card-btn" class="minigame-card-btn">Voltar agora</button>
+              </div>
+            </div>
+          </div>
+          <div id="minigame-bot-bar" class="minigame-bot-bar hidden">
+            <span id="minigame-bot-text">🤖 Máquina está jogando...</span>
+            <button id="minigame-skip-btn" class="minigame-skip-btn">⏭ Pular</button>
+          </div>
         </div>
-        <div id="minigame-container" class="minigame-container"></div>
       </div>
     </div>
 
@@ -446,8 +467,10 @@
     <div class="debug-section">
       <div class="debug-section-title">🌌 Galáxia Estelar</div>
       <div class="debug-btn-group">
+        <button class="debug-btn debug-btn-test" data-debug="galaxia-casa7">🔄 Gal C7</button>
         <button class="debug-btn debug-btn-test" data-debug="galaxia-casa9">Gal C9</button>
-        <button class="debug-btn debug-btn-test" data-debug="galaxia-casa10">Gal C10 🚪</button>
+        <button class="debug-btn debug-btn-test" data-debug="galaxia-casa14">Gal C14</button>
+        <button class="debug-btn debug-btn-test" data-debug="galaxia-casa15">Gal C15 🚪</button>
         <button class="debug-btn debug-btn-test" data-debug="galaxia-minigame">🎮 Abrir</button>
         <button class="debug-btn debug-btn-test" data-debug="galaxia-vitoria">✅ Vencer</button>
         <button class="debug-btn debug-btn-test" data-debug="galaxia-derrota">❌ Perder</button>
