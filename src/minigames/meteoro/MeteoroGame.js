@@ -198,11 +198,23 @@ export class MeteoroGame {
     return { x: e.clientX - rect.left, y: e.clientY - rect.top };
   }
 
+  _isTouchOnCanvas(e) {
+    if (!this.canvas) return false;
+    const rect = this.canvas.getBoundingClientRect();
+    const p = e.touches ? e.touches[0] : e;
+    return (
+      p.clientX >= rect.left &&
+      p.clientX <= rect.right &&
+      p.clientY >= rect.top &&
+      p.clientY <= rect.bottom
+    );
+  }
+
   /* ── Mobile: relative drag (touch anywhere on canvas) ── */
 
   _onTouchStart(e) {
     if (!this.canvas || this.state !== 'PLAYING') return;
-    if (e.target !== this.canvas) return;
+    if (!this._isTouchOnCanvas(e)) return;
     e.preventDefault();
     const t = this._posFromEvent(e.touches[0]);
     this._dragLastX = t.x;
@@ -212,7 +224,7 @@ export class MeteoroGame {
 
   _onTouchMove(e) {
     if (!this.canvas || !this.touchActive || this.state !== 'PLAYING') return;
-    if (e.target !== this.canvas) return;
+    if (!this._isTouchOnCanvas(e)) { this._cancelTouch(); return; }
     e.preventDefault();
     const t = this._posFromEvent(e.touches[0]);
     const deltaX = t.x - this._dragLastX;
@@ -227,8 +239,13 @@ export class MeteoroGame {
   }
 
   _onTouchEnd(e) {
-    if (e.target !== this.canvas) return;
+    if (!this.touchActive) return;
+    if (!this._isTouchOnCanvas(e)) return;
     e.preventDefault();
+    this._cancelTouch();
+  }
+
+  _cancelTouch() {
     this.touchActive = false;
     this._dragLastX = null;
     this._dragLastY = null;
@@ -238,7 +255,7 @@ export class MeteoroGame {
 
   _onPointerDown(e) {
     if (!this.canvas || e.pointerType === 'touch') return;
-    if (e.target !== this.canvas) return;
+    if (!this._isTouchOnCanvas(e)) return;
     e.preventDefault();
     this.canvas.setPointerCapture(e.pointerId);
     const t = this._posFromEvent(e);
@@ -249,7 +266,7 @@ export class MeteoroGame {
 
   _onPointerMove(e) {
     if (!this.canvas || !this.touchActive || e.pointerType === 'touch') return;
-    if (e.target !== this.canvas) return;
+    if (!this._isTouchOnCanvas(e)) { this._cancelPointer(); return; }
     e.preventDefault();
     const t = this._posFromEvent(e);
     this.touchX = t.x;
@@ -258,8 +275,12 @@ export class MeteoroGame {
 
   _onPointerUp(e) {
     if (!this.canvas || e.pointerType === 'touch') return;
-    if (e.target !== this.canvas) return;
+    if (!this._isTouchOnCanvas(e)) return;
     e.preventDefault();
+    this._cancelPointer();
+  }
+
+  _cancelPointer() {
     this.touchX = null;
     this.touchY = null;
     this.touchActive = false;
