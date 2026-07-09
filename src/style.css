@@ -2899,6 +2899,7 @@ body[data-world="galaxia-estelar"] .path-line {
   width: 100%;
   height: 100%;
   cursor: pointer;
+  touch-action: none;
 }
 
 /* Minigame result card (overlay on frozen scene) */

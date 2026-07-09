@@ -1,5 +1,89 @@
 # Memorial Técnico
 
+## Sprint — UX Mobile Galáxia Estelar (v0.20.0-preview)
+
+### Objetivo
+
+Melhorar a experiência mobile do minigame da Galáxia Estelar: controle touch responsivo por arraste relativo, correção do botão "Voltar agora" que não funcionava no celular, e prevenção de scroll durante o minigame.
+
+### Problemas Encontrados
+
+1. **Touch não responsivo**: o controle usava lerp (interpolação) da nave até a posição do dedo, exigindo tocar próximo à nave. Isso não funciona bem em celular porque o dedo obstrui a visão e o movimento não é preciso.
+2. **Botão "Voltar agora" não funcionava**: os handlers de `touchstart`/`pointerdown` registrados em `document` chamavam `preventDefault()` incondicionalmente, impedindo o navegador de gerar o evento `click` no botão.
+3. **Scroll do navegador durante o jogo**: sem `touch-action: none`, o navegador interpretava gestos de touch como scroll.
+4. **Botão "Pular" no modo bot**: não limpava o `autoTimer`, podendo causar dupla resolução do minigame.
+
+### Solução Implementada
+
+**Controle por arraste relativo** (`MeteoroGame.js`):
+- Em `touchstart`: armazena a posição inicial do dedo (`_dragLastX/Y`)
+- Em `touchmove`: calcula `deltaX = touchX - _dragLastX`, `deltaY = touchY - _dragLastY`, move a nave pelos mesmos deltas, e atualiza `_dragLastX/Y`
+- A nave move 1:1 com o dedo, sem interpolação
+- O dedo pode estar em qualquer ponto do canvas — não é necessário tocar na nave
+- A movimentação é feita diretamente nos handlers de evento (não no game loop), garantindo resposta imediata
+
+**Canvas target guard**:
+- Todos os handlers (`touchstart`, `touchmove`, `touchend`, `pointerdown`, `pointermove`, `pointerup`) agora verificam `if (e.target !== this.canvas) return;` antes de qualquer ação
+- Isso garante que `preventDefault()` só seja chamado quando o toque é no canvas, permitindo que o botão "Voltar agora" e outros elementos interativos recebam `click` normalmente
+
+**`touch-action: none`** (`style.css`):
+- Adicionado ao `.meteoro-canvas` para evitar scroll/zoom do navegador durante o toque no canvas
+
+**Correção do botão "Pular"** (`game.js`):
+- `skipBtn.onclick` agora limpa `autoTimer` com `clearTimeout()` antes de chamar `autoResolveBot()`, prevenindo resolução duplicada
+
+### Arquivos Alterados
+
+| Arquivo | Tipo de Alteração |
+|---------|-------------------|
+| `src/minigames/meteoro/MeteoroGame.js` | **Modificado** — Controle touch alterado para arraste relativo; handlers de touch/pointer agora verificam `e.target === canvas` antes de `preventDefault()`; adicionados `_dragLastX/Y` |
+| `src/style.css` | **Modificado** — Adicionado `touch-action: none` ao `.meteoro-canvas` |
+| `src/game.js` | **Modificado** — Botão "Pular" no modo bot agora limpa `autoTimer` |
+| `CHANGELOG.md` | **Modificado** — Entrada v0.20.0 adicionada |
+| `docs/memorial-tecnico.md` | **Modificado** — Sprint adicionada |
+
+### Fluxo do Controle Touch
+
+```
+touchstart (qualquer ponto do canvas)
+  ├── _dragLastX/Y = posição do dedo
+  └── touchActive = true
+
+touchmove
+  ├── deltaX = touchX - _dragLastX
+  ├── deltaY = touchY - _dragLastY
+  ├── ship.x += deltaX
+  ├── ship.y += deltaY
+  ├── clamp (borda com padding proporcional)
+  └── _dragLastX/Y = posição atual do dedo
+
+touchend
+  └── touchActive = false
+  └── _dragLastX/Y = null
+```
+
+### Como Testar no Celular
+
+1. Abrir o jogo no Chrome/Safari do celular
+2. Iniciar partida e entrar no minigame da Galáxia Estelar
+3. Tocar em qualquer ponto da área de jogo (não precisa ser na nave)
+4. Arrastar o dedo — a nave deve acompanhar o movimento 1:1
+5. Verificar que a página não dá scroll durante o minigame
+6. Deixar o minigame terminar (vitória ou derrota)
+7. Clicar em "Voltar agora" — deve voltar ao tabuleiro imediatamente
+8. Clicar várias vezes em "Voltar agora" — não deve causar erro
+9. Aguardar a contagem regressiva de 5s — o retorno automático deve funcionar
+10. Testar no Desktop: teclado e mouse devem continuar funcionando
+
+### Como Ativar Debug de Hitbox
+
+Adicionar `?debug=1` na URL para visualizar as hitboxes (funcionalidade da sprint anterior).
+
+### Limitações Restantes
+
+- Se o dedo sair do canvas durante o arraste, o `touchmove` não é mais capturado (evento no `document` mas guard `e.target` impede). Na prática, o dedo raramente sai da área de jogo em uso normal
+- Em telas muito estreitas (<360px), a nave (limitada a 80px) pode ocupar fração significativa da largura
+
 ## Sprint — Limite de Empates no Sorteio Inicial (v0.19.0-preview)
 
 ### Objetivo

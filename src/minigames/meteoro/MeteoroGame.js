@@ -21,6 +21,8 @@ export class MeteoroGame {
     this.touchX = null;
     this.touchY = null;
     this.touchActive = false;
+    this._dragLastX = null;
+    this._dragLastY = null;
     this.isMobile = window.innerWidth < 768;
     this.debugMode = /[?&]debug=1/.test(location.search);
     this.shipBottomMargin = this.isMobile ? 56 : 24;
@@ -196,32 +198,47 @@ export class MeteoroGame {
     return { x: e.clientX - rect.left, y: e.clientY - rect.top };
   }
 
+  /* ── Mobile: relative drag (touch anywhere on canvas) ── */
+
   _onTouchStart(e) {
-    if (!this.canvas) return;
+    if (!this.canvas || this.state !== 'PLAYING') return;
+    if (e.target !== this.canvas) return;
     e.preventDefault();
     const t = this._posFromEvent(e.touches[0]);
-    this.touchX = t.x;
-    this.touchY = t.y;
+    this._dragLastX = t.x;
+    this._dragLastY = t.y;
     this.touchActive = true;
   }
 
   _onTouchMove(e) {
-    if (!this.canvas || !this.touchActive) return;
+    if (!this.canvas || !this.touchActive || this.state !== 'PLAYING') return;
+    if (e.target !== this.canvas) return;
     e.preventDefault();
     const t = this._posFromEvent(e.touches[0]);
-    this.touchX = t.x;
-    this.touchY = t.y;
+    const deltaX = t.x - this._dragLastX;
+    const deltaY = t.y - this._dragLastY;
+    this.ship.x += deltaX;
+    this.ship.y += deltaY;
+    const pad = Math.max(2, this.ship.width * 0.08);
+    this.ship.x = Math.max(pad, Math.min(this.width - this.ship.width - pad, this.ship.x));
+    this.ship.y = Math.max(pad, Math.min(this.height - this.ship.height - pad, this.ship.y));
+    this._dragLastX = t.x;
+    this._dragLastY = t.y;
   }
 
   _onTouchEnd(e) {
+    if (e.target !== this.canvas) return;
     e.preventDefault();
-    this.touchX = null;
-    this.touchY = null;
     this.touchActive = false;
+    this._dragLastX = null;
+    this._dragLastY = null;
   }
+
+  /* ── Desktop pointer: quadrant-based + canvas guard ── */
 
   _onPointerDown(e) {
     if (!this.canvas || e.pointerType === 'touch') return;
+    if (e.target !== this.canvas) return;
     e.preventDefault();
     this.canvas.setPointerCapture(e.pointerId);
     const t = this._posFromEvent(e);
@@ -232,6 +249,7 @@ export class MeteoroGame {
 
   _onPointerMove(e) {
     if (!this.canvas || !this.touchActive || e.pointerType === 'touch') return;
+    if (e.target !== this.canvas) return;
     e.preventDefault();
     const t = this._posFromEvent(e);
     this.touchX = t.x;
@@ -239,7 +257,8 @@ export class MeteoroGame {
   }
 
   _onPointerUp(e) {
-    if (e.pointerType === 'touch') return;
+    if (!this.canvas || e.pointerType === 'touch') return;
+    if (e.target !== this.canvas) return;
     e.preventDefault();
     this.touchX = null;
     this.touchY = null;
@@ -259,18 +278,11 @@ export class MeteoroGame {
     const halfH = this.height / 2;
 
     if (this.touchActive && this.touchX !== null) {
-      if (this.isMobile) {
-        const targetX = this.touchX - this.ship.width / 2;
-        const targetY = this.touchY - this.ship.height / 2;
-        this.ship.x += (targetX - this.ship.x) * 0.3;
-        this.ship.y += (targetY - this.ship.y) * 0.3;
-      } else {
-        const shipSpeed = 260 * (this.width / 600);
-        if (this.touchX < halfW) this.ship.x -= shipSpeed * dt;
-        if (this.touchX >= halfW) this.ship.x += shipSpeed * dt;
-        if (this.touchY !== null && this.touchY < halfH) this.ship.y -= shipSpeed * dt;
-        if (this.touchY !== null && this.touchY >= halfH) this.ship.y += shipSpeed * dt;
-      }
+      const shipSpeed = 260 * (this.width / 600);
+      if (this.touchX < halfW) this.ship.x -= shipSpeed * dt;
+      if (this.touchX >= halfW) this.ship.x += shipSpeed * dt;
+      if (this.touchY !== null && this.touchY < halfH) this.ship.y -= shipSpeed * dt;
+      if (this.touchY !== null && this.touchY >= halfH) this.ship.y += shipSpeed * dt;
     }
 
     if (this.keys.left) this.ship.x -= 260 * (this.width / 600) * dt;

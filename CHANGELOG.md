@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.20.0-preview] - 2026-07-09
+
+### UX Mobile — Galáxia Estelar (Minigame)
+
+- **Controle touch**: substituído de "lerp até o dedo" para arraste relativo (`deltaX/deltaY`). A nave acompanha o movimento do dedo 1:1, sem precisar tocar na nave. Qualquer ponto da área de jogo funciona como área de controle.
+- **Canvas target guard**: eventos de touch/pointer só chamam `preventDefault()` quando o alvo é o canvas, evitando bloquear cliques em botões como "Voltar agora"
+- **Botão "Voltar agora" corrigido**: agora funciona no mobile — a chamada de `preventDefault()` nos eventos de toque bloqueava o clique. Com o guard `e.target !== this.canvas`, o botão recebe o clique normalmente.
+- **`touch-action: none`** adicionado ao `.meteoro-canvas` para evitar scroll/gestos do navegador durante o minigame
+- **Skip bot mode**: botão "Pular" agora limpa o `autoTimer` para evitar dupla resolução
+- **Arquivos**: `src/minigames/meteoro/MeteoroGame.js`, `src/style.css`, `src/game.js`
+
 ## [0.19.0-preview] - 2026-07-09
 
 ### Limite de Empates no Sorteio Inicial

@@ -1963,7 +1963,10 @@ import { bancoQuestoes, questoesDisponiveis, categoryIndices, worldCategoryMap, 
 
       if (isBot) {
         botBar.classList.remove('hidden');
-        skipBtn.onclick = () => autoResolveBot();
+        skipBtn.onclick = () => {
+          if (autoTimer) { clearTimeout(autoTimer); autoTimer = null; }
+          autoResolveBot();
+        };
         autoTimer = setTimeout(() => autoResolveBot(), 6000);
       }
 
