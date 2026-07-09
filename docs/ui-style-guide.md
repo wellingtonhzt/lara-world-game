@@ -112,6 +112,7 @@ Este documento define as diretrizes visuais do Lara World. Todo novo asset, tela
 
 ```
 src/assets/
+├── audio/          # Assets de áudio (.webm) — ver docs/audio.md
 ├── ui/             # Assets da Hero Screen
 ├── avatars/        # Avatares oficiais — preview circular no setup (108×108px)
 ├── tokens/         # Tokens oficiais — representação in-game (62×62px circular)

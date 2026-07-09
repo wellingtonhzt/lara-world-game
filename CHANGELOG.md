@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.13.0-preview] - 2026-07-08
+
+### Infraestrutura de Áudio — AUD-001
+
+- **AudioManager** (`src/audio/AudioManager.js`): classe gerenciadora central (~218 linhas) que encapsula a Web Audio API. Gerencia `AudioContext` criado sob demanda (lazy), cadeia de ganho em cascata (`masterGain` → `musicGain` + `effectsGain`), reprodução de efeitos (`play`/`stop`), música em loop (`playMusic`/`stopMusic`), volumes independentes, mute e persistência automática via `localStorage` (chave `laraAudioConfig`)
+- **Catálogo de sons** (`src/audio/sounds.js`): 16 chaves simbólicas com path e category (`'effects'` | `'music'`), cobrindo UI (3), dados (2), tabuleiro (5), quiz (3), recompensas (2) e música (1)
+- **Singleton** (`src/audio/index.js`): instância única `audioManager` exportada para consumo em todo o jogo
+- **Estrutura de pastas**: 7 diretórios criados em `src/assets/audio/` — `ui/`, `dice/`, `board/`, `quiz/`, `rewards/`, `music/` (vazios, aguardando arquivos .webm)
+- **Integração com gameplay**: 21 chamadas de `audioManager.play()` adicionadas em 8 funções de `src/game.js` — cliques, dados, movimento, casas especiais, desafios, vitória
+- **Documentação**: `docs/audio.md` com 11 seções (visão geral, arquitetura, API, integração, how-to, limitações, roadmap)
+- **Degradação graciosa**: todo erro de áudio é silenciosamente ignorado — o jogo nunca quebra por falta de assets sonoros
+
 ## [0.12.0-preview] - 2026-07-08
 
 ### Sistema de Avatares e Tokens — UX-015

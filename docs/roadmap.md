@@ -175,6 +175,10 @@
 
 ### 🎯 Próximas Prioridades
 
+- **Assets de áudio .webm** — produzir/baixar todos os 16 sons do catálogo (atualmente todos pendentes)
+- **Integração de música ambiente** — chamar `audioManager.playMusic('backgroundMusic')` em `game.js`
+- **Integração de sons de modal** — conectar `modalOpen`/`modalClose` nas aberturas/fechamentos
+- **Integração de treasure e gameOver** — conectar sons pendentes do catálogo
 - **Hero Screen v2** — reorganização completa da composição visual da tela inicial
 - **Evolução dos cards dos mundos** — refinamento visual contínuo da seleção de mundos
 - **Assets próprios das casas especiais** — substituir células CSS por assets visuais por tipo de casa
@@ -182,6 +186,17 @@
 - **Sistema de conquistas** — medalhas e progressão do jogador
 - **Modo Aventura** — campanha com progressão entre mundos
 - **Animações da interface** — transições e micro-interações
+
+### 🔊 Melhorias Futuras de Áudio
+
+- **Músicas por mundo** — trilhas sonoras temáticas diferentes para cada mundo (Floresta, Dinossauros, futuros)
+- **Preload de áudio** — carregar buffers na inicialização para evitar delay no primeiro play
+- **Crossfade entre músicas** — transição suave ao trocar faixas
+- **Tela de configuração de áudio** — sliders de volume e botão mute na UI do jogo
+- **Sistema de prioridades** — sons importantes (vitória, dado) têm prioridade sobre sons secundários
+- **Pool de efeitos** — reutilizar AudioBufferSourceNode para sons frequentes
+- **Variações aleatórias** — múltiplas variações do mesmo som para evitar repetição (ex: 3 sons de passo diferentes)
+- **Novas categorias de efeitos** — ambiência, passos, itens coletáveis, power-ups
 
 ### v0.11.0-preview — Evolução Visual (UX 2.0) ✅
 - **UX-1.1** — Overhaul CSS completo (cartoon, arredondado, 3D, profundidade)

@@ -18,7 +18,8 @@
 
 | Versão | Data | Status |
 |--------|------|--------|
-| **v0.12.0-preview** | Jul/2026 | ✅ **Ativo** — Hero Screen + Seleção de Mundos v2 + Ilustrações + Avatares/Tokens |
+| **v0.13.0-preview** | Jul/2026 | ✅ **Ativo** — Infraestrutura de Áudio |
+| v0.12.0-preview | Jul/2026 | ✅ Concluído |
 | v0.11.0-preview | Jul/2026 | ✅ Concluído |
 | v0.10.0-preview | Jul/2026 | ✅ Concluído |
 | v0.9.0-preview | Jul/2026 | ✅ Concluído |
@@ -33,7 +34,22 @@
 
 ---
 
-## ✨ Funcionalidades Atuais (v0.12.0-preview)
+## ✨ Funcionalidades Atuais (v0.13.0-preview)
+
+### Sistema de Áudio — AUD-001
+
+Documentação detalhada em [docs/audio.md](docs/audio.md).
+
+- **AudioManager centralizado** — classe `AudioManager` (~218 linhas) que encapsula a Web Audio API com cadeia de ganho em cascata (`masterGain` → `musicGain` + `effectsGain`), criação lazy do `AudioContext` e tolerância total a assets ausentes
+- **Catálogo de sons** (`src/audio/sounds.js`) — 16 chaves simbólicas mapeando categorias: UI (3), dados (2), tabuleiro (5), quiz (3), recompensas (2), música (1)
+- **Singleton** (`src/audio/index.js`) — instância única `audioManager` exportada para todo o jogo
+- **Estrutura de diretórios** — 7 pastas em `src/assets/audio/` preparadas para assets .webm (`ui/`, `dice/`, `board/`, `quiz/`, `rewards/`, `music/`)
+- **21 pontos de integração** em `src/game.js` — cliques de botão, rolagem de dados, movimento, casas especiais, desafios e vitória
+- **Volumes independentes** — mestre, música e efeitos com ranges 0–1, persistidos automaticamente em `localStorage`
+- **Mute com persistência** — `mute()`/`unmute()`/`toggleMute()` com estado salvo entre sessões
+- **Degradação graciosa** — qualquer falha de áudio (arquivo ausente, decode error, autoplay bloqueado) é silenciosamente ignorada; o jogo nunca quebra por áudio
+- **API segura** — `audioManager.play('chave')` nunca lança exceções
+- **5 sons registrados mas não integrados**: `modalOpen`, `modalClose`, `treasure`, `gameOver`, `backgroundMusic` — existem no catálogo mas ainda não são chamados no jogo
 
 ### Hero Screen — Tela Inicial com Estilo de Capa de Jogo
 
@@ -160,6 +176,13 @@ src/assets/
 ├── ui/
 │   ├── lara-hero.webp       # Ilustração da personagem Lara na tela inicial (asset pendente)
 │   └── menu-background.webp  # Fundo temático do menu principal (asset pendente)
+├── audio/               # Assets de áudio (.webm)
+│   ├── ui/              # Sons de interface (cliques, modais)
+│   ├── dice/            # Sons de dados (rolar, resultado)
+│   ├── board/           # Sons do tabuleiro (movimento, portais)
+│   ├── quiz/            # Sons de desafios (perguntas, acerto/erro)
+│   ├── rewards/         # Sons de recompensa (vitória, game over)
+│   └── music/           # Músicas de fundo (loop)
 ├── avatars/
 │   ├── lara.webp            # Avatar da Lara — preview circular no setup ✅
 │   ├── leo.webp             # Avatar do Léo — preview circular no setup (pendente)
@@ -408,8 +431,9 @@ docker compose down
 
 ## 🗺️ Roadmap
 
-- **v0.12.0-preview** — ✅ **Ativo** — Board Layout 2.0, path.webp, Hero Screen (UX-013), Seleção de Mundos v2 (UX-014), Ilustrações dos Mundos (ART-009), Avatares/Tokens (UX-015 + ART-010)
-- **v0.13.0-preview** — Hero Screen v2, evolução dos cards dos mundos, assets próprios das casas especiais, ilustrações das áreas dos mundos
+- **v0.13.0-preview** — ✅ **Ativo** — Infraestrutura de Áudio (AUD-001): AudioManager, catálogo de 16 sons, 21 pontos de integração, docs/audio.md
+- **v0.12.0-preview** — ✅ Concluído — Board Layout 2.0, path.webp, Hero Screen (UX-013), Seleção de Mundos v2 (UX-014), Ilustrações dos Mundos (ART-009), Avatares/Tokens (UX-015 + ART-010)
+- **v0.14.0-preview** — Hero Screen v2, evolução dos cards dos mundos, assets próprios das casas especiais, ilustrações das áreas dos mundos
 - **v1.0.0** — Lançamento oficial com sistema de conquistas, Modo Aventura e animações da interface
 
 Veja o [roadmap completo](docs/roadmap.md).

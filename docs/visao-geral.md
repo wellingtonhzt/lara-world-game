@@ -18,7 +18,18 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 
 ## Principais Funcionalidades
 
-### v0.12.0-preview (Atual) — Board Layout 2.0 + Hero Screen ✅
+### v0.13.0-preview (Atual) — Infraestrutura de Áudio ✅
+
+- **AudioManager centralizado**: classe `AudioManager` que encapsula a Web Audio API, com cadeia de ganho em cascata (`masterGain` → `musicGain` + `effectsGain`), criação lazy do `AudioContext` e tolerância total a assets ausentes. Documentação completa em [docs/audio.md](./audio.md)
+- **Catálogo de sons** (`src/audio/sounds.js`): 16 chaves simbólicas cobrindo UI, dados, tabuleiro, quiz, recompensas e música
+- **Singleton**: instância única `audioManager` exportada via `src/audio/index.js`
+- **21 pontos de integração**: cliques, dados, movimento, casas especiais, desafios e vitória com chamadas a `audioManager.play()`
+- **Volumes independentes** (mestre, música, efeitos) com persistência automática em `localStorage`
+- **Mute com persistência**: estado salvo entre sessões
+- **Assets de áudio**: 7 diretórios criados em `src/assets/audio/` — `ui/`, `dice/`, `board/`, `quiz/`, `rewards/`, `music/` (aguardando arquivos .webm)
+- **Degradação graciosa**: qualquer falha de áudio é silenciosamente ignorada
+
+### v0.12.0-preview — Board Layout 2.0 + Hero Screen ✅
 
 - **Hero Screen (UX-013)** — tela inicial com estilo de capa de jogo: personagem Lara sobreposta ao card central, fundo temático via `menu-background.webp`, card translúcido com gradiente rosado/creme/azulado e `backdrop-filter: blur(24px)`, logo gradiente pink-dourado com `background-clip: text`, botão "Jogo Rápido" com glow pulsante e subtítulo, "Modo Aventura" como card secundário com badge "EM BREVE..." e subtítulo, decorações animadas CSS, rodapé com versão
 - **Assets UI**: estrutura `src/assets/ui/` preparada para `lara-hero.webp` e `menu-background.webp` com fallback CSS garantido
@@ -180,6 +191,13 @@ O jogo possuía uma base técnica sólida (engine modular, dois mundos completos
 
 ```
 src/assets/
+├── audio/               # Assets de áudio (.webm)
+│   ├── ui/              # Sons de interface (cliques, modais)
+│   ├── dice/            # Sons de dados (rolar, resultado)
+│   ├── board/           # Sons do tabuleiro (movimento, portais)
+│   ├── quiz/            # Sons de desafios (perguntas, acerto/erro)
+│   ├── rewards/         # Sons de recompensa (vitória, game over)
+│   └── music/           # Músicas de fundo (loop)
 ├── ui/
 │   ├── lara-hero.webp       # Ilustração da personagem Lara na Hero Screen (asset pendente)
 │   └── menu-background.webp  # Fundo temático do menu principal (asset pendente)

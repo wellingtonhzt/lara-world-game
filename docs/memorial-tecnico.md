@@ -1,5 +1,56 @@
 # Memorial Técnico
 
+## Sprint — Sistema de Áudio — AUD-001 (v0.13.0-preview)
+
+### Objetivo
+
+Implementar o sistema de áudio do Lara World, centralizando toda reprodução sonora em um `AudioManager` que encapsula a Web Audio API, com catálogo de sons, volumes independentes para música e efeitos, persistência de preferências no `localStorage`, e tolerância total a assets ausentes. Foram criados 7 diretórios de assets (vazios, aguardando arquivos .webm) e 3 arquivos de código fonte.
+
+### Arquivos Alterados
+
+| Arquivo | Tipo de Alteração |
+|---------|-------------------|
+| `src/audio/AudioManager.js` | **Criado** — Classe gerenciadora central (~218 linhas). Gerencia `AudioContext` (criado sob demanda), `masterGain` → `musicGain` + `effectsGain` em cascata. API: `init()`, `play(key)`, `stop(key)`, `playMusic(key)`, `stopMusic()`, `setMasterVolume()`, `setMusicVolume()`, `setEffectsVolume()`, `mute()`, `unmute()`, `toggleMute()`, `isMuted()`. Persistência automática via `localStorage` (chave `laraAudioConfig`: masterVolume, musicVolume, effectsVolume, muted). Decode via `fetch` + `decodeAudioData` com catch silencioso. |
+| `src/audio/sounds.js` | **Criado** — Catálogo de sons com 16 chaves simbólicas, cada uma com `path` (relativo à raiz do servidor) e `category` (`'effects'` ou `'music'`). Cobre: UI (3), dados (2), tabuleiro (5), quiz (3), recompensas (2) e música (1). |
+| `src/audio/index.js` | **Criado** — Instância singleton do `AudioManager` exportada como `audioManager`. |
+| `src/assets/audio/ui/` | **Criado** — Diretório vazio para assets de interface (click.webm, modal-open.webm, modal-close.webm) |
+| `src/assets/audio/dice/` | **Criado** — Diretório vazio para assets de dados (roll.webm, result.webm) |
+| `src/assets/audio/board/` | **Criado** — Diretório vazio para assets de tabuleiro (move.webm, advance.webm, back.webm, portal.webm, treasure.webm) |
+| `src/assets/audio/quiz/` | **Criado** — Diretório vazio para assets de desafios (challenge.webm, correct.webm, wrong.webm) |
+| `src/assets/audio/rewards/` | **Criado** — Diretório vazio para assets de recompensa (victory.webm, gameover.webm) |
+| `src/assets/audio/music/` | **Criado** — Diretório vazio para músicas de fundo (bg-loop.webm) |
+| `src/game.js` | **Modificado** — Adicionadas 21 chamadas de `audioManager.play('chave')` em 8 funções: `setupMenuEvents()` (buttonClick), `setupWorldSelectorEvents()` (buttonClick ×2), `setupModalEvents()` (buttonClick), `init()` na vitória (buttonClick ×2), `jogarDado()` (diceRoll, diceResult), `waitForPlayerRoll()` (diceRoll, diceResult), `animatePlayerMovement()` (playerMove por passo), `processSpecialCell()` (specialAdvance, specialBack, portal, challengeOpen, correctAnswer, wrongAnswer), `resolveChallenge()` (correctAnswer, wrongAnswer), `handleVictory()` (victory). Adicionado `import { audioManager } from './audio/index.js'`. |
+| `docs/audio.md` | **Criado** — Documentação completa do sistema de áudio. |
+
+### Decisões Técnicas
+
+| Decisão | Alternativas | Motivo |
+|---------|-------------|--------|
+| `AudioContext` lazy (criado no primeiro `play()`) | Criar no `init()` | Evita bloqueio de autoplay — navegadores só permitem criar/retomar contexto após interação do usuário |
+| Ganho em cascata (master → music + effects) | Ganho único | Permite volumes independentes: música de fundo mais baixa que efeitos |
+| Singleton exportado | Injeção de dependência | Simplicidade: jogo pequeno, sem testes unitários complexos ainda |
+| Catálogo externo (`sounds.js`) | Strings soltas no código | Centralização: todas as chaves visíveis em um arquivo, facilita auditoria |
+| `.webm` como formato único | Múltiplos formatos com fallback | Simplicidade inicial; fallback pode ser adicionado depois |
+| Fetch + `decodeAudioData` a cada `play()` | Cache de `AudioBuffer` | Simplicidade; cache será adicionado quando houver assets reais |
+
+### Estado Atual
+
+- **Código fonte**: 3 arquivos criados, 1 modificado, ~240 linhas de JS
+- **Assets de áudio**: 7 diretórios criados, **0 arquivos .webm** — todos pendentes
+- **Integração**: 21 pontos de chamada em `src/game.js`, todos com `try/catch` implícito (o `AudioManager` engole erros internamente)
+- **Documentação**: `docs/audio.md` com 11 seções: visão geral, arquitetura, estrutura de diretórios, API pública, integração, como adicionar sons, boas práticas, limitações, roadmap
+- **Sons registrados mas não integrados**: `modalOpen`, `modalClose` (modal), `treasure` (casa tesouro), `gameOver` (game over), `backgroundMusic` (música ambiente) — existem no catálogo mas não são chamados em lugar nenhum
+
+### Pendências
+
+- [ ] Produzir/baixar assets .webm para todos os 16 sons do catálogo
+- [ ] Integrar `backgroundMusic` (`audioManager.playMusic('backgroundMusic')`) em `game.js`
+- [ ] Integrar `modalOpen`/`modalClose` nas aberturas/fechamentos de modal
+- [ ] Integrar `treasure` na casa especial de tesouro
+- [ ] Integrar `gameOver` na tela de game over
+
+---
+
 ## Sprint — Sistema de Avatares e Tokens + Reprocessamento de lara.webp — UX-015 + ART-010 (v0.12.0-preview)
 
 ### Objetivo
