@@ -1,5 +1,32 @@
 # Roadmap Lara World
 
+### v0.16.0-preview — Visual da Galáxia Estelar + Versionamento Centralizado (Atual) ✅
+
+- [x] Infraestrutura visual de background e path.webp para Galáxia Estelar (ART-011)
+- [x] `src/version.js` criado com constante `APP_VERSION` centralizada
+- [x] Cache-busting de CSS/JS unificado via `?v=v0.16.0-preview`
+- [x] Versão da tela inicial sincronizada com `APP_VERSION` (via `game.js:init()`)
+- [x] README, CHANGELOG, docs atualizados para v0.16.0-preview
+- [x] Fluxo de versionamento documentado no AI_WORKFLOW.md
+
+### v0.15.0-preview — Troca Quântica + Result Card ✅
+
+- [x] Casa 7 swap-positions
+- [x] Result card do minigame
+- [x] Correções de colisão e UX mobile
+
+### v0.14.0-preview — Galáxia Estelar + MeteoroGame ✅
+
+- [x] Mundo Galáxia Estelar completo (GAL-001)
+- [x] Minigame MeteoroGame funcional
+- [x] Integração com sistema de turnos e bônus
+
+### v0.13.0-preview — Infraestrutura de Áudio ✅
+
+- [x] Sistema de áudio modular (AUD-001)
+- [x] Efeitos sonoros para UI, dado, tabuleiro, quiz, recompensas
+- [x] Mecanismo de fallback silencioso
+
 ### v0.19.0-preview — Limite de Empates no Sorteio Inicial ✅
 
 - [x] Contador de empates consecutivos (máx. 2)

@@ -18,7 +18,7 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 
 ## Principais Funcionalidades
 
-### v0.19.0-preview (Atual) — Limite de Empates no Sorteio Inicial ✅
+### v0.16.0-preview (Atual) — Visual da Galáxia Estelar ✅
 
 - **Máximo de 2 empates** no sorteio inicial; no 3º, desempate automático aleatório
 - **Mensagens divertidas**: "Empate cósmico!", "Depois de tantos empates, a sorte decidiu!", "Tanto empate que o destino tomou a frente!"

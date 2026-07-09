@@ -1,5 +1,82 @@
 # Memorial Técnico
 
+## Sprint — Versionamento Centralizado e Cache-Busting (v0.21.0-preview)
+
+### Objetivo
+
+Revisar e corrigir a estratégia de versionamento do Lara World: criar uma fonte única de verdade para a versão do projeto, sincronizar a exibição na tela inicial com o código e a documentação, e unificar o cache-busting dos assets.
+
+### Problemas Encontrados
+
+1. **Versão da tela inicial desatualizada**: o rodapé do menu exibia `v0.12.0-preview` (fixo no HTML), enquanto o README já apontava `v0.19.0-preview` — 7 versões de diferença.
+2. **Cache-busting baseado em data**: `style.css?v=20260706` e `game.js?v=20260706` usavam data fixa, não refletindo a versão do projeto. Qualquer mudança entre versões exigia lembrar de atualizar manualmente a data.
+3. **Nenhuma constante centralizada**: não existia `APP_VERSION` ou similar — a versão era repetida manualmente em HTML, README, docs, sem garantia de consistência.
+4. **Documentação do processo ausente**: não havia regra documentada obrigando a atualizar versão/cache-busting a cada entrega.
+
+### Locais onde a versão estava definida
+
+| Local | Valor Antes | Problema |
+|-------|-------------|----------|
+| `src/index.html:40` (menu) | `v0.12.0-preview` | 7 versões atrasado |
+| `src/index.html:7` (CSS cache) | `?v=20260706` | Data, não versão |
+| `src/index.html:520` (JS cache) | `?v=20260706` | Data, não versão |
+| `README.md:21` (tabela) | `v0.19.0-preview` | Divergente do menu |
+| `README.md:43` (funcionalidades) | `v0.19.0-preview` | Divergente do menu |
+| `README.md:176` (rodapé) | `v0.12.0-preview` | 7 versões atrasado |
+| `docs/visao-geral.md:21` | `v0.19.0-preview` | Divergente |
+| `docs/arquitetura.md:114` | `v0.12.0-preview` | 7 versões atrasado |
+| Nenhum `version.js` | N/A | Inexistente |
+
+### Solução Implementada
+
+**`src/version.js` criado** — fonte única de verdade:
+```js
+export const APP_VERSION = 'v0.16.0-preview';
+export function getCacheBust() {
+  return `v=${encodeURIComponent(APP_VERSION)}`;
+}
+```
+
+**`src/index.html`**:
+- Cache-busting de CSS e JS alterado de `?v=20260706` para `?v=v0.16.0-preview`
+- Span do menu ganhou `id="menu-version"` para atualização dinâmica
+
+**`src/game.js`**:
+- Import de `APP_VERSION` adicionado
+- `init()` agora lê `#menu-version` e seta `textContent = APP_VERSION`
+
+**Documentação alinhada**:
+- README.md (tabela, funcionalidades atuais, rodapé) → v0.16.0-preview
+- docs/visao-geral.md → v0.16.0-preview
+- docs/arquitetura.md → v0.16.0-preview
+- docs/roadmap.md → seções v0.13.0 a v0.16.0 adicionadas
+- docs/AI_WORKFLOW.md → regra obrigatória de versionamento adicionada
+
+### Fluxo para Próximas Versões
+
+1. Editar `src/version.js`: `APP_VERSION = 'v0.x.x-preview'`
+2. Editar `src/index.html`: atualizar `?v=` nos links de CSS e JS
+3. Adicionar entrada no `CHANGELOG.md`
+4. Adicionar/atualizar seção no `docs/roadmap.md`
+5. Atualizar `README.md` se necessário
+6. Adicionar sprint no `docs/memorial-tecnico.md`
+7. A tela inicial lê de `APP_VERSION` automaticamente
+
+### Arquivos Alterados
+
+| Arquivo | Tipo de Alteração |
+|---------|-------------------|
+| `src/version.js` | **Criado** — Constante `APP_VERSION` e função `getCacheBust()` |
+| `src/index.html` | **Modificado** — Cache-busting `?v=v0.16.0-preview`; `id="menu-version"` no span |
+| `src/game.js` | **Modificado** — Import de `APP_VERSION`; `init()` atualiza versão no menu |
+| `CHANGELOG.md` | **Modificado** — Entrada v0.21.0 adicionada |
+| `README.md` | **Modificado** — Versão atual sincronizada para v0.16.0-preview |
+| `docs/visao-geral.md` | **Modificado** — Versão atual para v0.16.0-preview |
+| `docs/arquitetura.md` | **Modificado** — Footer version para v0.16.0-preview |
+| `docs/roadmap.md` | **Modificado** — Seções v0.13.0 a v0.16.0 adicionadas |
+| `docs/AI_WORKFLOW.md` | **Modificado** — Regra obrigatória de versionamento; checklist atualizado |
+| `docs/memorial-tecnico.md` | **Modificado** — Sprint adicionada |
+
 ## Sprint — UX Mobile Galáxia Estelar (v0.20.0-preview)
 
 ### Objetivo

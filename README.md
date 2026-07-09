@@ -18,7 +18,7 @@
 
 | Versão | Data | Status |
 |--------|------|--------|
-| **v0.19.0-preview** | Jul/2026 | ✅ **Ativo** — Limite de empates no sorteio inicial |
+| **v0.16.0-preview** | Jul/2026 | ✅ **Ativo** — Visual da Galáxia Estelar (ART-011) |
 | v0.18.0-preview | Jul/2026 | ✅ Revisão do sistema de perguntas |
 | v0.17.0-preview | Jul/2026 | ✅ Correção de cascata pós-desafio |
 | v0.16.0-preview | Jul/2026 | ✅ Concluído |
@@ -40,7 +40,7 @@
 
 ---
 
-## ✨ Funcionalidades Atuais (v0.19.0-preview)
+## ✨ Funcionalidades Atuais (v0.16.0-preview)
 
 ### Limite de Empates no Sorteio Inicial
 
@@ -173,7 +173,7 @@ Documentação detalhada em [docs/audio.md](docs/audio.md).
 - **⚡ Jogo Rápido** — card/botão principal grande com glow pulsante e subtítulo "Partida rápida e divertida"
 - **🏆 Modo Aventura** — card secundário desabilitado com subtítulo "Novos mundos aguardam você!" e badge "EM BREVE..."
 - **Decorações CSS** — formas flutuantes abstratas e sparkles animados (`✦`) sem poluir a composição
-- **Rodapé** — versão `v0.12.0-preview` exibida na parte inferior
+- **Rodapé** — versão `v0.16.0-preview` exibida na parte inferior
 
 ### Modo Single Player (Humano vs Máquina)
 

@@ -5,6 +5,7 @@ import { cavernaDosFosseis } from './worlds/dinossauros/config.js';
 import { audioManager } from './audio/index.js';
 import { MeteoroGame } from './minigames/meteoro/MeteoroGame.js';
 import { bancoQuestoes, questoesDisponiveis, categoryIndices, worldCategoryMap, getIndicesPorMundo, getCategoriasPorMundo } from './data/questions.js';
+import { APP_VERSION } from './version.js';
 
 (function () {
   const TOTAL_CASAS = 20;
@@ -1977,6 +1978,8 @@ import { bancoQuestoes, questoesDisponiveis, categoryIndices, worldCategoryMap, 
   /* ── Init ── */
 
   function init() {
+    const verEl = document.getElementById('menu-version');
+    if (verEl) verEl.textContent = APP_VERSION;
     initGalleryTokens();
     enableWorldCard('dinossauros');
     enableWorldCard('galaxia-estelar');

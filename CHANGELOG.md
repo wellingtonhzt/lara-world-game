@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.21.0-preview] - 2026-07-09
+
+### Versionamento Centralizado e Cache-Busting
+
+- **`src/version.js` criado**: constante `APP_VERSION` centralizada (`'v0.16.0-preview'`) + função `getCacheBust()`
+- **Tela inicial**: versão exibida no rodapé do menu agora lê de `APP_VERSION` via `game.js:init()` — não fica mais defasada
+- **Cache-busting unificado**: CSS (`style.css?v=v0.16.0-preview`) e JS (`game.js?v=v0.16.0-preview`) usam versão em vez de data
+- **README.md**: versão atual sincronizada para v0.16.0-preview
+- **docs/visao-geral.md, docs/arquitetura.md, docs/roadmap.md**: referências de versão alinhadas
+- **docs/AI_WORKFLOW.md**: regra obrigatória de versionamento adicionada ao fluxo de desenvolvimento
+- **docs/memorial-tecnico.md**: sprint documentada
+- **Arquivos**: `src/version.js`, `src/index.html`, `src/game.js`, `README.md`, `docs/*.md`
+
 ## [0.20.0-preview] - 2026-07-09
 
 ### UX Mobile — Galáxia Estelar (Minigame)

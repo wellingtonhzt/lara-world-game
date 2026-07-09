@@ -111,7 +111,7 @@ Estrutura semântica dividida em:
   - Personagem Lara (`.menu-lara-hero`) sobreposta ao topo do card, como se estivesse saindo do painel
   - Logo (`.menu-logo`) com emoji 🌍 grande + título "Lara World" gradiente pink-dourado via `background-clip: text`
   - Dois botões: "⚡ Jogo Rápido" (ativo, glow pulsante) e "🏆 Modo Aventura" (desabilitado, badge "EM BREVE...")
-  - Footer com versão `v0.12.0-preview`
+  - Footer com versão `v0.16.0-preview`
   - Escondido quando uma partida é iniciada; reexibido via "Voltar ao Menu"
 - **Setup Modal** (`#setup-screen`):
   - Overlay fixo com `z-index: 1000`, exibido após clicar em "Jogo Rápido"
