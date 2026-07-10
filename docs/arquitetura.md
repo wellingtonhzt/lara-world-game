@@ -88,8 +88,11 @@ lara-world/
 │       ├── loader.js    # Carregador de mundos
 │       ├── floresta/
 │       │   └── config.js  # WorldConfig Floresta Encantada + Floresta Misteriosa
-│       └── dinossauros/
-│           └── config.js  # WorldConfig Vale dos Dinossauros + Caverna dos Fósseis
+│       ├── dinossauros/
+│       │   └── config.js  # WorldConfig Vale dos Dinossauros + Caverna dos Fósseis
+│       └── galaxia/
+│           ├── config.js  # WorldConfig Galáxia Estelar
+│           └── layouts.js # Layouts do tabuleiro: padrão, orbita, spiral
 ├── docker/
 │   └── nginx.conf       # Configuração do Nginx
 ├── Dockerfile           # Build da imagem Docker
@@ -148,6 +151,7 @@ Estrutura semântica dividida em:
   - SVG `#trail-path`: caminho suave que conecta as casas (Catmull-Rom spline)
   - `#track`: container das células `.casa` com posicionamento absoluto (20 no principal, 8 na área especial)
   - `#lara` e `#lara-p2`: personagens posicionados dinamicamente (apenas o ativo na área especial)
+  - `.layout-selector`: barra horizontal com botões `icon + name` para troca de layout; oculto via `.hidden` se o mundo tiver < 2 layouts
   - Tema visual aplicado via `data-world` no `<body>`, com background temático opcional no `#track-container` (ASSET-001)
 - **Panel Area** (direita):
   - `#dice-display`: dado virtual com emoji
@@ -157,6 +161,8 @@ Estrutura semântica dividida em:
 - **Debug Panel** (`#debug-panel`):
   - Exibido apenas quando `?debug=1` na URL
   - 5 botões: Casa 11, Entrar na Floresta, Casa 5 (Atalho), Casa 8 (Saída), Voltar ao Principal
+  - Seção Galáxia: botões de layout (Padrão, Órbita, Espiral), C9, C14, C15🚪
+  - Seção Minigame: 🎮 Abrir, ✅ Vencer, ❌ Perder, ↩️ Retornar
   - Posicionado no canto inferior esquerdo com `z-index: 999`
 
 ### style.css
@@ -181,7 +187,7 @@ Padrão **ES Module** com imports estáticos. Consome WorldConfigs dos mundos re
 
 ```
 constantes / configuração
-  ├── WORLD_CONFIGS       → { florestaEncantada, valeDinossauros } — registrados no WorldRegistry
+  ├── WORLD_CONFIGS       → { florestaEncantada, valeDinossauros, galaxiaEstelar } — registrados no WorldRegistry
   ├── currentWorldConfig  → WorldConfig ativo (selecionado ou default)
   ├── selectedWorldId     → string | null (ID do mundo escolhido no seletor)
   ├── subworldConfigs     → { florestaMisteriosa, cavernaDosFosseis } — lookup de áreas especiais
@@ -205,10 +211,11 @@ constantes / configuração
 
 Getters World-Aware
   ├── getTotalCasas()      → currentWorldConfig.board.totalCells ou TOTAL_CASAS (fallback)
-  ├── getPosicoes()        → board.cells (se existir, converte array para mapa) ou board.positions ou boardPositions
+  ├── getPosicoes()        → Se board.layouts existir, usa `getActiveBoardLayout().cells` convertido para mapa; senão, board.cells (se existir) ou board.positions ou boardPositions
   ├── getIcones()          → currentWorldConfig.board.cellIcons ou icons
   ├── getCasasEspeciais()  → eventsToSpecialCells(currentWorldConfig.events) ou casasEspeciais
-  └── getSubworldConfig()  → subworldConfigs[activeSubworldId] ou null
+  ├── getSubworldConfig()  → subworldConfigs[activeSubworldId] ou null
+  └── getActiveBoardLayout() → se currentWorldConfig.board.layouts existir, retorna o layout ativo (persistido em localStorage e validado contra defaults); senão, null
 
 Getters de Área Especial
   ├── getPortalConfigForCell(pos) → busca em currentWorldConfig.portals[pos] ou null
@@ -224,7 +231,9 @@ Player Helpers
 
 SVG Path / Board
   ├── renderSvgPath(posicoes?) → gera curva Catmull-Rom no SVG (usa getPosicoes() por padrão)
-  └── renderizarTrilha()      → cria células <div> no DOM (usa getTotalCasas())
+  ├── renderizarTrilha()      → cria células <div> no DOM (usa getTotalCasas())
+  ├── applyLayout(layoutId)   → troca layout ativo: persiste em localStorage, re-renderiza SVG path e reposiciona jogadores
+  └── renderLayoutSelector()  → se currentWorldConfig.board.layouts tiver 2+ entradas, cria botões icon+nome no `.layout-selector` container; oculto via classe `.hidden` se < 2 layouts
 
 Posicionamento
   └── positionPlayerAt(n, player?) → posiciona personagem sobre a casa
@@ -257,6 +266,11 @@ Casas Especiais
        ├── "move" → executado via delta/target
        └── "vitoria" (casa 20) → handleVictory()
 
+Troca de Layout
+  └── Comando `layout:{id}` (processado no switch de comandos especiais, l.1692-1704)
+       ├── Chama applyLayout(layoutId) que persiste no localStorage e re-renderiza SVG
+       └── Botões de layout (renderLayoutSelector) e debug (renderDebugLayoutButtons) usam este comando
+
 Sorteio de Perguntas (temático por mundo)
   ├── sortearQuestao() → filtra por mundo (activeSubworldId || selectedWorldId)
   ├── Pool temático via getIndicesPorMundo() → se <5 itens, fallback geral
@@ -287,7 +301,8 @@ Turno Principal
   └── jogarDado() → função assíncrona principal
 
 Modo Debug
-  └── initDebugMode() → ativado por ?debug=1, painel com botões para teste de portais e áreas especiais
+  ├── initDebugMode() → ativado por ?debug=1, painel com botões para teste de portais, áreas especiais e layouts
+  └── renderDebugLayoutButtons() → botões de troca rápida de layout na seção Galáxia do debug
 
 Gerenciamento de Estado
   ├── resetGameState() → reseta estado (posições, rodadasPerdidas, activeSubworldId, subworldEntry,
@@ -439,7 +454,7 @@ unlockTurn → scheduleBotTurnIfNeeded()
 
 ## Motor de Mundos (v0.12.0-preview)
 
-A partir da v0.9.0-preview, o Lara World iniciou a **Fase de Mundos** com a criação de um motor modular. Na Sprint A5.1 o motor entrou em produção: o WorldRegistry é inicializado no bootstrap e o `currentWorldConfig` é populado na seleção do mundo. O game.js foi migrado para ES Module e consome `currentWorldConfig.board` diretamente (Sprint A5.2). Na v0.10.0-preview, o motor foi consolidado com a integração do segundo mundo e do sistema de portais genérico. Na v0.12.0-preview, o **Board Layout 2.0** estendeu o contrato `BoardConfig` com o formato `cells[]`, permitindo posicionamento individual por célula.
+A partir da v0.9.0-preview, o Lara World iniciou a **Fase de Mundos** com a criação de um motor modular. Na Sprint A5.1 o motor entrou em produção: o WorldRegistry é inicializado no bootstrap e o `currentWorldConfig` é populado na seleção do mundo. O game.js foi migrado para ES Module e consome `currentWorldConfig.board` diretamente (Sprint A5.2). Na v0.10.0-preview, o motor foi consolidado com a integração do segundo mundo e do sistema de portais genérico. Na v0.12.0-preview, o **Board Layout 2.0** estendeu o contrato `BoardConfig` com o formato `cells[]`, permitindo posicionamento individual por célula. Na entrega dos layouts (v0.22.0-preview), o contrato foi novamente estendido com `board.layouts` e `board.defaultLayout`, permitindo que um mundo declare múltiplas variantes de posicionamento sem alterar a engine.
 
 ### Módulos do Engine
 
@@ -464,8 +479,9 @@ A partir da v0.9.0-preview, o Lara World iniciou a **Fase de Mundos** com a cria
 |-------|---------|---------|---------|---------|--------|
 | **🌳 Floresta Encantada** (principal) | `src/worlds/floresta/config.js` | 20 | 12 | 1 | `board.positions` (original) |
 | **🌲 Floresta Misteriosa** (subworld) | (mesmo arquivo) | 8 | 4 | — | `board.positions` |
-| **🦖 Vale dos Dinossauros** (principal) | `src/worlds/dinossauros/config.js` | 20 | 12 | 1 | `board.cells` (Board Layout 2.0) |
+| **🦖 Vale dos Dinossauros** (principal) | `src/worlds/dinossauros/config.js` | 20 | 12 | 1 | `board.cells` (S-curve) |
 | **🦴 Caverna dos Fósseis** (subworld) | (mesmo arquivo) | 8 | 6 | — | `board.positions` |
+| **🌌 Galáxia Estelar** (principal) | `src/worlds/galaxia/config.js` | 20 | 9 | — | `board.layouts` (3: padrão/orbita/spiral) |
 
 ### Seletor de Mundos (UX-014 v2)
 

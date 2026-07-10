@@ -1,5 +1,114 @@
 # Memorial Técnico
 
+## Sprint — Sistema de Variantes de Tabuleiro (Layouts) (v0.22.0-preview)
+
+### Objetivo
+
+Implementar um sistema genérico de variantes de tabuleiro (layouts) para o Lara World, permitindo que qualquer mundo declare múltiplos posicionamentos de células via `board.layouts` no WorldConfig, com selector UI automático, persistência em `localStorage`, integração com o painel de debug, e validação no world-registry — tudo sem lógica específica de mundo no engine.
+
+### Arquivos Criados
+
+| Arquivo | Descrição |
+|---------|-----------|
+| `src/worlds/galaxia/layouts.js` | 3 layouts da Galáxia Estelar: `padrao` (original), `orbita` (curva orbital com deslocamento Y progressivo), `spiral` (rotação 360° com centro偏移) |
+
+### Arquivos Alterados
+
+| Arquivo | Tipo de Alteração |
+|---------|-------------------|
+| `src/game.js` | **Modificado** — Adicionadas: `getActiveBoardLayout()` (l.110-117), `applyLayout()` (l.136-141), `renderLayoutSelector()` (l.1065-1097), `renderDebugLayoutButtons()` (l.1516-1529), handler `layout:{id}` no switch de comandos (l.1692-1704). `getPosicoes()` estendido para consumir `getActiveBoardLayout().cells` quando `board.layouts` existe. Removido `import { galaxyLayouts }` (código específico de mundo não utilizado). Corrigido switch quebrado por `}` extra (l.1900). Restauradas coordenadas originais do Vale dos Dinossauros que foram sobrescritas com grid genérico |
+| `src/core/types.js` | **Modificado** — Adicionada typedef `LayoutEntry` ({id, name, icon, description, cells}). `BoardConfig` estendido com campos opcionais `layouts` (object de LayoutEntry) e `defaultLayout` (string) |
+| `src/engine/world-registry.js` | **Modificado** — `validateWorldConfig()` estendido para validar `board.layouts` e `board.defaultLayout` quando presentes |
+| `src/worlds/galaxia/config.js` | **Modificado** — Adicionados `board.layouts: galaxyLayouts` e `board.defaultLayout: 'padrao'` |
+| `src/index.html` | **Modificado** — Adicionado `.layout-selector` container no board area (l.121-124). Adicionados botões de layout na seção Galáxia do debug (l.483-484) |
+| `src/style.css` | **Modificado** — Adicionados estilos do `.layout-selector` (l.2096-2146): flexbox horizontal, botões compactos com icon+nome, `.hidden` com `display: none` |
+
+### Documentação
+
+| Arquivo | Tipo de Alteração |
+|---------|-------------------|
+| `README.md` | **Modificado** — Adicionada seção "Sistema de Variantes de Tabuleiro (Layouts)" |
+| `CHANGELOG.md` | **Modificado** — Entrada v0.22.0-preview adicionada |
+| `docs/visao-geral.md` | **Modificado** — Layout system adicionado à seção v0.16.0-preview |
+| `docs/arquitetura.md` | **Modificado** — `worlds/galaxia/layouts.js` na árvore; Galáxia na tabela de WorldConfigs; getActiveBoardLayout, applyLayout, renderLayoutSelector, renderDebugLayoutButtons, layout:{id} handler documentados; index.html com layout-selector; debug panel expandido; motor de mundos estendido |
+| `docs/regras-do-jogo.md` | **Modificado** — Seção "Seletor de Layout (Galáxia Estelar)" adicionada |
+| `docs/roadmap.md` | **Modificado** — Layout system adicionado ao checklist da v0.16.0-preview |
+| `docs/memorial-tecnico.md` | **Modificado** — Sprint adicionada |
+
+### Decisões Técnicas
+
+| Decisão | Alternativas | Motivo |
+|---------|-------------|--------|
+| `board.layouts` como objeto de LayoutEntry (não array) | Array com lookup por id | Objeto permite acesso O(1) por chave; o layout ativo é uma string id, não um índice |
+| `getActiveBoardLayout()` retorna o entry completo | Retornar apenas cells | A função é o ponto central de acesso — outros metadados (nome, ícone) podem ser úteis futuramente |
+| Selector UI com `icon + name` apenas, sem description | Mostrar descrição também | Design compacto para não poluir o tabuleiro; descrição visível nos layouts.js para documentação |
+| `.layout-selector.hidden` via CSS | Condicional no JS (só renderizar se 2+ layouts) | A classe hidden permite mostrar/esconder sem recriar o DOM. A lógica de renderização também só cria botões se 2+ layouts |
+| Novo layout via comando `layout:{id}` | Função direct call | O comando via dataset permite reúso entre selector UI e debug, sem duplicar handler |
+| `applyLayout()` como função separada | Dentro do handler | Reúso: chamada tanto pelo handler de comando quanto por futuras funções (ex: reset de layout) |
+| Persistência em `localStorage` (chave `lara_world_layout`) | SessionStorage ou memória | localStorage persiste entre partidas; a chave inclui o worldId para suportar layouts diferentes por mundo |
+
+### Fluxo de Troca de Layout
+
+```
+Usuário clica em botão de layout (selector UI ou debug)
+  ↓
+Comando `layout:{id}` é disparado
+  ├── Chama applyLayout(layoutId)
+  │   ├── Persiste `{worldId: layoutId}` em localStorage
+  │   ├── Re-renderiza SVG path com novo getPosicoes()
+  │   └── Re-posiciona jogadores via positionPlayerAt()
+  ├── Atualiza selector UI (destaca botão ativo)
+  └── Atualiza debug UI se visível
+```
+
+### Fluxo de Renderização do Selector
+
+```
+renderizarTrilha() ou selectWorld()
+  ↓
+renderLayoutSelector()
+  ├── Verifica currentWorldConfig.board.layouts
+  ├── Se null ou Object.keys(layouts).length < 2:
+  │   └── Adiciona classe .hidden ao .layout-selector
+  ├── Senão:
+  │   ├── Remove classe .hidden
+  │   ├── Para cada layout: cria <button> com icon + nome
+  │   ├── Destaca botão do layout ativo
+  │   └── Cada botão chama onClick → layout:{id}
+  └── Independente: limpa botões anteriores antes de recriar
+```
+
+### Impacto Técnico
+
+- **board.layouts + board.defaultLayout**: Novo contrato no WorldConfig. `layouts` é um objeto onde cada chave é um id de layout e cada valor é um `LayoutEntry` com `{id, name, icon, description, cells}`. `defaultLayout` é uma string com o id do layout padrão. Ambos são opcionais — mundos existentes (Floresta, Dinossauros) não são afetados.
+- **getActiveBoardLayout()**: Verifica se `board.layouts` existe. Se sim, lê o layout ativo do `localStorage` (chave `lara_world_layout_{worldId}`) ou usa `defaultLayout`. Valida se o id existe em layouts — se não, fallback para defaultLayout. Retorna o LayoutEntry completo.
+- **getPosicoes()**: Estendido: se `board.layouts` existir, chama `getActiveBoardLayout()` e converte `.cells` para mapa de posições. Este é o único ponto de integração com o sistema de posicionamento existente.
+- **applyLayout(layoutId)**: Persiste o layoutId em localStorage, atualiza o layout ativo, re-renderiza o SVG path via `renderSvgPath(getPosicoes())` e reposiciona ambos os jogadores. Não altera estado de jogo, turno, posições ou eventos.
+- **renderLayoutSelector()**: Limpa o container `.layout-selector` e, se houver 2+ layouts, cria botões `<button>` com `data-cmd="layout:{id}"`, exibindo `icon + name`. Destaca visualmente o botão do layout ativo. Se < 2 layouts, adiciona classe `.hidden` ao container.
+- **Comando `layout:{id}`**: Processado no switch de comandos especiais em `jogarDado()` e debug. Chama `applyLayout()`, depois `renderLayoutSelector()` e opcionalmente `renderDebugLayoutButtons()`.
+- **renderDebugLayoutButtons()**: Na seção Galáxia do debug, adiciona botões para cada layout disponível. Usa o mesmo comando `layout:{id}`.
+- **world-registry.js**: `validateWorldConfig()` agora valida: se `board.layouts` presente, deve ser objeto não-nulo; cada entry deve ter id, name, icon, description, cells array; cada cell deve ter id, x, y; `board.defaultLayout` deve ser string e chave válida em layouts.
+- **Dinossauros cells restaurados**: Durante desenvolvimento, os cells do Vale foram substituídos por um grid genérico. As coordenadas originais em S-curve com +7pp X foram restauradas manualmente.
+- **Switch quebrado**: Um `}` extra na linha 1900 (dentro do bloco `?debug=1`) quebrou a estrutura switch do handler de debug. Removido e validado com `node --check`.
+- **CSS**: `.layout-selector` com `display: flex; gap: 8px; justify-content: center; padding: 8px`. Botões com `padding: 4px 12px; font-size: 0.8rem; border-radius: 12px`. Classe `.hidden` com `display: none !important`. Seletor de layout com fundo semi-transparente e hover sutil.
+
+### Impacto Funcional
+
+- **Galáxia Estelar**: jogador pode alternar entre 3 layouts visuais (Padrão, Órbita, Espiral) que reorganizam as células do tabuleiro
+- **Selector automático**: aparece apenas no mundo Galáxia (3 layouts); Floresta e Dinossauros (1 layout cada) não exibem o seletor
+- **Layout persiste**: ao sair e voltar para a Galáxia, o último layout escolhido é restaurado
+- **Debug integrado**: desenvolvedores podem trocar layouts rapidamente via painel de debug
+- **Nenhuma regressão**: Floresta, Dinossauros, áreas especiais, single player, multiplayer, bot, desafios, minigame — tudo inalterado
+- **Arquitetura limpa**: engine não conhece layouts específicos; tudo é config-driven
+
+### Notas Técnicas
+
+- Nenhuma engine (`src/engine/*`, `src/core/*`) foi alterada além do contrato `types.js` (LayoutEntry) e `world-registry.js` (validação)
+- `getActiveBoardLayout()` nunca retorna null para mundos com `board.layouts` — sempre há fallback para `defaultLayout` ou primeiro entry
+- Layouts não afetam eventos, casas especiais, ou lógica de jogo — apenas o posicionamento visual das células
+- O sistema é preparado para expansão: qualquer mundo futuro pode declarar `board.layouts` e ganhar selector automático
+- A versão do projeto permanece **v0.16.0-preview** — não houve bump para esta entrega
+
 ## Sprint — Versionamento Centralizado e Cache-Busting (v0.21.0-preview)
 
 ### Objetivo

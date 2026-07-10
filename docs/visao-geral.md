@@ -18,8 +18,14 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 
 ## Principais Funcionalidades
 
-### v0.16.0-preview (Atual) — Visual da Galáxia Estelar ✅
+### v0.16.0-preview (Atual) — Visual da Galáxia Estelar + Variantes de Tabuleiro ✅
 
+- **Sistema de Variantes de Tabuleiro**: arquitetura genérica `board.layouts` + `board.defaultLayout` no WorldConfig — qualquer mundo pode declarar múltiplos layouts de células
+- **Galáxia Estelar**: 3 layouts disponíveis — ⭐ Padrão (original), 🪐 Órbita (curva orbital), 🌀 Espiral (rotação 360°)
+- **Selector UI automático**: botões `icon + name` renderizados apenas quando o mundo tem 2+ layouts; oculto para mundos com layout único
+- **Persistência**: layout ativo salvo em `localStorage` por mundo
+- **Integração Debug** (`?debug=1`): botões de troca rápida de layout no painel
+- **Validação**: world-registry.js valida layouts e defaultLayout
 - **Máximo de 2 empates** no sorteio inicial; no 3º, desempate automático aleatório
 - **Mensagens divertidas**: "Empate cósmico!", "Depois de tantos empates, a sorte decidiu!", "Tanto empate que o destino tomou a frente!"
 - **Válido para**: 2 jogadores e 1 jogador vs máquina

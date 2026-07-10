@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.22.0-preview] - 2026-07-10
+
+### Sistema de Variantes de Tabuleiro (Layouts)
+
+- **Arquitetura genérica de layouts**: cada mundo pode declarar múltiplos layouts de tabuleiro via `board.layouts` + `board.defaultLayout` no WorldConfig — zero lógica específica de mundo no engine
+- **Galáxia Estelar**: primeiro mundo a adotar o sistema com 3 layouts — ⭐ Padrão (original), 🪐 Órbita (curva orbital, deslocamento Y progressivo) e 🌀 Espiral (rotação espiral, 360° com centro偏移)
+- **Selector UI renderizado automaticamente**: `renderLayoutSelector()` em `src/game.js` (l.1065-1097) cria botões `icon + name` quando `Object.keys(layouts).length > 1`; oculto para mundos com layout único via `.layout-selector.hidden { display: none; }`
+- **Troca de layout via `layout:{id}`**: novo handler de comando processa `layout:id` no switch de comandos especiais (l.1692-1704), regenera o SVG path e reposiciona jogadores
+- **Persistência em `localStorage`**: layout ativo salvo e restaurado por mundo
+- **getActiveBoardLayout()**: função central que retorna o layout atual do mundo corrente (l.110-117), consumida por `getPosicoes()`, `applyLayout()` e `renderizarTrilha()`
+- **applyLayout()**: função que re-renderiza SVG path e posiciona jogadores ao trocar layout (l.136-141)
+- **Integração Debug**: `renderDebugLayoutButtons()` no painel de debug (l.1516-1529) para troca rápida entre variantes
+- **Validação**: `world-registry.js` — valida `board.layouts` (objeto de LayoutEntry) e `board.defaultLayout` (deve ser chave válida em layouts)
+- **Tipagem**: typedef `LayoutEntry` em `src/core/types.js` com `id`, `name`, `icon`, `description`, `cells`
+- **Arquivos**: `src/worlds/galaxia/layouts.js`, `src/game.js`, `src/core/types.js`, `src/engine/world-registry.js`, `src/index.html`, `src/style.css`
+
+### Corrigido
+
+- **Switch quebrado corrigido**: estrutura switch em handler de debug (game.js:1900) foi corrompida por `}` extra durante alterações do layout system — removido, `node --check` passa limpo
+- **Coordenadas dos Dinossauros restauradas**: `board.cells` do Vale dos Dinossauros foi sobrescrito com grid genérico durante desenvolvimento dos layouts — restauradas as coordenadas originais em S-curve com deslocamento +7pp X
+- **Layout selector visível em todos os mundos**: faltava a regra `.layout-selector.hidden { display: none; }` no CSS — adicionada, selector agora aparece apenas em mundos com 2+ layouts
+- **Import não utilizado removido**: `import { galaxyLayouts }` removido de `src/game.js` (era resquício de código específico de mundo)
+
 ## [0.21.0-preview] - 2026-07-09
 
 ### Versionamento Centralizado e Cache-Busting

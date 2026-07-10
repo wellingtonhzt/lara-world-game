@@ -31,6 +31,7 @@ import { APP_VERSION } from './version.js';
   let selectedWorldId = null;
   let currentWorldConfig = null;
   let isSinglePlayer = false;
+  let selectedLayoutId = null;
   let botTurnScheduled = false;
   let modoJogo = null;
   let drawState = { rolls: [null, null], drawWinnerIndex: null };
@@ -71,7 +72,23 @@ import { APP_VERSION } from './version.js';
     return casasEspeciais;
   }
   function getPosicoes() {
-    const board = getSubworldConfig()?.board || currentWorldConfig?.board;
+    const sw = getSubworldConfig();
+    if (sw) {
+      const board = sw.board;
+      if (board.cells) {
+        const map = {};
+        for (const c of board.cells) map[c.id] = { x: c.x, y: c.y };
+        return map;
+      }
+      return board.positions || boardPositions;
+    }
+    const activeLayout = getActiveBoardLayout();
+    if (activeLayout) {
+      const map = {};
+      for (const c of activeLayout.cells) map[c.id] = { x: c.x, y: c.y };
+      return map;
+    }
+    const board = currentWorldConfig?.board;
     if (!board) return boardPositions;
     if (board.cells) {
       const map = {};
@@ -86,6 +103,46 @@ import { APP_VERSION } from './version.js';
     const cfg = currentWorldConfig;
     return (cfg && cfg.board && cfg.board.cellIcons) || icons;
   }
+
+  /* ── Board Layout System ── */
+
+  function getActiveBoardLayout() {
+    const board = currentWorldConfig?.board;
+    if (!board || !board.layouts) return null;
+    if (selectedLayoutId && board.layouts[selectedLayoutId]) {
+      return board.layouts[selectedLayoutId];
+    }
+    return board.layouts[board.defaultLayout] || null;
+  }
+
+  function loadLayoutPreference(worldId) {
+    try {
+      const raw = localStorage.getItem('boardLayoutPrefs');
+      const prefs = raw ? JSON.parse(raw) : {};
+      return prefs[worldId] || null;
+    } catch { return null; }
+  }
+
+  function saveLayoutPreference(worldId, layoutId) {
+    try {
+      const raw = localStorage.getItem('boardLayoutPrefs');
+      const prefs = raw ? JSON.parse(raw) : {};
+      prefs[worldId] = layoutId;
+      localStorage.setItem('boardLayoutPrefs', JSON.stringify(prefs));
+    } catch { /* silencioso */ }
+  }
+
+  function applyLayout(layoutId) {
+    const board = currentWorldConfig?.board;
+    if (!board || !board.layouts || !board.layouts[layoutId]) return;
+    if (gameState.activeSubworldId) return;
+    selectedLayoutId = layoutId;
+    renderizarTrilha();
+    renderSvgPath();
+    players.forEach(p => positionPlayerAt(p.posicao, p));
+    updateUI();
+  }
+
   function eventsToSpecialCells(events) {
     const result = {};
     if (!events) return result;
@@ -913,6 +970,7 @@ import { APP_VERSION } from './version.js';
     document.getElementById("world-selector").classList.add("hidden");
     selectedWorldId = null;
     currentWorldConfig = null;
+    selectedLayoutId = null;
     modoJogo = null;
     clearWorldTheme();
   }
@@ -971,6 +1029,7 @@ import { APP_VERSION } from './version.js';
       currentWorldConfig = get(worldId);
       selectedWorldId = worldId;
     }
+    selectedLayoutId = loadLayoutPreference(selectedWorldId) || null;
     applyWorldTheme();
     hideWorldSelector();
     showSetupScreen();
@@ -995,10 +1054,45 @@ import { APP_VERSION } from './version.js';
 
   function showSetupScreen() {
     document.getElementById("setup-screen").classList.remove("hidden");
+    renderLayoutSelector();
   }
 
   function hideSetupScreen() {
     document.getElementById("setup-screen").classList.add("hidden");
+  }
+
+  function renderLayoutSelector() {
+    const container = document.getElementById('layout-selector');
+    const btnGroup = document.getElementById('layout-buttons');
+    const board = currentWorldConfig?.board;
+    const hasMultiple = board && board.layouts && Object.keys(board.layouts).length > 1;
+
+    if (!hasMultiple) {
+      container.classList.add('hidden');
+      return;
+    }
+
+    container.classList.remove('hidden');
+    btnGroup.innerHTML = '';
+
+    for (const [lid, layout] of Object.entries(board.layouts)) {
+      const btn = document.createElement('button');
+      btn.className = 'layout-btn';
+      btn.dataset.layoutId = lid;
+      btn.innerHTML = (layout.icon || '') + ' ' + layout.name;
+
+      if (lid === selectedLayoutId || (!selectedLayoutId && lid === board.defaultLayout)) {
+        btn.classList.add('selected');
+      }
+
+      btn.addEventListener('click', () => {
+        btnGroup.querySelectorAll('.layout-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        selectedLayoutId = lid;
+      });
+
+      btnGroup.appendChild(btn);
+    }
   }
 
   function startGame() {
@@ -1022,6 +1116,10 @@ import { APP_VERSION } from './version.js';
 
     renderBoardToken(0);
     renderBoardToken(1);
+
+    if (currentWorldConfig?.board?.layouts && selectedLayoutId) {
+      saveLayoutPreference(currentWorldConfig.id, selectedLayoutId);
+    }
 
     botTurnScheduled = false;
     hideSetupScreen();
@@ -1414,6 +1512,21 @@ import { APP_VERSION } from './version.js';
 
   /* ── Debug ── */
 
+  function renderDebugLayoutButtons() {
+    const container = document.getElementById('debug-layout-buttons');
+    if (!container) return;
+    container.innerHTML = '';
+    const board = currentWorldConfig?.board;
+    if (!board || !board.layouts) return;
+    for (const [lid, layout] of Object.entries(board.layouts)) {
+      const btn = document.createElement('button');
+      btn.className = 'debug-btn debug-btn-layout';
+      btn.dataset.debug = 'layout:' + lid;
+      btn.textContent = layout.name;
+      container.appendChild(btn);
+    }
+  }
+
   function setupDebugMode() {
     const params = new URLSearchParams(window.location.search);
     if (params.get("debug") !== "1") return;
@@ -1461,6 +1574,7 @@ import { APP_VERSION } from './version.js';
       txt('d-entry', p != null ? (gameState.subworldEntry[p.id] ?? '-') : '-');
       txt('d-game', gameState.jogoAtivo ? (gameState.jogoFinalizado ? 'Finalizado' : 'Ativo') : 'Inativo');
       txt('d-turn', `${gameState.currentPlayerIndex + 1}/${PLAYER_COUNT}`);
+      renderDebugLayoutButtons();
     }
 
     function renderLogs() {
@@ -1573,6 +1687,20 @@ import { APP_VERSION } from './version.js';
       const player = getCurrentPlayer();
 
       clearEventResult();
+
+      // Ações padronizadas via prefixo (processadas antes do switch para não poluir os cases)
+      const layoutMatch = action.match(/^layout:(.+)$/);
+      if (layoutMatch) {
+        const lid = layoutMatch[1];
+        const board = currentWorldConfig?.board;
+        if (board && board.layouts && board.layouts[lid]) {
+          applyLayout(lid);
+          addLog(`\uD83D\uDDFA\uFE0F Layout: ${board.layouts[lid].name}`);
+        } else {
+          addLog(`\u26A0\uFE0F Layout "${lid}" n\u00E3o encontrado`);
+        }
+        return;
+      }
 
       try {
         switch (action) {

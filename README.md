@@ -18,7 +18,7 @@
 
 | Versão | Data | Status |
 |--------|------|--------|
-| **v0.16.0-preview** | Jul/2026 | ✅ **Ativo** — Visual da Galáxia Estelar (ART-011) |
+| **v0.16.0-preview** | Jul/2026 | ✅ **Ativo** — Visual da Galáxia Estelar (ART-011) + Layouts |
 | v0.18.0-preview | Jul/2026 | ✅ Revisão do sistema de perguntas |
 | v0.17.0-preview | Jul/2026 | ✅ Correção de cascata pós-desafio |
 | v0.16.0-preview | Jul/2026 | ✅ Concluído |
@@ -68,6 +68,16 @@
 - **Background personalizado**: CSS do `#track-container` atualizado com overlay semitransparente + `url("assets/worlds/galaxia/background.webp")` + gradiente fallback escuro
 - **Path.webp**: regra CSS existente para `body[data-world="galaxia-estelar"] .path-line` com fallback SVG stroke
 - **Fallback garantido**: se os assets .webp não existirem, gradiente e SVG mantêm o visual funcional
+
+### Sistema de Variantes de Tabuleiro (Layouts)
+
+- **Config-driven**: cada mundo pode declarar múltiplos layouts via `board.layouts` + `board.defaultLayout` no WorldConfig, sem qualquer lógica específica de mundo no engine
+- **Galáxia Estelar como primeiro adotante**: 3 layouts — ⭐ Padrão (original), 🪐 Órbita (curva orbital) e 🌀 Espiral (rotação espiral) — definidos em `src/worlds/galaxia/layouts.js`
+- **Selector UI compacto**: botões com `icon + name` (sem descrição) que aparecem automaticamente no tabuleiro quando o mundo tem 2+ layouts; ocultos para mundos com layout único via `.layout-selector.hidden { display: none; }`
+- **Persistência**: layout ativo salvo em `localStorage` e restaurado ao retornar ao mundo — via a chave `activeLayout` no world config
+- **Integração Debug** (`?debug=1`): botões de layout na seção Galáxia do painel de debug para troca rápida entre variantes
+- **Validação**: `world-registry.js` valida `board.layouts` e `board.defaultLayout` quando presentes
+- **Tipagem**: typedef `LayoutEntry` em `src/core/types.js` com `id`, `name`, `icon`, `description`, `cells`
 
 ### Casa 7 — Troca Quântica (Galáxia) + Result Card do Minigame — GAL-002
 
@@ -483,7 +493,7 @@ docker compose down
 
 ## 🗺️ Roadmap
 
-- **v0.16.0-preview** — ✅ **Ativo** — Visual da Galáxia Estelar (ART-011): infraestrutura background.webp + path.webp para Galáxia
+- **v0.16.0-preview** — ✅ **Ativo** — Visual da Galáxia Estelar (ART-011) + Sistema de Variantes de Tabuleiro (Layouts)
 - **v0.15.0-preview** — ✅ Concluído — Troca Quântica (GAL-002): Casa 7 swap-positions + result card do minigame
 - **v0.14.0-preview** — ✅ Concluído — Galáxia Estelar + MeteoroGame (GAL-001)
 - **v0.13.0-preview** — ✅ Concluído — Infraestrutura de Áudio (AUD-001)

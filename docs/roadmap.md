@@ -1,6 +1,6 @@
 # Roadmap Lara World
 
-### v0.16.0-preview — Visual da Galáxia Estelar + Versionamento Centralizado (Atual) ✅
+### v0.16.0-preview — Visual da Galáxia Estelar + Sistema de Variantes de Tabuleiro (Atual) ✅
 
 - [x] Infraestrutura visual de background e path.webp para Galáxia Estelar (ART-011)
 - [x] `src/version.js` criado com constante `APP_VERSION` centralizada
@@ -8,6 +8,17 @@
 - [x] Versão da tela inicial sincronizada com `APP_VERSION` (via `game.js:init()`)
 - [x] README, CHANGELOG, docs atualizados para v0.16.0-preview
 - [x] Fluxo de versionamento documentado no AI_WORKFLOW.md
+
+**Sistema de Variantes de Tabuleiro (Layouts):**
+- [x] Arquitetura genérica `board.layouts` + `board.defaultLayout` no WorldConfig
+- [x] Galáxia Estelar com 3 layouts: padrão, orbita, spiral (`src/worlds/galaxia/layouts.js`)
+- [x] Selector UI automático (só aparece em mundos com 2+ layouts)
+- [x] Troca de layout via comando `layout:{id}`
+- [x] Persistência em `localStorage` por mundo
+- [x] getActiveBoardLayout(), applyLayout(), renderLayoutSelector()
+- [x] Integração Debug: renderDebugLayoutButtons()
+- [x] Validação em world-registry.js
+- [x] LayoutEntry typedef em types.js
 
 ### v0.15.0-preview — Troca Quântica + Result Card ✅
 
