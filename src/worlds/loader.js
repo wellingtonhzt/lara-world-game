@@ -3,11 +3,13 @@ import { WORLD_IDS } from '../data/world-manifest.js';
 import { florestaEncantada } from './floresta/config.js';
 import { valeDosDinossauros } from './dinossauros/config.js';
 import { galaxiaEstelar } from './galaxia/config.js';
+import { reinoOceanos } from './oceanos/config.js';
 
 const worldConfigMap = {
   'floresta-encantada': florestaEncantada,
   'dinossauros': valeDosDinossauros,
   'galaxia-estelar': galaxiaEstelar,
+  'reino-oceanos': reinoOceanos,
 };
 
 export function loadAllWorlds() {

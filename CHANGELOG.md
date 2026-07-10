@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.23.0-preview] - 2026-07-10
+
+### Infraestrutura de Assets — Reino dos Oceanos
+
+- **Diretório de assets criado**: `src/assets/worlds/oceanos/` com `.gitkeep`, `background.webp` e `path.webp` (placeholders zero-byte)
+- **README.md**: árvore de assets atualizada com `oceanos/`; tabela de status com entradas para background.webp e path.webp do Reino dos Oceanos
+- **CHANGELOG.md**: entrada v0.23.0-preview adicionada
+- **docs/visao-geral.md**: diretório `oceanos/` adicionado na estrutura de assets
+- **docs/roadmap.md**: item "Assets do Reino dos Oceanos" adicionado em Futuro
+- **docs/memorial-tecnico.md**: sprint registrada
+- **docs/arquitetura.md**: `oceanos/` adicionado na árvore de diretórios e na nota explicativa
+- **Nenhuma alteração de gameplay**: sem CSS, sem engine, sem world config — apenas assets placeholder + documentação
+
 ## [0.22.0-preview] - 2026-07-10
 
 ### Sistema de Variantes de Tabuleiro (Layouts)

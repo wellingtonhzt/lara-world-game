@@ -166,6 +166,7 @@ import { APP_VERSION } from './version.js';
         case 'worldExit': result[cell] = { tipo: 'saida-mundo', valor: ev.params?.bonusCells ?? 0, descricao: d }; break;
         case 'swap-positions': result[cell] = { tipo: 'swap-positions', descricao: d }; break;
         case 'buraco-minhoca': result[cell] = { tipo: 'buraco-minhoca', descricao: d }; break;
+        case 'recife-placeholder': result[cell] = { tipo: 'recife-placeholder', descricao: d }; break;
       }
     }
     return result;
@@ -712,6 +713,11 @@ import { APP_VERSION } from './version.js';
         } else {
           addHistory(`\uD83C\uDF00 ${info.descricao} — ambos na mesma casa, nada acontece.`, "info");
         }
+        return false;
+      }
+      case "recife-placeholder": {
+        addHistory(`\uD83D\uDC21 O desafio do Recife chegar\u00E1 em breve!`, "especial");
+        if (typeof addLog === 'function') addLog('\uD83E\uDEB8 TODO: Recife — futura batalha de Match-3');
         return false;
       }
       case "buraco-minhoca": {
@@ -1808,6 +1814,68 @@ import { APP_VERSION } from './version.js';
             break;
           }
 
+          // ── Testes Rápidos: Oceanos ──
+          case "oceanos-casa2": {
+            if (currentWorldConfig?.id !== 'reino-oceanos') { addLog('\u26A0\uFE0F Teste v\u00E1lido apenas no Reino dos Oceanos'); break; }
+            if (gameState.activeSubworldId) { addLog('\u26A0\uFE0F Est\u00E1 em submundo. Use o bot\u00E3o de sair primeiro.'); break; }
+            await debugMoveAndProcess(2);
+            break;
+          }
+          case "oceanos-casa4": {
+            if (currentWorldConfig?.id !== 'reino-oceanos') { addLog('\u26A0\uFE0F Teste v\u00E1lido apenas no Reino dos Oceanos'); break; }
+            if (gameState.activeSubworldId) { addLog('\u26A0\uFE0F Est\u00E1 em submundo. Use o bot\u00E3o de sair primeiro.'); break; }
+            await debugMoveAndProcess(4);
+            break;
+          }
+          case "oceanos-casa5": {
+            if (currentWorldConfig?.id !== 'reino-oceanos') { addLog('\u26A0\uFE0F Teste v\u00E1lido apenas no Reino dos Oceanos'); break; }
+            if (gameState.activeSubworldId) { addLog('\u26A0\uFE0F Est\u00E1 em submundo. Use o bot\u00E3o de sair primeiro.'); break; }
+            await debugMoveAndProcess(5);
+            break;
+          }
+          case "oceanos-casa8": {
+            if (currentWorldConfig?.id !== 'reino-oceanos') { addLog('\u26A0\uFE0F Teste v\u00E1lido apenas no Reino dos Oceanos'); break; }
+            if (gameState.activeSubworldId) { addLog('\u26A0\uFE0F Est\u00E1 em submundo. Use o bot\u00E3o de sair primeiro.'); break; }
+            await debugMoveAndProcess(8);
+            break;
+          }
+          case "oceanos-casa9": {
+            if (currentWorldConfig?.id !== 'reino-oceanos') { addLog('\u26A0\uFE0F Teste v\u00E1lido apenas no Reino dos Oceanos'); break; }
+            if (gameState.activeSubworldId) { addLog('\u26A0\uFE0F Est\u00E1 em submundo. Use o bot\u00E3o de sair primeiro.'); break; }
+            await debugMoveAndProcess(9);
+            break;
+          }
+          case "oceanos-casa12": {
+            if (currentWorldConfig?.id !== 'reino-oceanos') { addLog('\u26A0\uFE0F Teste v\u00E1lido apenas no Reino dos Oceanos'); break; }
+            if (gameState.activeSubworldId) { addLog('\u26A0\uFE0F Est\u00E1 em submundo. Use o bot\u00E3o de sair primeiro.'); break; }
+            await debugMoveAndProcess(12);
+            break;
+          }
+          case "oceanos-casa16": {
+            if (currentWorldConfig?.id !== 'reino-oceanos') { addLog('\u26A0\uFE0F Teste v\u00E1lido apenas no Reino dos Oceanos'); break; }
+            if (gameState.activeSubworldId) { addLog('\u26A0\uFE0F Est\u00E1 em submundo. Use o bot\u00E3o de sair primeiro.'); break; }
+            await debugMoveAndProcess(16);
+            break;
+          }
+          case "oceanos-casa17": {
+            if (currentWorldConfig?.id !== 'reino-oceanos') { addLog('\u26A0\uFE0F Teste v\u00E1lido apenas no Reino dos Oceanos'); break; }
+            if (gameState.activeSubworldId) { addLog('\u26A0\uFE0F Est\u00E1 em submundo. Use o bot\u00E3o de sair primeiro.'); break; }
+            await debugMoveAndProcess(17);
+            break;
+          }
+          case "oceanos-casa18": {
+            if (currentWorldConfig?.id !== 'reino-oceanos') { addLog('\u26A0\uFE0F Teste v\u00E1lido apenas no Reino dos Oceanos'); break; }
+            if (gameState.activeSubworldId) { addLog('\u26A0\uFE0F Est\u00E1 em submundo. Use o bot\u00E3o de sair primeiro.'); break; }
+            await debugMoveAndProcess(18);
+            break;
+          }
+          case "oceanos-casa20": {
+            if (currentWorldConfig?.id !== 'reino-oceanos') { addLog('\u26A0\uFE0F Teste v\u00E1lido apenas no Reino dos Oceanos'); break; }
+            if (gameState.activeSubworldId) { addLog('\u26A0\uFE0F Est\u00E1 em submundo. Use o bot\u00E3o de sair primeiro.'); break; }
+            await debugMoveAndProcess(20);
+            break;
+          }
+
           // ── Testes Rápidos: Galáxia ──
           case "galaxia-casa7": {
             if (currentWorldConfig?.id !== 'galaxia-estelar') { addLog('\u26A0\uFE0F Teste v\u00E1lido apenas na Gal\u00E1xia Estelar'); break; }
@@ -2111,6 +2179,7 @@ import { APP_VERSION } from './version.js';
     initGalleryTokens();
     enableWorldCard('dinossauros');
     enableWorldCard('galaxia-estelar');
+    enableWorldCard('reino-oceanos');
     audioManager.init();
 
     document.addEventListener('click', function firstInteraction() {

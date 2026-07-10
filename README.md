@@ -264,7 +264,10 @@ src/assets/
     ├── dinossauros/
     │   ├── background.webp   # Background ilustrado do tabuleiro (asset pendente)
     │   └── path.webp          # Textura do caminho (asset pendente)
-    └── galaxia/
+    ├── galaxia/
+    │   ├── background.webp   # Background ilustrado do tabuleiro (asset pendente)
+    │   └── path.webp          # Textura do caminho (asset pendente)
+    └── oceanos/
         ├── background.webp   # Background ilustrado do tabuleiro (asset pendente)
         └── path.webp          # Textura do caminho (asset pendente)
 ```
@@ -303,6 +306,8 @@ src/assets/
 | `path.webp` | Vale dos Dinossauros | ✅ Infraestrutura concluída — CSS via `background-image` + SVG stroke como fallback (asset pendente) |
 | `background.webp` | Galáxia Estelar | ✅ Infraestrutura concluída — CSS e overlay prontos (asset pendente de criação por IA) |
 | `path.webp` | Galáxia Estelar | ✅ Infraestrutura concluída — CSS via `background-image` + SVG stroke como fallback (asset pendente) |
+| `background.webp` | Reino dos Oceanos | 🟡 Infraestrutura concluída — diretório e placeholders criados (CSS pendente) |
+| `path.webp` | Reino dos Oceanos | 🟡 Infraestrutura concluída — diretório e placeholders criados (CSS pendente) |
 
 ### Decisões de UX Aprovadas
 

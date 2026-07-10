@@ -1501,10 +1501,10 @@ header h1 {
   box-shadow: 0 12px 40px rgba(179, 136, 255, 0.2);
 }
 
-.world-card[data-world="oceanos"] {
+.world-card[data-world="reino-oceanos"] {
   border-color: rgba(100, 181, 246, 0.35);
 }
-.world-card[data-world="oceanos"]:not(:disabled):hover {
+.world-card[data-world="reino-oceanos"]:not(:disabled):hover {
   border-color: #64b5f6;
   box-shadow: 0 12px 40px rgba(100, 181, 246, 0.2);
 }
@@ -2800,6 +2800,81 @@ body[data-world="galaxia-estelar"] .casa-vitoria {
 
 body[data-world="galaxia-estelar"] .path-line {
   background-image: url("assets/worlds/galaxia/path.webp");
+}
+
+/* ── Theme: Reino dos Oceanos ── */
+
+body[data-world="reino-oceanos"] {
+  background:
+    radial-gradient(ellipse at 20% 30%, #005f9e 0%, transparent 45%),
+    radial-gradient(ellipse at 80% 70%, #003d6b 0%, transparent 45%),
+    linear-gradient(160deg, #002244 0%, #003d6b 30%, #005f9e 60%, #002244 100%);
+}
+
+body[data-world="reino-oceanos"] #track-container {
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+    url("assets/worlds/oceanos/background.webp"),
+    linear-gradient(to bottom, #003d6b 0%, #005f9e 25%, #0077be 50%, #003d6b 75%, #002244 100%);
+  background-size: cover, cover, auto;
+  background-position: center, center, 0 0;
+  background-repeat: no-repeat, no-repeat, repeat;
+  box-shadow:
+    inset 0 0 60px rgba(0, 229, 255, 0.08),
+    0 6px 30px rgba(0, 0, 0, 0.07);
+}
+
+body[data-world="reino-oceanos"] #track-container #trail-path {
+  stroke: #4fc3f7;
+  stroke-width: 3;
+  opacity: 0.25;
+  filter: none;
+}
+
+body[data-world="reino-oceanos"] #track-container .casa {
+  background:
+    linear-gradient(to bottom, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.02) 45%, transparent 100%),
+    linear-gradient(145deg, #01579b, #004d6e);
+  border-color: rgba(79, 195, 247, 0.3);
+  box-shadow:
+    0 4px 0 rgba(1, 87, 155, 0.5),
+    0 8px 16px rgba(0, 0, 0, 0.06),
+    0 16px 32px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  color: #e0f7fa;
+}
+
+body[data-world="reino-oceanos"] #track-container .casa .casa-icone {
+  filter: drop-shadow(0 0 4px rgba(79, 195, 247, 0.4));
+}
+
+body[data-world="reino-oceanos"] .casa-especial {
+  border-color: rgba(0, 229, 255, 0.35);
+  background:
+    linear-gradient(to bottom, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.02) 45%, transparent 100%),
+    linear-gradient(145deg, #004d6e, #003355);
+  box-shadow:
+    0 4px 0 rgba(0, 100, 150, 0.5),
+    0 8px 16px rgba(0, 0, 0, 0.06),
+    0 16px 32px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 0 20px rgba(0, 229, 255, 0.12);
+}
+
+body[data-world="reino-oceanos"] .casa-vitoria {
+  border-color: rgba(249, 168, 37, 0.4);
+  background:
+    linear-gradient(to bottom, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.02) 45%, transparent 100%),
+    linear-gradient(145deg, #3a2a1e, #5a3a1e);
+  box-shadow:
+    0 4px 0 rgba(199, 144, 10, 0.4),
+    0 8px 16px rgba(0, 0, 0, 0.06),
+    0 16px 32px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+body[data-world="reino-oceanos"] .path-line {
+  background-image: url("assets/worlds/oceanos/path.webp");
 }
 
 /* ═══════════════════════════════════════
