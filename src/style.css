@@ -2093,6 +2093,62 @@ header h1 {
   box-shadow: 0 4px 12px rgba(233, 30, 99, 0.08);
 }
 
+/* ── Layout Selector ── */
+
+.layout-selector.hidden {
+  display: none;
+}
+
+.layout-selector {
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.layout-selector-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #8d6e4a;
+  margin-bottom: 6px;
+}
+
+.layout-btn-group {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.layout-btn {
+  flex: 0 1 auto;
+  min-width: 80px;
+  padding: 5px 12px;
+  border: 2px solid rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.6);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #8d6e4a;
+  cursor: pointer;
+  text-align: center;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  user-select: none;
+  font-family: inherit;
+}
+
+.layout-btn:hover {
+  border-color: #7c4dff;
+  box-shadow: 0 2px 8px rgba(124, 77, 255, 0.08);
+}
+
+.layout-btn.selected {
+  border-color: #7c4dff;
+  background: linear-gradient(135deg, #ede7f6, #d1c4e9);
+  color: #7c4dff;
+  box-shadow: 0 2px 12px rgba(124, 77, 255, 0.15);
+}
+
 /* ── Hide P2 card in 1-Player mode ── */
 
 #setup-screen.mode-1p .player2-card {
@@ -3282,6 +3338,7 @@ body[data-world="galaxia-estelar"] .path-line {
 .debug-btn-action { flex: 1; text-align: center; }
 .debug-btn-test { flex: 1; text-align: center; padding: 3px 4px; font-size: 0.6rem; min-width: 0; }
 .debug-btn-sm { padding: 2px 8px; font-size: 0.6rem; display: inline; }
+.debug-btn-layout { flex: 1; text-align: center; padding: 3px 4px; font-size: 0.6rem; min-width: 0; border-color: #e040fb; }
 .debug-btn-group { display: flex; flex-wrap: wrap; gap: 2px; }
 
 .debug-log-container {

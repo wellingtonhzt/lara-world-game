@@ -114,6 +114,12 @@ A escolha do modo determina quais campos são exibidos no modal e como o Jogador
 | **15** | **🚪 Buraco de Minhoca** | **Abre o minigame MeteoroGame. O jogador controla uma nave e precisa desviar de meteoros. Resultado: vitória (+3 bônus) ou derrota (-2 penalidade).** |
 | 18 | ⚡ Jogue novamente | O jogador ganha uma jogada extra. |
 
+### Seletor de Layout (Galáxia Estelar)
+
+- Ao selecionar a Galáxia Estelar, um seletor visual no topo do tabuleiro permite escolher entre 3 layouts: ⭐ **Padrão** (original), 🪐 **Órbita** (curva orbital) e 🌀 **Espiral** (rotação 360°)
+- A escolha persiste entre partidas (salva em `localStorage`)
+- O seletor aparece apenas quando o mundo possui 2+ layouts — mundos com layout único (Floresta, Dinossauros) não exibem o seletor
+
 ### Minigame: MeteoroGame (Buraco de Minhoca)
 
 - **Acesso**: ao cair na casa 15 do Mundo Galáxia, um overlay de transição é exibido antes de iniciar o minigame

@@ -1,3 +1,5 @@
+import { galaxyLayouts } from './layouts.js';
+
 export const galaxiaEstelar = {
   id: 'galaxia-estelar',
   name: '\uD83C\uDF0C Gal\u00E1xia Estelar',
@@ -16,28 +18,8 @@ export const galaxiaEstelar = {
     startCell: 1,
     finishCell: 20,
     pathType: 'linear',
-    cells: [
-      { id: 1,  x: 15, y: 8 },
-      { id: 2,  x: 29, y: 8 },
-      { id: 3,  x: 43, y: 8 },
-      { id: 4,  x: 57, y: 8 },
-      { id: 5,  x: 71, y: 8 },
-      { id: 6,  x: 71, y: 28 },
-      { id: 7,  x: 57, y: 28 },
-      { id: 8,  x: 43, y: 28 },
-      { id: 9,  x: 29, y: 28 },
-      { id: 10, x: 15, y: 28 },
-      { id: 11, x: 15, y: 48 },
-      { id: 12, x: 29, y: 48 },
-      { id: 13, x: 43, y: 48 },
-      { id: 14, x: 57, y: 48 },
-      { id: 15, x: 71, y: 48 },
-      { id: 16, x: 71, y: 68 },
-      { id: 17, x: 57, y: 68 },
-      { id: 18, x: 43, y: 68 },
-      { id: 19, x: 29, y: 68 },
-      { id: 20, x: 15, y: 84 },
-    ],
+    defaultLayout: 'padrao',
+    layouts: galaxyLayouts,
     cellIcons: [
       '\u2B50', '\uD83C\uDF1F', '\uD83C\uDF20', '\uD83D\uDE80', '\uD83C\uDF0D',
       '\uD83C\uDF0E', '\u2604\uFE0F', '\uD83C\uDF12', '\uD83D\uDD2D', '\uD83E\uDE90',

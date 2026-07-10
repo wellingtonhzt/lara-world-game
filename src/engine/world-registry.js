@@ -98,14 +98,58 @@ function validateWorldConfig(config) {
     );
   }
 
+  const total = config.board.totalCells;
+
   const hasPositions = !!config.board.positions;
   const hasCells = !!config.board.cells;
+  const hasLayouts = !!config.board.layouts;
 
-  if (!hasPositions && !hasCells) {
-    throw new InvalidWorldConfigError('Missing required field "board.positions" or "board.cells"');
+  if (!hasPositions && !hasCells && !hasLayouts) {
+    throw new InvalidWorldConfigError('Missing required field "board.positions", "board.cells", or "board.layouts"');
   }
 
-  const total = config.board.totalCells;
+  if (hasLayouts) {
+    if (typeof config.board.layouts !== 'object' || Array.isArray(config.board.layouts)) {
+      throw new InvalidWorldConfigError('"board.layouts" must be an object (layoutId -> layout)');
+    }
+    if (!config.board.defaultLayout || typeof config.board.defaultLayout !== 'string') {
+      throw new InvalidWorldConfigError('"board.defaultLayout" is required when board.layouts is provided');
+    }
+    const layoutIds = Object.keys(config.board.layouts);
+    if (layoutIds.length === 0) {
+      throw new InvalidWorldConfigError('"board.layouts" must contain at least one layout');
+    }
+    if (!config.board.layouts[config.board.defaultLayout]) {
+      throw new InvalidWorldConfigError(`board.defaultLayout "${config.board.defaultLayout}" not found in board.layouts`);
+    }
+    for (const [lid, layout] of Object.entries(config.board.layouts)) {
+      if (!layout.id || typeof layout.id !== 'string') {
+        throw new InvalidWorldConfigError(`board.layouts["${lid}"] missing required "id"`);
+      }
+      if (!layout.name || typeof layout.name !== 'string') {
+        throw new InvalidWorldConfigError(`board.layouts["${lid}"] missing required "name"`);
+      }
+      if (!Array.isArray(layout.cells)) {
+        throw new InvalidWorldConfigError(`board.layouts["${lid}"] missing required "cells" array`);
+      }
+      const seen = new Set();
+      for (const c of layout.cells) {
+        if (!Number.isInteger(c.id) || c.id < 1 || c.id > total) {
+          throw new InvalidWorldConfigError(
+            `board.layouts["${lid}"].cells: each cell must have an integer id in 1..${total}`
+          );
+        }
+        if (seen.has(c.id)) throw new InvalidWorldConfigError(`board.layouts["${lid}"].cells: duplicate cell id ${c.id}`);
+        seen.add(c.id);
+        if (typeof c.x !== 'number' || typeof c.y !== 'number') {
+          throw new InvalidWorldConfigError(`board.layouts["${lid}"].cells[${c.id}]: x and y must be numbers`);
+        }
+      }
+      if (seen.size === 0) {
+        throw new InvalidWorldConfigError(`board.layouts["${lid}"].cells must contain at least one cell`);
+      }
+    }
+  }
 
   if (hasPositions) {
     const posKeys = Object.keys(config.board.positions)

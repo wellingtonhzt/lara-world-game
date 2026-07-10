@@ -36,12 +36,22 @@
  */
 
 /**
+ * @typedef {Object} LayoutEntry
+ * @property {string} id - Identificador único do layout (ex: "padrao", "orbita")
+ * @property {string} name - Nome exibido (ex: "Padrão", "Órbita")
+ * @property {string} description - Descrição curta do formato
+ * @property {Array<{id: number, x: number, y: number}>} cells - Posições % das casas
+ */
+
+/**
  * @typedef {Object} BoardConfig
  * @property {number} totalCells - Total de casas
  * @property {number} startCell - Casa inicial
  * @property {number} finishCell - Casa final (vitória)
  * @property {Object.<number, {x: number, y: number}>} [positions] - Posições % das casas (formato mapa)
  * @property {Array<{id: number, x: number, y: number}>} [cells] - Posições % das casas (formato array, alternativa ao positions)
+ * @property {Object.<string, LayoutEntry>} [layouts] - Múltiplos formatos de tabuleiro (alternativa a cells/positions)
+ * @property {string} [defaultLayout] - ID do layout padrão (obrigatório se layouts existir)
  * @property {string[]} cellIcons - Emoji/ícone por casa
  * @property {"linear"|"circular"|"branched"} pathType - Tipo da trilha
  */
