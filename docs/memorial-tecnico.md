@@ -1,5 +1,52 @@
 # Memorial Técnico
 
+## Sprint — Infraestrutura de Assets do Reino dos Oceanos (v0.23.0-preview)
+
+### Objetivo
+
+Preparar a infraestrutura de assets visuais para o mundo Reino dos Oceanos, seguindo exatamente o mesmo padrão estabelecido para Floresta Encantada (v0.11.0), Vale dos Dinossauros (v0.12.0) e Galáxia Estelar (v0.16.0): criar o diretório de assets com placeholders e atualizar toda a documentação do projeto — sem qualquer alteração de gameplay, CSS, engine ou world config.
+
+### Arquivos Criados
+
+| Arquivo | Descrição |
+|---------|-----------|
+| `src/assets/worlds/oceanos/.gitkeep` | Placeholder da estrutura de assets visuais do Reino dos Oceanos |
+| `src/assets/worlds/oceanos/background.webp` | Placeholder zero-byte para background do tabuleiro |
+| `src/assets/worlds/oceanos/path.webp` | Placeholder zero-byte para textura do caminho |
+
+### Arquivos Alterados
+
+| Arquivo | Tipo de Alteração |
+|---------|-------------------|
+| `README.md` | **Modificado** — Árvore de assets inclui `oceanos/`; tabela de Status Atual com entradas para `background.webp` e `path.webp` do Reino dos Oceanos |
+| `CHANGELOG.md` | **Modificado** — Entrada v0.23.0-preview adicionada |
+| `docs/visao-geral.md` | **Modificado** — Diretório `oceanos/` adicionado na estrutura de assets |
+| `docs/roadmap.md` | **Modificado** — Seção "Assets do Reino dos Oceanos" adicionada em Futuro |
+| `docs/memorial-tecnico.md` | **Modificado** — Sprint adicionada |
+| `docs/arquitetura.md` | **Modificado** — `oceanos/` adicionado na árvore de diretórios e na nota explicativa |
+
+### Decisões Técnicas
+
+| Decisão | Alternativas | Motivo |
+|---------|-------------|--------|
+| Placeholders zero-byte em vez de gerar imagens | Gerar `.webp` com conteúdo visual | Assets visuais serão criados por IA/designer no futuro; placeholders zero-byte sinalizam a estrutura sem conteúdo enganoso |
+| Apenas documentação + diretório | Incluir CSS e registro do mundo | CSS e world config já foram adicionados em sprints anteriores; esta sprint é estritamente sobre asset infra |
+| Nenhuma alteração em `src/style.css` | Adicionar seletores CSS para oceanos | O CSS do oceanos (background, path) será adicionado quando o mundo for ativado visualmente — por ora, o fallback CSS existente mantém o tabuleiro funcional |
+
+### Impacto Técnico
+
+- **Nenhuma engine** (`src/engine/*`, `src/core/*`, `src/game.js`) foi alterada
+- **Nenhum CSS** foi alterado — seletores `body[data-world="reino-oceanos"]` já existem de sprints anteriores
+- **Nenhum WorldConfig** foi alterado — o config do oceanos foi criado e registrado em trabalho anterior
+- A estrutura `src/assets/worlds/oceanos/` segue o padrão exato de `floresta/`, `dinossauros/` e `galaxia/`
+- O diretório está preparado para receber assets reais (background.webp, path.webp) quando a produção artística for realizada
+
+### Notas Técnicas
+
+- Os placeholders `.webp` são arquivos de tamanho zero — quando o navegador tentar carregá-los, o `onerror` do fallback CSS será acionado, preservando o gradiente/svg como visual atual
+- Para ativar o background do oceanos, será necessário: (1) substituir `background.webp` e `path.webp` por assets reais, (2) adicionar/verificar seletores CSS (já existentes de sprint anterior)
+- A versão do projeto permanece **v0.16.0-preview** — não houve bump para esta entrega
+
 ## Sprint — Sistema de Variantes de Tabuleiro (Layouts) (v0.22.0-preview)
 
 ### Objetivo

@@ -247,13 +247,16 @@ src/assets/
 ├── ui/
 │   ├── lara-hero.webp       # Ilustração da personagem Lara na Hero Screen (asset pendente)
 │   └── menu-background.webp  # Fundo temático do menu principal (asset pendente)
-└── worlds/
-    ├── floresta/
-    │   ├── background.webp   # Background ilustrado do tabuleiro (asset pendente)
-    │   └── path.webp          # Textura do caminho — CSS com background-image pronto (v0.12.0)
-    └── dinossauros/
-        ├── background.webp   # Background ilustrado do tabuleiro (asset pendente)
-        └── path.webp          # Textura do caminho — CSS com background-image pronto (v0.12.0)
+    └── worlds/
+        ├── floresta/
+        │   ├── background.webp   # Background ilustrado do tabuleiro (asset pendente)
+        │   └── path.webp          # Textura do caminho — CSS com background-image pronto (v0.12.0)
+        ├── dinossauros/
+        │   ├── background.webp   # Background ilustrado do tabuleiro (asset pendente)
+        │   └── path.webp          # Textura do caminho — CSS com background-image pronto (v0.12.0)
+        └── oceanos/
+            ├── background.webp   # Background ilustrado do tabuleiro (asset pendente)
+            └── path.webp          # Textura do caminho (asset pendente)
 ```
 
 ### Finalidade dos Assets

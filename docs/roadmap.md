@@ -287,6 +287,12 @@
 - **Modo Aventura** — campanha com progressão entre mundos
 - **Animações da interface** — transições e micro-interações
 
+### Assets do Reino dos Oceanos
+
+- **Infraestrutura de diretório**: `src/assets/worlds/oceanos/` criado com `.gitkeep`, `background.webp` e `path.webp` (placeholders zero-byte)
+- **CSS pendente**: `body[data-world="reino-oceanos"]` seletores para `#track-container` e `.path-line` (mesmo padrão Floresta/Dinossauros/Galáxia)
+- **Ilustração do mundo**: `world-icons/oceanos.webp` asset pendente
+
 ### 🔊 Melhorias Futuras de Áudio
 
 - **Músicas por mundo** — trilhas sonoras temáticas diferentes para cada mundo (Floresta, Dinossauros, futuros)
