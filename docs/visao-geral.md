@@ -18,7 +18,14 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 
 ## Principais Funcionalidades
 
-### v0.16.0-preview (Atual) — Visual da Galáxia Estelar + Variantes de Tabuleiro ✅
+### v0.17.0-preview (Atual) — Correção de 3 Bugs ✅
+
+- **Bug 1 — Vitória Prematura**: jogador não vence mais ao completar submundo por avanço/desafio — sai com +2 casas de bônus via `handleBoardLimitReached()`
+- **Bug 2 — Pergunta incorreta**: "Qual palavra tem 5 letras?" corrigida de "Bola" para "Papel"; banco agora possui `validateQuestionBank()` para auditoria estrutural
+- **Bug 3 — Mundo Aleatório**: botão "🎲 Mundo Aleatório" agora sorteia entre todos os mundos principais (random filter `type === 'main'`) em vez de sempre escolher Floresta
+- **Versionamento**: v0.17.0-preview, cache-busting atualizado
+
+### v0.16.0-preview — Visual da Galáxia Estelar + Variantes de Tabuleiro ✅
 
 - **Sistema de Variantes de Tabuleiro**: arquitetura genérica `board.layouts` + `board.defaultLayout` no WorldConfig — qualquer mundo pode declarar múltiplos layouts de células
 - **Galáxia Estelar**: 3 layouts disponíveis — ⭐ Padrão (original), 🪐 Órbita (curva orbital), 🌀 Espiral (rotação 360°)

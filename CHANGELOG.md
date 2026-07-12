@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.17.0-preview] - 2026-07-11
+
+### Correção de 3 Bugs — Corrigido
+
+#### Bug 1 — Vitória Prematura ao Sair de Submundo
+
+- **Problema**: `handleVictory()` era chamado diretamente nos cases `desafio` e `avancar` de `processSpecialCell()` quando o jogador atingia o limite do tabuleiro, mesmo dentro de um submundo (`activeSubworldId` definido).
+- **Solução**: adicionada função `handleBoardLimitReached()` em `src/game.js` que, quando o jogador atinge o limite do submundo, sai do submundo (similar a `saida-mundo`), retorna ao mundo principal com bonificação de +2 casas e verifica vitória no mundo principal.
+- **Arquivo**: `src/game.js`
+
+#### Bug 2 — Pergunta sem Alternativa Correta
+
+- **Problema**: na pergunta "Qual palavra tem 5 letras?" as opções eram `["Gato", "Cachorro", "Bola"]` — nenhuma tem 5 letras (Gato=4, Cachorro=8, Bola=4).
+- **Solução**: alterada a opção "Bola" para "Papel" e resposta correspondente. Adicionada função `validateQuestionBank()` que percorre todo o banco e reporta perguntas com resposta ausente ou fora das opções.
+- **Arquivo**: `src/data/questions.js`
+
+#### Bug 3 — Mundo Aleatório Sempre Escolhia Floresta
+
+- **Problema**: no seletor de mundos, a opção "random" usava `getDefault()`, que retorna sempre o primeiro mundo com `metadata.default: true` (Floresta).
+- **Solução**: substituído `getDefault()` por `random(w => w.type === 'main')`, que sorteia entre todos os mundos principais disponíveis.
+- **Arquivo**: `src/game.js`
+
+### Detalhes Técnicos
+
+- Cache-busting atualizado para `?v=v0.17.0-preview`
+- Versão do projeto: `v0.17.0-preview`
+
 ## [0.23.0-preview] - 2026-07-10
 
 ### Infraestrutura de Assets — Reino dos Oceanos

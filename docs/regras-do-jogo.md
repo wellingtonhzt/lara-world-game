@@ -137,6 +137,8 @@ A escolha do modo determina quais campos são exibidos no modal e como o Jogador
 - **Efeito cascata**: ao cair na casa 3 (avance 2), se a nova casa também for especial, o efeito é aplicado novamente. Isso pode encadear múltiplos eventos.
 - **Exceção — desafios não cascateiam**: ao acertar ou errar um desafio (casas 4, 7, 12, 16, 18 e floresta 3, 7), o movimento de +1 ou -1 ocorre sem cascatear para outras casas especiais, evitando loops infinitos.
 - **Exceção — saída da floresta não cascateia**: o bônus de +2 (atalho) ou +3 (saída) ao retornar do Mundo da Floresta não ativa casas especiais.
+- **Limite do submundo**: ao atingir a última casa de um submundo por avanço automático ou acerto de desafio, o jogador não vence o jogo — ele retorna ao mundo principal com +2 casas de bônus. A vitória só é declarada se o bônux levar à casa 20 do mundo principal.
+- **Mundo Aleatório**: ao selecionar "🎲 Mundo Aleatório", um mundo principal é sorteado igualmente entre os disponíveis (Floresta, Dinossauros, Galáxia).
 - **Sorteio de perguntas**: a cada desafio, uma pergunta é sorteada do Banco de Questões (128 perguntas, 9 categorias). O sorteio é temático por mundo:
   - 🌌 **Galáxia Estelar**: prioriza Espaço, Lógica e Conhecimentos Gerais
   - 🌳 **Floresta** (principal + misteriosa): prioriza Animais, Natureza, Cores e Formas, Lógica

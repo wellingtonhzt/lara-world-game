@@ -1,4 +1,4 @@
-import { get, getDefault } from './engine/world-registry.js';
+import { get, getDefault, random } from './engine/world-registry.js';
 import { loadAllWorlds } from './worlds/loader.js';
 import { florestaMisteriosa } from './worlds/floresta/config.js';
 import { cavernaDosFosseis } from './worlds/dinossauros/config.js';
@@ -551,6 +551,7 @@ import { APP_VERSION } from './version.js';
         await animatePlayerMovement(posicao, destino);
         player.posicao = destino;
         if (player.posicao >= getTotalCasas()) {
+          if (gameState.activeSubworldId) return await handleBoardLimitReached();
           await handleVictory();
           return false;
         }
@@ -631,26 +632,7 @@ import { APP_VERSION } from './version.js';
         return false;
       }
       case "saida-mundo": {
-        const bonus = info.valor ?? 0;
-        const entrada = gameState.subworldEntry[player.id];
-        const swCfgS = getSubworldConfig();
-        const principalTotal = (currentWorldConfig && currentWorldConfig.board && currentWorldConfig.board.totalCells) || TOTAL_CASAS;
-        const destino = Math.min(entrada + bonus, principalTotal);
-        gameState.activeSubworldId = null;
-        gameState.subworldEntry[player.id] = null;
-        player.posicao = destino;
-        renderizarTrilha();
-        renderSvgPath();
-        if (swCfgS?.theme?.cssClass) elements.trackContainer.classList.remove(swCfgS.theme.cssClass);
-        document.getElementById("world-indicator").classList.add("hidden");
-        players.forEach(p => positionPlayerAt(p.posicao, p));
-        updateUI();
-        addHistory(`✨ ${player.name} completou o submundo! Avan\u00e7ou ${bonus} casas!`, "especial");
-        if (destino >= principalTotal) {
-          await handleVictory();
-          return false;
-        }
-        return false;
+        return handleSubworldExit(info);
       }
       case "perde-rodada": {
         player.rodadasPerdidas++;
@@ -682,6 +664,7 @@ import { APP_VERSION } from './version.js';
           positionPlayerAt(destino);
           addHistory(`\u2705 ${player.name} acertou! Avan\u00e7ou para casa ${destino}`, "especial");
           if (player.posicao >= getTotalCasas()) {
+            if (gameState.activeSubworldId) return await handleBoardLimitReached();
             await handleVictory();
             return false;
           }
@@ -748,6 +731,45 @@ import { APP_VERSION } from './version.js';
       default:
         return false;
     }
+  }
+
+  async function handleSubworldExit(info) {
+    const bonus = info.valor ?? 0;
+    const player = getCurrentPlayer();
+    const entrada = gameState.subworldEntry[player.id];
+    const swCfg = getSubworldConfig();
+    const principalTotal = (currentWorldConfig && currentWorldConfig.board && currentWorldConfig.board.totalCells) || TOTAL_CASAS;
+    const destino = Math.min(entrada + bonus, principalTotal);
+    gameState.activeSubworldId = null;
+    gameState.subworldEntry[player.id] = null;
+    player.posicao = destino;
+    renderizarTrilha();
+    renderSvgPath();
+    if (swCfg?.theme?.cssClass) elements.trackContainer.classList.remove(swCfg.theme.cssClass);
+    document.getElementById("world-indicator").classList.add("hidden");
+    players.forEach(p => positionPlayerAt(p.posicao, p));
+    updateUI();
+    addHistory(`✨ ${player.name} completou o submundo! Avan\u00e7ou ${bonus} casas!`, "especial");
+    if (destino >= principalTotal) {
+      await handleVictory();
+      return false;
+    }
+    return false;
+  }
+
+  /* ── Subworld limit helper ── */
+
+  async function handleBoardLimitReached() {
+    const player = getCurrentPlayer();
+    const info = getCasasEspeciais()[player.posicao];
+    if (info?.tipo === "saida-mundo") {
+      return handleSubworldExit(info);
+    }
+    console.error(
+      "[Lara World] Submundo " + gameState.activeSubworldId + " atingiu a posição final " +
+      player.posicao + ", mas não existe evento de saída configurado."
+    );
+    return false;
   }
 
   /* ── Victory ── */
@@ -1029,7 +1051,7 @@ import { APP_VERSION } from './version.js';
 
   function selectWorld(worldId) {
     if (worldId === "random") {
-      currentWorldConfig = getDefault();
+      currentWorldConfig = random(w => w.type === 'main');
       selectedWorldId = currentWorldConfig.id;
     } else {
       currentWorldConfig = get(worldId);

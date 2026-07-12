@@ -1,5 +1,100 @@
 # Memorial Técnico
 
+## Sprint — Correção de 3 Bugs (v0.17.0-preview)
+
+### Objetivo
+
+Corrigir três bugs identificados em auditoria no código do Lara World: (1) vitória prematura ao completar submundo, (2) pergunta "Qual palavra tem 5 letras?" sem alternativa correta, (3) botão "Mundo Aleatório" sempre selecionando Floresta. Nenhuma refatoração, apenas correções pontuais.
+
+### Bugs Identificados e Soluções
+
+#### Bug 1 — Vitória Prematura ao Sair de Submundo
+
+- **Arquivo**: `src/game.js`
+- **Problema**: `handleVictory()` era chamado diretamente nos cases `desafio` e `avancar` de `processSpecialCell()` sempre que `player.posicao >= getTotalCasas()`, sem verificar `gameState.activeSubworldId`.
+- **Solução**: criada função `handleBoardLimitReached()` que, se `activeSubworldId` estiver definido, sai do submundo com +2 casas de bônus, re-renderiza o mundo principal e só chama `handleVictory()` se o destino exceder o limite do mundo principal. Adicionada verificação `if (gameState.activeSubworldId) return await handleBoardLimitReached()` antes de `handleVictory()` nos dois casos.
+
+#### Bug 2 — Pergunta sem Alternativa Correta
+
+- **Arquivo**: `src/data/questions.js`
+- **Problema**: linha 34: `{ pergunta: "Qual palavra tem 5 letras?", opcoes: ["Gato", "Cachorro", "Bola"], resposta: "Bola" }` — Gato=4, Cachorro=8, Bola=4.
+- **Solução**: opções alteradas para `["Gato", "Cachorro", "Papel"]`, resposta para `"Papel"`. Adicionada função `validateQuestionBank()` que percorre todo o banco e reporta perguntas com resposta ausente ou fora das opções.
+
+#### Bug 3 — Mundo Aleatório Sempre Escolhia Floresta
+
+- **Arquivo**: `src/game.js`
+- **Problema**: `selectWorld("random")` usava `getDefault()`, que retorna sempre o primeiro mundo com `metadata.default: true` (Floresta Encantada).
+- **Solução**: substituído por `random(w => w.type === 'main')` importado de `world-registry.js`, que sorteia igualmente entre todos os mundos principais disponíveis.
+
+### Arquivos Alterados
+
+| Arquivo | Tipo de Alteração |
+|---------|-------------------|
+| `src/game.js` | **Modificado** — Adicionada função `handleBoardLimitReached()`; import de `random`; cases `avancar` e `desafio` usam `handleBoardLimitReached()` quando em submundo; `selectWorld("random")` usa `random()` |
+| `src/data/questions.js` | **Modificado** — Pergunta "Qual palavra tem 5 letras?" corrigida; função `validateQuestionBank()` adicionada |
+| `src/version.js` | **Modificado** — `APP_VERSION` alterado de `'v0.16.0-preview'` para `'v0.17.0-preview'` |
+| `src/index.html` | **Modificado** — Cache-busting CSS/JS e footer atualizados para `v0.17.0-preview` |
+| `CHANGELOG.md` | **Modificado** — Entrada v0.17.0-preview adicionada |
+| `README.md` | **Modificado** — Tabela de versões, funcionalidades atuais, roadmap atualizados |
+| `docs/regras-do-jogo.md` | **Modificado** — Regras de limite de submundo e mundo aleatório adicionadas |
+| `docs/visao-geral.md` | **Modificado** — Sessão v0.17.0-preview adicionada |
+| `docs/arquitetura.md` | **Modificado** — handleBoardLimitReached, validateQuestionBank, random world documentados |
+| `docs/roadmap.md` | **Modificado** — Sessão v0.17.0-preview adicionada |
+| `docs/memorial-tecnico.md` | **Modificado** — Sprint adicionada |
+
+### Decisões Técnicas
+
+| Decisão | Alternativas | Motivo |
+|---------|-------------|--------|
+| `handleBoardLimitReached()` como função separada em vez de modificar `handleVictory()` | Modificar `handleVictory()` para aceitar parâmetro de contexto | Isolamento: a lógica de saída de submundo é diferente da vitória (re-renderizar board, limpar tema, etc.). A função separada é autocontida e reutilizável |
+| Bônus de +2 no `handleBoardLimitReached()` | +0, +1, +3 | +2 é um valor moderado que recompensa o jogador por completar o submundo sem desequilibrar o jogo |
+| `random(w => w.type === 'main')` filtrado | `random()` sem filtro | Evita sortear submundos (Floresta Misteriosa, Caverna dos Fósseis) como mundo inicial, que não têm tabuleiro principal ou são dependentes de portal |
+| Validação em `validateQuestionBank()` em vez de teste unitário | Teste com framework | O projeto não possui package.json nem test runner — a validação em JS puro pode ser executada com `node --check` ou importada no console do navegador |
+
+### Fluxo de handleBoardLimitReached
+
+```
+desafio / avancar atinge getTotalCasas()
+  ├── activeSubworldId definido?
+  │   ├── Sim → handleBoardLimitReached()
+  │   │   ├── Lê entrada do jogador
+  │   │   ├── destino = entrada + 2
+  │   │   ├── Limpa activeSubworldId e subworldEntry
+  │   │   ├── Re-renderiza trilha principal
+  │   │   ├── Remove classe CSS do submundo
+  │   │   ├── Oculta world-indicator
+  │   │   ├── Re-posiciona jogadores
+  │   │   ├── Adiciona ao histórico
+  │   │   ├── destino >= totalPrincipal?
+  │   │   │   ├── Sim → handleVictory()
+  │   │   │   └── Não → return false
+  │   │   └── return false
+  │   └── Não → handleVictory() (comportamento original)
+```
+
+### Como Validar Bug 1
+
+1. Iniciar partida na Floresta Encantada
+2. Cair na casa 11 (Portal) e entrar na Floresta Misteriosa
+3. Dentro do submundo, avançar até a casa 8 (limite)
+4. Na casa 8, verificar se o jogo retorna ao mundo principal com bônus
+5. Verificar que o jogo NÃO declarou vitória
+6. Repetir com avanço/desafio nas casas 3/7 da floresta que levem ao limite
+
+### Como Validar Bug 2
+
+1. Executar: `node -e "import('./src/data/questions.js').then(m => console.log(m.validateQuestionBank()))"`
+2. Verificar que retorna array vazio (sem erros)
+3. Adicionar pergunta inválida propositalmente e verificar que o erro é reportado
+4. No jogo, verificar que a pergunta corrigida aparece com "Papel" como resposta
+
+### Como Validar Bug 3
+
+1. Abrir o jogo e iniciar partida
+2. No seletor de mundos, clicar em "🎲 Mundo Aleatório"
+3. Verificar que o mundo selecionado não é sempre Floresta
+4. Repetir 10 vezes — esperar distribuição variada entre Floresta, Dinossauros e Galáxia
+
 ## Sprint — Infraestrutura de Assets do Reino dos Oceanos (v0.23.0-preview)
 
 ### Objetivo

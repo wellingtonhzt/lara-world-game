@@ -117,7 +117,7 @@ Estrutura semântica dividida em:
   - Personagem Lara (`.menu-lara-hero`) sobreposta ao topo do card, como se estivesse saindo do painel
   - Logo (`.menu-logo`) com emoji 🌍 grande + título "Lara World" gradiente pink-dourado via `background-clip: text`
   - Dois botões: "⚡ Jogo Rápido" (ativo, glow pulsante) e "🏆 Modo Aventura" (desabilitado, badge "EM BREVE...")
-  - Footer com versão `v0.16.0-preview`
+   - Footer com versão `v0.17.0-preview`
   - Escondido quando uma partida é iniciada; reexibido via "Voltar ao Menu"
 - **Setup Modal** (`#setup-screen`):
   - Overlay fixo com `z-index: 1000`, exibido após clicar em "Jogo Rápido"
@@ -210,7 +210,8 @@ constantes / configuração
        ├── categoryIndices{}       → categoria → índices no flat pool
        ├── worldCategoryMap{}      → mundo → categorias temáticas
        ├── getIndicesPorMundo(id)  → retorna índices temáticos ou null (fallback geral)
-       └── getCategoriasPorMundo(id) → retorna categorias do mundo
+       ├── getCategoriasPorMundo(id) → retorna categorias do mundo
+       └── validateQuestionBank()   → percorre todo o banco reportando perguntas com resposta ausente ou fora das opções
 
 Getters World-Aware
   ├── getTotalCasas()      → currentWorldConfig.board.totalCells ou TOTAL_CASAS (fallback)
@@ -254,11 +255,19 @@ Histórico
   ├── addHistory(texto, tipo)
   └── clearHistory()
 
+Limite de Submundo
+  └── handleBoardLimitReached() → quando jogador atinge limite do submundo por avanço/desafio:
+       ├── Lê entrada do jogador + 2 de bônus
+       ├── Limpa activeSubworldId e subworldEntry
+       ├── Re-renderiza trilha principal
+       ├── Verifica vitória no mundo principal
+       └── Retorna false (encerra processamento)
+
 Casas Especiais
   └── processSpecialCell(pos) → aplica efeitos com animação
-       ├── "avancar" (casa 3) → move +n, cascateia
+       ├── "avancar" (casa 3) → move +n, cascateia; se activeSubworldId e limite, chama handleBoardLimitReached()
        ├── "voltar" (casa 5) → move -n, não cascateia
-       ├── "desafio" → sortearQuestao(), abre modal, move ±1, não cascateia
+       ├── "desafio" → sortearQuestao(), abre modal, move ±1, não cascateia; se activeSubworldId e limite, chama handleBoardLimitReached()
        ├── "portal" → consulta getPortalConfigForCell(), exibe modal, salva posição, define activeSubworldId
        ├── "atalho" (área especial) → volta ao principal com +bonusCells, não cascateia
        ├── "saida-mundo" (área especial) → volta ao principal com +bonusCells, não cascateia
@@ -290,7 +299,8 @@ Main Menu
 Seletor de Mundos
   ├── showWorldSelector() → exibe grid de 6 cards (2 disponíveis, 3 bloqueados, 1 aleatório)
   ├── hideWorldSelector() → esconde seletor
-  └── selectWorld(id) → currentWorldConfig = WorldRegistry.get(id) || getDefault(), aplica data-world
+  └── selectWorld(id) → currentWorldConfig = WorldRegistry.get(id) || (random + get), aplica data-world
+  └── "random" → currentWorldConfig = random(w => w.type === 'main'), sorteia entre mundos principais
 
 Bot AI
   ├── resolveChallenge(desafio) → se for bot, responde com 60% acerto (delay 600ms); senão, abre modal

@@ -18,7 +18,7 @@
 
 | Versão | Data | Status |
 |--------|------|--------|
-| **v0.16.0-preview** | Jul/2026 | ✅ **Ativo** — Visual da Galáxia Estelar (ART-011) + Layouts |
+| **v0.17.0-preview** | Jul/2026 | ✅ **Ativo** — Correção de 3 bugs (submundo, pergunta, aleatório) |
 | v0.18.0-preview | Jul/2026 | ✅ Revisão do sistema de perguntas |
 | v0.17.0-preview | Jul/2026 | ✅ Correção de cascata pós-desafio |
 | v0.16.0-preview | Jul/2026 | ✅ Concluído |
@@ -40,7 +40,26 @@
 
 ---
 
-## ✨ Funcionalidades Atuais (v0.16.0-preview)
+## ✨ Funcionalidades Atuais (v0.17.0-preview)
+
+### Correção de 3 Bugs
+
+#### Bug 1 — Vitória Prematura ao Sair de Submundo
+
+- **Problema corrigido**: ao atingir o limite do tabuleiro dentro de um submundo (Floresta Misteriosa ou Caverna dos Fósseis) por avanço ou acerto de desafio, o jogo declarava vitória indevidamente em vez de retornar ao mundo principal
+- **Nova função `handleBoardLimitReached()`**: quando o jogador completa o submundo, ele sai automaticamente, ganha +2 casas de bônus a partir da posição de entrada e retorna ao mundo principal — sem declarar vitória prematura
+- **Comportamento consistente**: alinhado com as regras de `saida-mundo` e `atalho`
+
+#### Bug 2 — Pergunta sem Alternativa Correta
+
+- **Problema corrigido**: a pergunta "Qual palavra tem 5 letras?" (Português, dificuldade média) tinha opções `["Gato", "Cachorro", "Bola"]` — nenhuma com 5 letras
+- **Correção**: opção alterada para `["Gato", "Cachorro", "Papel"]` com resposta `"Papel"` (5 letras)
+- **Validação estrutural**: nova função `validateQuestionBank()` em `src/data/questions.js` que percorre todo o banco e reporta perguntas com resposta ausente ou fora das opções — pode ser executada em `node --check` para auditoria
+
+#### Bug 3 — Mundo Aleatório Sempre Escolhia Floresta
+
+- **Problema corrigido**: o botão "🎲 Mundo Aleatório" sempre selecionava a Floresta Encantada por usar `getDefault()` internamente, que retorna o primeiro mundo marcado como `default`
+- **Correção**: substituído por `random(w => w.type === 'main')` que sorteia igualmente entre todos os mundos principais disponíveis (Floresta, Dinossauros, Galáxia)
 
 ### Limite de Empates no Sorteio Inicial
 
@@ -498,7 +517,8 @@ docker compose down
 
 ## 🗺️ Roadmap
 
-- **v0.16.0-preview** — ✅ **Ativo** — Visual da Galáxia Estelar (ART-011) + Sistema de Variantes de Tabuleiro (Layouts)
+- **v0.17.0-preview** — ✅ **Ativo** — Correção de 3 bugs (submundo, pergunta, aleatório)
+- **v0.16.0-preview** — ✅ Concluído — Visual da Galáxia Estelar (ART-011) + Sistema de Variantes de Tabuleiro (Layouts)
 - **v0.15.0-preview** — ✅ Concluído — Troca Quântica (GAL-002): Casa 7 swap-positions + result card do minigame
 - **v0.14.0-preview** — ✅ Concluído — Galáxia Estelar + MeteoroGame (GAL-001)
 - **v0.13.0-preview** — ✅ Concluído — Infraestrutura de Áudio (AUD-001)

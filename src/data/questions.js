@@ -31,7 +31,7 @@ export const bancoQuestoes = {
     { pergunta: "Qual é o plural de 'FLOR'?", opcoes: ["Flor", "Flores", "Floresta"], resposta: "Flores", dificuldade: "media" },
     { pergunta: "A palavra 'NAVIO' tem quantas vogais?", opcoes: ["2", "3", "4"], resposta: "3", dificuldade: "media" },
     { pergunta: "Qual letra completa 'BO___A'?", opcoes: ["L", "R", "S"], resposta: "L", dificuldade: "facil" },
-    { pergunta: "Qual palavra tem 5 letras?", opcoes: ["Gato", "Cachorro", "Bola"], resposta: "Bola", dificuldade: "media" },
+    { pergunta: "Qual palavra tem 5 letras?", opcoes: ["Gato", "Cachorro", "Papel"], resposta: "Papel", dificuldade: "media" },
     { pergunta: "Qual palavra termina com 'A'?", opcoes: ["Cachorro", "Gato", "Bola"], resposta: "Bola", dificuldade: "facil" },
     { pergunta: "Qual letra é uma vogal?", opcoes: ["B", "E", "D"], resposta: "E", dificuldade: "facil" },
   ],
@@ -181,4 +181,18 @@ export function getIndicesPorMundo(mundoId) {
 
 export function getCategoriasPorMundo(mundoId) {
   return worldCategoryMap[mundoId] || [];
+}
+
+export function validateQuestionBank() {
+  const errors = [];
+  for (const [cat, questoes] of Object.entries(bancoQuestoes)) {
+    for (let i = 0; i < questoes.length; i++) {
+      const q = questoes[i];
+      if (!q.pergunta) errors.push(`${cat}[${i}]: pergunta ausente`);
+      if (!Array.isArray(q.opcoes) || q.opcoes.length < 2) errors.push(`${cat}[${i}]: opcoes inválidas`);
+      if (q.resposta == null) errors.push(`${cat}[${i}]: resposta ausente`);
+      if (q.opcoes && !q.opcoes.includes(q.resposta)) errors.push(`${cat}[${i}]: resposta "${q.resposta}" não está em opcoes`);
+    }
+  }
+  return errors;
 }

@@ -1,6 +1,15 @@
 # Roadmap Lara World
 
-### v0.16.0-preview — Visual da Galáxia Estelar + Sistema de Variantes de Tabuleiro (Atual) ✅
+### v0.17.0-preview — Correção de 3 Bugs (Atual) ✅
+
+- [x] Bug 1 — Vitória prematura ao sair de submundo (handleBoardLimitReached)
+- [x] Bug 2 — Pergunta "Qual palavra tem 5 letras?" sem alternativa correta
+- [x] Bug 3 — Mundo Aleatório sempre escolhia Floresta (getDefault → random)
+- [x] validateQuestionBank() adicionada em src/data/questions.js
+- [x] Versionamento: v0.17.0-preview, cache-busting atualizado
+- [x] CHANGELOG, README, docs atualizados
+
+### v0.16.0-preview — Visual da Galáxia Estelar + Sistema de Variantes de Tabuleiro ✅
 
 - [x] Infraestrutura visual de background e path.webp para Galáxia Estelar (ART-011)
 - [x] `src/version.js` criado com constante `APP_VERSION` centralizada
