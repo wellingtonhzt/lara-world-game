@@ -141,7 +141,7 @@ Documentação detalhada em [docs/audio.md](docs/audio.md).
 
 ### Sistema de Avatares e Tokens — UX-015
 
-- **Galeria dividida em duas seções**: "🧑 Avatares" com 4 personagens oficiais (Lara, Léo, Dino, Byte) e "😊 Emojis clássicos" em seção collapsível (`<details>`) com 19 emojis adicionais
+- **Galeria com 4 personagens oficiais**: Lara (🧒), Léo (🧑), Dino (🦖), Byte (💻) — cada um com asset próprio em `assets/avatars/` e `assets/tokens/`
 - **Avatares oficiais** (`assets/avatars/`): cada personagem possui asset próprio para preview circular (108×108px) no setup, exibido via `<img class="avatar-img">` com `object-fit: contain` e fallback para emoji
 - **Tokens in-game** (`assets/tokens/`): representação do personagem no tabuleiro, status panel, draw screen e tela de vitória — carregados via `applyVisualFallback()` com `object-fit: cover` circular e fallback para emoji
 - **initGalleryTokens()**: no bootstrap, cada botão da galeria ganha `<span class="btn-emoji">` + `<img class="btn-img">`, tentando carregar `assets/tokens/{avatar}.webp` com fallback automático

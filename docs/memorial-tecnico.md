@@ -818,7 +818,7 @@ Implementar o sistema de avatares e tokens do Lara World, separando personagens 
 
 | Arquivo | Tipo de Alteração |
 |---------|-------------------|
-| `src/index.html` | Setup screen reformulada: cada `.setup-player-card` ganhou `.avatar-preview` com `.avatar-frame` (108×108px circular contendo `.avatar-emoji` + `<img class="avatar-img">`), `.avatar-player-name`. Grade de seleção dividida em duas seções: `.avatar-grid` para "🧑 Avatares" (lara, leo, dino, byte) e `<details class="emoji-section">` com `summary` "😊 Emojis clássicos" para os 19 emojis restantes. Título do botão `emoji-btn` consiste no emoji original. Todos os botões ganharam `data-avatar` e `data-token`. Draw overlay: `.draw-player-visual` ampliado, `.draw-player-emoji` e `.draw-player-img` com fallback |
+| `src/index.html` | Setup screen reformulada: cada `.setup-player-card` ganhou `.avatar-preview` com `.avatar-frame` (108×108px circular contendo `.avatar-emoji` + `<img class="avatar-img">`), `.avatar-player-name`. Grade de seleção com `.avatar-grid` para "🧑 Avatares" (lara, leo, dino, byte). Título do botão `emoji-btn` consiste no emoji original. Todos os botões ganharam `data-avatar` e `data-token`. Draw overlay: `.draw-player-visual` ampliado, `.draw-player-emoji` e `.draw-player-img` com fallback |
 | `src/style.css` | **Setup preview**: `.avatar-preview`, `.avatar-frame` (108×108, circular, box-shadow com cor do jogador), `.avatar-emoji` (3.6rem), `.avatar-img` (absolute, object-fit contain), `.avatar-player-name` (0.85rem). **Grid**: `.avatar-grid` (grid 5 colunas, gap 6px), `.emoji-section` (collapsível com borda, background). **Botões**: `.emoji-btn` (40×40, border-radius 12px, overflow hidden), `.btn-emoji` (span dentro do botão), `.btn-img` (absolute, inset 0, object-fit cover). Hover/selected por jogador (rosa P1, azul P2). **Draw**: `.draw-player-visual` 76×76 (era 52px), `.draw-player-img` com object-fit cover. **Visual fallback pattern**: `.visual-emoji` e `.visual-img` compartilhados entre status, vitória e draw |
 | `src/game.js` | Adicionado: `player.tokenId` no array `players[]`, `initGalleryTokens()` (converte emoji-btn em span+img), `applyVisualFallback()` (mecanismo central de fallback), `renderBoardToken()` (carrega token no tabuleiro), `updateAvatarPreview()` (atualiza preview ao selecionar). Modificado: `startGame()` e `prepareAndDraw()` leem `data-token` do botão selecionado, `updateUI()` chama `applyVisualFallback` para turno/status/tabuleiro, `showDrawScreen()` usa `applyVisualFallback` para visuais do sorteio, `handleVictory()` aplica fallback no overlay de vitória, `init()` chama `initGalleryTokens()` no bootstrap |
 | `assets/avatars/lara.webp` | **Reprocessado**: canvas 512×512, altura 445px (~86.9%), centralizado |
@@ -843,7 +843,6 @@ Implementar o sistema de avatares e tokens do Lara World, separando personagens 
 - `updateAvatarPreview(playerIndex, emoji, name, avatarId)`: atualiza `.avatar-emoji`, `.avatar-player-name` e carrega `assets/avatars/{avatarId}.webp` no `.avatar-img`. Se `avatarId` é nulo/vazio, limpa `src` e oculta a imagem.
 - `.avatar-frame`: 108×108px circular com overflow hidden. Box-shadow diferenciado por jogador — P1 com glow rosa, P2 com glow azul.
 - `.avatar-img`: posicionado absolutamente, `object-fit: contain` para não distorcer o asset.
-- `.emoji-section`: `<details>` com `summary` estilizado (cor #b8956a, 0.78rem, letter-spacing 0.3px). Padding interno reduzido (4px 6px 6px), grid da seção com gap 4px.
 - `.emoji-btn`: 40×40px, border-radius 12px, overflow hidden, posição relativa. Hover/selected com cor do jogador.
 - `.btn-img`: absolute inset 0, `object-fit: cover`, `border-radius: inherit`, `display: none` por padrão.
 - Draw overlay: `.draw-player-visual` ampliado de 52×52 para 76×76. `.draw-player-img` com `object-fit: cover` circular. `.draw-player-emoji` com 3.4rem.
@@ -854,7 +853,7 @@ Implementar o sistema de avatares e tokens do Lara World, separando personagens 
 
 ### Impacto Funcional
 
-- **Galeria visualmente dividida**: 4 avatares oficiais sempre visíveis no topo; 19 emojis clássicos em seção collapsível (`<details>`)
+- **Galeria com 4 avatares oficiais**: Lara, Léo, Dino, Byte — cada um com asset próprio
 - **Preview do avatar**: ao selecionar um personagem, o preview circular acima da grade exibe o asset oficial com nome do personagem
 - **Token no tabuleiro**: personagens no tabuleiro exibem asset token em vez de emoji, com fallback visual transparente
 - **Token no status**: barra de status, draw screen e tela de vitória também exibem o token asset com fallback

@@ -69,7 +69,7 @@ Este documento define as diretrizes visuais do Lara World. Todo novo asset, tela
 - Hover com elevação, active com afundamento
 
 ### Galeria de Seleção (Setup)
-- Dividida em duas seções visuais: "🧑 Avatares" (personagens oficiais) e "😊 Emojis clássicos" (collapsível via `<details>`)
+- Grade com 4 personagens oficiais: Lara (🧒), Léo (🧑), Dino (🦖), Byte (💻)
 - **Preview circular**: `.avatar-frame` 108×108px com `border-radius: 50%`, box-shadow colorido por jogador (rosa P1, azul P2)
 - **Avatar-img**: `object-fit: contain` para mostrar o asset completo sem cortes
 - **Avatar-emoji**: fallback de 3.6rem, oculto quando o asset carrega

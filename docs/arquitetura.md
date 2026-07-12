@@ -129,7 +129,7 @@ Estrutura semântica dividida em:
     - `.avatar-preview`: preview circular 108×108px (`.avatar-frame`) com `<span class="avatar-emoji">` + `<img class="avatar-img">` para o asset `assets/avatars/{id}.webp` e `.avatar-player-name`
     - Campo de nome (`<input>`) e label "Personagem:"
     - Grade "🧑 Avatares" (`.avatar-grid`) com 4 botões oficiais: Lara (`🧒`), Léo (`🧑`), Dino (`🦖`), Byte (`💻`)
-    - Seção collapsível "😊 Emojis clássicos" (`<details class="emoji-section">`) com 19 emojis adicionais
+    - Grade de 4 personagens oficiais: Lara, Léo, Dino, Byte (todos com assets .webp + fallback emoji)
     - Cada botão (`.emoji-btn`) possui `data-emoji`, `data-avatar` e `data-token`; no bootstrap, `initGalleryTokens()` transforma cada botão em span + img com fallback visual para `assets/tokens/{avatar}.webp`
   - Botão **"Iniciar Jogo"** — esconde o modal e renderiza o tabuleiro
 - **Victory Overlay** (`#victory-overlay`):

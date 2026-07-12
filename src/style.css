@@ -2302,32 +2302,6 @@ header h1 {
   gap: 6px;
 }
 
-.emoji-section {
-  margin-top: 10px;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  border-radius: 10px;
-  padding: 4px 6px 6px;
-  background: rgba(255, 255, 255, 0.25);
-}
-
-.emoji-section summary {
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: #b8956a;
-  cursor: pointer;
-  padding: 4px 2px;
-  user-select: none;
-  letter-spacing: 0.3px;
-}
-
-.emoji-section[open] summary {
-  margin-bottom: 6px;
-}
-
-.emoji-section .avatar-grid {
-  gap: 4px;
-}
-
 .emoji-btn {
   width: 40px;
   height: 40px;
@@ -3362,9 +3336,6 @@ body[data-world="castelo-dragoes"] .path-line {
   .avatar-emoji { font-size: 2.8rem; }
   .avatar-grid { grid-template-columns: repeat(4, 1fr); gap: 5px; }
   .emoji-btn { width: 44px; height: 44px; font-size: 1.2rem; border-radius: 11px; }
-  .emoji-section { padding: 3px 5px 5px; }
-  .emoji-section .avatar-grid { gap: 4px; }
-
   /* Challenge */
   .challenge-content { padding: 24px 20px; }
   .challenge-btn { font-size: 1rem; padding: 12px 16px; }
@@ -3397,9 +3368,6 @@ body[data-world="castelo-dragoes"] .path-line {
   .avatar-emoji { font-size: 2.4rem; }
   .avatar-grid { gap: 4px; }
   .emoji-btn { width: 36px; height: 36px; font-size: 1rem; border-radius: 10px; }
-  .emoji-section { padding: 2px 4px 4px; }
-  .emoji-section .avatar-grid { gap: 3px; }
-
   .challenge-content { padding: 20px 16px; }
 
   .menu-lara-hero { max-height: 120px; max-width: 140px; margin-top: -52px; }

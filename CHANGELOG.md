@@ -190,7 +190,7 @@
 
 ### Sistema de Avatares e Tokens — UX-015
 
-- **Galeria dividida em duas seções**: "🧑 Avatares" (topo) com 4 personagens oficiais (Lara, Léo, Dino, Byte) e "😊 Emojis clássicos" (collapsível via `<details>`) com 19 emojis adicionais
+- **Galeria com 4 personagens oficiais**: Lara, Léo, Dino, Byte — cada um com asset próprio em `assets/avatars/` e `assets/tokens/`
 - **initGalleryTokens()**: função executada no bootstrap que transforma cada `.emoji-btn` em um container `<span class="btn-emoji">` + `<img class="btn-img">`, carregando `assets/tokens/{avatar}.webp` com fallback visual para o emoji original
 - **applyVisualFallback()**: mecanismo central de fallback — tenta carregar o `.webp`; se carrega (`onload`), oculta o emoji e exibe a imagem; se falha (`onerror`), oculta a imagem e exibe o emoji. Aplicado em: galeria de botões, barra de status (`#turn-emoji`/`#turn-img`), tokens no tabuleiro (`#lara`/`#lara-p2`), tela de sorteio inicial, tela de vitória
 - **Avatar Preview**: cada player card ganhou preview circular (`.avatar-frame`, 108×108px) com `<span class="avatar-emoji">` + `<img class="avatar-img">`, exibindo o asset `assets/avatars/{avatarId}.webp` com `object-fit: contain` e fallback para emoji

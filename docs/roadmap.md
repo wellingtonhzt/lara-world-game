@@ -119,7 +119,7 @@
 - Cache-busting permanece em `?v=0.12.0-preview` (sem alteração de código)
 
 **Sistema de Avatares e Tokens (UX-015):**
-- Galeria dividida em duas seções: Avatares (lara, leo, dino, byte) e Emojis clássicos (collapsível)
+- Galeria com 4 avatares oficiais: Lara, Léo, Dino, Byte
 - `assets/avatars/` — 4 avatares oficiais para preview circular no setup (108×108px, object-fit: contain)
 - `assets/tokens/` — 4 tokens oficiais para representação in-game (object-fit: cover circular)
 - `initGalleryTokens()` — transforma cada botão da galeria em span+img com fallback visual
@@ -242,7 +242,7 @@
 - Diretório `src/assets/world-icons/` criado
 
 ### UX-015 — Sistema de Avatares e Tokens ✅
-- Galeria dividida em Avatares (Lara, Léo, Dino, Byte) + Emojis clássicos (collapsível)
+- Galeria com 4 avatares oficiais: Lara, Léo, Dino, Byte
 - `assets/avatars/` — preview circular no setup (108×108px, object-fit: contain)
 - `assets/tokens/` — representação in-game (object-fit: cover circular)
 - `initGalleryTokens()` — cada botão vira span+img com fallback visual
