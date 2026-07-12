@@ -59,7 +59,7 @@
 #### Bug 3 — Mundo Aleatório Sempre Escolhia Floresta
 
 - **Problema corrigido**: o botão "🎲 Mundo Aleatório" sempre selecionava a Floresta Encantada por usar `getDefault()` internamente, que retorna o primeiro mundo marcado como `default`
-- **Correção**: substituído por `random(w => w.type === 'main')` que sorteia igualmente entre todos os mundos principais disponíveis (Floresta, Dinossauros, Galáxia)
+- **Correção**: substituído por `random(w => w.type === 'main')` que sorteia igualmente entre todos os mundos principais disponíveis (Floresta, Dinossauros, Galáxia, Oceanos, Castelo)
 
 ### Limite de Empates no Sorteio Inicial
 
@@ -179,18 +179,18 @@ Documentação detalhada em [docs/audio.md](docs/audio.md).
 
 - **Preparação para ilustrações próprias** — cada card de mundo possui container dedicado de 96×96px para futura ilustração
 - **Fallback de emoji** — enquanto as ilustrações não são criadas, os emojis continuam sendo exibidos automaticamente via `onerror="this.style.display='none'"`
-- **6 ilustrações previstas** em `src/assets/world-icons/`: `floresta.webp`, `dinossauros.webp`, `galaxia.webp`, `oceanos.webp`, `castelo.webp`, `aleatorio.webp`
+- **Ilustrações previstas** em `src/assets/world-icons/`: `floresta.webp`, `dinossauros.webp`, `galaxia.webp`, `oceanos.webp`, `castelo.webp`, `aleatorio.webp`
 - **Mesmo padrão artístico da Lara** — todas as ilustrações futuras deverão seguir a identidade visual da protagonista
 - **Troca automática** — quando o asset for criado na pasta, a imagem carrega e substitui o emoji sem qualquer alteração de código
 
 ### Seletor de Mundos
 
-- **Tela de seleção de mundo** — após clicar em "⚡ Jogo Rápido", 6 cards de mundos são exibidos (Floresta, Dinossauros, 3 "Em breve" bloqueados, Aleatório)
+- **Tela de seleção de mundo** — após clicar em "⚡ Jogo Rápido", 6 cards de mundos são exibidos (Floresta, Dinossauros, Galáxia, Oceanos, Castelo e Aleatório)
 - **🌳 Floresta Encantada** — mundo com 20 casas, desafios educativos e portal para Área Especial (Floresta Misteriosa)
 - **🌲 Área Especial (Floresta Misteriosa)** — submundo de 8 casas acessado pelo portal da Floresta, com desafios próprios e retorno parametrizado
 - **🦴 Área Especial (Caverna dos Fósseis)** — submundo curto de 8 casas com filosofia risco x recompensa: saída antecipada sem bônus (casa 7) ou saída completa com bônus +3 (casa 8)
 - **Mundo Aleatório** — seleciona um mundo aleatório entre os disponíveis
-- **Cards "Em breve"** — visualmente bloqueados com badge "🔒 Em breve", sem ação ao clicar
+- **5 mundos disponíveis** — Floresta, Dinossauros, Galáxia, Oceanos e Castelo — todos com badge "✅ Disponível"
 
 ### Hero Screen (Menu Inicial)
 
@@ -223,7 +223,7 @@ Documentação detalhada em [docs/audio.md](docs/audio.md).
 
 ### Sistema de Mundos e Áreas Especiais
 
-- **Dois mundos completos** — 🌳 Floresta Encantada e 🦖 Vale dos Dinossauros, cada um com 20 casas, eventos e portal próprio
+- **Cinco mundos jogáveis** — 🌳 Floresta Encantada, 🦖 Vale dos Dinossauros, 🌌 Galáxia Estelar, 🌊 Reino dos Oceanos e 🐉 Castelo dos Dragões, cada um com 20 casas e eventos próprios
 - **Áreas Especiais** — cada mundo pode conter uma área especial (submundo) acessada via portal:
   - 🌲 **Floresta Misteriosa** (submundo da Floresta) — 8 casas, mini-trilha com visual temático
   - 🦴 **Caverna dos Fósseis** (submundo do Vale) — 8 casas, risco x recompensa: saída rápida sem bônus (c7) ou saída completa com +3 (c8)
@@ -286,7 +286,10 @@ src/assets/
     ├── galaxia/
     │   ├── background.webp   # Background ilustrado do tabuleiro (asset pendente)
     │   └── path.webp          # Textura do caminho (asset pendente)
-    └── oceanos/
+    ├── oceanos/
+    │   ├── background.webp   # Background ilustrado do tabuleiro (asset pendente)
+    │   └── path.webp          # Textura do caminho (asset pendente)
+    └── castelo/
         ├── background.webp   # Background ilustrado do tabuleiro (asset pendente)
         └── path.webp          # Textura do caminho (asset pendente)
 ```
@@ -300,7 +303,7 @@ src/assets/
 - Fallback visual para personagens: `applyVisualFallback()` tenta carregar token `.webp`; se falha, exibe emoji
 - Avatares (`assets/avatars/`) são para preview no setup (108×108, `object-fit: contain`)
 - Tokens (`assets/tokens/`) são para representação in-game (62×62, `object-fit: cover`)
-- Sistema preparado para expansão para novos mundos (Galáxia, Oceanos, Castelo)
+- Sistema preparado para expansão para novos mundos
 
 ### Status Atual
 
@@ -325,8 +328,10 @@ src/assets/
 | `path.webp` | Vale dos Dinossauros | ✅ Infraestrutura concluída — CSS via `background-image` + SVG stroke como fallback (asset pendente) |
 | `background.webp` | Galáxia Estelar | ✅ Infraestrutura concluída — CSS e overlay prontos (asset pendente de criação por IA) |
 | `path.webp` | Galáxia Estelar | ✅ Infraestrutura concluída — CSS via `background-image` + SVG stroke como fallback (asset pendente) |
-| `background.webp` | Reino dos Oceanos | 🟡 Infraestrutura concluída — diretório e placeholders criados (CSS pendente) |
-| `path.webp` | Reino dos Oceanos | 🟡 Infraestrutura concluída — diretório e placeholders criados (CSS pendente) |
+| `background.webp` | Reino dos Oceanos | ✅ Infraestrutura concluída — CSS e overlay prontos (asset pendente de criação por IA) |
+| `path.webp` | Reino dos Oceanos | ✅ Infraestrutura concluída — CSS via `background-image` + SVG stroke como fallback (asset pendente) |
+| `background.webp` | Castelo dos Dragões | ✅ Infraestrutura concluída — CSS e overlay prontos (asset pendente de criação por IA) |
+| `path.webp` | Castelo dos Dragões | ✅ Infraestrutura concluída — CSS via `background-image` + SVG stroke como fallback (asset pendente) |
 
 ### Decisões de UX Aprovadas
 

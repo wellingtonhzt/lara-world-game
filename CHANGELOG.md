@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.24.0-preview] - 2026-07-12
+
+### 🐉 Quinto Mundo — Castelo dos Dragões
+
+- **Novo mundo jogável**: "Castelo dos Dragões" (`castelo-dragoes`) — quinto mundo principal com tema medieval infantil
+- **Layout em subida**: células posicionadas em `board.cells` no sentido ascendente (y: 90→18), simulando escalada até o castelo
+- **Integração ao seletor**: card do Castelo habilitado via `enableWorldCard('castelo-dragoes')`, badge "✅ Disponível"
+- **Integração ao Mundo Aleatório**: incluído no sorteio de `random(w => w.type === 'main')` entre todos os 5 mundos principais
+- **Identidade visual própria**: tema roxo/lilás (#4a148c, #7b1fa2, #ce93d8) com gradiente escuro, células em tom pastel e bordas douradas
+- **Assets**: diretório `src/assets/worlds/castelo/` com `background.webp` (placeholder) e `.gitkeep`
+- **CSS completo**: seletores `body[data-world="castelo-dragoes"]` para fundo, track-container, células, casas especiais, vitória e path-line
+- **WorldConfig registrado**: no `world-manifest.js`, `loader.js` e importado no `game.js`
+- **Eventos implementados**: Avance 2 (c3), Desafio (c5, c14, c19), Volte 1 (c7), Jogue novamente (c9), Perde rodada (c11), Placeholder (c12), Volte 2 (c16), Troque de lugar (c18), Vitória (c20)
+- **Casa 12 reservada**: evento `placeholder` para evolução futura
+- **Sem submundo**: não possui área especial
+- **Sem portal**: não possui portal para outro mundo
+- **Sem minigame**: não possui minigame implementado
+
 ## [0.17.0-preview] - 2026-07-11
 
 ### Correção de 3 Bugs — Corrigido

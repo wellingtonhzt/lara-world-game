@@ -93,16 +93,20 @@ lara-world/
 │       │   └── config.js  # WorldConfig Floresta Encantada + Floresta Misteriosa
 │       ├── dinossauros/
 │       │   └── config.js  # WorldConfig Vale dos Dinossauros + Caverna dos Fósseis
-│       └── galaxia/
-│           ├── config.js  # WorldConfig Galáxia Estelar
-│           └── layouts.js # Layouts do tabuleiro: padrão, orbita, spiral
+│       ├── galaxia/
+│       │   ├── config.js  # WorldConfig Galáxia Estelar
+│       │   └── layouts.js # Layouts do tabuleiro: padrão, orbita, spiral
+│       ├── oceanos/
+│       │   └── config.js  # WorldConfig Reino dos Oceanos
+│       └── castelo/
+│           └── config.js  # WorldConfig Castelo dos Dragões
 ├── docker/
 │   └── nginx.conf       # Configuração do Nginx
 ├── Dockerfile           # Build da imagem Docker
 └── docker-compose.yml   # Orquestração Docker
 ```
 
-> Nota: a pasta `src/assets/` foi criada na v0.11.0-preview para iniciar a fase de identidade visual. A subpasta `worlds/` abriga assets por mundo (`background.webp`, `path.webp`), atualmente com floresta/, dinossauros/, galaxia/ e oceanos/. Cada mundo possui seu próprio background e textura de caminho, com fallback CSS garantido se o asset não existir. A Galáxia Estelar recebeu sua infraestrutura visual na v0.16.0-preview (ART-011). A infraestrutura do `path.webp` foi preparada na v0.12.0-preview (background-image no `.path-line`, seletores por mundo). A subpasta `ui/` foi criada na UX-013 para abrigar assets da Hero Screen (`lara-hero.webp`, `menu-background.webp`), também com fallback CSS. A subpasta `world-icons/` foi criada na UX-014/ART-009 para abrigar as ilustrações oficiais dos mundos (6 assets previstos), com container 96×96px e fallback de emoji. As subpastas `avatars/` e `tokens/` foram criadas na UX-015/ART-010 para abrigar os assets de personagens oficiais — `avatars/` para preview circular no setup (108×108px, `object-fit: contain`) e `tokens/` para representação in-game (62×62px circular, `object-fit: cover`), ambos com fallback para emoji. A subpasta `audio/` foi criada na AUD-001 (v0.13.0-preview) para abrigar assets de áudio (.webm), com subpastas por categoria: `ui/`, `dice/`, `board/`, `quiz/`, `rewards/`, `music/`. Consulte [docs/audio.md](./audio.md) para detalhes completos.
+> Nota: a pasta `src/assets/` foi criada na v0.11.0-preview para iniciar a fase de identidade visual. A subpasta `worlds/` abriga assets por mundo (`background.webp`, `path.webp`), atualmente com floresta/, dinossauros/, galaxia/, oceanos/ e castelo/. Cada mundo possui seu próprio background e textura de caminho, com fallback CSS garantido se o asset não existir. A Galáxia Estelar recebeu sua infraestrutura visual na v0.16.0-preview (ART-011). A infraestrutura do `path.webp` foi preparada na v0.12.0-preview (background-image no `.path-line`, seletores por mundo). A subpasta `ui/` foi criada na UX-013 para abrigar assets da Hero Screen (`lara-hero.webp`, `menu-background.webp`), também com fallback CSS. A subpasta `world-icons/` foi criada na UX-014/ART-009 para abrigar as ilustrações oficiais dos mundos (6 assets previstos), com container 96×96px e fallback de emoji. As subpastas `avatars/` e `tokens/` foram criadas na UX-015/ART-010 para abrigar os assets de personagens oficiais — `avatars/` para preview circular no setup (108×108px, `object-fit: contain`) e `tokens/` para representação in-game (62×62px circular, `object-fit: cover`), ambos com fallback para emoji. A subpasta `audio/` foi criada na AUD-001 (v0.13.0-preview) para abrigar assets de áudio (.webm), com subpastas por categoria: `ui/`, `dice/`, `board/`, `quiz/`, `rewards/`, `music/`. Consulte [docs/audio.md](./audio.md) para detalhes completos.
 
 ## Arquitetura do Frontend
 
@@ -190,7 +194,7 @@ Padrão **ES Module** com imports estáticos. Consome WorldConfigs dos mundos re
 
 ```
 constantes / configuração
-  ├── WORLD_CONFIGS       → { florestaEncantada, valeDinossauros, galaxiaEstelar } — registrados no WorldRegistry
+  ├── WORLD_CONFIGS       → { florestaEncantada, valeDinossauros, galaxiaEstelar, reinoOceanos, casteloDosDragoes } — registrados no WorldRegistry
   ├── currentWorldConfig  → WorldConfig ativo (selecionado ou default)
   ├── selectedWorldId     → string | null (ID do mundo escolhido no seletor)
   ├── subworldConfigs     → { florestaMisteriosa, cavernaDosFosseis } — lookup de áreas especiais
@@ -297,7 +301,7 @@ Main Menu
   └── setupMenuEvents() → registra clique em "⚡ Jogo Rápido" e "🏆 Modo Carreira"
 
 Seletor de Mundos
-  ├── showWorldSelector() → exibe grid de 6 cards (2 disponíveis, 3 bloqueados, 1 aleatório)
+  ├── showWorldSelector() → exibe grid de 6 cards (5 mundos disponíveis + 1 aleatório)
   ├── hideWorldSelector() → esconde seletor
   └── selectWorld(id) → currentWorldConfig = WorldRegistry.get(id) || (random + get), aplica data-world
   └── "random" → currentWorldConfig = random(w => w.type === 'main'), sorteia entre mundos principais
@@ -347,7 +351,7 @@ Sorteio Inicial
 
 Inicialização
   ├── initGalleryTokens() → transforma emoji-btn em span+img com fallback visual
-  └── init() → initGalleryTokens(), WorldRegistry.init([florestaEncantada, valeDinossauros]), chama showMainMenu()
+  └── init() → initGalleryTokens(), WorldRegistry.init([florestaEncantada, valeDinossauros, galaxiaEstelar, reinoOceanos, casteloDosDragoes]), chama showMainMenu()
 ```
 
 #### Sistema de Movimentação
@@ -410,7 +414,7 @@ Menu Inicial (showMainMenu)
 Seletor de Mundos (showWorldSelector)
   ├── 🌳 Floresta Encantada → selectedWorldId = "floresta-encantada"
   ├── 🦖 Vale dos Dinossauros → selectedWorldId = "vale-dinossauros"
-  ├── 🔒 Em breve (3 cards) → desabilitados
+  ├── 🐉 Castelo dos Dragões → selectedWorldId = "castelo-dragoes"
   └── 🎲 Aleatório → selectedWorldId = "random"
   ↓
 Modal de Configuração (showSetupScreen)
@@ -495,16 +499,20 @@ A partir da v0.9.0-preview, o Lara World iniciou a **Fase de Mundos** com a cria
 | **🦖 Vale dos Dinossauros** (principal) | `src/worlds/dinossauros/config.js` | 20 | 12 | 1 | `board.cells` (S-curve) |
 | **🦴 Caverna dos Fósseis** (subworld) | (mesmo arquivo) | 8 | 6 | — | `board.positions` |
 | **🌌 Galáxia Estelar** (principal) | `src/worlds/galaxia/config.js` | 20 | 9 | — | `board.layouts` (3: padrão/orbita/spiral) |
+| **🌊 Reino dos Oceanos** (principal) | `src/worlds/oceanos/config.js` | 20 | 9 | — | `board.positions` |
+| **🐉 Castelo dos Dragões** (principal) | `src/worlds/castelo/config.js` | 20 | 9 | — | `board.cells` (ascendente) |
 
 ### Seletor de Mundos (UX-014 v2)
 
-O seletor de mundos é uma tela intermediária entre o clique em "⚡ Jogo Rápido" e o modal de configuração. Exibe 6 cards em grid com visual remodelado:
+O seletor de mundos é uma tela intermediária entre o clique em "⚡ Jogo Rápido" e o modal de configuração. Exibe 6 cards em grid com visual remodelado (5 mundos disponíveis + 1 aleatório):
 
 - **Painel glass** — mesmo estilo da Hero Screen: gradiente rosado/creme/azulado, `backdrop-filter: blur(24px)`, borda branca 3px, glow rosa
 - **Fundo temático** — 7 gradientes radiais + `menu-background.webp` (opacity 0.60) + shapes flutuantes + sparkles
 - **🌳 Floresta Encantada** — selecionável, borda verde
 - **🦖 Vale dos Dinossauros** — selecionável, borda âmbar
-- **3 cards "Em breve"** — bloqueados com identidade de cor (sem grayscale)
+- **🌌 Galáxia Estelar** — selecionável, borda roxa
+- **🌊 Reino dos Oceanos** — selecionável, borda azul
+- **🐉 Castelo dos Dragões** — selecionável, borda lilás
 - **🎲 Mundo Aleatório** — destaque visual com glow pulsante roxo
 
 Cada card possui container `.world-card-illustration` de 96×96px preparado para futuras ilustrações, com fallback de emoji via `onerror`.

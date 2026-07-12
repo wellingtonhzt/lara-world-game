@@ -18,7 +18,17 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 
 ## Principais Funcionalidades
 
-### v0.17.0-preview (Atual) — Correção de 3 Bugs ✅
+### v0.24.0-preview (Atual) — 🐉 Castelo dos Dragões ✅
+
+- **Quinto mundo implementado**: Castelo dos Dragões (`castelo-dragoes`) — tema medieval infantil, layout ascendente (escalada até o castelo), 20 casas com eventos temáticos
+- **Integração completa**: registrado no WorldRegistry, habilitado no seletor de mundos, incluso no sorteio do Mundo Aleatório
+- **Identidade visual própria**: tema roxo/lilás com CSS completo (fundo, track-container, células, path-line)
+- **Casa 12 reservada**: evento `placeholder` para evolução futura
+- **Sem submundo**: não possui área especial
+- **Sem portal**: não possui portal para outro mundo
+- **Sem minigame**: não possui minigame implementado
+
+### v0.17.0-preview — Correção de 3 Bugs ✅
 
 - **Bug 1 — Vitória Prematura**: jogador não vence mais ao completar submundo por avanço/desafio — sai com +2 casas de bônus via `handleBoardLimitReached()`
 - **Bug 2 — Pergunta incorreta**: "Qual palavra tem 5 letras?" corrigida de "Bola" para "Papel"; banco agora possui `validateQuestionBank()` para auditoria estrutural
@@ -114,7 +124,7 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 
 ### v0.9.0-preview — Seletor de Mundos e Motor Modular ✅
 
-- **Seletor de Mundos** — 6 cards exibidos entre "Jogo Rápido" e setup (Floresta, 4 "Em breve", Aleatório)
+- **Seletor de Mundos** — 6 cards exibidos entre "Jogo Rápido" e setup (5 mundos disponíveis + Aleatório)
 - **Engine modular** — SessionManager, StateManager, WorldRegistry, EventProcessor como módulos independentes
 - **Primeiro WorldConfig** — Floresta Encantada (20 células, 12 eventos, 1 portal) + Floresta Misteriosa (subworld, 8 células)
 - **Módulos fundamentais** — `src/core/constants.js`, `utils.js`, `types.js`
@@ -224,7 +234,7 @@ Iniciada na **v0.11.0-preview** e expandida na **v0.12.0-preview**, a fase de id
 
 ### Motivação
 
-O jogo possuía uma base técnica sólida (engine modular, dois mundos completos, áreas especiais, modo single player) mas ainda carecia de identidade visual própria. A interface era funcional mas genérica — sem personalidade, profundidade ou apelo infantil.
+O jogo possuía uma base técnica sólida (engine modular, áreas especiais, modo single player) mas ainda carecia de identidade visual própria. A interface era funcional mas genérica — sem personalidade, profundidade ou apelo infantil. Na época, dois mundos estavam disponíveis (Floresta Encantada e Vale dos Dinossauros); atualmente são cinco.
 
 ### Decisões Arquiteturais Aprovadas
 
@@ -261,7 +271,10 @@ src/assets/
         ├── dinossauros/
         │   ├── background.webp   # Background ilustrado do tabuleiro (asset pendente)
         │   └── path.webp          # Textura do caminho — CSS com background-image pronto (v0.12.0)
-        └── oceanos/
+        ├── oceanos/
+        │   ├── background.webp   # Background ilustrado do tabuleiro (asset pendente)
+        │   └── path.webp          # Textura do caminho (asset pendente)
+        └── castelo/
             ├── background.webp   # Background ilustrado do tabuleiro (asset pendente)
             └── path.webp          # Textura do caminho (asset pendente)
 ```

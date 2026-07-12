@@ -120,6 +120,24 @@ A escolha do modo determina quais campos são exibidos no modal e como o Jogador
 - A escolha persiste entre partidas (salva em `localStorage`)
 - O seletor aparece apenas quando o mundo possui 2+ layouts — mundos com layout único (Floresta, Dinossauros) não exibem o seletor
 
+### Mundo Castelo dos Dragões — Casas Especiais
+
+| Casa | Tipo | Efeito |
+|------|------|--------|
+| 3 | 🏰 Avance 2 | O personagem avança 2 casas. |
+| 5 | ❓ Desafio educativo | Mesmo efeito das demais casas de desafio. |
+| 7 | 🔙 Volte 1 | O personagem volta 1 casa. |
+| 9 | 🎯 Jogue novamente | O jogador ganha uma jogada extra. |
+| 11 | 😴 Perde uma rodada | O jogador perde a próxima rodada. |
+| 12 | 🐉 Em breve | Casa reservada para evolução futura (sem efeito atual). |
+| 14 | ❓ Desafio educativo | Mesmo efeito das demais casas de desafio. |
+| 16 | 🔥 Volte 2 | O personagem volta 2 casas. |
+| 18 | 🔀 Troque de lugar | O personagem troca de posição com o adversário. |
+| 20 | 🏆 Vitória! | O jogador vence a partida. |
+
+- O Castelo dos Dragões **não possui submundo**, **não possui portal** e **não possui minigame**
+- O layout do tabuleiro é ascendente (escalada até o castelo), começando na base (y=90) e terminando no topo (y=18)
+
 ### Minigame: MeteoroGame (Buraco de Minhoca)
 
 - **Acesso**: ao cair na casa 15 do Mundo Galáxia, um overlay de transição é exibido antes de iniciar o minigame
@@ -138,11 +156,13 @@ A escolha do modo determina quais campos são exibidos no modal e como o Jogador
 - **Exceção — desafios não cascateiam**: ao acertar ou errar um desafio (casas 4, 7, 12, 16, 18 e floresta 3, 7), o movimento de +1 ou -1 ocorre sem cascatear para outras casas especiais, evitando loops infinitos.
 - **Exceção — saída da floresta não cascateia**: o bônus de +2 (atalho) ou +3 (saída) ao retornar do Mundo da Floresta não ativa casas especiais.
 - **Limite do submundo**: ao atingir a última casa de um submundo por avanço automático ou acerto de desafio, o jogador não vence o jogo — ele retorna ao mundo principal com +2 casas de bônus. A vitória só é declarada se o bônux levar à casa 20 do mundo principal.
-- **Mundo Aleatório**: ao selecionar "🎲 Mundo Aleatório", um mundo principal é sorteado igualmente entre os disponíveis (Floresta, Dinossauros, Galáxia).
+- **Mundo Aleatório**: ao selecionar "🎲 Mundo Aleatório", um mundo principal é sorteado igualmente entre os 5 disponíveis (Floresta, Dinossauros, Galáxia, Oceanos, Castelo).
 - **Sorteio de perguntas**: a cada desafio, uma pergunta é sorteada do Banco de Questões (128 perguntas, 9 categorias). O sorteio é temático por mundo:
   - 🌌 **Galáxia Estelar**: prioriza Espaço, Lógica e Conhecimentos Gerais
   - 🌳 **Floresta** (principal + misteriosa): prioriza Animais, Natureza, Cores e Formas, Lógica
   - 🦕 **Dinossauros** (Vale + Caverna): prioriza Dinossauros, Animais, Natureza, Matemática
+  - 🌊 **Reino dos Oceanos**: prioriza Natureza, Animais, Matemática, Português, Espaço
+  - 🐉 **Castelo dos Dragões**: prioriza Lógica, Matemática, Português, Conhecimentos Gerais
   - Se o pool temático acabar, usa o banco geral como fallback
 - O jogo evita repetir a mesma pergunta durante a mesma partida (controle via `gameState.questoesUsadas`). Quando todas as perguntas do pool temático forem utilizadas, o ciclo recomeça.
 - O bot usa o mesmo algoritmo de sorteio (60% de acerto).

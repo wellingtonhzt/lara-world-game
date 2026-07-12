@@ -1,5 +1,53 @@
 # Memorial Técnico
 
+## Sprint — 🐉 Castelo dos Dragões (v0.24.0-preview)
+
+### Objetivo
+
+Implementar o quinto mundo jogável do Lara World: Castelo dos Dragões, com tema medieval infantil, layout ascendente e identidade visual roxa/lilás. O mundo não possui submundo, portal ou minigame — apenas tabuleiro principal com 20 casas e eventos temáticos.
+
+### Arquivos Criados
+
+| Arquivo | Descrição |
+|---------|-----------|
+| `src/worlds/castelo/config.js` | WorldConfig completo do Castelo dos Dragões: 20 casas, `board.cells` ascendente (y: 90→18), 9 eventos, categorias de perguntas (Lógica, Matemática, Português, Conhecimentos Gerais) |
+
+### Arquivos Alterados
+
+| Arquivo | Tipo de Alteração |
+|---------|-------------------|
+| `src/style.css` | **Modificado** — Adicionado tema completo `body[data-world="castelo-dragoes"]` com gradiente roxo escuro, track-container com overlay + `background.webp`, células em tom pastel com borda dourada, casas especiais roxas, casa vitória dourada, path-line |
+| `src/worlds/loader.js` | **Modificado** — Import de `casteloDosDragoes` adicionado; mapeamento `'castelo-dragoes': casteloDosDragoes` |
+| `src/data/world-manifest.js` | **Modificado** — `'castelo-dragoes'` adicionado ao array `WORLD_IDS` |
+| `src/game.js` | **Modificado** — `enableWorldCard('castelo-dragoes')` adicionado no `init()` |
+| `src/index.html` | **Modificado** — Card do Castelo dos Dragões adicionado no seletor de mundos (inicialmente `disabled`, habilitado via `enableWorldCard`) |
+| `src/assets/worlds/castelo/.gitkeep` | **Criado** — Placeholder da estrutura de assets visuais |
+| `src/assets/worlds/castelo/background.webp` | **Criado** — Placeholder zero-byte para background do tabuleiro |
+
+### Decisões Técnicas
+
+| Decisão | Alternativas | Motivo |
+|---------|-------------|--------|
+| Layout ascendente (y: 90 → 18) | Snake padrão (y: 10 → 90) | Tema de "escalada ao castelo" — começa na base e termina no topo do castelo |
+| `board.cells` em vez de `board.positions` | Usar positions | Castelo adota o formato moderno de células individuais, permitindo controle fino do posicionamento ascendente |
+| Sem submundo | Criar masmorra/subsolo | Mantém o escopo enxuto; a casa 12 foi reservada com `placeholder` para evolução futura |
+| Sem portal | Conectar a outro mundo | Castelo é autossuficiente; não há dependência de outros mundos |
+| Sem minigame | Implementar jogo de dragão | Minigame foi postergado para sprint futura; a casa 12 reservada pode recebê-lo |
+
+### Impacto Técnico
+
+- **Nenhuma engine** (`src/engine/*`, `src/core/*`) foi alterada — o Castelo reutiliza a engine existente sem modificações
+- **Nenhum evento específico do Castelo**: todos os eventos usam tipos built-in da engine (`move`, `challenge`, `extraTurn`, `skipTurn`, `swap-positions`, `placeholder`, `finishWorld`)
+- O layout ascendente (`board.cells` com y decrescente) funciona com a engine existente pois `getPosicoes()` converte células para coordenadas percentuais sem depender de ordem
+- A casa 12 usa `type: 'placeholder'` que é ignorado pelo `EventProcessor` — não gera erro, apenas não executa ação
+- O mundo está incluído no sorteio do Mundo Aleatório via `random(w => w.type === 'main')`, que já filtra por mundos principais
+
+### Notas Técnicas
+
+- Assets visuais (`background.webp` e `path.webp`) são placeholders — quando substituídos por assets reais, o CSS existente os exibirá automaticamente
+- O tema CSS segue exatamente o padrão dos demais mundos (Floresta, Dinossauros, Galáxia, Oceanos)
+- O Castelo dos Dragões é o quinto mundo principal registrado, completando o conjunto atual de 5 mundos jogáveis
+
 ## Sprint — Correção de 3 Bugs (v0.17.0-preview)
 
 ### Objetivo

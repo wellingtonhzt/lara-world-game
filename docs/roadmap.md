@@ -279,6 +279,18 @@
 - ✅ **`board.cells`** utilizado para layout personalizado
 - ✅ **Processo de adição de novo mundo validado** — Floresta → Dinossauros → Galáxia
 
+### 🐉 Quinto Mundo — Castelo dos Dragões ✅
+
+- [x] WorldConfig completo em `src/worlds/castelo/config.js`
+- [x] Layout ascendente via `board.cells` (y: 90 → 18)
+- [x] Tema visual roxo/lilás com gradiente escuro
+- [x] 9 eventos (avance, desafio, volte, extraTurn, skipTurn, swap-positions, placeholder, vitória)
+- [x] Registro no WorldRegistry e integração ao seletor de mundos
+- [x] Integração ao sorteio do Mundo Aleatório
+- [x] Identidade visual com CSS completo
+- [x] Assets placeholder (`background.webp`)
+- [x] Casa 12 reservada como `placeholder` para evolução futura
+
 ## Futuro
 
 ### 🎯 Próximas Prioridades
@@ -295,11 +307,12 @@
 - **Sistema de conquistas** — medalhas e progressão do jogador
 - **Modo Aventura** — campanha com progressão entre mundos
 - **Animações da interface** — transições e micro-interações
+- **Minigame exclusivo do Castelo dos Dragões** — evento especial para a casa reservada (casa 12)
 
 ### Assets do Reino dos Oceanos
 
 - **Infraestrutura de diretório**: `src/assets/worlds/oceanos/` criado com `.gitkeep`, `background.webp` e `path.webp` (placeholders zero-byte)
-- **CSS pendente**: `body[data-world="reino-oceanos"]` seletores para `#track-container` e `.path-line` (mesmo padrão Floresta/Dinossauros/Galáxia)
+- **CSS completo**: seletores `body[data-world="reino-oceanos"]` implementados para fundo, track-container, células, casas especiais, vitória e path-line
 - **Ilustração do mundo**: `world-icons/oceanos.webp` asset pendente
 
 ### 🔊 Melhorias Futuras de Áudio
