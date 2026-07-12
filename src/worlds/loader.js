@@ -4,12 +4,14 @@ import { florestaEncantada } from './floresta/config.js';
 import { valeDosDinossauros } from './dinossauros/config.js';
 import { galaxiaEstelar } from './galaxia/config.js';
 import { reinoOceanos } from './oceanos/config.js';
+import { casteloDosDragoes } from './castelo/config.js';
 
 const worldConfigMap = {
   'floresta-encantada': florestaEncantada,
   'dinossauros': valeDosDinossauros,
   'galaxia-estelar': galaxiaEstelar,
   'reino-oceanos': reinoOceanos,
+  'castelo-dragoes': casteloDosDragoes,
 };
 
 export function loadAllWorlds() {

@@ -1509,10 +1509,10 @@ header h1 {
   box-shadow: 0 12px 40px rgba(100, 181, 246, 0.2);
 }
 
-.world-card[data-world="castelo"] {
+.world-card[data-world="castelo-dragoes"] {
   border-color: rgba(206, 147, 216, 0.35);
 }
-.world-card[data-world="castelo"]:not(:disabled):hover {
+.world-card[data-world="castelo-dragoes"]:not(:disabled):hover {
   border-color: #ce93d8;
   box-shadow: 0 12px 40px rgba(206, 147, 216, 0.2);
 }
@@ -2875,6 +2875,84 @@ body[data-world="reino-oceanos"] .casa-vitoria {
 
 body[data-world="reino-oceanos"] .path-line {
   background-image: url("assets/worlds/oceanos/path.webp");
+}
+
+/* ═══════════════════════════════════════
+   CASTELO DOS DRAGOES THEME
+   ═══════════════════════════════════════ */
+
+body[data-world="castelo-dragoes"] {
+  background:
+    radial-gradient(ellipse at 30% 20%, #6a1b9a 0%, transparent 40%),
+    radial-gradient(ellipse at 70% 80%, #4a148c 0%, transparent 40%),
+    linear-gradient(160deg, #1a0a2e 0%, #311b92 30%, #4a148c 60%, #1a0a2e 100%);
+}
+
+body[data-world="castelo-dragoes"] #track-container {
+  background-image:
+    linear-gradient(rgba(45, 20, 70, 0.18), rgba(45, 20, 70, 0.18)),
+    url("assets/worlds/castelo/background.webp"),
+    linear-gradient(to bottom, #4a148c 0%, #6a1b9a 25%, #7b1fa2 50%, #4a148c 75%, #311b92 100%);
+  background-size: cover, cover, auto;
+  background-position: center, center, 0 0;
+  background-repeat: no-repeat, no-repeat, repeat;
+  box-shadow:
+    inset 0 0 60px rgba(206, 147, 216, 0.08),
+    0 6px 30px rgba(0, 0, 0, 0.07);
+}
+
+body[data-world="castelo-dragoes"] #track-container #trail-path {
+  stroke: #ce93d8;
+  stroke-width: 3;
+  opacity: 0.3;
+  filter: none;
+}
+
+body[data-world="castelo-dragoes"] #track-container .casa {
+  background:
+    linear-gradient(to bottom, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.03) 45%, transparent 100%),
+    linear-gradient(145deg, #fff8e1, #f5e6c8);
+  border-color: rgba(255, 215, 0, 0.35);
+  box-shadow:
+    0 4px 0 rgba(123, 31, 162, 0.4),
+    0 8px 16px rgba(0, 0, 0, 0.06),
+    0 16px 32px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  color: #2d1b4e;
+}
+
+body[data-world="castelo-dragoes"] #track-container .casa .casa-icone {
+  filter: drop-shadow(0 0 4px rgba(206, 147, 216, 0.4));
+}
+
+body[data-world="castelo-dragoes"] .casa-especial {
+  border-color: rgba(206, 147, 216, 0.35);
+  background:
+    linear-gradient(to bottom, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.03) 45%, transparent 100%),
+    linear-gradient(145deg, #f3e5f5, #e1bee7);
+  box-shadow:
+    0 4px 0 rgba(106, 27, 154, 0.4),
+    0 8px 16px rgba(0, 0, 0, 0.06),
+    0 16px 32px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    0 0 20px rgba(206, 147, 216, 0.12);
+}
+
+body[data-world="castelo-dragoes"] .casa-vitoria {
+  border-color: rgba(255, 215, 0, 0.5);
+  background:
+    linear-gradient(to bottom, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.03) 45%, transparent 100%),
+    linear-gradient(145deg, #fff8e1, #ffecb3);
+  box-shadow:
+    0 4px 0 rgba(255, 179, 0, 0.5),
+    0 8px 16px rgba(0, 0, 0, 0.06),
+    0 16px 32px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    0 0 20px rgba(255, 215, 0, 0.2);
+}
+
+body[data-world="castelo-dragoes"] .path-line {
+  background-image: url("assets/worlds/castelo/path.webp");
 }
 
 /* ═══════════════════════════════════════

@@ -166,6 +166,7 @@ export const worldCategoryMap = {
   'dinossauros': ['Dinossauros', 'Animais', 'Natureza', 'Matematica'],
   'caverna-dos-fosseis': ['Dinossauros', 'Animais', 'Natureza', 'Matematica'],
   'galaxia-estelar': ['Espaco', 'Logica', 'ConhecimentosGerais'],
+  'castelo-dragoes': ['Logica', 'Matematica', 'Portugues', 'ConhecimentosGerais'],
 };
 
 export function getIndicesPorMundo(mundoId) {

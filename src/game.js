@@ -167,6 +167,7 @@ import { APP_VERSION } from './version.js';
         case 'swap-positions': result[cell] = { tipo: 'swap-positions', descricao: d }; break;
         case 'buraco-minhoca': result[cell] = { tipo: 'buraco-minhoca', descricao: d }; break;
         case 'recife-placeholder': result[cell] = { tipo: 'recife-placeholder', descricao: d }; break;
+        case 'placeholder': result[cell] = { tipo: 'placeholder', descricao: d }; break;
       }
     }
     return result;
@@ -701,6 +702,10 @@ import { APP_VERSION } from './version.js';
       case "recife-placeholder": {
         addHistory(`\uD83D\uDC21 O desafio do Recife chegar\u00E1 em breve!`, "especial");
         if (typeof addLog === 'function') addLog('\uD83E\uDEB8 TODO: Recife — futura batalha de Match-3');
+        return false;
+      }
+      case "placeholder": {
+        addHistory(`\uD83D\uDCCC ${info.descricao}`, "info");
         return false;
       }
       case "buraco-minhoca": {
@@ -2202,6 +2207,7 @@ import { APP_VERSION } from './version.js';
     enableWorldCard('dinossauros');
     enableWorldCard('galaxia-estelar');
     enableWorldCard('reino-oceanos');
+    enableWorldCard('castelo-dragoes');
     audioManager.init();
 
     document.addEventListener('click', function firstInteraction() {
