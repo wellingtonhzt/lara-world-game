@@ -17,13 +17,16 @@
       <div class="menu-bg-shapes"></div>
       <div class="menu-sparkles" aria-hidden="true"></div>
       <div class="menu-content">
-        <img class="menu-lara-hero" src="assets/ui/lara-hero.webp" alt="" aria-hidden="true">
-        <div class="menu-logo">
-          <span class="menu-title-emoji">🌍</span>
-          <h1>Lara World</h1>
+        <div class="menu-brand">
+          <img
+            class="menu-brand-logo"
+            src="assets/ui/logo-lara-world.webp"
+            alt="Lara World — Aprender brincando, aventuras sem fim!"
+            onload="this.nextElementSibling.hidden=true"
+            onerror="this.hidden=true;this.nextElementSibling.hidden=false"
+          >
+          <span class="menu-brand-fallback" hidden>Lara World</span>
         </div>
-        <p class="menu-subtitle">A aventura da Lara começa aqui!</p>
-        <div class="menu-divider"></div>
         <div class="menu-buttons">
           <button id="btn-rapido" class="menu-btn menu-btn-primary">
             <span class="btn-main-text">⚡ Jogo Rápido</span>

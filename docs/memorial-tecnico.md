@@ -1,5 +1,38 @@
 # Memorial Técnico
 
+## Sprint — Hero Screen Redesign (v0.25.0-preview)
+
+### Objetivo
+
+Redesign completo da Hero Screen (tela inicial) do Lara World, substituindo o antigo título baseado em emoji 🌍 + gradiente CSS por um logo oficial em asset (`logo-lara-world.webp`), removendo a ilustração da personagem Lara sobreposta ao card central, refatorando as classes CSS e consolidando a identidade visual inicial do projeto.
+
+### Arquivos Alterados
+
+| Arquivo | Tipo de Alteração |
+|---------|-------------------|
+| `src/index.html` | **Modificado** — Estrutura `.menu-logo` (emoji + título) substituída por `.menu-brand` com `<img class="menu-brand-logo" src="assets/ui/logo-lara-world.webp">` + `<span class="menu-brand-fallback">`; elemento `.menu-lara-hero` removido |
+| `src/style.css` | **Modificado** — Classes `.menu-logo`, `.menu-title-emoji`, `.menu-logo h1`, `.menu-lara-hero` removidas; adicionadas `.menu-brand`, `.menu-brand-logo`, `.menu-brand-fallback` com estilos de exibição, máscara radial, drop-shadow e mix-blend-mode; `.menu-content` com padding ajustado; responsivo atualizado com breakpoints para o novo logo |
+| `src/assets/ui/logo-lara-world.webp` | **Criado** — Logo oficial do Lara World (92KB) em formato .webp |
+| `src/assets/ui/lara-hero.webp` | **Criado anteriormente** — Mantido no diretório (181KB), não utilizado na Hero Screen atual |
+
+### Decisões Técnicas
+
+| Decisão | Alternativas | Motivo |
+|---------|-------------|--------|
+| Asset .webp para o logo | SVG inline, texto CSS puro | .webp oferece compressão eficiente e suporta gradientes complexos e tipografia estilizada; fallback textual via `onerror` garante resiliência |
+| Remoção da ilustração Lara | Manter Lara sobreposta | A presença da Lara competia visualmente com o novo logo; a remoção simplifica a composição e melhora a hierarquia visual |
+| `mix-blend-mode: multiply` no logo | `mix-blend-mode: normal` | O modo multiply permite que o logo se integre suavemente ao gradiente de fundo do card, evitando bordas brancas artificiais |
+| Máscara radial no logo | Sem máscara | A máscara `radial-gradient` suaviza as bordas do logo, criando um fade sutil nas extremidades que elimina cortes abruptos |
+
+### Impacto Técnico
+
+- **Nova estrutura HTML**: `.menu-brand > img.menu-brand-logo + span.menu-brand-fallback` substitui `.menu-logo > span.menu-title-emoji + h1`
+- **Novas classes CSS**: `.menu-brand` (container flex centralizado), `.menu-brand-logo` (display block, max-width 432px, object-fit contain, mix-blend-mode multiply, máscara radial, drop-shadow), `.menu-brand-fallback` (texto rosa 3rem padding 48px 16px)
+- **Classes removidas**: `.menu-lara-hero`, `.menu-logo`, `.menu-title-emoji`, `.menu-logo h1`, `.menu-lara-hero source` — todas eliminadas do stylesheet
+- **Fallback preservado**: se `logo-lara-world.webp` não carregar, `onerror` oculta a imagem e exibe o `<span class="menu-brand-fallback" hidden>` com texto "Lara World" em rosa
+- **Nenhuma regressão funcional**: Jogo Rápido, seleção de mundos, setup, gameplay — tudo idêntico
+- **Assets UI consolidados**: `logo-lara-world.webp` (novo), `lara-hero.webp` (existente, não utilizado na Hero Screen atual), `menu-background.webp` (existente, mantido)
+
 ## Sprint — 🐉 Castelo dos Dragões (v0.24.0-preview)
 
 ### Objetivo

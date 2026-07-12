@@ -37,8 +37,9 @@ lara-world/
 │   │       └── index.js            # Factory/export do minigame
 │   ├── assets/          # Recursos visuais do jogo
 │   │   ├── ui/          # Assets da Hero Screen (menu inicial)
-│   │   │   ├── lara-hero.webp       # Ilustração da personagem Lara (pendente)
-│   │   │   └── menu-background.webp # Fundo temático do menu (pendente)
+│   │   │   ├── logo-lara-world.webp  # Logo oficial do Lara World — exibido na Hero Screen
+│   │   │   ├── lara-hero.webp       # Ilustração da personagem Lara (criado, não utilizado na Hero Screen atual)
+│   │   │   └── menu-background.webp # Fundo temático do menu
 │   │   ├── avatars/     # Avatares oficiais (preview no setup)
 │   │   │   ├── lara.webp            # Lara — protagonista
 │   │   │   ├── leo.webp             # Léo — personagem oficial
@@ -106,7 +107,7 @@ lara-world/
 └── docker-compose.yml   # Orquestração Docker
 ```
 
-> Nota: a pasta `src/assets/` foi criada na v0.11.0-preview para iniciar a fase de identidade visual. A subpasta `worlds/` abriga assets por mundo (`background.webp`, `path.webp`), atualmente com floresta/, dinossauros/, galaxia/, oceanos/ e castelo/. Cada mundo possui seu próprio background e textura de caminho, com fallback CSS garantido se o asset não existir. A Galáxia Estelar recebeu sua infraestrutura visual na v0.16.0-preview (ART-011). A infraestrutura do `path.webp` foi preparada na v0.12.0-preview (background-image no `.path-line`, seletores por mundo). A subpasta `ui/` foi criada na UX-013 para abrigar assets da Hero Screen (`lara-hero.webp`, `menu-background.webp`), também com fallback CSS. A subpasta `world-icons/` foi criada na UX-014/ART-009 para abrigar as ilustrações oficiais dos mundos (6 assets previstos), com container 96×96px e fallback de emoji. As subpastas `avatars/` e `tokens/` foram criadas na UX-015/ART-010 para abrigar os assets de personagens oficiais — `avatars/` para preview circular no setup (108×108px, `object-fit: contain`) e `tokens/` para representação in-game (62×62px circular, `object-fit: cover`), ambos com fallback para emoji. A subpasta `audio/` foi criada na AUD-001 (v0.13.0-preview) para abrigar assets de áudio (.webm), com subpastas por categoria: `ui/`, `dice/`, `board/`, `quiz/`, `rewards/`, `music/`. Consulte [docs/audio.md](./audio.md) para detalhes completos.
+> Nota: a pasta `src/assets/` foi criada na v0.11.0-preview para iniciar a fase de identidade visual. A subpasta `worlds/` abriga assets por mundo (`background.webp`, `path.webp`), atualmente com floresta/, dinossauros/, galaxia/, oceanos/ e castelo/. Cada mundo possui seu próprio background e textura de caminho, com fallback CSS garantido se o asset não existir. A Galáxia Estelar recebeu sua infraestrutura visual na v0.16.0-preview (ART-011). A infraestrutura do `path.webp` foi preparada na v0.12.0-preview (background-image no `.path-line`, seletores por mundo). A subpasta `ui/` foi criada na UX-013 para abrigar assets da Hero Screen (`lara-hero.webp`, `menu-background.webp`), posteriormente expandida na v0.25.0-preview com `logo-lara-world.webp` (logo oficial). Todos os 3 assets existem atualmente com fallback CSS/textual garantido. A subpasta `world-icons/` foi criada na UX-014/ART-009 para abrigar as ilustrações oficiais dos mundos (6 assets), com container 96×96px e fallback de emoji — atualmente todos os 6 assets existem e são funcionalmente carregados. As subpastas `avatars/` e `tokens/` foram criadas na UX-015/ART-010 para abrigar os assets de personagens oficiais — `avatars/` para preview circular no setup (108×108px, `object-fit: contain`) e `tokens/` para representação in-game (62×62px circular, `object-fit: cover`), ambos com fallback para emoji. A subpasta `audio/` foi criada na AUD-001 (v0.13.0-preview) para abrigar assets de áudio (.webm), com subpastas por categoria: `ui/`, `dice/`, `board/`, `quiz/`, `rewards/`, `music/`. Consulte [docs/audio.md](./audio.md) para detalhes completos.
 
 ## Arquitetura do Frontend
 
@@ -118,10 +119,10 @@ Estrutura semântica dividida em:
   - Container centralizado com `z-index: 2000`, exibido ao carregar o jogo
   - Fundo com 7 gradientes radiais + shapes flutuantes animados + `menu-background.webp` (opacity 0.50) + sparkles decorativos
   - Card central translúcido (`.menu-content`) com gradiente rosado/creme/azulado, `backdrop-filter: blur(24px)`, borda branca 3px e glow rosa
-  - Personagem Lara (`.menu-lara-hero`) sobreposta ao topo do card, como se estivesse saindo do painel
-  - Logo (`.menu-logo`) com emoji 🌍 grande + título "Lara World" gradiente pink-dourado via `background-clip: text`
+  - Logo oficial (`.menu-brand`) com `<img class="menu-brand-logo" src="assets/ui/logo-lara-world.webp">` + `<span class="menu-brand-fallback">` como fallback textual — substitui a antiga estrutura `.menu-logo` com emoji 🌍 + gradiente
+  - Ilustração Lara removida do card central (antigo `.menu-lara-hero`) — composição simplificada
   - Dois botões: "⚡ Jogo Rápido" (ativo, glow pulsante) e "🏆 Modo Aventura" (desabilitado, badge "EM BREVE...")
-   - Footer com versão `v0.17.0-preview`
+  - Footer com versão lida de `APP_VERSION` (src/version.js)
   - Escondido quando uma partida é iniciada; reexibido via "Voltar ao Menu"
 - **Setup Modal** (`#setup-screen`):
   - Overlay fixo com `z-index: 1000`, exibido após clicar em "Jogo Rápido"

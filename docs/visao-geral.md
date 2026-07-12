@@ -94,9 +94,9 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 
 ### v0.12.0-preview — Board Layout 2.0 + Hero Screen ✅
 
-- **Hero Screen (UX-013)** — tela inicial com estilo de capa de jogo: personagem Lara sobreposta ao card central, fundo temático via `menu-background.webp`, card translúcido com gradiente rosado/creme/azulado e `backdrop-filter: blur(24px)`, logo gradiente pink-dourado com `background-clip: text`, botão "Jogo Rápido" com glow pulsante e subtítulo, "Modo Aventura" como card secundário com badge "EM BREVE..." e subtítulo, decorações animadas CSS, rodapé com versão
-- **Assets UI**: estrutura `src/assets/ui/` preparada para `lara-hero.webp` e `menu-background.webp` com fallback CSS garantido
-- **Responsivo**: breakpoints ≤600px e ≤400px com escalonamento de Lara, card e botões
+- **Hero Screen (UX-013 → redesign)** — tela inicial com redesign completo: logo oficial `logo-lara-world.webp` substitui o antigo título emoji + gradiente, card central glass com `backdrop-filter: blur(24px)`, borda branca 3px e glow rosa, botão "Jogo Rápido" com glow pulsante e subtítulo, "Modo Aventura" secundário com badge "EM BREVE...", fundo temático via `menu-background.webp` (opacity 0.50) + 7 gradientes radiais + shapes flutuantes + sparkles. A ilustração da Lara sobreposta ao card foi removida para simplificar a composição
+- **Assets UI**: `src/assets/ui/` com `logo-lara-world.webp` (logo oficial, ativo), `menu-background.webp` (fundo, ativo) e `lara-hero.webp` (asset existente, não utilizado na Hero Screen atual)
+- **Responsivo**: breakpoints ≤768px, ≤400px e viewport reduzida com escalonamento proporcional do logo e botões
 - **Board Layout 2.0** — novo formato `board.cells` (`[{id, x, y}]`) que permite posicionamento individual de cada célula por mundo, substituindo o mapa fixo `positions`
 - **Fallback automático** — `getPosicoes()` normaliza ambos os formatos; mundos existentes (Floresta) seguem com `board.positions` inalterados
 - **Vale dos Dinossauros recelularizado** — primeiro mundo a usar `board.cells` (20 células, 4 fileiras S-curve, +7pp X para centralizar)
@@ -230,7 +230,7 @@ Cada mundo do Lara World pode conter uma ou mais Áreas Especiais (submundos), a
 
 ## Evolução Visual (UX 2.0 + Hero Screen)
 
-Iniciada na **v0.11.0-preview** e expandida na **v0.12.0-preview**, a fase de identidade visual estabeleceu a pipeline de produção artística do projeto, incluindo a Hero Screen com assets próprios de UI.
+Iniciada na **v0.11.0-preview**, expandida na **v0.12.0-preview** e refinada na **v0.25.0-preview**, a fase de identidade visual estabeleceu e consolidou a pipeline de produção artística do projeto, incluindo a Hero Screen com redesign completo e logo oficial em asset.
 
 ### Motivação
 
@@ -262,8 +262,9 @@ src/assets/
 │   ├── rewards/         # Sons de recompensa (vitória, game over)
 │   └── music/           # Músicas de fundo (loop)
 ├── ui/
-│   ├── lara-hero.webp       # Ilustração da personagem Lara na Hero Screen (asset pendente)
-│   └── menu-background.webp  # Fundo temático do menu principal (asset pendente)
+│   ├── logo-lara-world.webp # Logo oficial do Lara World — exibido na Hero Screen ✅
+│   ├── lara-hero.webp       # Ilustração da personagem Lara (asset criado, não utilizado na Hero Screen atual)
+│   └── menu-background.webp # Fundo temático do menu principal ✅
     └── worlds/
         ├── floresta/
         │   ├── background.webp   # Background ilustrado do tabuleiro (asset pendente)
@@ -283,7 +284,7 @@ src/assets/
 
 | Asset | Onde é aplicado | Função |
 |-------|----------------|--------|
-| `lara-hero.webp` | `.menu-lara-hero` via `<img>` na Hero Screen | Ilustração decorativa da personagem Lara sobreposta ao card central |
+| `logo-lara-world.webp` | `.menu-brand-logo` via `<img>` na Hero Screen | Logo oficial do Lara World, exibido centralizado no `.menu-brand` com fallback textual |
 | `menu-background.webp` | `.main-menu::before` via CSS `background-image` | Fundo temático suave do menu principal, opacidade 0.50 |
 | `background.webp` | `#track-container` via `background-image` | Ilustração de fundo do tabuleiro, coberta por overlay semitransparente para contraste |
 | `path.webp` | SVG `#trail-path` via SVG pattern (`stroke: url(#...)`) | Textura aplicada ao traço do caminho, mantendo largura, sombra e formato SVG |

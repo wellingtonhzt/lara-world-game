@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.25.0-preview] - 2026-07-12
+
+### Hero Screen — Redesign da Tela Inicial
+
+- **Redesign completo da Hero Screen**: nova composição visual da tela inicial com branding próprio baseado em asset oficial
+- **Logo oficial implementado**: `assets/ui/logo-lara-world.webp` (92KB) substitui o antigo título HTML baseado em emoji `🌍` + gradiente pink-dourado via `background-clip: text`
+- **Estrutura `.menu-brand`**: container dedicado para o logo com `<img class="menu-brand-logo">` + `<span class="menu-brand-fallback">` como fallback textual — substitui a antiga estrutura `.menu-logo`
+- **Ilustração Lara removida**: o elemento `.menu-lara-hero` (personagem sobreposta ao card) foi removido da Hero Screen para simplificar a composição e evitar conflito visual com o novo logo
+- **Classes CSS refatoradas**: `.menu-brand`, `.menu-brand-logo`, `.menu-brand-fallback` substituem `.menu-logo`, `.menu-title-emoji`, `.menu-logo h1`
+- **Card central refinado**: `.menu-content` com padding ajustado (18px 40px 18px), `backdrop-filter: blur(24px)`, borda 3px branca, glow rosa e sombra multicamadas
+- **Botões preservados**: "⚡ Jogo Rápido" (primário com glow pulsante) e "🏆 Modo Aventura" (secundário com badge "EM BREVE...") mantidos sem alteração funcional
+- **Decorações mantidas**: shapes flutuantes (`.menu-bg-shapes`), sparkles animados (`.menu-sparkles`), fundo com 7 gradientes radiais + `menu-background.webp` (opacity 0.50)
+- **Logo com fallback**: se `logo-lara-world.webp` não carregar, o texto "Lara World" em rosa (#e91e63) com fonte 3rem é exibido como fallback via `onerror`
+- **Responsivo**: breakpoints ≤768px, ≤400px e viewport reduzida com ajustes proporcionais do logo (`max-width: 432px → 390px → 100%`)
+- **Assets UI consolidados**: pasta `src/assets/ui/` com `logo-lara-world.webp` (novo), `lara-hero.webp` (existente, não utilizado na Hero Screen atual), `menu-background.webp` (existente, mantido no fundo)
+- **Ilustrações dos mundos implementadas**: todos os 6 assets `world-icons/*.webp` (floresta, dinossauros, galaxia, oceanos, castelo, aleatorio) existem e são funcionalmente carregados nos cards do seletor com fallback de emoji
+
 ## [0.24.0-preview] - 2026-07-12
 
 ### 🐉 Quinto Mundo — Castelo dos Dragões

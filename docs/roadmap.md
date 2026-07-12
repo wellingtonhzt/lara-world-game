@@ -47,6 +47,17 @@
 - [x] Efeitos sonoros para UI, dado, tabuleiro, quiz, recompensas
 - [x] Mecanismo de fallback silencioso
 
+### Hero Screen Redesign — Tela Inicial com Logo Oficial ✅
+
+- [x] Redesign completo da Hero Screen com logo oficial (`logo-lara-world.webp`)
+- [x] Estrutura `.menu-brand` substitui antiga `.menu-logo` baseada em emoji
+- [x] Ilustração Lara removida do card central (composição simplificada)
+- [x] Classes CSS refatoradas (`.menu-brand-logo`, `.menu-brand-fallback`)
+- [x] Fallback textual via `onerror` no logo
+- [x] Responsivo com breakpoints ≤768px, ≤400px
+- [x] Assets `logo-lara-world.webp`, `menu-background.webp`, `lara-hero.webp` existentes
+- [x] Todos os 6 `world-icons/*.webp` implementados (floresta, dinossauros, galaxia, oceanos, castelo, aleatorio)
+
 ### v0.19.0-preview — Limite de Empates no Sorteio Inicial ✅
 
 - [x] Contador de empates consecutivos (máx. 2)
@@ -299,7 +310,7 @@
 - **Integração de música ambiente** — chamar `audioManager.playMusic('backgroundMusic')` em `game.js`
 - **Integração de sons de modal** — conectar `modalOpen`/`modalClose` nas aberturas/fechamentos
 - **Integração de treasure e gameOver** — conectar sons pendentes do catálogo
-- **Hero Screen v2** — reorganização completa da composição visual da tela inicial
+- ~~**Hero Screen v2** — reorganização completa da composição visual da tela inicial~~ ✅ **Concluído** — redesign entregue com logo oficial e identidade consolidada
 - **Evolução dos cards dos mundos** — refinamento visual contínuo da seleção de mundos
 - **Assets próprios das casas especiais** — substituir células CSS por assets visuais por tipo de casa
 - **Ilustrações das áreas dos mundos** — backgrounds e caminhos para submundos (Floresta Misteriosa, Caverna dos Fósseis)
@@ -353,9 +364,11 @@ Trilha de desenvolvimento focada exclusivamente na identidade visual do projeto.
 | **ART-010** | ✅ Concluído | Reprocessamento de lara.webp — canvas 512×512, 86.9% altura para avatar e token |
 | **ART-011** | 🔲 Pendente | Ícones próprios — substituir emojis por iconografia original do jogo |
 | **ART-012** | ✅ Concluído | Personagens oficiais — Lara, Léo, Dino, Byte com avatares e tokens (UX-015) |
-| **ART-013** | 🔲 Pendente | Hero Screen background — criar `menu-background.webp` asset |
-| **ART-014** | 🔲 Pendente | Lara character asset — criar `lara-hero.webp` ilustração |
-| **ART-015** | 🔲 Pendente | Demais personagens — criar assets leo.webp, dino.webp, byte.webp |
+| **ART-013** | ✅ Concluído | Hero Screen background — `menu-background.webp` (99KB) criado e ativo |
+| **ART-014** | ✅ Concluído | Lara character asset — `lara-hero.webp` (181KB) criado (não utilizado na Hero Screen atual) |
+| **ART-015** | ✅ Concluído | Demais personagens — assets leo.webp, dino.webp, byte.webp criados |
+| **ART-016** | ✅ Concluído | Logo oficial — `logo-lara-world.webp` (92KB) implementado na Hero Screen |
+| **ART-017** | ✅ Concluído | Ilustrações dos mundos — 6 `world-icons/*.webp` criados (floresta, dinossauros, galaxia, oceanos, castelo, aleatorio) |
 
 ### A7 — Board Layout 2.0 e Refinamentos
 - **Board Layout 2.0** — ✅ Concluído — `board.cells` implementado, Vale dos Dinossauros adotado

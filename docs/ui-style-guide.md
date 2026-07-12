@@ -74,7 +74,7 @@ Este documento define as diretrizes visuais do Lara World. Todo novo asset, tela
 - **Avatar-img**: `object-fit: contain` para mostrar o asset completo sem cortes
 - **Avatar-emoji**: fallback de 3.6rem, oculto quando o asset carrega
 - **Botões**: 40×40px, `border-radius: 12px`, hover scale 1.12 com cor do jogador, selected com gradiente e glow
-- **Seção de emojis**: `border-radius: 10px`, padding reduzido, summary com cor #b8956a e letter-spacing
+- **Seção de avatares**: grade única com 4 personagens oficiais (a antiga seção "Emojis clássicos" foi removida)
 - **Token nos botões**: cada botão exibe o token asset (object-fit cover circular) via `initGalleryTokens()` com fallback para emoji
 - **Regra**: a galeria nunca deve mostrar broken image — sempre cai para emoji
 
@@ -91,7 +91,7 @@ Este documento define as diretrizes visuais do Lara World. Todo novo asset, tela
 | **Estilo** | Cartoon infantil premium |
 | **Função** | Guia do jogador, mascote do jogo |
 
-- Lara aparece exclusivamente na **Hero Screen** (tela inicial)
+- Lara apareceva exclusivamente na **Hero Screen** (tela inicial) da versão anterior; na versão atual, a Hero Screen utiliza o logo oficial e a ilustração da Lara foi removida do card central
 - Não deve ser replicada em outras telas para evitar poluição visual
 - Todos os personagens e ilustrações do jogo devem seguir o mesmo padrão artístico
 
@@ -114,9 +114,12 @@ Este documento define as diretrizes visuais do Lara World. Todo novo asset, tela
 src/assets/
 ├── audio/          # Assets de áudio (.webm) — ver docs/audio.md
 ├── ui/             # Assets da Hero Screen
+│   ├── logo-lara-world.webp    # Logo oficial (ativo)
+│   ├── lara-hero.webp          # Ilustração Lara (não utilizado atualmente)
+│   └── menu-background.webp    # Fundo temático (ativo)
 ├── avatars/        # Avatares oficiais — preview circular no setup (108×108px)
 ├── tokens/         # Tokens oficiais — representação in-game (62×62px circular)
-├── world-icons/    # Ilustrações oficiais dos mundos (96×96px)
+├── world-icons/    # Ilustrações oficiais dos mundos (96×96px) — 6 assets concluídos
 └── worlds/         # Backgrounds e texturas por mundo
 ```
 
@@ -136,7 +139,7 @@ src/assets/
 
 | Tela | Elementos-chave |
 |------|-----------------|
-| **Hero Screen** | Card glass central, Lara sobreposta, fundo gradiente radial + shapes, botões com glow |
+| **Hero Screen** | Card glass central, logo oficial (menu-brand-logo), fundo gradiente radial + menu-background.webp + shapes, botões com glow |
 | **Seleção de Mundos** | Mesmo fundo da Hero Screen, card glass, cards com identidade por mundo, botão premium |
 | **Tabuleiro** | Background por mundo, células arredondadas, caminho SVG suave, painel lateral com glass |
 
