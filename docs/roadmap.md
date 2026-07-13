@@ -8,6 +8,16 @@
 - [x] Duplicidade [0.17.0-preview] no CHANGELOG resolvida (hotfix realocado para [0.16.0-preview])
 - [x] Versionamento inconsistente corrigido
 
+### Dino Runner (DINO-001) — Em andamento
+
+- [ ] Minigame Canvas: dino automático, pulo (Espaço/Up/Clique), obstáculos (cactos/rochas), 30s, 3 fases de dificuldade
+- [ ] `src/minigames/dino-runner/DinoRunnerGame.js` criado
+- [ ] Registrado no loader.js e via registerMinigame()
+- [ ] Casa 10 do Vale dos Dinossauros substitui portal da Caverna por evento dino-runner
+- [x] Caverna dos Fósseis removida (config.js, game.js, questions.js, index.html)
+- [ ] Debug panel com botões: 🎮 Abrir, ✅ Vencer, ❌ Perder, ↩️ Retornar
+- [ ] Documentação atualizada
+
 ### v0.17.0-preview — Correção de 3 Bugs ✅
 
 - [x] Bug 1 — Vitória prematura ao sair de submundo (handleBoardLimitReached)
@@ -75,6 +85,8 @@
 - [x] Dado da partida não alterado
 
 ### v0.18.0-preview — Revisão e Melhorias do Sistema de Perguntas — QST-001 ✅
+
+- [x] Dino Runner criado, Caverna dos Fósseis removida
 
 **Banco de Perguntas:**
 - [x] Extrair bancoQuestoes para `src/data/questions.js`
@@ -234,13 +246,13 @@
 
 ### v0.10.0-preview — Vale dos Dinossauros e Ecossistema Multi-Mundos
 - **🦖 Vale dos Dinossauros** — segundo mundo completo com 20 casas, eventos temáticos e portal na casa 10
-- **🦴 Caverna dos Fósseis** — segunda Área Especial (submundo), 8 casas, risco x recompensa: saída rápida sem bônus (c7) ou saída completa com +3 (c8)
+- **🏃 Dino Runner** — minigame Canvas na casa 10 do Vale, substitui a Caverna dos Fósseis
 - **Portal genérico** — `activeSubworldId` substitui `mundoAtual` hardcoded
 - **Retorno parametrizado** — bônus lido do WorldConfig (Floresta +3, Caverna +3)
 - **Theme Engine** — tema visual por mundo via `data-world` no body
 - **Debug da Caverna** — botões específicos no painel `?debug=1`
 - **Sprint A6.3** — Theme Manager em produção
-- **Sprint A6.5** — Config e debug da Caverna dos Fósseis
+- **Sprint A6.5** — Config e debug da Caverna dos Fósseis (substituída pelo Dino Runner em DINO-001)
 - **Sprint A6.6** — Portal genérico sem hardcoded
 - **Arquitetura consolidada** — dois mundos, duas áreas, zero alterações na engine
 - Cache-busting via `?v=20260706`
@@ -321,7 +333,7 @@
 - ~~**Hero Screen v2** — reorganização completa da composição visual da tela inicial~~ ✅ **Concluído** — redesign entregue com logo oficial e identidade consolidada
 - **Evolução dos cards dos mundos** — refinamento visual contínuo da seleção de mundos
 - **Assets próprios das casas especiais** — substituir células CSS por assets visuais por tipo de casa
-- **Ilustrações das áreas dos mundos** — backgrounds e caminhos para submundos (Floresta Misteriosa, Caverna dos Fósseis)
+- **Ilustrações das áreas dos mundos** — backgrounds e caminhos para submundos (Floresta Misteriosa)
 - **Assets da Galáxia** — criar `background.webp` e `path.webp` em `src/assets/worlds/galaxia/` (infraestrutura CSS pronta)
 - **Sistema de conquistas** — medalhas e progressão do jogador
 - **Modo Aventura** — campanha com progressão entre mundos
@@ -367,7 +379,7 @@ Trilha de desenvolvimento focada exclusivamente na identidade visual do projeto.
 | **ART-005** | ✅ Concluído | Refinamento do traço SVG — stroke 14px→5px, opacity ~0.25, preparação para path.webp |
 | **ART-006** | ✅ Concluído | Infraestrutura path.webp — background-image no `.path-line`, seletores por mundo, subworld override |
 | **ART-007** | 🔲 Pendente | Background Floresta Misteriosa — assets e CSS para o submundo da Floresta |
-| **ART-008** | 🔲 Pendente | Background Caverna dos Fósseis — assets e CSS para o submundo do Vale |
+| **ART-008** | 🔲 Cancelada (substituída pelo Dino Runner) | Background Caverna dos Fósseis — assets e CSS para o submundo do Vale |
 | **ART-009** | ✅ Concluído | Ilustrações oficiais dos mundos — container 96×96px em cada card, fallback de emoji, 6 assets em `src/assets/world-icons/` |
 | **ART-010** | ✅ Concluído | Reprocessamento de lara.webp — canvas 512×512, 86.9% altura para avatar e token |
 | **ART-011** | 🔲 Pendente | Ícones próprios — substituir emojis por iconografia original do jogo |

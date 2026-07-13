@@ -160,7 +160,7 @@ A escolha do modo determina quais campos são exibidos no modal e como o Jogador
 - **Sorteio de perguntas**: a cada desafio, uma pergunta é sorteada do Banco de Questões (128 perguntas, 9 categorias). O sorteio é temático por mundo:
   - 🌌 **Galáxia Estelar**: prioriza Espaço, Lógica e Conhecimentos Gerais
   - 🌳 **Floresta** (principal + misteriosa): prioriza Animais, Natureza, Cores e Formas, Lógica
-  - 🦕 **Dinossauros** (Vale + Caverna): prioriza Dinossauros, Animais, Natureza, Matemática
+  - 🦕 **Dinossauros**: prioriza Dinossauros, Animais, Natureza, Matemática
   - 🌊 **Reino dos Oceanos**: prioriza Natureza, Animais, Matemática, Português, Espaço
   - 🐉 **Castelo dos Dragões**: prioriza Lógica, Matemática, Português, Conhecimentos Gerais
   - Se o pool temático acabar, usa o banco geral como fallback

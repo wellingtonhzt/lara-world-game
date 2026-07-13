@@ -31,10 +31,14 @@ lara-world/
 │   │   ├── sounds.js          # Catálogo de sons (chaves simbólicas)
 │   │   └── index.js           # Instância singleton exportada
 │   ├── minigames/       # Minigames internos
-│   │   └── meteoro/           # Minigame MeteoroGame (Buraco de Minhoca)
-│   │       ├── MeteoroGame.js      # Classe principal do minigame (4-dir, meteoros, vidas)
-│   │       ├── meteoroGame.css     # Estilos do jogo (flash, UI, resultado)
-│   │       └── index.js            # Factory/export do minigame
+│   │   ├── meteoro/           # Minigame MeteoroGame (Buraco de Minhoca)
+│   │   │   ├── MeteoroGame.js      # Classe principal do minigame (4-dir, meteoros, vidas)
+│   │   │   ├── meteoroGame.css     # Estilos do jogo (flash, UI, resultado)
+│   │   │   └── index.js            # Factory/export do minigame
+│   │   ├── dino-runner/       # Minigame Dino Runner (Vale dos Dinossauros, casa 10)
+│   │   │   ├── DinoRunnerGame.js   # Classe principal (Canvas, pulo, obstáculos, 30s, 3 fases)
+│   │   │   ├── dino-runner.css     # Estilos do canvas
+│   │   │   └── index.js            # Config e registro do minigame
 │   ├── assets/          # Recursos visuais do jogo
 │   │   ├── ui/          # Assets da Hero Screen (menu inicial)
 │   │   │   ├── logo-lara-world.webp  # Logo oficial do Lara World — exibido na Hero Screen
@@ -93,7 +97,7 @@ lara-world/
 │       ├── floresta/
 │       │   └── config.js  # WorldConfig Floresta Encantada + Floresta Misteriosa
 │       ├── dinossauros/
-│       │   └── config.js  # WorldConfig Vale dos Dinossauros + Caverna dos Fósseis
+│       │   └── config.js  # WorldConfig Vale dos Dinossauros (sem Caverna dos Fósseis — substituída pelo Dino Runner)
 │       ├── galaxia/
 │       │   ├── config.js  # WorldConfig Galáxia Estelar
 │       │   └── layouts.js # Layouts do tabuleiro: padrão, orbita, spiral
@@ -198,7 +202,7 @@ constantes / configuração
   ├── WORLD_CONFIGS       → { florestaEncantada, valeDinossauros, galaxiaEstelar, reinoOceanos, casteloDosDragoes } — registrados no WorldRegistry
   ├── currentWorldConfig  → WorldConfig ativo (selecionado ou default)
   ├── selectedWorldId     → string | null (ID do mundo escolhido no seletor)
-  ├── subworldConfigs     → { florestaMisteriosa, cavernaDosFosseis } — lookup de áreas especiais
+  ├── subworldConfigs     → { florestaMisteriosa } — lookup de áreas especiais
   ├── PLAYER_COUNT (2)
   ├── players[]           → array de objetos {id, name, emoji, posicao, rodadasPerdidas, element, isBot, tokenId}
   ├── gameState           → {currentPlayerIndex, jogoAtivo, jogoFinalizado, isMoving, questoesUsadas,
@@ -273,7 +277,8 @@ Casas Especiais
        ├── "avancar" (casa 3) → move +n, cascateia; se activeSubworldId e limite, chama handleBoardLimitReached()
        ├── "voltar" (casa 5) → move -n, não cascateia
        ├── "desafio" → sortearQuestao(), abre modal, move ±1, não cascateia; se activeSubworldId e limite, chama handleBoardLimitReached()
-       ├── "portal" → consulta getPortalConfigForCell(), exibe modal, salva posição, define activeSubworldId
+        ├── "dino-runner" → launchDinoRunner(), vitória +3 casas, derrota 0
+        ├── "portal" → consulta getPortalConfigForCell(), exibe modal, salva posição, define activeSubworldId
        ├── "atalho" (área especial) → volta ao principal com +bonusCells, não cascateia
        ├── "saida-mundo" (área especial) → volta ao principal com +bonusCells, não cascateia
        ├── "jogar-novamente" (casa 8) → retorna true (extra turn)
@@ -399,7 +404,7 @@ let isSinglePlayer = false;   // true quando modo 1 jogador está ativo
 let botTurnScheduled = false; // true quando um turno de bot já foi agendado
 ```
 
-- `activeSubworldId`: string | null — ID do submundo ativo (`"floresta-misteriosa"` ou `"caverna-dos-fosseis"`) ou null se no mundo principal
+- `activeSubworldId`: string | null — ID do submundo ativo (`"floresta-misteriosa"`) ou null se no mundo principal
 - `subworldEntry`: `{1: number | null, 2: number | null}` — posição de entrada salva por jogador na área especial
 - `entrouNoPortal`: boolean — evita reentrada no portal durante o mesmo turno
 
@@ -497,8 +502,7 @@ A partir da v0.9.0-preview, o Lara World iniciou a **Fase de Mundos** com a cria
 |-------|---------|---------|---------|---------|--------|
 | **🌳 Floresta Encantada** (principal) | `src/worlds/floresta/config.js` | 20 | 12 | 1 | `board.positions` (original) |
 | **🌲 Floresta Misteriosa** (subworld) | (mesmo arquivo) | 8 | 4 | — | `board.positions` |
-| **🦖 Vale dos Dinossauros** (principal) | `src/worlds/dinossauros/config.js` | 20 | 12 | 1 | `board.cells` (S-curve) |
-| **🦴 Caverna dos Fósseis** (subworld) | (mesmo arquivo) | 8 | 6 | — | `board.positions` |
+| **🦖 Vale dos Dinossauros** (principal) | `src/worlds/dinossauros/config.js` | 20 | 12 | 1 (Dino Runner) | `board.cells` (S-curve) |
 | **🌌 Galáxia Estelar** (principal) | `src/worlds/galaxia/config.js` | 20 | 9 | — | `board.layouts` (3: padrão/orbita/spiral) |
 | **🌊 Reino dos Oceanos** (principal) | `src/worlds/oceanos/config.js` | 20 | 9 | — | `board.positions` |
 | **🐉 Castelo dos Dragões** (principal) | `src/worlds/castelo/config.js` | 20 | 9 | — | `board.cells` (ascendente) |

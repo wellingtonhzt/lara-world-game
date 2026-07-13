@@ -129,7 +129,7 @@ Corrigir três bugs identificados em auditoria no código do Lara World: (1) vit
 |---------|-------------|--------|
 | `handleBoardLimitReached()` como função separada em vez de modificar `handleVictory()` | Modificar `handleVictory()` para aceitar parâmetro de contexto | Isolamento: a lógica de saída de submundo é diferente da vitória (re-renderizar board, limpar tema, etc.). A função separada é autocontida e reutilizável |
 | Bônus de +2 no `handleBoardLimitReached()` | +0, +1, +3 | +2 é um valor moderado que recompensa o jogador por completar o submundo sem desequilibrar o jogo |
-| `random(w => w.type === 'main')` filtrado | `random()` sem filtro | Evita sortear submundos (Floresta Misteriosa, Caverna dos Fósseis) como mundo inicial, que não têm tabuleiro principal ou são dependentes de portal |
+| `random(w => w.type === 'main')` filtrado | `random()` sem filtro | Evita sortear submundos (Floresta Misteriosa) como mundo inicial, que não têm tabuleiro principal ou são dependentes de portal |
 | Validação em `validateQuestionBank()` em vez de teste unitário | Teste com framework | O projeto não possui package.json nem test runner — a validação em JS puro pode ser executada com `node --check` ou importada no console do navegador |
 
 ### Fluxo de handleBoardLimitReached
@@ -175,6 +175,78 @@ desafio / avancar atinge getTotalCasas()
 2. No seletor de mundos, clicar em "🎲 Mundo Aleatório"
 3. Verificar que o mundo selecionado não é sempre Floresta
 4. Repetir 10 vezes — esperar distribuição variada entre Floresta, Dinossauros e Galáxia
+
+## Sprint — Dino Runner (DINO-001)
+
+### Objetivo
+
+Criar o minigame Dino Runner para o Vale dos Dinossauros, substituindo o subworld Caverna dos Fósseis (8-cell board) por um Canvas-based infinite runner onde o jogador controla o pulo de um dinossauro para desviar de obstáculos por 30 segundos. Seguir exatamente o mesmo padrão de integração do MeteoroGame (evento em `eventsToSpecialCells`, handler em `processSpecialCell`, debug buttons, `launchDinoRunner()` function, `MinigameHost`).
+
+### Arquivos Criados
+
+| Arquivo | Descrição |
+|---------|-----------|
+| `src/minigames/dino-runner/DinoRunnerGame.js` | Classe principal do minigame (~300 linhas): canvas, dino verde, 2 tipos de obstáculo (cacto/rocha), pulo com gravidade, 30s timer, 3 fases (Fácil 0-10s, Médio 10-20s, Intenso 20-30s), colisão com hitbox reduzida, start/stop/destroy |
+| `src/minigames/dino-runner/dino-runner.css` | Estilos do canvas: 100% width/height, `touch-action: none` |
+| `src/minigames/dino-runner/index.js` | Config do minigame com `registerMinigame()`, incluindo presentation, botSuccessRate 0.40, rewards com successBoardDelta 3 |
+
+### Arquivos Alterados
+
+| Arquivo | Tipo de Alteração |
+|---------|-------------------|
+| `src/minigames/engine/loader.js` | **Modificado** — Import de `'../dino-runner/index.js'` adicionado |
+| `src/worlds/dinossauros/config.js` | **Modificado** — Casa 10 substituída de `portal portal-caverna-fosseis` para `dino-runner`; seção `portals` esvaziada; `export const cavernaDosFosseis` removido (148 linhas) |
+| `src/game.js` | **Modificado** — Import de `cavernaDosFosseis` removido; `'caverna-dos-fosseis': cavernaDosFosseis` removido de subworldConfigs; `case 'dino-runner'` adicionado em eventsToSpecialCells e processSpecialCell (lança Dino Runner via MinigameHost, vitória = +3 boardDelta); debug handlers substituídos: 3 botões caverna → 4 botões dino-runner (abrir, vencer, derrota, retornar); `launchDinoRunner()` function adicionada |
+| `src/data/questions.js` | **Modificado** — `'caverna-dos-fosseis'` removido de `worldCategoryMap` |
+| `src/index.html` | **Modificado** — 3 botões debug `caverna-casa4/7/8` substituídos por 4 botões `dino-runner-minigame/vitoria/derrota/retornar` |
+| `CHANGELOG.md`, `README.md`, `docs/visao-geral.md`, `docs/arquitetura.md`, `docs/roadmap.md`, `docs/memorial-tecnico.md` | **Modificados** — Caverna dos Fósseis removida da documentação; Dino Runner adicionado |
+
+### Decisões Técnicas
+
+| Decisão | Alternativas | Motivo |
+|---------|-------------|--------|
+| Canvas 2D puro para o minigame | DOM + CSS ou sprite sheets | Sem dependências externas; performance adequada para runner simples; segue o mesmo padrão do MeteoroGame |
+| Dino automático + jogador só pula | Controle completo (andar, pular, agachar) | Simplicidade para o público infantil (3-10 anos); uma única ação reduz a barreira de entrada |
+| Colisão com hitbox reduzida (-4px cada lado) | Hitbox exata | A hitbox mais justa reduz frustração — colisões "injustas" em bordas de pixel são evitadas |
+| 3 fases de dificuldade (0-10s fácil, 10-20s médio, 20-30s intenso) | Dificuldade linear contínua | Marcos claros dão sensação de progressão; o ritmo do jogo acelera em degraus perceptíveis |
+| Obstáculos visuais desenhados no Canvas (cacto + rocha) | Emoji ou sprite externo | Consistência visual com o tema; sem dependência de assets externos; o design geométrico é adequado para crianças |
+| Reutilização do MinigameHost existente (sem criar novo host) | Host próprio para Dino Runner | O MinigameHost é genérico — overlay, barra de progresso, botão "Pular", auto-return 5s. Dino Runner não precisa de controles especiais no host |
+| Bot não joga — apenas simula resultado | Bot jogar de verdade | O bot não possui visão do Canvas; simular 40% de sucesso (botSuccessRate) é mais realista |
+| Remoção completa da Caverna dos Fósseis | Manter desativada | Código morto aumenta manutenção; a Caverna nunca teve assets visuais ou som; o Dino Runner é mais adequado ao tema |
+
+### Fluxo do Jogo (Dino Runner)
+
+```
+Jogo → Casa 10 do Vale dos Dinossauros
+  ↓
+processSpecialCell("dino-runner")
+  ├── addHistory → "🦖 Dino Runner!"
+  └── launchDinoRunner({ isBot })
+       └── launchMinigameHost('dino-runner', options)
+            ├── Cria overlay MinigameHost
+            ├── Cria DinoRunnerGame via index.js create()
+            │   ├── Canvas renderizado
+            │   ├── Dino começa a correr automaticamente
+            │   ├── Obstáculos spawnam da direita
+            │   └── Timer de 30s regressivo
+            ├── Input: Espaço / Seta p/ Cima / Clique / Toque → pulo
+            ├── Colisão? → estado FAIL, onComplete({ venceu: false })
+            ├── Timer 0? → estado SUCCESS, onComplete({ venceu: true })
+            └── MinigameHost processa resultado
+                 ├── Vitória: +3 boardDelta, animação, log
+                 └── Derrota: 0 boardDelta, log
+```
+
+### Como Testar
+
+1. Selecionar Vale dos Dinossauros e iniciar partida
+2. Avançar até a casa 10 (ou usar debug 🎮 Abrir)
+3. Verificar que o minigame abre com canvas dino + obstáculos
+4. Pular com Espaço/Seta/Clique — verificar gravidade e colisão
+5. Aguardar 30s para vitória ou colidir para derrota
+6. Verificar resultado: vitória = +3 casas, derrota = 0
+7. Testar modo single player (bot vai para casa 10) — verificar overlay com "Pular"
+8. Verificar retorno automático após 5s
 
 ## Sprint — Infraestrutura de Assets do Reino dos Oceanos (v0.23.0-preview)
 
@@ -618,7 +690,7 @@ src/data/questions.js
 |-------|-----------|-----------------|
 | Galáxia Estelar (`galaxia-estelar`) | Espaço, Lógica, Conhecimentos Gerais | 40 |
 | Floresta Encantada (`floresta-encantada`) + Floresta Misteriosa (`floresta-misteriosa`) | Animais, Natureza, Cores e Formas, Lógica | 56 |
-| Vale dos Dinossauros (`dinossauros`) + Caverna dos Fósseis (`caverna-dos-fosseis`) | Dinossauros, Animais, Natureza, Matemática | 59 |
+| Vale dos Dinossauros (`dinossauros`) | Dinossauros, Animais, Natureza, Matemática | 59 |
 
 ### Algoritmo Final (sortearQuestao)
 

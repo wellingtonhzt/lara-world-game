@@ -127,8 +127,8 @@ export const valeDosDinossauros = {
       9: [
       { type: 'challenge', description: '\uD83C\uDF0B Desafio' },
     ],
-    10: [
-      { type: 'portal', params: { portalId: 'portal-caverna-fosseis' }, description: '\uD83E\uDEB4 Portal' },
+     10: [
+      { type: 'dino-runner', description: '\uD83E\uDD96 Dino Runner!' },
     ],
     11: [
       { type: 'move', params: { delta: -4 }, description: '\uD83E\uDD96 Volte 4' },
@@ -152,33 +152,7 @@ export const valeDosDinossauros = {
 
   // ── Portals ──
 
-  portals: [
-    {
-      id: 'portal-caverna-fosseis',
-      name: '\uD83E\uDEB4 Caverna dos F\u00f3sseis',
-      description: 'Uma antiga caverna cheia de f\u00f3sseis e cristais.',
-      sourceCell: 10,
-      type: 'fixed',
-      targetWorldId: 'caverna-dos-fosseis',
-      entrance: {
-        message: 'Voc\u00EA encontrou a entrada de uma caverna antiga! Deseja explorar?',
-        effect: null,
-        requiresConfirmation: true,
-        requirements: null,
-      },
-      exitBehavior: {
-        returnCell: null,
-        bonusCells: 0,
-        message: '\u2728 Retornou ao Vale dos Dinossauros!',
-        clearsPenalties: false,
-      },
-      lifetime: {
-        maxActivations: null,
-        expiresAfterTurn: null,
-        expiresOnComplete: false,
-      },
-    },
-  ],
+  portals: [],
 
   // ── Question Categories ──
 
@@ -234,149 +208,3 @@ export const valeDosDinossauros = {
   customEventHandlers: {},
 };
 
-export const cavernaDosFosseis = {
-  id: 'caverna-dos-fosseis',
-  name: '\uD83E\uDEB4 Caverna dos F\u00f3sseis',
-  description: 'Uma antiga caverna onde paleont\u00f3logos encontraram f\u00f3sseis gigantes, cristais brilhantes e o esqueleto de um temido T-Rex.',
-  icon: '\uD83E\uDEB4',
-  thumbnail: null,
-  version: '1.0.0',
-  type: 'subworld',
-
-  board: {
-    totalCells: 8,
-    startCell: 1,
-    finishCell: 8,
-    pathType: 'linear',
-    positions: {
-      1: { x: 10, y: 15 },
-      2: { x: 28, y: 15 },
-      3: { x: 46, y: 18 },
-      4: { x: 64, y: 22 },
-      5: { x: 72, y: 42 },
-      6: { x: 58, y: 58 },
-      7: { x: 38, y: 62 },
-      8: { x: 18, y: 66 },
-    },
-    cellIcons: [
-      '\uD83D\uDEAA', '\uD83D\uDC8E', '\uD83E\uDEB4', '\uD83E\uDEA8',
-      '\uD83E\uDEA8', '\uD83D\uDC80', '\u2620\uFE0F', '\uD83D\uDEAA',
-    ],
-  },
-
-  theme: {
-    themeId: 'caverna-dos-fosseis',
-    cssClass: 'mundo-caverna-fosseis',
-    background: {
-      type: 'gradient',
-      value: 'linear-gradient(to bottom, #2d1b0e 0%, #4a3020 30%, #3a2515 60%, #1a0f08 100%)',
-    },
-    colors: {
-      primary: '#ff8f00',
-      secondary: '#5d4037',
-      accent: '#ffd54f',
-      background: '#2d1b0e',
-      text: '#f5e6d3',
-      cellDefault: '#4a3020',
-      cellSpecial: '#5d4037',
-    },
-    decorations: [
-      { type: 'emoji', content: '\uD83D\uDDA4', className: 'caverna-deco-crystal-1' },
-      { type: 'emoji', content: '\uD83D\uDDA4', className: 'caverna-deco-crystal-2' },
-      { type: 'emoji', content: '\uD83E\uDEB4', className: 'caverna-deco-fossil-1' },
-      { type: 'emoji', content: '\uD83E\uDEB4', className: 'caverna-deco-fossil-2' },
-      { type: 'emoji', content: '\uD83E\uDD96', className: 'caverna-deco-trex' },
-      { type: 'emoji', content: '\uD83E\uDEA8', className: 'caverna-deco-rock' },
-    ],
-    music: {
-      theme: null,
-      portal: null,
-      victory: null,
-    },
-  },
-
-  rules: {
-    diceFaces: 6,
-    passStartBonus: false,
-    allowBackMovement: true,
-    slipChance: 0,
-    slipDelta: 0,
-  },
-
-  objectives: [
-    {
-      type: 'reachEnd',
-      params: { cell: 8 },
-      label: 'Explorar a caverna e retornar ao Vale dos Dinossauros!',
-      optional: false,
-    },
-  ],
-
-  events: {
-    2: [
-      { type: 'move', params: { delta: 1 }, description: '\uD83D\uDC8E Avance 1 casa' },
-    ],
-    3: [
-      { type: 'challenge', description: '\uD83E\uDEB4 Desafio' },
-    ],
-    5: [
-      { type: 'move', params: { delta: -1 }, description: '\uD83E\uDEA8 Volte 1 casa' },
-    ],
-    7: [
-      { type: 'worldExit', params: { bonusCells: 0 }, description: '\u2620\uFE0F Sa\u00edda r\u00e1pida' },
-    ],
-    8: [
-      { type: 'worldExit', params: { bonusCells: 3 }, description: '\uD83D\uDEAA Sa\u00edda' },
-    ],
-  },
-
-  portals: [],
-
-  questionCategories: [
-    'dinossauros',
-    'natureza',
-    'animais',
-  ],
-
-  assets: {
-    backgrounds: {
-      main: null,
-      loading: null,
-      victory: null,
-      portal: null,
-    },
-    sprites: {
-      cristais: null,
-      fossil: null,
-      ovo: null,
-      trex: null,
-      caverna: null,
-    },
-    sounds: {
-      dice: null,
-      move: null,
-      portal: null,
-      challenge: null,
-      victory: null,
-    },
-    music: {
-      theme: null,
-      portal: null,
-      victory: null,
-    },
-    ui: {
-      icon: null,
-      banner: null,
-    },
-  },
-
-  ui: {
-    worldName: 'Caverna dos F\u00f3sseis',
-    subtitle: 'Antigas cavernas de f\u00f3sseis e cristais.',
-    initialMessage: '\uD83E\uDEB4 Bem-vindo \u00e0 Caverna dos F\u00f3sseis!',
-    worldIndicator: '\uD83E\uDEB4 Caverna dos F\u00f3sseis',
-    victoryTitle: 'Caverna Explorada!',
-  },
-
-  customEventHandlers: {},
-};

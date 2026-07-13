@@ -46,7 +46,7 @@
 
 #### Bug 1 — Vitória Prematura ao Sair de Submundo
 
-- **Problema corrigido**: ao atingir o limite do tabuleiro dentro de um submundo (Floresta Misteriosa ou Caverna dos Fósseis) por avanço ou acerto de desafio, o jogo declarava vitória indevidamente em vez de retornar ao mundo principal
+- **Problema corrigido**: ao atingir o limite do tabuleiro dentro de um submundo (Floresta Misteriosa) por avanço ou acerto de desafio, o jogo declarava vitória indevidamente em vez de retornar ao mundo principal
 - **Nova função `handleBoardLimitReached()`**: quando o jogador completa o submundo, ele sai automaticamente, ganha +2 casas de bônus a partir da posição de entrada e retorna ao mundo principal — sem declarar vitória prematura
 - **Comportamento consistente**: alinhado com as regras de `saida-mundo` e `atalho`
 
@@ -75,7 +75,7 @@
 - **Perguntas temáticas por mundo**:
   - 🌌 Galáxia Estelar → Espaço, Lógica, Conhecimentos Gerais
   - 🌳 Floresta (principal + misteriosa) → Animais, Natureza, Cores e Formas, Lógica
-  - 🦕 Dinossauros (Vale + Caverna) → Dinossauros, Animais, Natureza, Matemática
+  - 🦕 Dinossauros → Dinossauros, Animais, Natureza, Matemática
 - **Sem repetição na mesma partida**: o algoritmo evita repetir perguntas até que todo o pool seja usado
 - **Fallback automático**: se o tema do mundo não tiver perguntas suficientes, usa o banco geral
 - **Painel de auditoria**: modo debug (`?debug=1`) com botão "📚 Mostrar" que lista todas as perguntas por categoria, com indicador de usadas, dificuldade e mundo atual
@@ -189,7 +189,7 @@ Documentação detalhada em [docs/audio.md](docs/audio.md).
 - **Tela de seleção de mundo** — após clicar em "⚡ Jogo Rápido", 6 cards de mundos são exibidos (Floresta, Dinossauros, Galáxia, Oceanos, Castelo e Aleatório)
 - **🌳 Floresta Encantada** — mundo com 20 casas, desafios educativos e portal para Área Especial (Floresta Misteriosa)
 - **🌲 Área Especial (Floresta Misteriosa)** — submundo de 8 casas acessado pelo portal da Floresta, com desafios próprios e retorno parametrizado
-- **🦴 Área Especial (Caverna dos Fósseis)** — submundo curto de 8 casas com filosofia risco x recompensa: saída antecipada sem bônus (casa 7) ou saída completa com bônus +3 (casa 8)
+- **🏃 Dino Runner (casa 10)** — minigame Canvas onde o dinossauro corre automaticamente e o jogador pula (Espaço/Up/Clique) para desviar de obstáculos. Vitória = sobreviver 30s; derrota = colisão. Substitui a antiga Caverna dos Fósseis
 - **Mundo Aleatório** — seleciona um mundo aleatório entre os disponíveis
 - **5 mundos disponíveis** — Floresta, Dinossauros, Galáxia, Oceanos e Castelo — todos com badge "✅ Disponível"
 
@@ -221,12 +221,14 @@ Documentação detalhada em [docs/audio.md](docs/audio.md).
 - **Botão "🔁 Jogar Novamente"** — reinicia a partida no mesmo modo (Jogo Rápido mantém single player)
 - **Botão "🏠 Voltar ao Menu"** — retorna ao menu inicial para escolher outro modo
 
-### Sistema de Mundos e Áreas Especiais
+### Sistema de Mundos e Minigames
 
 - **Cinco mundos jogáveis** — 🌳 Floresta Encantada, 🦖 Vale dos Dinossauros, 🌌 Galáxia Estelar, 🌊 Reino dos Oceanos e 🐉 Castelo dos Dragões, cada um com 20 casas e eventos próprios
-- **Áreas Especiais** — cada mundo pode conter uma área especial (submundo) acessada via portal:
-  - 🌲 **Floresta Misteriosa** (submundo da Floresta) — 8 casas, mini-trilha com visual temático
-  - 🦴 **Caverna dos Fósseis** (submundo do Vale) — 8 casas, risco x recompensa: saída rápida sem bônus (c7) ou saída completa com +3 (c8)
+- **Áreas Especiais** — a Floresta Encantada possui um submundo:
+  - 🌲 **Floresta Misteriosa** — 8 casas, mini-trilha com visual temático, acessada via portal na casa 11
+- **Minigames** — eventos especiais que lançam jogos Canvas internos:
+  - 🌌 **MeteoroGame** (Galáxia, casa 15) — desvie de meteoros por 60s com nave 4-dir
+  - 🏃 **Dino Runner** (Dinossauros, casa 10) — corra com o dino por 30s pulando obstáculos
 - **Portal** — casa específica que abre modal perguntando se deseja entrar na Área Especial
 - **Modal de entrada** — ao cair na casa do portal, um modal oferece "Entrar" ou "Continuar"
 - **Jogador ativo na área especial** — apenas o jogador que entrou joga na área
@@ -531,7 +533,7 @@ docker compose down
 - **v0.13.0-preview** — ✅ Concluído — Infraestrutura de Áudio (AUD-001)
 - **v0.12.0-preview** — ✅ Concluído — Board Layout 2.0, path.webp, Hero Screen, Seleção de Mundos v2, Avatares/Tokens
 - **v0.11.0-preview** — ✅ Concluído — Evolução Visual (UX 2.0)
-- **v0.10.0-preview** — ✅ Concluído — Vale dos Dinossauros + Caverna dos Fósseis
+- **v0.10.0-preview** — ✅ Concluído — Vale dos Dinossauros (Caverna dos Fósseis adicionada, removida no Dino Runner)
 
 Veja o [roadmap completo](docs/roadmap.md).
 

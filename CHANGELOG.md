@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- **Dino Runner (DINO-001)**: novo minigame Canvas no Vale dos Dinossauros — substitui o subworld Caverna dos Fósseis (8-cell board) por um infinite runner de 30s com 3 fases de dificuldade. Casa 10 agora dispara o minigame. Botões de debug substituídos. Caverna dos Fósseis removida da base de código.
+
 ## [0.26.0-preview] - 2026-07-12
 
 ### Versão Oficial Consolidada
@@ -174,7 +176,7 @@ Release oficial que incorpora todo o trabalho realizado desde v0.17.0-preview, u
 - **Seleção temática por mundo**:
   - Galáxia Estelar → Espaço, Lógica, Conhecimentos Gerais
   - Floresta (principal + misteriosa) → Animais, Natureza, Cores e Formas, Lógica
-  - Dinossauros (Vale + Caverna) → Dinossauros, Animais, Natureza, Matemática
+   - Dinossauros → Dinossauros, Animais, Natureza, Matemática
   - Fallback geral se o pool temático acabar
 - **Algoritmo de sorteio (sortearQuestao)**: agora filtra por mundo, evita repetição na mesma partida, reinicia automaticamente quando o pool acaba, funciona igual para humano e bot
 - **Painel de auditoria**: nova seção "Banco de Perguntas" no debug (`?debug=1`) com total, usadas, categorias, dificuldade e mundo atual — botão `📚 Mostrar/Ocultar`

@@ -615,9 +615,9 @@ Ideias registradas para sprints futuras (fora do escopo atual):
 ### O que foi entregue
 
 - **Dois mundos completos**: Floresta Encantada e Vale dos Dinossauros, cada um com 20 casas, eventos temáticos, portal próprio
-- **Duas Áreas Especiais**: Floresta Misteriosa (submundo da Floresta) e Caverna dos Fósseis (submundo do Vale), cada uma com 8 casas e eventos próprios
+- **Duas Áreas Especiais**: Floresta Misteriosa (submundo da Floresta) e Caverna dos Fósseis (submundo do Vale — **substituída pelo Dino Runner em DINO-001**), cada uma com 8 casas e eventos próprios
 - **Portal genérico**: o estado de submundo (`activeSubworldId`, `subworldEntry`) substituiu as variáveis hardcoded `mundoAtual`, `entradaFloresta`, `entradaCaverna`
-- **Retorno parametrizado**: o bônus de saída é lido do WorldConfig (`worldExit.params.bonusCells`) — Floresta +3, Caverna +3
+- **Retorno parametrizado**: o bônus de saída é lido do WorldConfig (`worldExit.params.bonusCells`) — Floresta +3, Caverna +3 (Caverna removida em DINO-001)
 - **Theme Engine**: tema visual aplicado via `data-world` no `<body>`, CSS temático para cada mundo, decorações dinâmicas injetadas via JS
 - **Debug independente**: botões específicos para cada Área Especial no painel de debug
 - **Zero alterações na Engine**: nenhum arquivo em `src/engine/`, `src/core/`, `src/data/` ou `src/worlds/loader.js` foi modificado
@@ -632,7 +632,7 @@ Ideias registradas para sprints futuras (fora do escopo atual):
 | Eventos de área especial | `florestaEspeciais[]` separado | `eventsToSpecialCells()` converte qualquer config |
 | Tema visual | Classe `.mundo-floresta` fixa | `data-world` dinâmico, CSS class do config |
 | Quantidade de mundos | 1 (Floresta) | 2 (Floresta + Dinossauros) |
-| Quantidade de submundos | 1 (Floresta Misteriosa) | 2 (Floresta Misteriosa + Caverna dos Fósseis) |
+| Quantidade de submundos | 1 (Floresta Misteriosa) | 2 (Floresta Misteriosa + Caverna dos Fósseis — substituída pelo Dino Runner em DINO-001) |
 
 ### Como criar um novo mundo + área especial
 

@@ -96,7 +96,7 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 - **Responsivo**: breakpoints ≤768px, ≤400px e viewport reduzida com escalonamento proporcional do logo e botões
 - **Board Layout 2.0** — novo formato `board.cells` (`[{id, x, y}]`) que permite posicionamento individual de cada célula por mundo, substituindo o mapa fixo `positions`
 - **Fallback automático** — `getPosicoes()` normaliza ambos os formatos; mundos existentes (Floresta) seguem com `board.positions` inalterados
-- **Vale dos Dinossauros recelularizado** — primeiro mundo a usar `board.cells` (20 células, 4 fileiras S-curve, +7pp X para centralizar)
+- **Vale dos Dinossauros recelularizado com Dino Runner** — primeiro mundo a usar `board.cells` (20 células, 4 fileiras S-curve, +7pp X para centralizar). A casa 10 agora abriga o minigame Dino Runner (Canvas infinite runner de 30s) em vez do portal para a Caverna dos Fósseis
 - **path.webp infrastructure** — CSS do `.path-line` preparado com `background-image`, `background-size: cover`, seletores por mundo e override de subworld
 - **ART-005** — stroke do SVG reduzido de 14px para 5px com opacity ~0.25, preparando o caminho para receber textura
 - **ART-006** — infraestrutura CSS completa para path.webp com fallback do traço SVG original
@@ -110,13 +110,14 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 - **Assets pipeline consolidada**: estrutura `src/assets/worlds/` com pastas por mundo (floresta/, dinossauros/), cada um preparado para `background.webp` e `path.webp`
 - **Decorações emoji removidas**: elementos decorativos antigos do HTML removidos (ART-004) — background ilustrado assume papel de cenário
 - **Vale dos Dinossauros** — segundo mundo completo (20 casas, portal na casa 10, eventos temáticos)
-- **Caverna dos Fósseis** — segunda Área Especial (8 casas, risco x recompensa: saída rápida sem bônus ou saída completa com +3)
+- **Dino Runner (casa 10)** — minigame infinite runner de 30s substituindo a Caverna dos Fósseis. O dino corre automaticamente e o jogador pula para desviar de obstáculos (cactos e rochas) com 3 fases de dificuldade
 - **Floresta Encantada** — primeiro mundo (20 casas, portal, Floresta Misteriosa como Área Especial)
 - **Portal genérico** — sem hardcoded de nomes de mundo; navegação via configuração
 - **Theme Engine** — tema visual aplicado por mundo (`data-world` no body, CSS temático)
 - **Retorno parametrizado** — bônus de saída lido do WorldConfig (Floresta +3, Caverna +3)
 - **Debug independente** — botões para cada Área Especial no painel de debug
 - **Arquitetura consolidada** — engine não conhece mundos específicos; tudo via WorldConfig
+- Dino Runner: minigame Canvas (Dinossauros, casa 10) substitui a Caverna dos Fósseis
 - Cache-busting atualizado para `?v=0.10.0-preview`
 
 ### v0.9.0-preview — Seletor de Mundos e Motor Modular ✅

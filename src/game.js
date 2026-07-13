@@ -1,7 +1,7 @@
 import { get, getDefault, random } from './engine/world-registry.js';
 import { loadAllWorlds } from './worlds/loader.js';
 import { florestaMisteriosa } from './worlds/floresta/config.js';
-import { cavernaDosFosseis } from './worlds/dinossauros/config.js';
+
 import { audioManager } from './audio/index.js';
 import { launchMinigameHost } from './minigames/engine/index.js';
 import { OceanMatch3 } from './minigames/ocean-match3/OceanMatch3.js';
@@ -42,7 +42,7 @@ import { APP_VERSION } from './version.js';
 
   const subworldConfigs = {
     'floresta-misteriosa': florestaMisteriosa,
-    'caverna-dos-fosseis': cavernaDosFosseis,
+
   };
 
   /* ── Subworld helpers ── */
@@ -168,6 +168,7 @@ import { APP_VERSION } from './version.js';
         case 'worldExit': result[cell] = { tipo: 'saida-mundo', valor: ev.params?.bonusCells ?? 0, descricao: d }; break;
         case 'swap-positions': result[cell] = { tipo: 'swap-positions', descricao: d }; break;
         case 'buraco-minhoca': result[cell] = { tipo: 'buraco-minhoca', descricao: d }; break;
+        case 'dino-runner': result[cell] = { tipo: 'dino-runner', descricao: d }; break;
         case 'recife-placeholder': result[cell] = { tipo: 'recife-placeholder', descricao: d }; break;
         case 'placeholder': result[cell] = { tipo: 'placeholder', descricao: d }; break;
       }
@@ -731,6 +732,31 @@ import { APP_VERSION } from './version.js';
       }
       case "placeholder": {
         addHistory(`\uD83D\uDCCC ${info.descricao}`, "info");
+        return false;
+      }
+      case "dino-runner": {
+        addHistory(`\uD83E\uDD96 ${info.descricao}`, "especial");
+        const dinoResult = await launchDinoRunner({ isBot: player.isBot });
+        const delta = dinoResult.boardDelta || 0;
+        if (delta > 0) {
+          const destino = Math.min(player.posicao + delta, getTotalCasas());
+          audioManager.play('specialAdvance');
+          if (destino > player.posicao) {
+            await animatePlayerMovement(player.posicao, destino);
+          }
+          player.posicao = destino;
+          const msg = dinoResult.venceu
+            ? `\uD83C\uDF1F ${player.name} completou o Dino Runner e avan\u00E7ou +${delta} casas!`
+            : `\uD83C\uDF1F ${player.name} alcan\u00E7ou a \u00E1rea dif\u00EDcil do Dino Runner e ganhou +${delta} casas!`;
+          addHistory(msg, "especial");
+          if (player.posicao >= getTotalCasas()) {
+            await handleVictory();
+            return false;
+          }
+        } else {
+          audioManager.play('wrongAnswer');
+          addHistory(`\uD83D\uDCA5 ${player.name} colidiu no Dino Runner! B\u00F4nus: 0`, "especial");
+        }
         return false;
       }
       case "buraco-minhoca": {
@@ -1835,17 +1861,62 @@ import { APP_VERSION } from './version.js';
             break;
           }
 
-          // ── Testes Rápidos: Caverna ──
-          case "caverna-casa4":
-          case "caverna-casa7":
-          case "caverna-casa8": {
-            const cavCell = { 'caverna-casa4': 4, 'caverna-casa7': 7, 'caverna-casa8': 8 }[action];
-            if (gameState.activeSubworldId !== 'caverna-dos-fosseis') {
-              addLog('\uD83D\uDEAA Entrando na Caverna dos F\u00f3sseis...');
-              enterSubworld('caverna-dos-fosseis');
-              setEventResult({ specialAreaChange: 'Entrou na Caverna dos F\u00f3sseis' });
+          // ── Testes Rápidos: Dino Runner ──
+          case "dino-runner-minigame": {
+            addLog('\uD83C\uDFAE Abrindo Dino Runner manualmente...');
+            gameState.isMoving = true;
+            elements.rollBtn.disabled = true;
+            const dinoResult = await launchDinoRunner();
+            gameState.isMoving = false;
+            elements.rollBtn.disabled = false;
+            if (dinoResult.venceu) {
+              const p = getCurrentPlayer();
+              const destino = Math.min(p.posicao + dinoResult.boardDelta, getTotalCasas());
+              if (destino > p.posicao) {
+                await animatePlayerMovement(p.posicao, destino);
+              }
+              p.posicao = destino;
+              addLog(`\u2705 Dino Runner vencido! Avan\u00E7ou +${dinoResult.boardDelta} \u2192 casa ${destino}`);
+            } else {
+              addLog(`\uD83D\uDCA5 Dino Runner perdido! B\u00F4nus: 0`);
             }
-            await debugMoveAndProcess(cavCell);
+            updateUI();
+            setEventResult({ eventType: 'dino-runner (debug)', posBefore: getCurrentPlayer().posicao, posAfter: getCurrentPlayer().posicao });
+            break;
+          }
+          case "dino-runner-vitoria": {
+            const pDR = getCurrentPlayer();
+            const BONUS_DR = 3;
+            const destinoDR = Math.min(pDR.posicao + BONUS_DR, getTotalCasas());
+            addLog('\u2705 Simulando vit\u00F3ria no Dino Runner...');
+            gameState.isMoving = true;
+            elements.rollBtn.disabled = true;
+            if (destinoDR > pDR.posicao) {
+              await animatePlayerMovement(pDR.posicao, destinoDR);
+            }
+            pDR.posicao = destinoDR;
+            gameState.isMoving = false;
+            elements.rollBtn.disabled = false;
+            updateUI();
+            addLog(`\u2705 B\u00F4nus aplicado: +${BONUS_DR} \u2192 casa ${destinoDR} (sem cascata)`);
+            if (pDR.posicao >= getTotalCasas()) {
+              await handleVictory();
+            }
+            setEventResult({ eventType: 'dino-runner vit\u00F3ria (simulado)', posBefore: pDR.posicao - BONUS_DR, posAfter: destinoDR, cascaded: 'N\u00E3o (debug)' });
+            break;
+          }
+          case "dino-runner-derrota": {
+            addLog('\u274C Simulando derrota no Dino Runner...');
+            addLog('\uD83E\uDEA8 Dinossauro colidiu! B\u00F4nus: 0');
+            setEventResult({ eventType: 'dino-runner derrota (simulado)', posBefore: getCurrentPlayer().posicao, posAfter: getCurrentPlayer().posicao, cascaded: 'N\u00E3o' });
+            break;
+          }
+          case "dino-runner-retornar": {
+            document.getElementById('minigame-overlay').classList.add('hidden');
+            gameState.isMoving = false;
+            elements.rollBtn.disabled = false;
+            addLog('\u21A9\uFE0F Overlay do Dino Runner fechado. Estado restaurado.');
+            setEventResult({ eventType: 'retorno dino-runner (debug)', posBefore: getCurrentPlayer().posicao, posAfter: getCurrentPlayer().posicao });
             break;
           }
 
@@ -2320,6 +2391,13 @@ import { APP_VERSION } from './version.js';
     if (val === Infinity) label.textContent = 'Tempo atual: \u221E (sem limite)';
     else if (val === null) label.textContent = 'Tempo atual: 45s (padr\u00E3o)';
     else label.textContent = `Tempo atual: ${val}s`;
+  }
+
+  async function launchDinoRunner(options = {}) {
+    return launchMinigameHost('dino-runner', {
+      isBot: options.isBot || false,
+      playerName: getCurrentPlayer().name
+    });
   }
 
   async function launchOceanMatch3(options = {}) {
