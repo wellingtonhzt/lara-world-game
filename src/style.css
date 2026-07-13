@@ -2558,8 +2558,7 @@ body:has(.main-menu:not(.hidden)) {
    Enquanto não existir, o fallback de gradiente verde mantém o funcionamento.
    Uma camada overlay semitransparente garante contraste das casas sobre a imagem. */
 
-body[data-world="floresta-encantada"] #track-container,
-#track-container.mundo-floresta {
+body[data-world="floresta-encantada"] #track-container {
   background-image:
     linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
     url("assets/worlds/floresta/background.webp"),
@@ -2575,8 +2574,7 @@ body[data-world="floresta-encantada"] #track-container,
    O asset path.webp será adicionado futuramente. Enquanto não existir,
    o <rect> fill #6d8f5e dentro do pattern serve como fallback sólido. */
 
-body[data-world="floresta-encantada"] #trail-path,
-#track-container.mundo-floresta #trail-path {
+body[data-world="floresta-encantada"] #trail-path {
   stroke: #5d7a4f;
   stroke: url(#path-texture-floresta);
   stroke-width: 5;
@@ -2584,63 +2582,10 @@ body[data-world="floresta-encantada"] #trail-path,
   filter: none;
 }
 
-/* ── Forest Houses ── */
-
-#track-container.mundo-floresta .casa[data-position="3"],
-#track-container.mundo-floresta .casa[data-position="7"] {
-  background:
-    linear-gradient(to bottom, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.08) 45%, transparent 100%),
-    linear-gradient(145deg, #f3e5f5, #dcb8e0);
-  border-color: rgba(123, 31, 162, 0.35);
-  box-shadow:
-    0 4px 0 rgba(74, 20, 140, 0.4),
-    0 8px 16px rgba(0, 0, 0, 0.06),
-    0 16px 32px rgba(0, 0, 0, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 0.55);
-}
-#track-container.mundo-floresta .casa[data-position="3"] .casa-tipo,
-#track-container.mundo-floresta .casa[data-position="7"] .casa-tipo {
-  color: #4a148c; background: rgba(255, 255, 255, 0.4);
-}
-
-#track-container.mundo-floresta .casa[data-position="5"] {
-  background:
-    linear-gradient(to bottom, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.08) 45%, transparent 100%),
-    linear-gradient(145deg, #fff8e1, #f0dcb0);
-  border-color: rgba(249, 168, 37, 0.4);
-  box-shadow:
-    0 4px 0 rgba(199, 144, 10, 0.4),
-    0 8px 16px rgba(0, 0, 0, 0.06),
-    0 16px 32px rgba(0, 0, 0, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 0.55);
-}
-#track-container.mundo-floresta .casa[data-position="5"] .casa-tipo {
-  color: #c7900a; background: rgba(255, 255, 248, 0.45);
-}
-
-#track-container.mundo-floresta .casa[data-position="8"] {
-  background:
-    linear-gradient(to bottom, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.08) 45%, transparent 100%),
-    linear-gradient(145deg, #e8f5e9, #b8dbb8);
-  border-color: rgba(27, 94, 32, 0.4);
-  box-shadow:
-    0 4px 0 rgba(13, 59, 13, 0.4),
-    0 8px 16px rgba(0, 0, 0, 0.06),
-    0 16px 32px rgba(0, 0, 0, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 0.55);
-}
-#track-container.mundo-floresta .casa[data-position="8"] .casa-tipo {
-  color: #0d3b0d; background: rgba(255, 255, 255, 0.4);
-}
-
 /* ── Path.webp ── Floresta ── */
 
 body[data-world="floresta-encantada"] .path-line {
   background-image: url("assets/worlds/floresta/path.webp");
-}
-
-#track-container.mundo-floresta .path-line {
-  background-image: none;
 }
 
 /* ── Dinosaur World Theme ── */
@@ -2652,7 +2597,7 @@ body[data-world="dinossauros"] {
     linear-gradient(160deg, #f4a460 0%, #e8d5a3 30%, #c9a96e 60%, #a0522d 100%);
 }
 
-body[data-world="dinossauros"] #track-container:not(.mundo-floresta) {
+body[data-world="dinossauros"] #track-container {
   background-image:
     linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
     url("assets/worlds/dinossauros/background.webp"),
@@ -2667,7 +2612,7 @@ body[data-world="dinossauros"] #track-container:not(.mundo-floresta) {
 
 .theme-deco { display: none; }
 
-body[data-world="dinossauros"] #track-container:not(.mundo-floresta) #trail-path {
+body[data-world="dinossauros"] #track-container #trail-path {
   stroke: #a0824a;
   stroke: url(#path-texture-dinossauros);
   stroke-width: 4;
@@ -2675,7 +2620,7 @@ body[data-world="dinossauros"] #track-container:not(.mundo-floresta) #trail-path
   filter: none;
 }
 
-body[data-world="dinossauros"] #track-container:not(.mundo-floresta) .casa {
+body[data-world="dinossauros"] #track-container .casa {
   background:
     linear-gradient(to bottom, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.08) 45%, transparent 100%),
     linear-gradient(145deg, #fff3e0, #f0c898);

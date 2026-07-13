@@ -1,5 +1,77 @@
 # Memorial Técnico
 
+## Sprint — Jogo da Memória da Floresta (v0.27.0-preview)
+
+### Objetivo
+
+Substituir completamente a Área Especial "Floresta Misteriosa" (subworld de 8 casas) por um minigame isolado de memória chamado "Jogo da Memória da Floresta". A casa 11 da Floresta Encantada agora dispara um evento `memory-forest` que abre o minigame via MinigameHost, em vez de entrar em um submundo.
+
+### Arquivos Criados
+
+| Arquivo | Descrição |
+|---------|-----------|
+| `src/minigames/memoria-floresta/MemoryGame.js` | Classe principal do minigame — tabuleiro de 12 cartas, cronômetro 30s, lógica de pares, proteção contra resolução dupla |
+| `src/minigames/memoria-floresta/memoryGame.css` | Estilos do tabuleiro, cartas, hud, responsividade e `prefers-reduced-motion` |
+| `src/minigames/memoria-floresta/index.js` | Registro via `registerMinigame()` com id `memory-forest`, config de recompensas, bot presentation, loading dinâmico de CSS |
+
+### Arquivos Alterados
+
+| Arquivo | Tipo de Alteração |
+|---------|-------------------|
+| `src/minigames/engine/loader.js` | **Modificado** — Adicionado import `'../memoria-floresta/index.js'` |
+| `src/worlds/floresta/config.js` | **Modificado** — Export `florestaMisteriosa` removido; evento casa 11 alterado de `portal` para `memory-forest`; `portals[]` esvaziado; `customEventHandlers` removido |
+| `src/game.js` | **Modificado** — Import `florestaMisteriosa` removido; `subworldConfigs['floresta-misteriosa']` removido; `case 'memory-forest'` adicionado em `eventsToSpecialCells()`; `case "memory-forest"` handler em `processSpecialCell()`; `launchMemoryForest()` wrapper; debug buttons atualizados (6 novos); `mundo-floresta` CSS cleanup removido de `resetGameState()` |
+| `src/data/questions.js` | **Modificado** — Entrada `'floresta-misteriosa'` removida de `worldCategoryMap` |
+| `src/style.css` | **Modificado** — CSS exclusivo `.mundo-floresta` (casas 3, 5, 7, 8) e seletores `#track-container.mundo-floresta` removidos |
+| `src/index.html` | **Modificado** — Debug buttons da Floresta atualizados para Jogo da Memória; cache-busting atualizado |
+| `src/version.js` | **Modificado** — `APP_VERSION` de `v0.26.0-preview` para `v0.27.0-preview` |
+
+### Arquivos Removidos (Código)
+
+- **`florestaMisteriosa`** — WorldConfig completa (135 linhas) removida de `config.js`
+- **Import `florestaMisteriosa`** — removido de `game.js`
+- **Entrada `subworldConfigs['floresta-misteriosa']`** — removida de `game.js`
+- **Mapeamento `'floresta-misteriosa'`** — removido de `questions.js`
+- **CSS `.mundo-floresta`** — ~50 linhas de estilos exclusivos do submundo removidos de `style.css`
+- **Debug `floresta-saida`** — handler e botão removidos
+
+### Decisões Técnicas
+
+| Decisão | Alternativas | Motivo |
+|---------|-------------|--------|
+| Evento `memory-forest` em vez de reusar `portal` | Adicionar condicional no `resolvePortal()` | Preservar fluxo genérico de portais; evento semanticamente claro |
+| MinigameHost em vez de subworld | Manter subworld com 8 casas | Minigame é um jogo isolado, não um tabuleiro; padrão já estabelecido (MeteoroGame, DinoRunner) |
+| CSS loading dinâmico via `_loadCSS()` | Import fixo no `index.html` | Seguir padrão do OceanMatch3; evitar poluição do HTML |
+| Bot com 65% de chance | 50% como outros minigames | Jogo da memória é mais acessível; vitória com 4/6 pares (67%) justifica chance maior |
+| `prefers-reduced-motion` | Animções sempre ativas | Acessibilidade: desativa rotação 3D das cartas para usuários com sensibilidade a movimento |
+| `subworldConfigs` vazio mantido | Remover o mapa inteiro | Preservar infraestrutura para uso futuro (Caverna dos Fósseis já foi removida anteriormente) |
+
+### Impacto Técnico
+
+- A infraestrutura genérica de subworlds (`activeSubworldId`, `subworldEntry`, `getSubworldConfig()`, `handleSubworldExit()`, cases `"portal"`, `"atalho"`, `"saida-mundo"`) foi **preservada integralmente**
+- O caso `"portal"` em `processSpecialCell()` continua funcionando para qualquer mundo que declare portais
+- O mapa `subworldConfigs` está vazio mas permanece válido
+- O novo minigame segue o padrão estabelecido por MeteoroGame e DinoRunner
+
+### Impacto Funcional
+
+- A casa 11 da Floresta Encantada agora abre o Jogo da Memória em vez do submundo
+- O jogador vê modal "Entrar" ou "Continuar" antes de iniciar
+- O minigame tem 30s, 6 pares e vitória com 4+ pares
+- Bot resolve automaticamente em ~6s com 65% de chance
+- Bônus de +3 casas (sem cascata) na vitória
+- Floresta Misteriosa (subworld) não existe mais
+
+### Testes Executados
+
+- `node --check` em todos os JS alterados
+- Busca global por `floresta-misteriosa` — apenas em docs (histórico)
+- Busca global por `mundo-floresta` — nenhum resultado
+- Busca global por `portal-floresta-misteriosa` — nenhum resultado
+- Busca por imports órfãos — nenhum resultado
+
+---
+
 ## Sprint — Hero Screen Redesign (v0.25.0-preview)
 
 ### Objetivo

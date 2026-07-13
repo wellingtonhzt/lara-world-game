@@ -83,7 +83,7 @@ export function launchMinigameHost(id, options = {}) {
       if (countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
       stopBotPresentation();
       removeBotOverlay();
-      if (gameInstance && typeof gameInstance.stop === 'function') { gameInstance.stop(); }
+      if (gameInstance && typeof gameInstance.destroy === 'function') { gameInstance.destroy(); }
       gameInstance = null;
     }
 

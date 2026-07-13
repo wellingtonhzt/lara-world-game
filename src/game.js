@@ -1,6 +1,6 @@
 import { get, getDefault, random } from './engine/world-registry.js';
 import { loadAllWorlds } from './worlds/loader.js';
-import { florestaMisteriosa } from './worlds/floresta/config.js';
+// florestaMisteriosa removido — a casa 11 agora usa o minigame memory-forest
 
 import { audioManager } from './audio/index.js';
 import { launchMinigameHost } from './minigames/engine/index.js';
@@ -41,8 +41,7 @@ import { APP_VERSION } from './version.js';
   /* ── Subworld config map ── */
 
   const subworldConfigs = {
-    'floresta-misteriosa': florestaMisteriosa,
-
+    // Nenhum subworld ativo no momento
   };
 
   /* ── Subworld helpers ── */
@@ -170,6 +169,7 @@ import { APP_VERSION } from './version.js';
         case 'buraco-minhoca': result[cell] = { tipo: 'buraco-minhoca', descricao: d }; break;
         case 'dino-runner': result[cell] = { tipo: 'dino-runner', descricao: d }; break;
         case 'recife-placeholder': result[cell] = { tipo: 'recife-placeholder', descricao: d }; break;
+        case 'memory-forest': result[cell] = { tipo: 'memory-forest', descricao: d }; break;
         case 'placeholder': result[cell] = { tipo: 'placeholder', descricao: d }; break;
       }
     }
@@ -780,6 +780,33 @@ import { APP_VERSION } from './version.js';
         }
         return false;
       }
+      case "memory-forest": {
+        addHistory(`\uD83C\uDF3F ${info.descricao}`, "especial");
+        let resultado;
+        try {
+          resultado = await launchMemoryForest({ isBot: player.isBot });
+        } catch (err) {
+          console.error('[Memory Forest Error]', err);
+          return false;
+        }
+        if (resultado.venceu) {
+          const destino = Math.min(player.posicao + resultado.boardDelta, getTotalCasas());
+          audioManager.play('specialAdvance');
+          if (destino > player.posicao) {
+            await animatePlayerMovement(player.posicao, destino);
+          }
+          player.posicao = destino;
+          addHistory(`\uD83C\uDF1F ${player.name} encontrou ${resultado.stats?.paresEncontrados ?? 0} pares e avan\u00E7ou +${resultado.boardDelta} casas!`, "especial");
+          if (player.posicao >= getTotalCasas()) {
+            await handleVictory();
+            return false;
+          }
+        } else {
+          audioManager.play('wrongAnswer');
+          addHistory(`\uD83C\uDF32 ${player.name} encontrou ${resultado.stats?.paresEncontrados ?? 0} pares. B\u00F4nus: 0`, "especial");
+        }
+        return false;
+      }
       case "vitoria": {
         await handleVictory();
         return false;
@@ -1014,7 +1041,6 @@ import { APP_VERSION } from './version.js';
 
     clearHistory();
     elements.rollBtn.disabled = false;
-    elements.trackContainer.classList.remove("mundo-floresta");
     document.getElementById("world-indicator").classList.add("hidden");
   }
 
@@ -1933,13 +1959,73 @@ import { APP_VERSION } from './version.js';
             await debugMoveAndProcess(11);
             break;
           }
-          case "floresta-saida": {
-            if (gameState.activeSubworldId !== 'floresta-misteriosa') {
-              addLog('\uD83D\uDEAA Entrando na Floresta Misteriosa...');
-              enterSubworld('floresta-misteriosa');
-              setEventResult({ specialAreaChange: 'Entrou na Floresta Misteriosa' });
+
+          // ── Testes Rápidos: Jogo da Memória ──
+          case "memoria-abrir": {
+            if (currentWorldConfig?.id !== 'floresta-encantada') { addLog('\u26A0\uFE0F Teste v\u00e1lido apenas na Floresta Encantada'); break; }
+            addLog('\uD83C\uDF3F Abrindo Jogo da Mem\u00F3ria...');
+            const memResult = await launchMemoryForest({ isBot: false });
+            const memDelta = memResult.boardDelta || 0;
+            if (memDelta > 0) {
+              const pM = getCurrentPlayer();
+              const destinoM = Math.min(pM.posicao + memDelta, getTotalCasas());
+              pM.posicao = destinoM;
+              addLog(`\u2705 Vit\u00F3ria! +${memDelta} casas \u2192 casa ${destinoM}`);
+            } else {
+              addLog(`\u274C Derrota. Pares: ${memResult.stats?.paresEncontrados ?? 0}/6`);
             }
-            await debugMoveAndProcess(8);
+            setEventResult({ eventType: 'memory-forest (debug)', posBefore: getCurrentPlayer().posicao - memDelta, posAfter: getCurrentPlayer().posicao, cascaded: 'N\u00E3o' });
+            break;
+          }
+          case "memoria-vitoria": {
+            if (currentWorldConfig?.id !== 'floresta-encantada') { addLog('\u26A0\uFE0F Teste v\u00e1lido apenas na Floresta Encantada'); break; }
+            addLog('\u2705 Simulando vit\u00F3ria no Jogo da Mem\u00F3ria...');
+            const pMV = getCurrentPlayer();
+            const destinoMV = Math.min(pMV.posicao + 3, getTotalCasas());
+            pMV.posicao = destinoMV;
+            addLog(`\u2705 B\u00F4nus aplicado: +3 \u2192 casa ${destinoMV} (sem cascata)`);
+            if (pMV.posicao >= getTotalCasas()) {
+              await handleVictory();
+            }
+            setEventResult({ eventType: 'memory-forest vit\u00F3ria (simulado)', posBefore: pMV.posicao - 3, posAfter: destinoMV, cascaded: 'N\u00E3o (debug)' });
+            break;
+          }
+          case "memoria-derrota": {
+            addLog('\u274C Simulando derrota no Jogo da Mem\u00F3ria...');
+            addLog('\uD83C\uDF32 Pares insuficientes. B\u00F4nus: 0');
+            setEventResult({ eventType: 'memory-forest derrota (simulado)', posBefore: getCurrentPlayer().posicao, posAfter: getCurrentPlayer().posicao, cascaded: 'N\u00E3o' });
+            break;
+          }
+          case "memoria-tempo": {
+            document.getElementById('minigame-overlay').classList.add('hidden');
+            gameState.isMoving = false;
+            elements.rollBtn.disabled = false;
+            addLog('\u23F1 Tempo encerrado (debug).');
+            setEventResult({ eventType: 'memory-forest tempo (debug)', posBefore: getCurrentPlayer().posicao, posAfter: getCurrentPlayer().posicao });
+            break;
+          }
+          case "memoria-retornar": {
+            document.getElementById('minigame-overlay').classList.add('hidden');
+            gameState.isMoving = false;
+            elements.rollBtn.disabled = false;
+            addLog('\u21A9\uFE0F Overlay do Jogo da Mem\u00F3ria fechado. Estado restaurado.');
+            setEventResult({ eventType: 'retorno memory-forest (debug)', posBefore: getCurrentPlayer().posicao, posAfter: getCurrentPlayer().posicao });
+            break;
+          }
+          case "memoria-bot": {
+            if (currentWorldConfig?.id !== 'floresta-encantada') { addLog('\u26A0\uFE0F Teste v\u00e1lido apenas na Floresta Encantada'); break; }
+            addLog('\uD83E\uDD16 Abrindo Jogo da Mem\u00F3ria (modo bot)...');
+            const memBotResult = await launchMemoryForest({ isBot: true });
+            const memBotDelta = memBotResult.boardDelta || 0;
+            if (memBotDelta > 0) {
+              const pMB = getCurrentPlayer();
+              const destinoMB = Math.min(pMB.posicao + memBotDelta, getTotalCasas());
+              pMB.posicao = destinoMB;
+              addLog(`\u2705 Bot venceu! +${memBotDelta} casas \u2192 casa ${destinoMB}`);
+            } else {
+              addLog(`\u274C Bot perdeu. Pares: ${memBotResult.stats?.paresEncontrados ?? 0}/6`);
+            }
+            setEventResult({ eventType: 'memory-forest bot (debug)', posBefore: getCurrentPlayer().posicao - memBotDelta, posAfter: getCurrentPlayer().posicao, cascaded: 'N\u00E3o' });
             break;
           }
 
@@ -2395,6 +2481,13 @@ import { APP_VERSION } from './version.js';
 
   async function launchDinoRunner(options = {}) {
     return launchMinigameHost('dino-runner', {
+      isBot: options.isBot || false,
+      playerName: getCurrentPlayer().name
+    });
+  }
+
+  async function launchMemoryForest(options = {}) {
+    return launchMinigameHost('memory-forest', {
       isBot: options.isBot || false,
       playerName: getCurrentPlayer().name
     });

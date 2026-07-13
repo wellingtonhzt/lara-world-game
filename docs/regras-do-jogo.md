@@ -58,33 +58,33 @@ A escolha do modo determina quais campos são exibidos no modal e como o Jogador
 6. A regra vale para modo 2 jogadores e 1 jogador vs máquina.
 7. O dado da partida não é alterado — esta regra vale apenas para o sorteio inicial.
 
-## Portal da Floresta (Casa 11)
+## Jogo da Memória da Floresta (Casa 11)
 
 - Ao cair exatamente na **casa 11**, um modal é exibido com duas opções:
-  - **"Entrar na Floresta"** — o jogador é transportado para o Mundo da Floresta
-  - **"Continuar no Jogo"** — o jogador permanece no mundo principal e o turno segue normalmente
-- A posição atual do jogador no mundo principal é salva automaticamente ao entrar na floresta
-- Cada jogador tem sua própria posição de entrada salva (objeto `{1, 2}`)
+  - **"Entrar no Jogo da Memória"** — o jogador inicia o minigame de memória
+  - **"Continuar no tabuleiro"** — o jogador permanece no mundo principal e o turno segue normalmente
+- O minigame é um overlay isolado que **não altera** o tabuleiro principal
 
-## Mundo da Floresta
+### Regras do Minigame
 
-- Mini-trilha de **8 casas** com visual temático verde escuro e decorações de floresta
-- O jogador que entrou controla o turno exclusivamente — **não há alternância** enquanto estiver na floresta
-- O sprite do outro jogador **não aparece** no tabuleiro da floresta
-- O dado funciona normalmente (1 a 6) dentro da floresta
+- **Tabuleiro**: 12 cartas formando 6 pares com emojis de floresta (🌲🦊🌳🍄🌺🦋)
+- **Duração**: 30 segundos (cronômetro visível)
+- **Mecânica**: virar no máximo 2 cartas por tentativa
+- **Par correto**: cartas permanecem abertas
+- **Par incorreto**: cartas ficam visíveis por ~700ms e depois são fechadas
+- **Cliques bloqueados**: enquanto duas cartas erradas estiverem sendo exibidas
+- **Vitória**: encontrar pelo menos 4 dos 6 pares
+- **Continue jogando**: mesmo após atingir 4 pares, o jogador continua até os 30 segundos ou todos os 6 pares
+- **Todos os 6 pares**: tabuleiro permanece concluído até o cronômetro terminar
 
-### Casas Especiais da Floresta
+### Resultado
 
-| Casa | Efeito | Descrição |
-|------|--------|-----------|
-| 3 | ❓ Desafio da Floresta | Pergunta educativa sorteada do banco (mesmo sistema do mundo principal). Acertar: avança 1 casa. Errar: volta 1 casa. Não cascateia. |
-| 5 | 🌿 Atalho de Saída | O jogador sai imediatamente da floresta e volta ao mundo principal, **avançando 2 casas** extras. O bônus não cascateia. |
-| 7 | 🦉 Enigma do Guardião | Pergunta educativa sorteada do banco. Acertar: avança 1 casa. Errar: volta 1 casa. Não cascateia. |
-| 8 | 🚪 Saída da Floresta | O jogador sai imediatamente da floresta e volta ao mundo principal, **avançando 3 casas** extras. O bônus não cascateia. |
-
-- Ao sair da floresta (casa 5 ou 8), o jogador é posicionado de volta no mundo principal a partir da posição salva, com o bônus aplicado
-- O bônus de saída **não ativa** outras casas especiais (não cascateia)
-- Se o bônus de saída levar à vitória (casa 20+), o jogo termina normalmente
+- **4, 5 ou 6 pares**: vitória e bônus de +3 casas
+- **0, 1, 2 ou 3 pares**: retorno sem bônus
+- **Sem penalidade**: o jogador permanece onde está
+- **Bônus sem cascata**: o movimento de bônus não dispara outras casas especiais
+- **Result card**: exibe vitória/derrota, pares encontrados, percentual, bônus e botão "Voltar ao tabuleiro"
+- **Retorno automático**: após ~5 segundos o jogador retorna ao tabuleiro
 
 ## Casas Especiais — Mundo Principal
 
@@ -159,7 +159,7 @@ A escolha do modo determina quais campos são exibidos no modal e como o Jogador
 - **Mundo Aleatório**: ao selecionar "🎲 Mundo Aleatório", um mundo principal é sorteado igualmente entre os 5 disponíveis (Floresta, Dinossauros, Galáxia, Oceanos, Castelo).
 - **Sorteio de perguntas**: a cada desafio, uma pergunta é sorteada do Banco de Questões (128 perguntas, 9 categorias). O sorteio é temático por mundo:
   - 🌌 **Galáxia Estelar**: prioriza Espaço, Lógica e Conhecimentos Gerais
-  - 🌳 **Floresta** (principal + misteriosa): prioriza Animais, Natureza, Cores e Formas, Lógica
+  - 🌳 **Floresta Encantada**: prioriza Animais, Natureza, Cores e Formas, Lógica
   - 🦕 **Dinossauros**: prioriza Dinossauros, Animais, Natureza, Matemática
   - 🌊 **Reino dos Oceanos**: prioriza Natureza, Animais, Matemática, Português, Espaço
   - 🐉 **Castelo dos Dragões**: prioriza Lógica, Matemática, Português, Conhecimentos Gerais

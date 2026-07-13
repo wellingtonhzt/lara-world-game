@@ -1,6 +1,17 @@
 # Roadmap Lara World
 
-### v0.26.0-preview — Versão Oficial Consolidada (Atual) ✅
+### v0.27.0-preview — Jogo da Memória da Floresta (Atual) ✅
+
+- [x] Minigame DOM: 12 cartas (6 pares), 30s, vitória com 4+ pares
+- [x] `src/minigames/memoria-floresta/MemoryGame.js` criado
+- [x] Registrado no loader.js e via registerMinigame()
+- [x] Casa 11 da Floresta usa evento `memory-forest` em vez de `portal`
+- [x] Floresta Misteriosa removida (WorldConfig, import, subworldConfigs, CSS, debug)
+- [x] Infraestrutura de subworlds preservada
+- [x] Debug panel com 6 botões: abrir, vitória, derrota, tempo, retornar, bot
+- [x] Documentação atualizada
+
+### v0.26.0-preview — Versão Oficial Consolidada ✅
 
 - [x] Versão oficial que unifica todo o trabalho desde v0.17.0-preview
 - [x] src/version.js, cache-busting e documentação sincronizados em v0.26.0-preview

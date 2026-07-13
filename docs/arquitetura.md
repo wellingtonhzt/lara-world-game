@@ -95,7 +95,7 @@ lara-world/
 │   └── worlds/          # Configurações de mundos
 │       ├── loader.js    # Carregador de mundos
 │       ├── floresta/
-│       │   └── config.js  # WorldConfig Floresta Encantada + Floresta Misteriosa
+│       │   └── config.js  # WorldConfig Floresta Encantada
 │       ├── dinossauros/
 │       │   └── config.js  # WorldConfig Vale dos Dinossauros (sem Caverna dos Fósseis — substituída pelo Dino Runner)
 │       ├── galaxia/
@@ -202,7 +202,7 @@ constantes / configuração
   ├── WORLD_CONFIGS       → { florestaEncantada, valeDinossauros, galaxiaEstelar, reinoOceanos, casteloDosDragoes } — registrados no WorldRegistry
   ├── currentWorldConfig  → WorldConfig ativo (selecionado ou default)
   ├── selectedWorldId     → string | null (ID do mundo escolhido no seletor)
-  ├── subworldConfigs     → { florestaMisteriosa } — lookup de áreas especiais
+  ├── subworldConfigs     → {} — lookup de áreas especiais (vazio no momento)
   ├── PLAYER_COUNT (2)
   ├── players[]           → array de objetos {id, name, emoji, posicao, rodadasPerdidas, element, isBot, tokenId}
   ├── gameState           → {currentPlayerIndex, jogoAtivo, jogoFinalizado, isMoving, questoesUsadas,
@@ -404,7 +404,7 @@ let isSinglePlayer = false;   // true quando modo 1 jogador está ativo
 let botTurnScheduled = false; // true quando um turno de bot já foi agendado
 ```
 
-- `activeSubworldId`: string | null — ID do submundo ativo (`"floresta-misteriosa"`) ou null se no mundo principal
+- `activeSubworldId`: string | null — ID do submundo ativo ou null se no mundo principal
 - `subworldEntry`: `{1: number | null, 2: number | null}` — posição de entrada salva por jogador na área especial
 - `entrouNoPortal`: boolean — evita reentrada no portal durante o mesmo turno
 
@@ -500,8 +500,7 @@ A partir da v0.9.0-preview, o Lara World iniciou a **Fase de Mundos** com a cria
 
 | Mundo | Arquivo | Células | Eventos | Portais | Layout |
 |-------|---------|---------|---------|---------|--------|
-| **🌳 Floresta Encantada** (principal) | `src/worlds/floresta/config.js` | 20 | 12 | 1 | `board.positions` (original) |
-| **🌲 Floresta Misteriosa** (subworld) | (mesmo arquivo) | 8 | 4 | — | `board.positions` |
+| **🌳 Floresta Encantada** (principal) | `src/worlds/floresta/config.js` | 20 | 12 | 0 | `board.positions` (original) |
 | **🦖 Vale dos Dinossauros** (principal) | `src/worlds/dinossauros/config.js` | 20 | 12 | 1 (Dino Runner) | `board.cells` (S-curve) |
 | **🌌 Galáxia Estelar** (principal) | `src/worlds/galaxia/config.js` | 20 | 9 | — | `board.layouts` (3: padrão/orbita/spiral) |
 | **🌊 Reino dos Oceanos** (principal) | `src/worlds/oceanos/config.js` | 20 | 9 | — | `board.positions` |

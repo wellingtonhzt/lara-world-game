@@ -162,7 +162,6 @@ export const categoryIndices = {};
 
 export const worldCategoryMap = {
   'floresta-encantada': ['Animais', 'Natureza', 'CoresEFormas', 'Logica'],
-  'floresta-misteriosa': ['Animais', 'Natureza', 'CoresEFormas', 'Logica'],
   'dinossauros': ['Dinossauros', 'Animais', 'Natureza', 'Matematica'],
   'galaxia-estelar': ['Espaco', 'Logica', 'ConhecimentosGerais'],
   'castelo-dragoes': ['Logica', 'Matematica', 'Portugues', 'ConhecimentosGerais'],

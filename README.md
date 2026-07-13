@@ -18,7 +18,8 @@
 
 | Versão | Data | Status |
 |--------|------|--------|
-| **v0.26.0-preview** | Jul/2026 | ✅ **Ativo** — Versão oficial consolidada |
+| **v0.27.0-preview** | Jul/2026 | ✅ **Ativo** — Jogo da Memória da Floresta |
+| v0.26.0-preview | Jul/2026 | ✅ Versão oficial consolidada |
 | v0.17.0-preview | Jul/2026 | ✅ Correção de 3 bugs (submundo, pergunta, aleatório) |
 | v0.18.0-preview | Jul/2026 | ✅ Revisão do sistema de perguntas |
 | v0.16.0-preview | Jul/2026 | ✅ Concluído |
@@ -40,7 +41,7 @@
 
 ---
 
-## ✨ Funcionalidades Atuais (v0.26.0-preview)
+## ✨ Funcionalidades Atuais (v0.27.0-preview)
 
 ### Correção de 3 Bugs
 
@@ -74,7 +75,7 @@
 - **Banco expandido**: 128 perguntas em 9 categorias (Matemática, Português, Animais, Espaço, Natureza, Dinossauros, Lógica, Cores e Formas, Conhecimentos Gerais) — módulo separado em `src/data/questions.js`
 - **Perguntas temáticas por mundo**:
   - 🌌 Galáxia Estelar → Espaço, Lógica, Conhecimentos Gerais
-  - 🌳 Floresta (principal + misteriosa) → Animais, Natureza, Cores e Formas, Lógica
+  - 🌳 Floresta Encantada → Animais, Natureza, Cores e Formas, Lógica
   - 🦕 Dinossauros → Dinossauros, Animais, Natureza, Matemática
 - **Sem repetição na mesma partida**: o algoritmo evita repetir perguntas até que todo o pool seja usado
 - **Fallback automático**: se o tema do mundo não tiver perguntas suficientes, usa o banco geral
@@ -187,8 +188,8 @@ Documentação detalhada em [docs/audio.md](docs/audio.md).
 ### Seletor de Mundos
 
 - **Tela de seleção de mundo** — após clicar em "⚡ Jogo Rápido", 6 cards de mundos são exibidos (Floresta, Dinossauros, Galáxia, Oceanos, Castelo e Aleatório)
-- **🌳 Floresta Encantada** — mundo com 20 casas, desafios educativos e portal para Área Especial (Floresta Misteriosa)
-- **🌲 Área Especial (Floresta Misteriosa)** — submundo de 8 casas acessado pelo portal da Floresta, com desafios próprios e retorno parametrizado
+- **🌳 Floresta Encantada** — mundo com 20 casas, desafios educativos e Jogo da Memória na casa 11
+- **🧠 Jogo da Memória da Floresta** — minigame DOM com 12 cartas (6 pares), 30s de tempo, vitória com 4+ pares. Acessado pela casa 11, modal "Entrar" ou "Continuar"
 - **🏃 Dino Runner (casa 10)** — minigame Canvas onde o dinossauro corre automaticamente e o jogador pula (Espaço/Up/Clique) para desviar de obstáculos. Vitória = sobreviver 30s; derrota = colisão. Substitui a antiga Caverna dos Fósseis
 - **Mundo Aleatório** — seleciona um mundo aleatório entre os disponíveis
 - **5 mundos disponíveis** — Floresta, Dinossauros, Galáxia, Oceanos e Castelo — todos com badge "✅ Disponível"
@@ -211,7 +212,7 @@ Documentação detalhada em [docs/audio.md](docs/audio.md).
 - **Configuração simplificada** — no modo 1 jogador, apenas o nome e sprite do Jogador 1 são solicitados
 - **Bot automático** — a máquina joga sozinha após 1 segundo de espera, com jogada completa (dado, movimento, casas especiais)
 - **Desafios do bot** — o bot responde desafios educativos com 60% de chance de acerto
-- **Portal do bot** — o bot decide entrar no Portal da Floresta com 50% de chance
+- **Jogo da Memória do bot** — o bot resolve automaticamente o Jogo da Memória com 65% de chance de vitória
 - **Alternância automática** — os turnos alternam normalmente entre humano e máquina
 
 ### Tela de Vitória
@@ -224,9 +225,8 @@ Documentação detalhada em [docs/audio.md](docs/audio.md).
 ### Sistema de Mundos e Minigames
 
 - **Cinco mundos jogáveis** — 🌳 Floresta Encantada, 🦖 Vale dos Dinossauros, 🌌 Galáxia Estelar, 🌊 Reino dos Oceanos e 🐉 Castelo dos Dragões, cada um com 20 casas e eventos próprios
-- **Áreas Especiais** — a Floresta Encantada possui um submundo:
-  - 🌲 **Floresta Misteriosa** — 8 casas, mini-trilha com visual temático, acessada via portal na casa 11
-- **Minigames** — eventos especiais que lançam jogos Canvas internos:
+- **Minigames** — eventos especiais que lançam jogos internos:
+  - 🧠 **Jogo da Memória da Floresta** (Floresta, casa 11) — encontre 4+ pares de cartas em 30s
   - 🌌 **MeteoroGame** (Galáxia, casa 15) — desvie de meteoros por 60s com nave 4-dir
   - 🏃 **Dino Runner** (Dinossauros, casa 10) — corra com o dino por 30s pulando obstáculos
 - **Portal** — casa específica que abre modal perguntando se deseja entrar na Área Especial
@@ -403,7 +403,7 @@ src/assets/
   - Casa 7 → Desafio educativo
   - Casa 8 → Jogue novamente
   - Casa 10 → Perde uma rodada
-  - **Casa 11 → 🌿 Portal da Floresta**
+  - **Casa 11 → 🧠 Jogo da Memória da Floresta**
   - Casa 12 → Desafio educativo
   - Casa 15 → Volte ao início
   - Casa 16 → Desafio educativo
@@ -447,7 +447,7 @@ src/assets/
 3. Após sua jogada, o turno alterna para a **Máquina** (🤖), que joga automaticamente após 1 segundo.
 4. A máquina realiza a jogada completa: dado, movimento, casas especiais, desafios e portal.
 5. **Desafios da máquina**: o bot responde com 60% de chance de acerto — sem modal, resolvido em 600ms.
-6. **Portal da máquina**: o bot decide entrar no Portal da Floresta com 50% de chance — decidido em 500ms.
+6. **Jogo da Memória da máquina**: o bot resolve automaticamente em ~6s com 65% de chance de vitória.
 7. Os turnos alternam entre você e a máquina até alguém atingir a **casa 20**.
 8. Para uma nova partida, clique em **"Reiniciar"** — o modal de configuração reaparece.
 
@@ -526,7 +526,8 @@ docker compose down
 
 ## 🗺️ Roadmap
 
-- **v0.26.0-preview** — ✅ **Ativo** — Versão oficial consolidada
+- **v0.27.0-preview** — ✅ **Ativo** — Jogo da Memória da Floresta
+- **v0.26.0-preview** — ✅ Versão oficial consolidada
 - **v0.16.0-preview** — ✅ Concluído — Visual da Galáxia Estelar (ART-011) + Sistema de Variantes de Tabuleiro (Layouts)
 - **v0.15.0-preview** — ✅ Concluído — Troca Quântica (GAL-002): Casa 7 swap-positions + result card do minigame
 - **v0.14.0-preview** — ✅ Concluído — Galáxia Estelar + MeteoroGame (GAL-001)

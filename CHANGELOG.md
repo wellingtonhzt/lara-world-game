@@ -2,7 +2,24 @@
 
 ## [Unreleased]
 
-- **Dino Runner (DINO-001)**: novo minigame Canvas no Vale dos Dinossauros — substitui o subworld Caverna dos Fósseis (8-cell board) por um infinite runner de 30s com 3 fases de dificuldade. Casa 10 agora dispara o minigame. Botões de debug substituídos. Caverna dos Fósseis removida da base de código.
+## [0.27.0-preview] - 2026-07-13
+
+### Adicionado
+- **Jogo da Memória da Floresta (MEMORY-FOREST)**: novo minigame DOM na casa 11 da Floresta Encantada — 12 cartas (6 pares com emojis de floresta), cronômetro de 30s, vitória com 4+ pares. Modal "Entrar" ou "Continuar" antes de iniciar. Bot com 65% de chance de vitória. Result card com estatísticas e retorno automático em 5s.
+- **Arquivos criados**: `src/minigames/memoria-floresta/MemoryGame.js`, `memoryGame.css`, `index.js`
+- **Debug expandido**: 6 botões novos — abrir memória, simular vitória, simular derrota, encerrar tempo, retornar, testar bot
+
+### Removido
+- **Floresta Misteriosa**: WorldConfig completa (`florestaMisteriosa`) removida de `src/worlds/floresta/config.js`
+- **Subworld removido**: import `florestaMisteriosa` em `game.js` removido; entrada `subworldConfigs['floresta-misteriosa']` esvaziada
+- **CSS exclusivo removido**: estilos `.mundo-floresta` (casas 3, 5, 7, 8 do submundo) e seletor `#track-container.mundo-floresta` removidos de `style.css`
+- **Mapeamento de perguntas**: `'floresta-misteriosa'` removido de `worldCategoryMap` em `questions.js`
+- **Debug antigo**: botões `floresta-saida` e handler `enterSubworld('floresta-misteriosa')` removidos
+
+### Alterado
+- **Casa 11 da Floresta**: evento alterado de `portal` (genérico) para `memory-forest` (minigame específico)
+- **Handler `processSpecialCell()`**: novo case `"memory-forest"` com modal, lançamento do minigame e processamento de bônus
+- **Infraestrutura de subworlds preservada**: `subworldConfigs`, `getSubworldConfig()`, `handleSubworldExit()`, cases `"portal"`, `"atalho"`, `"saida-mundo"` mantidos intactos
 
 ## [0.26.0-preview] - 2026-07-12
 

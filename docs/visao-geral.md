@@ -18,7 +18,13 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 
 ## Principais Funcionalidades
 
-### v0.26.0-preview (Atual) — Versão Oficial Consolidada ✅
+### v0.27.0-preview (Atual) — Jogo da Memória da Floresta ✅
+
+- **Jogo da Memória da Floresta**: minigame DOM na casa 11 da Floresta Encantada — 12 cartas (6 pares com emojis de floresta), cronômetro de 30s, vitória com 4+ pares
+- **Floresta Misteriosa removida**: WorldConfig, subworld, CSS e debug da antiga Área Especial removidos
+- **Infraestrutura de subworlds preservada**: sistema genérico mantido para uso futuro
+
+### v0.26.0-preview — Versão Oficial Consolidada
 
 - **Versão oficial que incorpora todo o trabalho desde v0.17.0-preview**, unificando as releases documentais v0.18.0-preview a v0.25.0-preview
 - **Quinto mundo — Castelo dos Dragões**: tema medieval infantil, layout ascendente, identidade visual roxa/lilás
