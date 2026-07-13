@@ -1,39 +1,68 @@
+/* ═══════════════════════════════════════
+   Jogo da Memória da Floresta — Layout
+   ═══════════════════════════════════════ */
+
+.memory-game-root {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* ── HUD ── */
+
 .mem-hud {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 12px;
-  margin-bottom: 10px;
-  font-size: 1rem;
+  width: 100%;
+  max-width: 420px;
+  padding: 6px 12px;
+  margin-bottom: 6px;
+  font-size: 0.95rem;
   font-weight: 700;
   color: #1b5e20;
   background: rgba(255, 255, 255, 0.85);
   border-radius: 10px;
   user-select: none;
   -webkit-user-select: none;
+  flex-shrink: 0;
+  box-sizing: border-box;
 }
 
 .mem-timer {
   min-width: 70px;
 }
 
+/* ── Board ── */
+
 .mem-board {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(3, 1fr);
   gap: 8px;
-  max-width: 420px;
+  width: min(420px, 88vw);
+  max-height: calc(100dvh - 140px);
   margin: 0 auto;
   perspective: 800px;
   touch-action: manipulation;
+  flex: 1;
+  min-height: 0;
 }
 
+/* ── Carta ── */
+
 .mem-card {
-  aspect-ratio: 3 / 4;
   cursor: pointer;
   perspective: 600px;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
   -webkit-user-select: none;
+  min-width: 0;
+  min-height: 0;
 }
 
 .mem-card-inner {
@@ -60,8 +89,12 @@
   border-radius: 10px;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  font-size: clamp(1.5rem, 6vw, 2.4rem);
+  font-size: clamp(1.4rem, 5vw, 2.2rem);
   border: 2px solid rgba(0, 0, 0, 0.1);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  overflow: hidden;
 }
 
 .mem-card-front {
@@ -86,30 +119,115 @@
   outline-offset: 2px;
 }
 
+/* ── Reduced motion ── */
+
 @media (prefers-reduced-motion: reduce) {
   .mem-card-inner {
     transition: none;
   }
 }
 
-@media (max-width: 480px) {
+/* ═══════════════════════════════════════
+   Desktop (>= 769px)
+   Board dimensionado pela ALTURA disponível
+   ═══════════════════════════════════════ */
+
+@media (min-width: 769px) {
   .mem-board {
-    gap: 6px;
-    max-width: 92vw;
+    aspect-ratio: 4 / 3;
   }
+
+  .mem-card {
+    aspect-ratio: 3 / 4;
+  }
+}
+
+/* ═══════════════════════════════════════
+   Tablet (481–768px)
+   ═══════════════════════════════════════ */
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .memory-game-root {
+    padding: 0 4px;
+  }
+
+  .mem-hud {
+    max-width: 380px;
+    padding: 5px 10px;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+  }
+
+  .mem-board {
+    width: min(380px, 88vw);
+    gap: 7px;
+    aspect-ratio: 4 / 3;
+  }
+
+  .mem-card {
+    aspect-ratio: 3 / 4;
+  }
+
+  .mem-card-front,
+  .mem-card-back {
+    font-size: clamp(1.3rem, 5.5vw, 2rem);
+    border-radius: 9px;
+  }
+
+  .mem-card-inner {
+    border-radius: 9px;
+  }
+}
+
+/* ═══════════════════════════════════════
+   Mobile (<= 480px)
+   Container é flex:1 com 100dvh
+   ═══════════════════════════════════════ */
+
+@media (max-width: 480px) {
+  .memory-game-root {
+    padding: 0 2px;
+  }
+
+  .mem-hud {
+    padding: 5px 8px;
+    margin-bottom: 4px;
+    font-size: 0.85rem;
+    border-radius: 8px;
+  }
+
+  .mem-board {
+    width: min(100%, 92vw);
+    gap: 6px;
+  }
+
   .mem-card-front,
   .mem-card-back {
     font-size: clamp(1.2rem, 8vw, 2rem);
     border-radius: 8px;
   }
+
   .mem-card-inner {
     border-radius: 8px;
   }
 }
 
-@media (min-width: 481px) and (max-width: 768px) {
+/* ═══════════════════════════════════════
+   Mobile estreito (<= 360px)
+   ═══════════════════════════════════════ */
+
+@media (max-width: 360px) {
+  .mem-hud {
+    padding: 4px 6px;
+    font-size: 0.8rem;
+  }
+
   .mem-board {
-    gap: 8px;
-    max-width: 380px;
+    gap: 5px;
+  }
+
+  .mem-card-front,
+  .mem-card-back {
+    font-size: clamp(1rem, 7vw, 1.6rem);
   }
 }
