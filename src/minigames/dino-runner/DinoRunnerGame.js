@@ -1,6 +1,8 @@
 const BONUS_THRESHOLD = 20;
 const RUN_FRAME_DURATION_MS = 110;
 const RUN_FRAME_COUNT = 4;
+const MIN_SAFE_OBSTACLE_GAP = 180;
+const CRITICAL_ZONE_DISTANCE = 160;
 
 export class DinoRunnerGame {
   constructor(container, onComplete) {
@@ -203,18 +205,33 @@ export class DinoRunnerGame {
 
   _getSpawnInterval() {
     if (this.elapsed < 10) return 1.4;
-    if (this.elapsed < 20) return 1.0;
-    return 0.7;
+    if (this.elapsed < 20) return 1.0 + Math.random() * 0.4;
+    if (this.elapsed < 24) return 0.85 + Math.random() * 0.45;
+    return 0.9 + Math.random() * 0.4;
   }
 
   _getSpeedMultiplier() {
     if (this.elapsed < 10) return 1.0;
-    if (this.elapsed < 20) return 1.25;
-    return 1.5;
+    if (this.elapsed < 20) return 1.2;
+    if (this.elapsed < 24) return 1.4;
+    return 1.4;
   }
 
   _spawnObstacle() {
-    const isCactus = Math.random() < 0.6;
+    if (this.obstacles.length > 0) {
+      const last = this.obstacles[this.obstacles.length - 1];
+      const gap = this.width - (last.x + last.w);
+      if (gap < MIN_SAFE_OBSTACLE_GAP) return;
+    }
+
+    for (const o of this.obstacles) {
+      const dist = o.x - this.dino.x;
+      if (dist > 0 && dist < CRITICAL_ZONE_DISTANCE) return;
+    }
+
+    const lastType = this.obstacles.length > 0
+      ? this.obstacles[this.obstacles.length - 1].type : null;
+    const isCactus = lastType === 'rock' ? true : Math.random() < 0.6;
     const w = isCactus
       ? Math.max(14, this.width * 0.028)
       : Math.max(18, this.width * 0.035);
