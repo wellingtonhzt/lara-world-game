@@ -238,17 +238,26 @@ O jogador joga normalmente.
 
 ### Fluxo da máquina (bot)
 
-O bot não interage com a área de jogo. Em vez disso:
+O bot não interage com a área de jogo. Durante a vez da máquina:
 
-1. Barra "🤖 Máquina está jogando..." com progresso visual é exibida
-2. Botão "⏭ Pular" permite ao jogador humano acelerar o processo
-3. Timer de auto-resolve é iniciado (padrão: 6 segundos)
-4. Ao fim do timer (ou clique em Pular):
+1. **Modo espectador ativado**: o host adiciona uma camada semi-transparente (`.minigame-bot-overlay`) sobre a área do minigame, bloqueando toda interação via CSS (`pointer-events` na área jogável, exceto no botão "Pular")
+2. **Bloqueio interno**: cada minigame possui um flag `interactionLocked` que impede:
+   - Cliques em peças (Match-3)
+   - Teclado, touch e mouse (MeteoroGame)
+   - Botões de debug internos
+3. **Apresentação visual opcional**: o minigame pode definir um contrato `botPresentation` com métodos `start(instance)` e `stop(instance)`. Quando fornecido, o host chama `start` ao ativar o bot e `stop` ao finalizar
+   - Ocean Match-3: destaca 3 peças aleatórias a cada 800ms com pulsação roxa (`bot-glow`)
+   - MeteoroGame: movimenta a nave automaticamente em direções aleatórias
+4. Barra "🤖 Máquina está jogando..." com botão "⏭ Pular" permanece visível e funcional
+5. Timer de auto-resolve é iniciado (padrão: 6 segundos)
+6. Ao fim do timer (ou clique em Pular):
+   - A apresentação visual é interrompida
+   - O overlay de bloqueio é removido
    - O jogo real é interrompido (se iniciado)
    - Um resultado é simulado com base na dificuldade do bot
-   - A tela de resultado é exibida (mesmo fluxo do humano, sem delay de 1s)
-5. O resultado simulado deve ser coerente com a `botSuccessRate` configurada
-6. O tempo máximo de resolução não deve bloquear a partida
+   - A tela de resultado é exibida (mesmo fluxo do humano, sem delay)
+7. Todo ciclo de vida é limpo: intervals, timeouts, classes CSS e listeners são removidos ao finalizar, pular ou destruir
+8. O resultado simulado deve ser coerente com a `botSuccessRate` configurada
 
 ### Taxa de sucesso
 
@@ -262,17 +271,18 @@ A chance de sucesso do bot **não é fixa**. Cada minigame define sua própria t
 | Auto-resolve | 6 segundos |
 | Skip | Botão "⏭ Pular" resolve imediatamente |
 
-### Ocean Match-3 (especificado, não implementado)
+### Ocean Match-3 (implementado)
 
 | Propriedade | Valor |
 |-------------|-------|
 | `botSuccessRate` | 0.60 |
 | Auto-resolve | 6 segundos |
 | Skip | Sim, mesmo padrão |
+| Preview visual | Destaque de 3 peças a cada 800ms |
 
 A taxa de 0.60 para o Ocean Match-3 segue a filosofia infantil não punitiva e mantém coerência com a taxa de acerto dos desafios educativos (60%).
 
-> ✅ O Ocean Match-3 **está registrado** no MinigameRegistry. A implementação atual exibe uma grade 6×6 com 5 tipos de peça, HUD provisório e botões de simulação de vitória/falha. A mecânica real (troca, combinações, cascatas) será implementada em sprints futuras.
+> ✅ O Ocean Match-3 **está registrado** no MinigameRegistry. A implementação atual inclui grade 6×6, HUD, mecânica real de troca/combinações/cascatas, modo espectador para o bot com bloqueio de interação e preview visual.
 
 ## 9. Restrições
 
@@ -675,14 +685,18 @@ Nada mais deve ser exibido durante o jogo. Sem botões extras, sem pontuação c
 
 Quando a máquina cair na casa que dispara o Ocean Match-3:
 
-1. Exibir barra "🤖 Máquina está jogando..." com botão "⏭ Pular"
-2. Timer de 6 segundos é iniciado
-3. Tabuleiro Match-3 **não é renderizado** (apenas a barra de status)
-4. Ao fim do timer (ou clique em Pular):
+1. Minigame é renderizado normalmente (grade visível)
+2. Host ativa o modo espectador:
+   - Overlay `.minigame-bot-overlay` bloqueia interação
+   - `interactionLocked = true` no OceanMatch3 (defesa interna)
+3. `startBotPreview()` é chamado: destaca 3 peças aleatórias a cada 800ms com pulsação roxa (`bot-glow`)
+4. Barra "🤖 Máquina está jogando..." com botão "⏭ Pular" visível
+5. Timer de 6 segundos é iniciado
+6. Ao fim do timer (ou clique em Pular):
+   - `stopBotPreview()` limpa interval e classes
    - Resultado é simulado com `botSuccessRate: 0.60`
-   - Se vitória: 5 combinações simuladas
-   - Se derrota: 2-3 combinações simuladas
-   - Tela de resultado é exibida (1 segundo, sem countdown)
+   - Overlay e bloqueio são removidos
+   - Tela de resultado é exibida
    - Retorno ao tabuleiro
 
 ### Resultado simulado
@@ -741,7 +755,7 @@ A infraestrutura de áudio já existe (`src/audio/`, `AudioManager`, catálogo e
 | DMG-03 | HUD mínima (título, cronômetro, progresso, área de jogo) | Evita poluição visual; foco na ação |
 | DMG-04 | Result card com glass blur sobre frozen scene | MeteoroGame validou; jogador vê o estado final do jogo |
 | DMG-05 | Retorno com countdown configurável (3-5s) + botão "Voltar agora" | MeteoroGame validou; jogador controla o ritmo; cada minigame define seu intervalo |
-| DMG-06 | Bot com barra + skip + auto-resolve 6s | MeteoroGame validou; não bloqueia a partida |
+| DMG-06 | Bot com modo espectador: overlay de bloqueio, interactionLock interno, preview visual opcional, barra + skip + auto-resolve 6s | MeteoroGame e Ocean Match-3 implementados; bloqueio duplo (CSS + JS) garante que humano não interage durante turno do bot |
 | DMG-07 | `boardDelta` na derrota = 0 (sem penalidade) | Consistente com o código atual do MeteoroGame; evita frustração infantil |
 | DMG-08 | Sem peças especiais, bombas, boosters na primeira versão | Mantém o jogo simples e alinhado ao público 3-10 anos |
 | DMG-09 | Cascata com limite de 5 ciclos por jogada | Mecânica central do Match-3; limite previne loops infinitos |

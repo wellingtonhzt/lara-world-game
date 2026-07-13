@@ -2164,6 +2164,8 @@ import { APP_VERSION } from './version.js';
             const inst2 = OceanMatch3.currentInstance;
             if (!inst2 || !inst2._started) {
               addLog('\uD83D\uDD04 Ocean Match-3 n\u00E3o est\u00E1 ativo.');
+            } else if (inst2.interactionLocked) {
+              addLog('\u26A0\uFE0F A m\u00E1quina est\u00E1 jogando este minigame. Aguarde.');
             } else {
               inst2.regenerateGrid();
               addLog('\uD83D\uDD04 Grade do Ocean Match-3 regenerada.');
@@ -2174,6 +2176,8 @@ import { APP_VERSION } from './version.js';
             const inst3 = OceanMatch3.currentInstance;
             if (!inst3 || !inst3._started) {
               addLog('\uD83D\uDD0D Ocean Match-3 n\u00E3o est\u00E1 ativo.');
+            } else if (inst3.interactionLocked) {
+              addLog('\u26A0\uFE0F A m\u00E1quina est\u00E1 jogando este minigame. Aguarde.');
             } else {
               const matches = inst3._findMatches(inst3.grid);
               if (matches.hasMatches) {
@@ -2192,6 +2196,8 @@ import { APP_VERSION } from './version.js';
             const inst4 = OceanMatch3.currentInstance;
             if (!inst4 || !inst4._started) {
               addLog('\uD83E\uDDEA Ocean Match-3 n\u00E3o est\u00E1 ativo.');
+            } else if (inst4.interactionLocked) {
+              addLog('\u26A0\uFE0F A m\u00E1quina est\u00E1 jogando este minigame. Aguarde.');
             } else {
               inst4._loadTestGrid();
               addLog('\uD83E\uDDEA Grade de teste carregada (v\u00E1rias combina\u00E7\u00F5es prontas).');
@@ -2202,6 +2208,8 @@ import { APP_VERSION } from './version.js';
             const inst5 = OceanMatch3.currentInstance;
             if (!inst5 || !inst5._started) {
               addLog('\u2B1C Ocean Match-3 n\u00E3o est\u00E1 ativo.');
+            } else if (inst5.interactionLocked) {
+              addLog('\u26A0\uFE0F A m\u00E1quina est\u00E1 jogando este minigame. Aguarde.');
             } else {
               inst5._loadEmptyCellsTestGrid();
               addLog('\u2B1C Grade com c\u00E9lulas vazias carregada.');

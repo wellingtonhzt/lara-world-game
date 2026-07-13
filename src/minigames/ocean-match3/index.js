@@ -35,6 +35,18 @@ const OCEAN_MATCH3_CONFIG = Object.freeze({
     });
     game.start();
     return game;
+  },
+  botPresentation: {
+    start(instance) {
+      if (instance && typeof instance.startBotPreview === 'function') {
+        instance.startBotPreview();
+      }
+    },
+    stop(instance) {
+      if (instance && typeof instance.stopBotPreview === 'function') {
+        instance.stopBotPreview();
+      }
+    }
   }
 });
 

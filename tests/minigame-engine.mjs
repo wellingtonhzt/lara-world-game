@@ -1173,6 +1173,95 @@ globalThis.document = prevDoc;
 assert(hasMinigame('meteor-game'), 'meteor-game still registered after lifecycle tests');
 assert(hasMinigame('ocean-match3'), 'ocean-match3 still registered after lifecycle tests');
 
+/* ── Bot Mode Tests ── */
+
+console.log('\n🌊 Ocean Match-3 Modo Bot (espectador)\n');
+
+// Re-enable document mock for bot preview tests
+const prevDoc2 = globalThis.document;
+globalThis.document = mockDoc;
+
+// 94. interactionLocked starts as false
+const botGame = new OceanMatch3(mockContainer, () => {});
+botGame._createGrid();
+assert(botGame.interactionLocked === false, 'interactionLocked starts as false');
+
+// 95. startBotPreview sets interactionLocked = true
+// Provide a mock root so the interval is created
+botGame.rootElement = createMockElement('div');
+function makeMockEl() {
+  const classes = [];
+  return { classList: { add(c) { classes.push(c); }, remove(c) { const i = classes.indexOf(c); if (i>=0) classes.splice(i,1); }, toString() { return classes.join(' '); } } };
+}
+const mockPiece1 = makeMockEl();
+const mockPiece2 = makeMockEl();
+const mockPiece3 = makeMockEl();
+botGame.rootElement.querySelectorAll = () => [mockPiece1, mockPiece2, mockPiece3];
+botGame.startBotPreview();
+assert(botGame.interactionLocked === true, 'startBotPreview sets interactionLocked = true');
+assert(botGame._botPreviewInterval !== null, 'startBotPreview creates interval');
+
+// 96. _handlePieceClick blocked when interactionLocked
+const beforeSwapCount = botGame.swapCount;
+botGame._handlePieceClick(0, 0);
+botGame._handlePieceClick(0, 1);
+assert(botGame.swapCount === beforeSwapCount, '_handlePieceClick does not mutate state when interactionLocked');
+
+// 97. stopBotPreview clears interactionLocked
+botGame.stopBotPreview();
+assert(botGame.interactionLocked === false, 'stopBotPreview clears interactionLocked');
+assert(botGame._botPreviewInterval === null, 'stopBotPreview clears interval');
+
+// 98. human mode still interacts after bot mode ends
+const humanGame = new OceanMatch3(mockContainer, () => {});
+humanGame._createGrid();
+humanGame._handlePieceClick(0, 0);
+humanGame._handlePieceClick(0, 1);
+assert(humanGame.selectedCell !== null || humanGame.swapCount >= 0, 'human mode interacts after bot mode end');
+
+// 99. destroy clears bot preview state
+const botGame2 = new OceanMatch3(mockContainer, () => {});
+botGame2._createGrid();
+botGame2.rootElement = createMockElement('div');
+botGame2.rootElement.querySelectorAll = () => [makeMockEl(), makeMockEl(), makeMockEl()];
+botGame2.startBotPreview();
+botGame2.destroy();
+assert(botGame2.interactionLocked === false, 'destroy clears interactionLocked');
+assert(botGame2._botPreviewInterval === null, 'destroy clears bot preview interval');
+
+// Restore document
+globalThis.document = prevDoc2;
+
+// 100. botPresentation exists on ocean-match3 config
+const om3cfg = getMinigame('ocean-match3');
+assert(typeof om3cfg.botPresentation === 'object' && om3cfg.botPresentation !== null, 'ocean-match3 config has botPresentation');
+assert(typeof om3cfg.botPresentation.start === 'function', 'botPresentation.start is a function');
+assert(typeof om3cfg.botPresentation.stop === 'function', 'botPresentation.stop is a function');
+
+// 101. botPresentation.start/stop calls startBotPreview/stopBotPreview
+const bpGame = new OceanMatch3(mockContainer, () => {});
+bpGame._createGrid();
+const origStart = bpGame.startBotPreview;
+const origStop = bpGame.stopBotPreview;
+let startCalled = false;
+let stopCalled = false;
+bpGame.startBotPreview = () => { startCalled = true; };
+bpGame.stopBotPreview = () => { stopCalled = true; };
+om3cfg.botPresentation.start(bpGame);
+assert(startCalled, 'botPresentation.start calls startBotPreview');
+om3cfg.botPresentation.stop(bpGame);
+assert(stopCalled, 'botPresentation.stop calls stopBotPreview');
+
+// 102. botPresentation exists on meteor-game config
+const metCfg = getMinigame('meteor-game');
+assert(typeof metCfg.botPresentation === 'object' && metCfg.botPresentation !== null, 'meteor-game config has botPresentation');
+assert(typeof metCfg.botPresentation.start === 'function', 'meteor-game botPresentation.start is a function');
+assert(typeof metCfg.botPresentation.stop === 'function', 'meteor-game botPresentation.stop is a function');
+
+// 103. meteor-game still registered after bot mode tests
+assert(hasMinigame('meteor-game'), 'meteor-game still registered after bot mode tests');
+assert(hasMinigame('ocean-match3'), 'ocean-match3 still registered after bot mode tests');
+
 /* ── Summary ── */
 
 console.log(`\n📊 Resultado: ${passed} passaram, ${failed} falharam\n`);

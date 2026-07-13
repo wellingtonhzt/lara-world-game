@@ -26,6 +26,8 @@ export class MeteoroGame {
     this.isMobile = window.innerWidth < 768;
     this.debugMode = /[?&]debug=1/.test(location.search);
     this.shipBottomMargin = this.isMobile ? 56 : 24;
+    this.interactionLocked = false;
+    this._botPreviewTimer = null;
 
     this.invulnerableUntil = 0;
     this.flashTimer = 0;
@@ -76,7 +78,48 @@ export class MeteoroGame {
     this._loop(performance.now());
   }
 
+  /* ── Bot preview (visual only, no model changes) ── */
+
+  startBotPreview() {
+    this.interactionLocked = true;
+    if (!this.canvas || !this.ctx) return;
+    const w = this.width;
+    const h = this.height;
+    const dirs = [
+      { x: 1, y: 0 }, { x: -1, y: 0 }, { x: 0, y: -1 }, { x: 0, y: 1 },
+      { x: 0.7, y: -0.7 }, { x: -0.7, y: -0.7 }, { x: 0.7, y: 0.7 }, { x: -0.7, y: 0.7 },
+    ];
+    let dIdx = 0;
+    let step = 0;
+    const stepLimit = 30;
+    const speed = w * 0.018;
+
+    this._botPreviewTimer = setInterval(() => {
+      if (!this.canvas || !this.ctx || !this.interactionLocked) return;
+      const d = dirs[dIdx];
+      this.ship.x += d.x * speed;
+      this.ship.y += d.y * speed;
+      const pad = Math.max(2, this.ship.width * 0.08);
+      this.ship.x = Math.max(pad, Math.min(w - this.ship.width - pad, this.ship.x));
+      this.ship.y = Math.max(pad, Math.min(h - this.ship.height - pad, this.ship.y));
+      step++;
+      if (step >= stepLimit) {
+        step = 0;
+        dIdx = (dIdx + 1) % dirs.length;
+      }
+    }, 50);
+  }
+
+  stopBotPreview() {
+    this.interactionLocked = false;
+    if (this._botPreviewTimer) {
+      clearInterval(this._botPreviewTimer);
+      this._botPreviewTimer = null;
+    }
+  }
+
   stop() {
+    this.stopBotPreview();
     this.state = 'IDLE';
     this.running = false;
     if (this.rafId) {
@@ -176,6 +219,7 @@ export class MeteoroGame {
   }
 
   _onKeyDown(e) {
+    if (this.interactionLocked) return;
     switch (e.key) {
       case 'ArrowLeft': case 'a': this.keys.left = true; e.preventDefault(); break;
       case 'ArrowRight': case 'd': this.keys.right = true; e.preventDefault(); break;
@@ -213,6 +257,7 @@ export class MeteoroGame {
   /* ── Mobile: relative drag (touch anywhere on canvas) ── */
 
   _onTouchStart(e) {
+    if (this.interactionLocked) return;
     if (!this.canvas || this.state !== 'PLAYING') return;
     if (!this._isTouchOnCanvas(e)) return;
     e.preventDefault();
@@ -223,6 +268,7 @@ export class MeteoroGame {
   }
 
   _onTouchMove(e) {
+    if (this.interactionLocked) return;
     if (!this.canvas || !this.touchActive || this.state !== 'PLAYING') return;
     if (!this._isTouchOnCanvas(e)) { this._cancelTouch(); return; }
     e.preventDefault();
@@ -239,6 +285,7 @@ export class MeteoroGame {
   }
 
   _onTouchEnd(e) {
+    if (this.interactionLocked) return;
     if (!this.touchActive) return;
     if (!this._isTouchOnCanvas(e)) return;
     e.preventDefault();
@@ -254,6 +301,7 @@ export class MeteoroGame {
   /* ── Desktop pointer: quadrant-based + canvas guard ── */
 
   _onPointerDown(e) {
+    if (this.interactionLocked) return;
     if (!this.canvas || e.pointerType === 'touch') return;
     if (!this._isTouchOnCanvas(e)) return;
     e.preventDefault();
@@ -265,6 +313,7 @@ export class MeteoroGame {
   }
 
   _onPointerMove(e) {
+    if (this.interactionLocked) return;
     if (!this.canvas || !this.touchActive || e.pointerType === 'touch') return;
     if (!this._isTouchOnCanvas(e)) { this._cancelPointer(); return; }
     e.preventDefault();
@@ -288,6 +337,7 @@ export class MeteoroGame {
 
   _update(dt) {
     if (this.state !== 'PLAYING') return;
+    if (this.interactionLocked) return;
 
     if (this.hitPauseTimer > 0) {
       this.hitPauseTimer -= dt * 1000;

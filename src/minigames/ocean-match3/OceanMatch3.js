@@ -42,6 +42,8 @@ export class OceanMatch3 {
     this._timerInterval = null;
     this._boundGridClick = null;
     this.rootElement = null;
+    this.interactionLocked = false;
+    this._botPreviewInterval = null;
   }
 
   start() {
@@ -278,7 +280,7 @@ export class OceanMatch3 {
   /* ── Click handling ── */
 
   _handlePieceClick(row, col) {
-    if (this.isResolving || this._completed) return;
+    if (this.interactionLocked || this.isResolving || this._completed) return;
     if (this.grid[row][col] === OceanMatch3.EMPTY_CELL) return;
     if (this.selectedCell === null) {
       this.selectedCell = { row, col };
@@ -711,6 +713,7 @@ export class OceanMatch3 {
   }
 
   _handleAction(action) {
+    if (this.interactionLocked) return;
     if (action === 'vitoria') {
       this._complete({
         venceu: true,
@@ -730,6 +733,38 @@ export class OceanMatch3 {
     }
   }
 
+  /* ── Bot preview (visual only, no model changes) ── */
+
+  startBotPreview() {
+    this.interactionLocked = true;
+    if (typeof document === 'undefined') return;
+    const root = this.rootElement || this.container;
+    if (!root) return;
+    const pieces = [...(root.querySelectorAll('.ocean-match3-piece') || [])];
+    if (pieces.length === 0) return;
+    this._botPreviewInterval = setInterval(() => {
+      if (!this.interactionLocked) return;
+      const shuffled = [...pieces].sort(() => Math.random() - 0.5);
+      const chosen = shuffled.slice(0, 3).filter(Boolean);
+      chosen.forEach(p => p.classList.add('bot-glow'));
+      setTimeout(() => {
+        chosen.forEach(p => p.classList.remove('bot-glow'));
+      }, 500);
+    }, 800);
+  }
+
+  stopBotPreview() {
+    this.interactionLocked = false;
+    if (this._botPreviewInterval) {
+      clearInterval(this._botPreviewInterval);
+      this._botPreviewInterval = null;
+    }
+    if (typeof document === 'undefined') return;
+    const root = this.rootElement || this.container;
+    if (!root) return;
+    root.querySelectorAll('.ocean-match3-piece.bot-glow').forEach(p => p.classList.remove('bot-glow'));
+  }
+
   _complete(result) {
     if (this._completed) return;
     this._completed = true;
@@ -740,6 +775,7 @@ export class OceanMatch3 {
   }
 
   destroy() {
+    this.stopBotPreview();
     this._stopTimer();
     if (OceanMatch3.currentInstance === this) {
       OceanMatch3.currentInstance = null;

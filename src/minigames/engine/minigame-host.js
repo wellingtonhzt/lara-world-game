@@ -49,17 +49,50 @@ export function launchMinigameHost(id, options = {}) {
   container.innerHTML = '';
   container.appendChild(card);
 
+  /* ── Bot mode overlay builder ── */
+  function buildBotOverlay() {
+    const div = document.createElement('div');
+    div.className = 'minigame-bot-overlay';
+    div.innerHTML = `
+      <div class="bot-overlay-content">
+        <div class="bot-overlay-icon">\uD83E\uDD16</div>
+        <div class="bot-overlay-label">${pres.botMessage || `${config.name || 'M\u00E1quina'} est\u00E1 jogando...`}</div>
+        <div class="minigame-bot-progress-track">
+          <div class="minigame-bot-progress-fill"></div>
+        </div>
+      </div>`;
+    return div;
+  }
+  let botOverlayEl = null;
+
   return new Promise((resolve) => {
     let gameInstance = null;
     let resolved = false;
     let autoTimer = null;
     let countdownInterval = null;
 
+    function stopBotPresentation() {
+      const bp = config.botPresentation;
+      if (bp && typeof bp.stop === 'function') {
+        bp.stop(gameInstance);
+      }
+    }
+
     function cleanup() {
       if (autoTimer) { clearTimeout(autoTimer); autoTimer = null; }
       if (countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
+      stopBotPresentation();
+      removeBotOverlay();
       if (gameInstance && typeof gameInstance.stop === 'function') { gameInstance.stop(); }
       gameInstance = null;
+    }
+
+    function removeBotOverlay() {
+      if (botOverlayEl && botOverlayEl.parentNode) {
+        botOverlayEl.parentNode.removeChild(botOverlayEl);
+      }
+      botOverlayEl = null;
+      container.classList.remove('bot-active');
     }
 
     function resolveWith(result) {
@@ -113,6 +146,7 @@ export function launchMinigameHost(id, options = {}) {
 
     function onGameComplete(rawResult) {
       if (resolved) return;
+      cleanup();
       header.classList.add('hidden');
       botBar.classList.add('hidden');
       const normalized = normalizeMinigameResult(rawResult);
@@ -144,15 +178,28 @@ export function launchMinigameHost(id, options = {}) {
     });
 
     if (isBot) {
+      container.classList.add('bot-active');
+      botOverlayEl = buildBotOverlay();
+      container.appendChild(botOverlayEl);
+
+      const bp = config.botPresentation;
+      if (bp && typeof bp.start === 'function') {
+        bp.start(gameInstance);
+      }
+
       botBar.classList.remove('hidden');
       if (botText && pres.botMessage) {
         botText.textContent = pres.botMessage;
       }
       skipBtn.onclick = () => {
         if (autoTimer) { clearTimeout(autoTimer); autoTimer = null; }
+        removeBotOverlay();
         autoResolveBot();
       };
-      autoTimer = setTimeout(() => autoResolveBot(), DEFAULT_BOT_DELAY);
+      autoTimer = setTimeout(() => {
+        removeBotOverlay();
+        autoResolveBot();
+      }, DEFAULT_BOT_DELAY);
     }
   });
 }
