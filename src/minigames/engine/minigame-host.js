@@ -33,6 +33,10 @@ export function launchMinigameHost(id, options = {}) {
   const cardBtn = document.getElementById('minigame-card-btn');
   const countdownEl = document.getElementById('minigame-card-countdown');
 
+  if (!card) {
+    throw new Error('[MinigameHost] #minigame-result-card n\u00E3o encontrado no DOM. Um minigame pode t\u00EA-lo destru\u00EDdo.');
+  }
+
   titleEl.textContent = pres.title || config.name || 'Minigame';
   instrEl.textContent = pres.instruction || '';
 

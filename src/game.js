@@ -4,6 +4,7 @@ import { florestaMisteriosa } from './worlds/floresta/config.js';
 import { cavernaDosFosseis } from './worlds/dinossauros/config.js';
 import { audioManager } from './audio/index.js';
 import { launchMinigameHost } from './minigames/engine/index.js';
+import { OceanMatch3 } from './minigames/ocean-match3/OceanMatch3.js';
 import './minigames/engine/loader.js';
 import { bancoQuestoes, questoesDisponiveis, categoryIndices, worldCategoryMap, getIndicesPorMundo, getCategoriasPorMundo } from './data/questions.js';
 import { APP_VERSION } from './version.js';
@@ -701,8 +702,31 @@ import { APP_VERSION } from './version.js';
         return false;
       }
       case "recife-placeholder": {
-        addHistory(`\uD83D\uDC21 O desafio do Recife chegar\u00E1 em breve!`, "especial");
-        if (typeof addLog === 'function') addLog('\uD83E\uDEB8 TODO: Recife — futura batalha de Match-3');
+        addHistory(`\uD83C\uDF0A ${info.descricao}`, "especial");
+        let resultado;
+        try {
+          resultado = await launchOceanMatch3({ isBot: player.isBot });
+        } catch (err) {
+          addLog(`\u274C Erro no Ocean Match-3: ${err.message}`);
+          console.error('[Ocean Match-3 Error]', err);
+          return false;
+        }
+        if (resultado.venceu) {
+          const destino = Math.min(player.posicao + resultado.boardDelta, getTotalCasas());
+          audioManager.play('specialAdvance');
+          if (destino > player.posicao) {
+            await animatePlayerMovement(player.posicao, destino);
+          }
+          player.posicao = destino;
+          addHistory(`\uD83C\uDF1F ${player.name} encontrou o tesouro e avan\u00E7ou +${resultado.boardDelta} casas!`, "especial");
+          if (player.posicao >= getTotalCasas()) {
+            await handleVictory();
+            return false;
+          }
+        } else {
+          audioManager.play('wrongAnswer');
+          addHistory(`\uD83C\uDF0A ${player.name} ficou sem tempo! B\u00F4nus: 0`, "especial");
+        }
         return false;
       }
       case "placeholder": {
@@ -900,7 +924,13 @@ import { APP_VERSION } from './version.js';
     }
 
     console.log("[JOGAR] calling processSpecialCell(" + target + "), activeSubworldId=" + gameState.activeSubworldId);
-    const extraTurn = await processSpecialCell(target);
+    let extraTurn;
+    try {
+      extraTurn = await processSpecialCell(target);
+    } catch (err) {
+      console.error('[JOGAR] processSpecialCell error:', err);
+      extraTurn = false;
+    }
     console.log("[JOGAR] processSpecialCell returned extraTurn=" + extraTurn + ", isMoving=" + gameState.isMoving + ", rollBtn.disabled=" + elements.rollBtn.disabled + ", activeSubworldId=" + gameState.activeSubworldId);
 
     if (gameState.jogoFinalizado) {
@@ -1992,6 +2022,193 @@ import { APP_VERSION } from './version.js';
             break;
           }
 
+          // ── Testes Rápidos: Ocean Match-3 ──
+          case "ocean-match3-minigame": {
+            const pOcean = getCurrentPlayer();
+            addLog('\uD83C\uDFAE Abrindo Ocean Match-3 manualmente...');
+            gameState.isMoving = true;
+            elements.rollBtn.disabled = true;
+            let resultadoOcean;
+            try {
+              resultadoOcean = await launchOceanMatch3();
+            } catch (err) {
+              addLog(`\u274C Erro ao abrir Ocean Match-3: ${err.message}`);
+              console.error('[Ocean Match-3 Error]', err);
+              gameState.isMoving = false;
+              elements.rollBtn.disabled = false;
+              updateUI();
+              break;
+            }
+            gameState.isMoving = false;
+            elements.rollBtn.disabled = false;
+            if (resultadoOcean.venceu) {
+              const destino = Math.min(pOcean.posicao + resultadoOcean.boardDelta, getTotalCasas());
+              if (destino > pOcean.posicao) {
+                await animatePlayerMovement(pOcean.posicao, destino);
+              }
+              pOcean.posicao = destino;
+              addLog(`\u2705 Ocean Match-3 vencido! Avan\u00E7ou +${resultadoOcean.boardDelta} \u2192 casa ${destino}`);
+            } else {
+              addLog(`\uD83D\uDCA5 Ocean Match-3 perdido! B\u00F4nus: 0`);
+            }
+            updateUI();
+            setEventResult({ eventType: 'ocean-match3 (debug)', posBefore: pOcean.posicao, posAfter: pOcean.posicao });
+            break;
+          }
+          case "ocean-match3-vitoria": {
+            const pOV = getCurrentPlayer();
+            const BONUS_OCEAN = 3;
+            const destinoOV = Math.min(pOV.posicao + BONUS_OCEAN, getTotalCasas());
+            addLog('\u2705 Simulando vit\u00F3ria no Ocean Match-3...');
+            gameState.isMoving = true;
+            elements.rollBtn.disabled = true;
+            if (destinoOV > pOV.posicao) {
+              await animatePlayerMovement(pOV.posicao, destinoOV);
+            }
+            pOV.posicao = destinoOV;
+            gameState.isMoving = false;
+            elements.rollBtn.disabled = false;
+            updateUI();
+            addLog(`\u2705 B\u00F4nus aplicado: +${BONUS_OCEAN} \u2192 casa ${destinoOV} (sem cascata)`);
+            if (pOV.posicao >= getTotalCasas()) {
+              await handleVictory();
+            }
+            setEventResult({ eventType: 'ocean-match3 vit\u00F3ria (simulado)', posBefore: pOV.posicao - BONUS_OCEAN, posAfter: destinoOV, cascaded: 'N\u00E3o (debug)' });
+            break;
+          }
+          case "ocean-match3-tempo": {
+            addLog('\u274C Simulando fim do tempo no Ocean Match-3...');
+            addLog('\uD83C\uDF0A Tempo esgotado! B\u00F4nus: 0');
+            setEventResult({ eventType: 'ocean-match3 tempo (simulado)', posBefore: getCurrentPlayer().posicao, posAfter: getCurrentPlayer().posicao, cascaded: 'N\u00E3o' });
+            break;
+          }
+          case "ocean-match3-retornar": {
+            document.getElementById('minigame-overlay').classList.add('hidden');
+            gameState.isMoving = false;
+            elements.rollBtn.disabled = false;
+            addLog('\u21A9\uFE0F Overlay do Ocean Match-3 fechado. Estado restaurado.');
+            setEventResult({ eventType: 'retorno ocean (debug)', posBefore: getCurrentPlayer().posicao, posAfter: getCurrentPlayer().posicao });
+            break;
+          }
+
+          // ── Ocean Match-3 Debug ──
+          case "ocean-match3-time-20": {
+            _debugOceanTimeConfig = 20;
+            _updateDebugTimeLabel();
+            addLog('\u23F1 Tempo do Ocean Match-3 configurado para 20s.');
+            break;
+          }
+          case "ocean-match3-time-30": {
+            _debugOceanTimeConfig = 30;
+            _updateDebugTimeLabel();
+            addLog('\u23F1 Tempo do Ocean Match-3 configurado para 30s.');
+            break;
+          }
+          case "ocean-match3-time-45": {
+            _debugOceanTimeConfig = null;
+            _updateDebugTimeLabel();
+            addLog('\u23F1 Tempo do Ocean Match-3 restaurado para 45s (padr\u00E3o).');
+            break;
+          }
+          case "ocean-match3-time-60": {
+            _debugOceanTimeConfig = 60;
+            _updateDebugTimeLabel();
+            addLog('\u23F1 Tempo do Ocean Match-3 configurado para 60s.');
+            break;
+          }
+          case "ocean-match3-time-inf": {
+            _debugOceanTimeConfig = Infinity;
+            _updateDebugTimeLabel();
+            addLog('\u267E\uFE0F Ocean Match-3 em modo sem limite de tempo.');
+            break;
+          }
+          case "ocean-match3-restart": {
+            const oldInst = OceanMatch3.currentInstance;
+            if (oldInst && oldInst._started) {
+              oldInst.destroy();
+            }
+            addLog('\uD83D\uDD04 Ocean Match-3 reiniciado...');
+            gameState.isMoving = true;
+            elements.rollBtn.disabled = true;
+            try {
+              await launchOceanMatch3();
+            } catch (err) {
+              addLog(`\u274C Erro ao reiniciar Ocean Match-3: ${err.message}`);
+              console.error('[Ocean Match-3 Restart Error]', err);
+            }
+            gameState.isMoving = false;
+            elements.rollBtn.disabled = false;
+            setEventResult({ eventType: 'ocean-match3 restart (debug)', posBefore: getCurrentPlayer().posicao, posAfter: getCurrentPlayer().posicao });
+            break;
+          }
+          case "ocean-match3-estado": {
+            const inst = OceanMatch3.currentInstance;
+            if (!inst || !inst._started) {
+              addLog('\uD83D\uDD0E Ocean Match-3 n\u00E3o est\u00E1 ativo.');
+            } else {
+              const s = inst.getDebugState();
+              const sel = s.selectedCell
+                ? `(${s.selectedCell.row},${s.selectedCell.col})`
+                : 'nenhuma';
+              const swapInfo = s.lastSwap
+                ? `, \u00FAltima: (${s.lastSwap.from.row},${s.lastSwap.from.col}) ${s.lastSwap.from.type} \u2194 (${s.lastSwap.to.row},${s.lastSwap.to.col}) ${s.lastSwap.to.type}`
+                : '';
+              addLog(
+                `\uD83D\uDD0E Estado: grade ${s.rows}\u00D76, ${s.totalPieces} pe\u00E7as, ` +
+                `sele\u00E7\u00E3o: ${sel}, trocas: ${s.swapCount}${swapInfo}`
+              );
+            }
+            break;
+          }
+          case "ocean-match3-regenerar": {
+            const inst2 = OceanMatch3.currentInstance;
+            if (!inst2 || !inst2._started) {
+              addLog('\uD83D\uDD04 Ocean Match-3 n\u00E3o est\u00E1 ativo.');
+            } else {
+              inst2.regenerateGrid();
+              addLog('\uD83D\uDD04 Grade do Ocean Match-3 regenerada.');
+            }
+            break;
+          }
+          case "ocean-match3-detectar": {
+            const inst3 = OceanMatch3.currentInstance;
+            if (!inst3 || !inst3._started) {
+              addLog('\uD83D\uDD0D Ocean Match-3 n\u00E3o est\u00E1 ativo.');
+            } else {
+              const matches = inst3._findMatches(inst3.grid);
+              if (matches.hasMatches) {
+                const totalCells = matches.cells.length;
+                const groups = matches.groups.map(g =>
+                  `${g.type} (${g.direction}, ${g.cells.length} pe\u00E7as)`
+                ).join('; ');
+                addLog(`\uD83D\uDD0D ${matches.groups.length} grupo(s) encontrados: ${groups} (${totalCells} c\u00E9lulas no total)`);
+              } else {
+                addLog('\uD83D\uDD0D Nenhuma combina\u00E7\u00E3o encontrada na grade atual.');
+              }
+            }
+            break;
+          }
+          case "ocean-match3-load-test": {
+            const inst4 = OceanMatch3.currentInstance;
+            if (!inst4 || !inst4._started) {
+              addLog('\uD83E\uDDEA Ocean Match-3 n\u00E3o est\u00E1 ativo.');
+            } else {
+              inst4._loadTestGrid();
+              addLog('\uD83E\uDDEA Grade de teste carregada (v\u00E1rias combina\u00E7\u00F5es prontas).');
+            }
+            break;
+          }
+          case "ocean-match3-load-empty": {
+            const inst5 = OceanMatch3.currentInstance;
+            if (!inst5 || !inst5._started) {
+              addLog('\u2B1C Ocean Match-3 n\u00E3o est\u00E1 ativo.');
+            } else {
+              inst5._loadEmptyCellsTestGrid();
+              addLog('\u2B1C Grade com c\u00E9lulas vazias carregada.');
+            }
+            break;
+          }
+
           // ── Limpar Logs ──
           case "clear-logs":
             debugLog.length = 0;
@@ -2086,6 +2303,25 @@ import { APP_VERSION } from './version.js';
     });
   }
 
+  let _debugOceanTimeConfig = null; // null = default (45), number = specific, Infinity = no limit
+
+  function _updateDebugTimeLabel() {
+    const label = document.getElementById('debug-ocean-current-time');
+    if (!label) return;
+    const val = _debugOceanTimeConfig;
+    if (val === Infinity) label.textContent = 'Tempo atual: \u221E (sem limite)';
+    else if (val === null) label.textContent = 'Tempo atual: 45s (padr\u00E3o)';
+    else label.textContent = `Tempo atual: ${val}s`;
+  }
+
+  async function launchOceanMatch3(options = {}) {
+    OceanMatch3.debugTimeLimit = _debugOceanTimeConfig;
+    return launchMinigameHost('ocean-match3', {
+      isBot: options.isBot || false,
+      playerName: getCurrentPlayer().name
+    });
+  }
+
   /* ── Init ── */
 
   function init() {
@@ -2147,6 +2383,7 @@ import { APP_VERSION } from './version.js';
     setupWorldSelectorEvents();
     setupModalEvents();
     setupDebugMode();
+    _updateDebugTimeLabel();
   }
 
   document.addEventListener("DOMContentLoaded", async () => {

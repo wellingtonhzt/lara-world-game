@@ -118,7 +118,7 @@ export const reinoOceanos = {
       { type: 'challenge', description: '\uD83D\uDC19 Desafio' },
     ],
     16: [
-      { type: 'recife-placeholder', description: '\uD83D\uDC21 Em breve' },
+      { type: 'recife-placeholder', description: '\uD83C\uDF0A Tesouro das Mar\u00E9s' },
     ],
     17: [
       { type: 'skipTurn', params: { count: 1 }, description: '\uD83C\uDF0A Perde rodada' },
