@@ -50,9 +50,9 @@ export const florestaEncantada = {
       20: { x: 10, y: 82 },
     },
     cellIcons: [
-      '\uD83C\uDF1F', '\uD83C\uDF38', '\uD83C\uDF08', '\u2B50', '\uD83E\uDD8B',
+      '\uD83C\uDF1F', '\uD83C\uDF38', '\uD83C\uDF33', '\u2B50', '\uD83E\uDD8B',
       '\uD83C\uDF40', '\uD83C\uDF88', '\uD83D\uDC31', '\uD83C\uDF6D', '\uD83C\uDF80',
-      '\uD83C\uDF3B', '\uD83D\uDC30', '\uD83C\uDF6C', '\uD83E\uDD84', '\uD83C\uDFAA',
+      '\uD83E\uDDE0', '\uD83D\uDC30', '\uD83C\uDF6C', '\uD83E\uDD84', '\uD83C\uDFAA',
       '\uD83D\uDC3C', '\uD83C\uDF49', '\uD83D\uDC36', '\uD83C\uDFA0', '\uD83D\uDC51',
     ],
   },
