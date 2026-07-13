@@ -66,7 +66,7 @@ export class DinoRunnerGame {
     this.container.appendChild(this.canvas);
 
     this._resize();
-    this.runningSpeed = Math.max(2.5, this.width * 0.006);
+    this.runningSpeed = Math.max(2.5, this.width * 0.006) * 60;
 
     this._loadDinoAssets();
 
@@ -172,7 +172,7 @@ export class DinoRunnerGame {
     this.dino.x = Math.max(40, this.width * 0.1);
     this.dino.y = this.groundLevel - this.dino.h;
     this.groundY = this.groundLevel;
-    this.runningSpeed = Math.max(2.5, this.width * 0.006);
+    this.runningSpeed = Math.max(2.5, this.width * 0.006) * 60;
   }
 
   _onKeyDown(e) {
@@ -277,7 +277,7 @@ export class DinoRunnerGame {
 
     for (let i = this.obstacles.length - 1; i >= 0; i--) {
       const o = this.obstacles[i];
-      o.x -= speed;
+      o.x -= speed * dt;
       if (o.x + o.w < 0) {
         this.obstacles.splice(i, 1);
       }
