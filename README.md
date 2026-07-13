@@ -18,9 +18,9 @@
 
 | Versão | Data | Status |
 |--------|------|--------|
-| **v0.17.0-preview** | Jul/2026 | ✅ **Ativo** — Correção de 3 bugs (submundo, pergunta, aleatório) |
+| **v0.26.0-preview** | Jul/2026 | ✅ **Ativo** — Versão oficial consolidada |
+| v0.17.0-preview | Jul/2026 | ✅ Correção de 3 bugs (submundo, pergunta, aleatório) |
 | v0.18.0-preview | Jul/2026 | ✅ Revisão do sistema de perguntas |
-| v0.17.0-preview | Jul/2026 | ✅ Correção de cascata pós-desafio |
 | v0.16.0-preview | Jul/2026 | ✅ Concluído |
 | v0.15.0-preview | Jul/2026 | ✅ Concluído |
 | v0.14.0-preview | Jul/2026 | ✅ Concluído |
@@ -40,7 +40,7 @@
 
 ---
 
-## ✨ Funcionalidades Atuais (v0.17.0-preview)
+## ✨ Funcionalidades Atuais (v0.26.0-preview)
 
 ### Correção de 3 Bugs
 
@@ -465,7 +465,7 @@ src/assets/
 
 ## 📜 História do Projeto
 
-O Lara World começou como um MVP de tabuleiro simples para 1 jogador. A primeira versão (v0.1.0) implementou a lógica básica do jogo com dados, casas especiais e Docker. Na sequência (v0.1.5) recebeu um tabuleiro visual com trilha serpentina, personagem animado e painel lateral. A versão v0.2.0 adicionou multiplayer local com alternância de turnos entre 2 jogadores. A v0.3.0 introduziu o modal de configuração inicial com nomes e sprites personalizáveis. A v0.4.0 adicionou 5 casas de desafios educativos com perguntas de múltipla escolha. A v0.5.0 substituiu as perguntas fixas por um **Banco de Questões** com 30 perguntas. A v0.6.0 adicionou o **Mundo da Floresta** com portal na casa 11, sistema de portais, mini-trilha de 8 casas com mecânicas exclusivas e modo debug. A v0.7.0 adicionou o **modo Single Player (Humano vs Máquina)** com bot inteligente, tela de vitória com confetes e correções de cascata. A v0.8.0 adicionou um **Menu Inicial** com opções "⚡ Jogo Rápido" (single player) e "🏆 Modo Carreira (Em Breve)", além de uma tela de vitória com dois botões de saída (Jogar Novamente e Voltar ao Menu). A v0.9.0-preview iniciou a **Fase de Mundos** com seletor de mundos, motor modular (SessionManager, StateManager, WorldRegistry, EventProcessor) e o primeiro WorldConfig (Floresta Encantada + Floresta Misteriosa). A versão v0.10.0-preview consolidou o **primeiro ecossistema multi-mundos** com a integração completa do Vale dos Dinossauros, da Caverna dos Fósseis, portal genérico baseado em configuração, Theme Engine em produção e debug independente para cada área. A v0.11.0-preview estabeleceu a **Evolução Visual (UX 2.0)**, com pipeline de assets, backgrounds Floresta e Dinossauros, caminhos temáticos, infraestrutura de padrões SVG, e remoção de elementos decorativos antigos. A versão atual (v0.25.0-preview) consolida o **redesign da Hero Screen** com logo oficial em asset (`logo-lara-world.webp`), identidade visual refinada e documentação atualizada. Consulte o [Guia de Estilo](docs/ui-style-guide.md) para as diretrizes visuais oficiais do projeto.
+O Lara World começou como um MVP de tabuleiro simples para 1 jogador. A primeira versão (v0.1.0) implementou a lógica básica do jogo com dados, casas especiais e Docker. Na sequência (v0.1.5) recebeu um tabuleiro visual com trilha serpentina, personagem animado e painel lateral. A versão v0.2.0 adicionou multiplayer local com alternância de turnos entre 2 jogadores. A v0.3.0 introduziu o modal de configuração inicial com nomes e sprites personalizáveis. A v0.4.0 adicionou 5 casas de desafios educativos com perguntas de múltipla escolha. A v0.5.0 substituiu as perguntas fixas por um **Banco de Questões** com 30 perguntas. A v0.6.0 adicionou o **Mundo da Floresta** com portal na casa 11, sistema de portais, mini-trilha de 8 casas com mecânicas exclusivas e modo debug. A v0.7.0 adicionou o **modo Single Player (Humano vs Máquina)** com bot inteligente, tela de vitória com confetes e correções de cascata. A v0.8.0 adicionou um **Menu Inicial** com opções "⚡ Jogo Rápido" (single player) e "🏆 Modo Carreira (Em Breve)", além de uma tela de vitória com dois botões de saída (Jogar Novamente e Voltar ao Menu). A v0.9.0-preview iniciou a **Fase de Mundos** com seletor de mundos, motor modular (SessionManager, StateManager, WorldRegistry, EventProcessor) e o primeiro WorldConfig (Floresta Encantada + Floresta Misteriosa). A versão v0.10.0-preview consolidou o **primeiro ecossistema multi-mundos** com a integração completa do Vale dos Dinossauros, da Caverna dos Fósseis, portal genérico baseado em configuração, Theme Engine em produção e debug independente para cada área. A v0.11.0-preview estabeleceu a **Evolução Visual (UX 2.0)**, com pipeline de assets, backgrounds Floresta e Dinossauros, caminhos temáticos, infraestrutura de padrões SVG, e remoção de elementos decorativos antigos. A versão atual (v0.26.0-preview) é a versão oficial consolidada, incorporando todo o trabalho desde v0.17.0-preview: Castelo dos Dragões, Hero Screen redesign, sistema de layouts e demais evoluções. Consulte o [Guia de Estilo](docs/ui-style-guide.md) para as diretrizes visuais oficiais do projeto.
 
 ---
 
@@ -524,7 +524,7 @@ docker compose down
 
 ## 🗺️ Roadmap
 
-- **v0.17.0-preview** — ✅ **Ativo** — Correção de 3 bugs (submundo, pergunta, aleatório)
+- **v0.26.0-preview** — ✅ **Ativo** — Versão oficial consolidada
 - **v0.16.0-preview** — ✅ Concluído — Visual da Galáxia Estelar (ART-011) + Sistema de Variantes de Tabuleiro (Layouts)
 - **v0.15.0-preview** — ✅ Concluído — Troca Quântica (GAL-002): Casa 7 swap-positions + result card do minigame
 - **v0.14.0-preview** — ✅ Concluído — Galáxia Estelar + MeteoroGame (GAL-001)

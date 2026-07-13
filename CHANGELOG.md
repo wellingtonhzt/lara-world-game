@@ -1,5 +1,37 @@
 # Changelog
 
+## [Unreleased]
+
+## [0.26.0-preview] - 2026-07-12
+
+### Versão Oficial Consolidada
+
+Release oficial que incorpora todo o trabalho realizado desde v0.17.0-preview, unificando as versões documentais v0.18.0-preview a v0.25.0-preview em um único marco com evidência no código (version.js, cache-busting, documentação sincronizada).
+
+### Adicionado
+- **Remoção dos emojis clássicos**: seção collapsível removida da tela de seleção de personagens; galeria simplificada para 4 personagens oficiais
+- **Quinto mundo — Castelo dos Dragões**: tema medieval infantil, layout ascendente, 20 casas, 9 eventos, identidade visual roxa/lilás
+- **Reino dos Oceanos**: infraestrutura de assets e diretório `src/assets/worlds/oceanos/` com placeholders
+- **Sistema de Variantes de Tabuleiro (Layouts)**: arquitetura genérica `board.layouts` no WorldConfig, Galáxia como primeiro adotante com 3 layouts
+- **Sistema de Avatares e Tokens (UX-015)**: 4 personagens oficiais com fallback visual via `applyVisualFallback()`
+- **Ilustrações Oficiais dos Mundos (ART-009)**: container 96×96px em cada card com fallback de emoji
+- **Board Layout 2.0**: `board.cells` substitui `board.positions` para posicionamento individual de células
+
+### Alterado
+- **Redesign da Hero Screen**: logo oficial `logo-lara-world.webp` substitui antigo título emoji + gradiente; Lara removida do card; estrutura `.menu-brand` adotada
+- **Consolidação da arquitetura de minigames**: documentação unificada (MinigameRegistry, MinigameHost, contrato boardDelta). DMP-01 resolvido — penalidade -2 do MeteoroGame oficializada como boardDelta 0
+- **Galáxia Estelar**: background personalizado, suporte a `path.webp`, 3 layouts
+- **Seletor de Mundos v2 (UX-014)**: painel remodelado no visual da Hero Screen, cards com identidade por mundo
+
+### Corrigido
+- **Duplicidade [0.17.0-preview] no CHANGELOG**: duas entradas mesmo número (07-09 e 07-11) mescladas — hotfix cascata realocado para [0.16.0-preview], período correto de desenvolvimento
+- **Versionamento inconsistente**: v0.18.0-preview a v0.25.0-preview existiam apenas na documentação, sem tag ou version.js. v0.26.0-preview é a primeira release oficial desde v0.17.0-preview
+
+### Notas Técnicas
+- `src/version.js` é a fonte única da verdade para a versão atual
+- Script `scripts/check-version.mjs` criado para auditoria automática de consistência
+- Todas as referências ativas sincronizadas para v0.26.0-preview
+
 ## [0.25.0-preview] - 2026-07-12
 
 ### Hero Screen — Redesign da Tela Inicial
@@ -149,15 +181,6 @@
 - **Cascata pós-desafio corrigida**: acertar/errar desafio não dispara mais a casa destino (bug reportado na Floresta casa 4 → casa 5)
 - **Documentação**: README, CHANGELOG, docs atualizados com o novo sistema
 
-## [0.17.0-preview] - 2026-07-09
-
-### Correção de Cascata Pós-Desafio — HOTFIX
-
-- **Bug corrigido**: ao acertar um desafio na casa 4 da Floresta, o jogador avançava para casa 5 e o efeito "volte 1" da casa 5 era disparado indevidamente
-- **Arquivo**: `src/game.js` — removidas linhas 621-623 (cascade após acerto)
-- **Regra**: movimento causado por resposta de desafio NÃO cascateia casas especiais — vale para acerto e erro, humano e bot, todos os mundos
-- **Efeitos normais** (avance/volte automático) continuam cascateando
-
 ## [0.16.0-preview] - 2026-07-09
 
 ### Visual da Galáxia Estelar — ART-011
@@ -167,6 +190,11 @@
 - **Path.webp já suportado**: regra `body[data-world="galaxia-estelar"] .path-line` existente com URL para o asset e fallback SVG stroke
 - **Fallback garantido**: se os assets .webp não existirem, gradiente e SVG mantêm o tabuleiro funcional e legível
 - **Documentação**: README, CHANGELOG, visão-geral atualizados com a nova infraestrutura
+
+### Corrigido
+
+- **Cascata pós-desafio**: ao acertar/errar um desafio, o movimento resultante NÃO cascateia casas especiais — vale para acerto e erro, humano e bot, todos os mundos. Movimentos de Avance/Volte automáticos continuam cascateando
+- **Arquivo**: `src/game.js` — removidas linhas 621-623 (cascade após acerto)
 
 ## [0.15.0-preview] - 2026-07-09
 

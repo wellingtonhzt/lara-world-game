@@ -111,7 +111,7 @@ A escolha do modo determina quais campos são exibidos no modal e como o Jogador
 | 7 | 🔀 Troca Quântica | O personagem troca de posição com o adversário. |
 | 10 | ⭐ Desafio educativo | Mesmo efeito da casa 4. |
 | 12 | 🌀 Volte 2 | O personagem volta 2 casas. |
-| **15** | **🚪 Buraco de Minhoca** | **Abre o minigame MeteoroGame. O jogador controla uma nave e precisa desviar de meteoros. Resultado: vitória (+3 bônus) ou derrota (-2 penalidade).** |
+| **15** | **🚪 Buraco de Minhoca** | **Abre o minigame MeteoroGame. O jogador controla uma nave e precisa desviar de meteoros. Resultado: vitória (+3 bônus) ou derrota (boardDelta 0, sem penalidade).** |
 | 18 | ⚡ Jogue novamente | O jogador ganha uma jogada extra. |
 
 ### Seletor de Layout (Galáxia Estelar)
@@ -144,8 +144,8 @@ A escolha do modo determina quais campos são exibidos no modal e como o Jogador
 - **Controles**: setas do teclado (↑ ↓ ← →) ou WASD. Touch/mouse: metade superior da tela sobe, inferior desce, laterais movem horizontalmente
 - **Vidas**: 3 vidas. Ao colidir com um meteoro, flash vermelho na tela, nave pisca invulnerável por 1s, texto `💥 -1 Vida!` aparece centralizado
 - **Condições de vitória**: sobreviver até o tempo acabar → +3 casas de bônus no tabuleiro
-- **Condições de derrota**: perder todas as 3 vidas → -2 casas de penalidade
-- **Tela de resultado**: ao fim, um card glass é exibido sobre o canvas do minigame congelado (cenário espacial visível ao fundo), com resultado (vitória/derrota), vidas restantes, bônus. Botão "Voltar agora" confirma e aplica o bônus/penalidade
+- **Condições de derrota**: perder todas as 3 vidas → boardDelta 0 (nenhuma penalidade, jogador permanece onde está)
+- **Tela de resultado**: ao fim, um card glass é exibido sobre o canvas do minigame congelado (cenário espacial visível ao fundo), com resultado (vitória/derrota), vidas restantes, bônus. Botão "Voltar agora" confirma e aplica o resultado (boardDelta 0 na derrota)
 - **Fluxo do Bot**: se a máquina cair no Buraco de Minhoca, um overlay exibe a barra "🤖 Máquina está jogando..." com botão "⏭ Pular". Ao clicar, o resultado é simulado e exibido por 2s. Sem interação, auto-resolve após 6s
 
 ## Regras Adicionais

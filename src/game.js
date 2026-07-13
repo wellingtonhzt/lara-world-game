@@ -3,7 +3,8 @@ import { loadAllWorlds } from './worlds/loader.js';
 import { florestaMisteriosa } from './worlds/floresta/config.js';
 import { cavernaDosFosseis } from './worlds/dinossauros/config.js';
 import { audioManager } from './audio/index.js';
-import { MeteoroGame } from './minigames/meteoro/MeteoroGame.js';
+import { launchMinigameHost } from './minigames/engine/index.js';
+import './minigames/engine/loader.js';
 import { bancoQuestoes, questoesDisponiveis, categoryIndices, worldCategoryMap, getIndicesPorMundo, getCategoriasPorMundo } from './data/questions.js';
 import { APP_VERSION } from './version.js';
 
@@ -711,14 +712,14 @@ import { APP_VERSION } from './version.js';
       case "buraco-minhoca": {
         addHistory(`\uD83D\uDE80 ${info.descricao}`, "especial");
         const resultado = await launchMeteoroGame({ isBot: player.isBot });
-        if (resultado.status === "success") {
-          const destino = Math.min(player.posicao + resultado.bonus, getTotalCasas());
+        if (resultado.venceu) {
+          const destino = Math.min(player.posicao + resultado.boardDelta, getTotalCasas());
           audioManager.play('specialAdvance');
           if (destino > player.posicao) {
             await animatePlayerMovement(player.posicao, destino);
           }
           player.posicao = destino;
-          addHistory(`\uD83C\uDF1F ${player.name} atravessou o Buraco de Minhoca e avan\u00E7ou +${resultado.bonus} casas!`, "especial");
+          addHistory(`\uD83C\uDF1F ${player.name} atravessou o Buraco de Minhoca e avan\u00E7ou +${resultado.boardDelta} casas!`, "especial");
           if (player.posicao >= getTotalCasas()) {
             await handleVictory();
             return false;
@@ -1937,13 +1938,13 @@ import { APP_VERSION } from './version.js';
             const resultado = await launchMeteoroGame();
             gameState.isMoving = false;
             elements.rollBtn.disabled = false;
-            if (resultado.status === "success") {
-              const destino = Math.min(p.posicao + resultado.bonus, getTotalCasas());
+            if (resultado.venceu) {
+              const destino = Math.min(p.posicao + resultado.boardDelta, getTotalCasas());
               if (destino > p.posicao) {
                 await animatePlayerMovement(p.posicao, destino);
               }
               p.posicao = destino;
-              addLog(`\u2705 Minigame vencido! Avan\u00E7ou +${resultado.bonus} \u2192 casa ${destino}`);
+              addLog(`\u2705 Minigame vencido! Avan\u00E7ou +${resultado.boardDelta} \u2192 casa ${destino}`);
             } else {
               addLog(`\uD83D\uDCA5 Minigame perdido! B\u00F4nus: 0`);
             }
@@ -2076,125 +2077,12 @@ import { APP_VERSION } from './version.js';
     });
   }
 
-  /* ── Minigame helpers ── */
+  /* ── Minigame host wrapper ── */
 
-  function showMinigameResult(result) {
-    const icon = document.getElementById('minigame-card-icon');
-    const title = document.getElementById('minigame-card-title');
-    const desc = document.getElementById('minigame-card-desc');
-    const bonusEl = document.getElementById('minigame-card-bonus');
-    const bonusValue = document.getElementById('minigame-card-bonus-value');
-
-    if (result.status === 'success') {
-      icon.textContent = '\uD83D\uDE80';
-      title.textContent = 'MISS\u00C3O COMPLETA!';
-      desc.textContent = 'Voc\u00EA atravessou a chuva de meteoros.';
-      bonusEl.classList.remove('hidden');
-      bonusValue.textContent = `+${result.bonus} ${result.bonus > 1 ? 'casas' : 'casa'}`;
-    } else {
-      icon.textContent = '\uD83D\uDCA5';
-      title.textContent = 'MISS\u00C3O FALHOU';
-      desc.textContent = 'Sua nave sofreu muitos danos.';
-      bonusEl.classList.add('hidden');
-      bonusValue.textContent = 'Sem b\u00F4nus';
-    }
-  }
-
-  function launchMeteoroGame(options = {}) {
-    const isBot = options.isBot || false;
-    const overlay = document.getElementById('minigame-overlay');
-    const container = document.getElementById('minigame-container');
-    const playPhase = document.getElementById('minigame-phase-play');
-    const header = document.querySelector('#minigame-phase-play .minigame-header');
-    const botBar = document.getElementById('minigame-bot-bar');
-    const skipBtn = document.getElementById('minigame-skip-btn');
-    const card = document.getElementById('minigame-result-card');
-    const cardBtn = document.getElementById('minigame-card-btn');
-    const countdownEl = document.getElementById('minigame-card-countdown');
-
-    playPhase.classList.remove('hidden');
-    header.classList.remove('hidden');
-    botBar.classList.add('hidden');
-    card.classList.add('hidden');
-    overlay.classList.remove('hidden');
-    container.innerHTML = '';
-    container.appendChild(card);
-
-    let autoTimer = null;
-    let countdownInterval = null;
-
-    return new Promise((resolve) => {
-      let game = null;
-      let resolved = false;
-
-      function resolveWith(result) {
-        if (resolved) return;
-        resolved = true;
-        if (autoTimer) { clearTimeout(autoTimer); autoTimer = null; }
-        if (countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
-        if (game) { game.stop(); game = null; }
-        card.classList.add('hidden');
-        header.classList.remove('hidden');
-        overlay.classList.add('hidden');
-        resolve(result);
-      }
-
-      function startReturnCountdown(result) {
-        let count = 5;
-        countdownEl.textContent = `Voltando ao tabuleiro em ${count}...`;
-        countdownEl.classList.remove('hidden');
-        cardBtn.textContent = 'Voltar agora';
-        cardBtn.onclick = () => {
-          if (countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
-          countdownEl.classList.add('hidden');
-          resolveWith(result);
-        };
-        countdownInterval = setInterval(() => {
-          count--;
-          if (count <= 0) {
-            clearInterval(countdownInterval);
-            countdownInterval = null;
-            countdownEl.classList.add('hidden');
-            resolveWith(result);
-          } else {
-            countdownEl.textContent = `Voltando ao tabuleiro em ${count}...`;
-          }
-        }, 1000);
-      }
-
-      function onGameComplete(result) {
-        if (resolved) return;
-        header.classList.add('hidden');
-        botBar.classList.add('hidden');
-        showMinigameResult(result);
-        card.classList.remove('hidden');
-        startReturnCountdown(result);
-      }
-
-      function autoResolveBot() {
-        if (resolved) return;
-        const sucesso = Math.random() < 0.4;
-        const result = { status: sucesso ? 'success' : 'fail', bonus: sucesso ? 3 : 0, lives: sucesso ? 2 : 0, timeLeft: sucesso ? 6 : 0 };
-        if (game) { game.stop(); game = null; }
-        header.classList.add('hidden');
-        botBar.classList.add('hidden');
-        showMinigameResult(result);
-        card.classList.remove('hidden');
-        startReturnCountdown(result);
-      }
-
-      game = new MeteoroGame(container, onGameComplete);
-
-      if (isBot) {
-        botBar.classList.remove('hidden');
-        skipBtn.onclick = () => {
-          if (autoTimer) { clearTimeout(autoTimer); autoTimer = null; }
-          autoResolveBot();
-        };
-        autoTimer = setTimeout(() => autoResolveBot(), 6000);
-      }
-
-      game.start();
+  async function launchMeteoroGame(options = {}) {
+    return launchMinigameHost('meteor-game', {
+      isBot: options.isBot || false,
+      playerName: getCurrentPlayer().name
     });
   }
 

@@ -18,15 +18,17 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 
 ## Principais Funcionalidades
 
-### v0.24.0-preview (Atual) — 🐉 Castelo dos Dragões ✅
+### v0.26.0-preview (Atual) — Versão Oficial Consolidada ✅
 
-- **Quinto mundo implementado**: Castelo dos Dragões (`castelo-dragoes`) — tema medieval infantil, layout ascendente (escalada até o castelo), 20 casas com eventos temáticos
-- **Integração completa**: registrado no WorldRegistry, habilitado no seletor de mundos, incluso no sorteio do Mundo Aleatório
-- **Identidade visual própria**: tema roxo/lilás com CSS completo (fundo, track-container, células, path-line)
-- **Casa 12 reservada**: evento `placeholder` para evolução futura
-- **Sem submundo**: não possui área especial
-- **Sem portal**: não possui portal para outro mundo
-- **Sem minigame**: não possui minigame implementado
+- **Versão oficial que incorpora todo o trabalho desde v0.17.0-preview**, unificando as releases documentais v0.18.0-preview a v0.25.0-preview
+- **Quinto mundo — Castelo dos Dragões**: tema medieval infantil, layout ascendente, identidade visual roxa/lilás
+- **Redesign da Hero Screen**: logo oficial `logo-lara-world.webp` substitui antigo título emoji + gradiente
+- **Sistema de Variantes de Tabuleiro (Layouts)**: arquitetura genérica `board.layouts` no WorldConfig
+- **Sistema de Avatares e Tokens (UX-015)**: 4 personagens oficiais com fallback visual
+- **Board Layout 2.0**: `board.cells` para posicionamento individual de células
+- **Emojis clássicos removidos**: galeria de seleção simplificada para 4 personagens oficiais
+- **Arquitetura de minigames consolidada**: documentação unificada, DMP-01 resolvido
+- **Cache-busting**: `?v=v0.26.0-preview`
 
 ### v0.17.0-preview — Correção de 3 Bugs ✅
 
@@ -54,11 +56,6 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 - **Seleção temática**: perguntas filtradas por mundo — Galáxia (Espaço/Lógica), Floresta (Animais/Natureza/Cores/Lógica), Dinossauros (Dinossauros/Animais/Natureza/Matemática)
 - **Auditoria em debug (`?debug=1`)**: botão "📚 Mostrar" exibe todas as perguntas com categoria, dificuldade, opções, resposta e indicador de usadas
 - **Cascata pós-desafio removida**: acertar ou errar não dispara mais o efeito da casa seguinte
-
-### v0.17.0-preview — Correção de Cascata Pós-Desafio ✅
-
-- **Bug corrigido**: jogador que acertava desafio na casa 4 da Floresta avançava para casa 5 e o efeito "volte 1" era indevidamente disparado
-- **Regra**: movimento por resposta de desafio nunca cascateia casas especiais
 
 ### v0.16.0-preview — Visual da Galáxia Estelar ✅
 
@@ -230,7 +227,7 @@ Cada mundo do Lara World pode conter uma ou mais Áreas Especiais (submundos), a
 
 ## Evolução Visual (UX 2.0 + Hero Screen)
 
-Iniciada na **v0.11.0-preview**, expandida na **v0.12.0-preview** e refinada na **v0.25.0-preview**, a fase de identidade visual estabeleceu e consolidou a pipeline de produção artística do projeto, incluindo a Hero Screen com redesign completo e logo oficial em asset.
+Iniciada na **v0.11.0-preview**, expandida na **v0.12.0-preview** e consolidada na **v0.26.0-preview**, a fase de identidade visual estabeleceu e consolidou a pipeline de produção artística do projeto, incluindo a Hero Screen com redesign completo e logo oficial em asset.
 
 ### Motivação
 

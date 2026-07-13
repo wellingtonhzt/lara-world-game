@@ -1,6 +1,14 @@
 # Roadmap Lara World
 
-### v0.17.0-preview — Correção de 3 Bugs (Atual) ✅
+### v0.26.0-preview — Versão Oficial Consolidada (Atual) ✅
+
+- [x] Versão oficial que unifica todo o trabalho desde v0.17.0-preview
+- [x] src/version.js, cache-busting e documentação sincronizados em v0.26.0-preview
+- [x] Script scripts/check-version.mjs criado para auditoria automática
+- [x] Duplicidade [0.17.0-preview] no CHANGELOG resolvida (hotfix realocado para [0.16.0-preview])
+- [x] Versionamento inconsistente corrigido
+
+### v0.17.0-preview — Correção de 3 Bugs ✅
 
 - [x] Bug 1 — Vitória prematura ao sair de submundo (handleBoardLimitReached)
 - [x] Bug 2 — Pergunta "Qual palavra tem 5 letras?" sem alternativa correta
