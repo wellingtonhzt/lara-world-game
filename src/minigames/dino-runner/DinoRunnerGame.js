@@ -3,6 +3,11 @@ const RUN_FRAME_DURATION_MS = 110;
 const RUN_FRAME_COUNT = 4;
 const MIN_SAFE_OBSTACLE_GAP = 180;
 const CRITICAL_ZONE_DISTANCE = 160;
+const BASE_RUNNING_SPEED = 180;
+const CACTUS_WIDTH = 22;
+const CACTUS_HEIGHT = 42;
+const ROCK_WIDTH = 28;
+const ROCK_HEIGHT = 32;
 
 export class DinoRunnerGame {
   constructor(container, onComplete) {
@@ -32,7 +37,7 @@ export class DinoRunnerGame {
     this.spawnInterval = 1.4;
     this.elapsed = 0;
 
-    this.runningSpeed = 3;
+    this.runningSpeed = BASE_RUNNING_SPEED;
 
     this._bonusAwarded = false;
 
@@ -60,13 +65,24 @@ export class DinoRunnerGame {
     this._bonusAwarded = false;
     this._runFramesLoaded = [];
     this._jumpSpriteLoaded = false;
+    this._lastTime = null;
 
     this.canvas = document.createElement('canvas');
     this.canvas.className = 'dino-runner-canvas';
     this.container.appendChild(this.canvas);
 
     this._resize();
-    this.runningSpeed = Math.max(2.5, this.width * 0.006) * 60;
+    this.runningSpeed = BASE_RUNNING_SPEED;
+
+    console.info('[DinoRunner config]', {
+      width: this.width,
+      height: this.height,
+      runningSpeed: this.runningSpeed,
+      gravity: this.gravity,
+      jumpForce: this.jumpForce,
+      minSafeGap: MIN_SAFE_OBSTACLE_GAP,
+      criticalZone: CRITICAL_ZONE_DISTANCE
+    });
 
     this._loadDinoAssets();
 
@@ -172,7 +188,6 @@ export class DinoRunnerGame {
     this.dino.x = Math.max(40, this.width * 0.1);
     this.dino.y = this.groundLevel - this.dino.h;
     this.groundY = this.groundLevel;
-    this.runningSpeed = Math.max(2.5, this.width * 0.006) * 60;
   }
 
   _onKeyDown(e) {
@@ -232,12 +247,8 @@ export class DinoRunnerGame {
     const lastType = this.obstacles.length > 0
       ? this.obstacles[this.obstacles.length - 1].type : null;
     const isCactus = lastType === 'rock' ? true : Math.random() < 0.6;
-    const w = isCactus
-      ? Math.max(14, this.width * 0.028)
-      : Math.max(18, this.width * 0.035);
-    const h = isCactus
-      ? Math.max(28, this.width * 0.055)
-      : Math.max(22, this.width * 0.045);
+    const w = isCactus ? CACTUS_WIDTH : ROCK_WIDTH;
+    const h = isCactus ? CACTUS_HEIGHT : ROCK_HEIGHT;
     this.obstacles.push({
       x: this.width,
       y: this.groundLevel - h,
