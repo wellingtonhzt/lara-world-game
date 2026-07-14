@@ -6,12 +6,49 @@ Levar seu personagem da casa inicial (posição 0) até a **casa 20** (vitória)
 
 ## Tela Inicial (Menu Principal)
 
-Ao abrir o jogo, a **Tela Inicial** é exibida com duas opções:
+Ao abrir o jogo, a **Tela Inicial** é exibida com três opções:
 
 - **⚡ Jogo Rápido** — inicia uma partida no modo Single Player (Humano vs Máquina) com configuração simplificada (apenas nome e sprite do Jogador 1)
+- **🎮 Modo Arcade** — abre a galeria de minigames para jogar qualquer minigame registrado de forma avulsa, sem tabuleiro
 - **🏆 Modo Carreira** — botão desabilitado visualmente com texto "(Em Breve)", reservado para futura progressão com fases e pontuação
 
 Clique em **"⚡ Jogo Rápido"** para acessar o modal de configuração e começar a jogar.
+
+## Modo Arcade
+
+O **Modo Arcade** permite jogar qualquer minigame registrado de forma avulsa, sem precisar percorrer o tabuleiro.
+
+### Como Acessar
+
+1. Na **Tela Inicial**, clique em **"🎮 Modo Arcade"**.
+2. Uma galeria com cards de todos os minigames disponíveis é exibida.
+3. Clique em um card para iniciar o minigame.
+
+### Regras
+
+- **Sem tabuleiro**: o Arcade não usa o tabuleiro, dados, turnos ou posições — apenas o MinigameHost
+- **Sem configuração de jogadores**: o nome do jogador é fixo ("Jogador"), sem modal de setup
+- **Reutilização do MinigameHost**: o mesmo host e card de resultado são usados, com o parâmetro `context: 'arcade'`
+- **Card final contextual**: ao invés de "Voltar ao tabuleiro", o card exibe "Voltar ao Arcade" e "Voltando ao Modo Arcade em Xs..."
+- **Sem bônus de casas**: o card de resultado NÃO exibe "+N casas" — o Arcade não tem tabuleiro para avançar
+- **Sem penalidade**: não há penalidade por derrota no Arcade
+- **Estatísticas persistentes**: cada partida é registrada em `localStorage` (partidas, vitórias, derrotas, sequência máxima, tempo total jogado)
+- **Repetição imediata**: ao retornar à galeria, o jogador pode escolher outro minigame ou repetir o mesmo
+
+### Minigames Disponíveis no Arcade
+
+Todos os minigames registrados no `MinigameRegistry` estão disponíveis:
+- 🚀 **Buraco de Minhoca** (MeteoroGame) — 60s, desvie de meteoros
+- 🦕 **Dino Runner** — 30s, pule obstáculos
+- 🧩 **Jogo da Memória da Floresta** — 30s, encontre pares de cartas
+- 🌊 **Tesouro das Marés** (Ocean Match-3) — 45s, combine peças
+- 🐉 **Ataque dos Dragões** — 20s, destrua dragões
+
+### Retorno
+
+- O jogador retorna à galeria Arcade (não ao tabuleiro)
+- As estatísticas são atualizadas automaticamente
+- O estado do tabuleiro (se houver uma partida em andamento) não é afetado
 
 ## Seletor de Modo
 

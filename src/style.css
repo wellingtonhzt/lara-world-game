@@ -2013,6 +2013,17 @@ body:has(.main-menu:not(.hidden)) {
   text-transform: uppercase;
 }
 
+/* ── Arcade Button ── */
+.menu-btn-arcade {
+  max-width: 420px;
+  padding: 18px 32px 14px;
+  font-size: 1.2rem;
+}
+
+.menu-btn-arcade::after {
+  content: none;
+}
+
 .menu-footer {
   position: relative;
   flex: 0 0 auto;
@@ -3358,6 +3369,7 @@ body[data-world="castelo-dragoes"] .path-line {
   .menu-brand-fallback { padding: 36px 12px; font-size: 2.4rem; }
   .menu-btn { max-width: 100%; }
   .menu-btn-primary { max-width: 100%; padding: 20px 28px 16px; font-size: 1.2rem; }
+  .menu-btn-arcade { max-width: 100%; padding: 14px 24px 12px; font-size: 1.1rem; }
   .menu-btn-secondary { max-width: 100%; padding: 9px 22px 8px; }
 
   .game-header-logo { max-height: 46px; }
@@ -3431,6 +3443,7 @@ body[data-world="castelo-dragoes"] .path-line {
   .menu-brand-logo { max-width: 100%; border-radius: 20px; }
   .menu-brand-fallback { padding: 28px 10px; font-size: 2rem; }
   .menu-btn-primary { padding: 16px 20px 14px; font-size: 1rem; }
+  .menu-btn-arcade { padding: 12px 18px 10px; font-size: 0.95rem; }
   .menu-btn-secondary { padding: 7px 18px 6px; }
   .challenge-btn { font-size: 0.9rem; padding: 10px 14px; }
 }
@@ -3459,6 +3472,11 @@ body[data-world="castelo-dragoes"] .path-line {
     padding-top: 7px;
     padding-bottom: 6px;
     font-size: 0.95rem;
+  }
+
+  .menu-btn-arcade {
+    padding-top: 10px;
+    padding-bottom: 8px;
   }
 
   .menu-footer {

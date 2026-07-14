@@ -18,8 +18,8 @@
 
 | Versão | Data | Status |
 |--------|------|--------|
-| **v0.29.0-preview** | Jul/2026 | ✅ **Ativo** — Padronização visual dos tabuleiros |
-| v0.28.0-preview | Jul/2026 | ✅ Ataque dos Dragões |
+| **v0.30.0-preview** | Jul/2026 | ✅ **Ativo** — Modo Arcade |
+| v0.29.0-preview | Jul/2026 | ✅ Padronização visual dos tabuleiros |
 | v0.27.0-preview | Jul/2026 | ✅ Jogo da Memória da Floresta |
 | v0.17.0-preview | Jul/2026 | ✅ Correção de 3 bugs (submundo, pergunta, aleatório) |
 | v0.18.0-preview | Jul/2026 | ✅ Revisão do sistema de perguntas |
@@ -42,9 +42,19 @@
 
 ---
 
-## ✨ Funcionalidades Atuais (v0.28.0-preview)
+## ✨ Funcionalidades Atuais (v0.30.0-preview)
 
-### Ataque dos Dragões — Novo Minigame ✅
+### Modo Arcade ✅
+
+- **Modo Arcade**: novo modo de jogo acessível pelo botão "🎮 Modo Arcade" na tela inicial — permite jogar qualquer minigame registrado de forma avulsa, sem precisar passar pelo tabuleiro
+- **Galeria de minigames**: tela com cards para cada minigame, exibindo nome, ícone, descrição, duração e estatísticas (partidas, vitórias, derrotas, taxa de acerto, sequência máxima, tempo total)
+- **Estatísticas persistentes**: dados salvos em `localStorage` (chave `lara-world-arcade-stats`) e atualizados a cada partida — schema v1 com partidas, vitorias, derrotas, sequenciaAtual, sequenciaMaxima, tempoTotalJogado
+- **Card final contextual**: no Arcade, o card exibe "Voltar ao Arcade" e "Voltando ao Modo Arcade..." — sem menção ao tabuleiro, sem exibição de bônus de casas
+- **Isolamento total**: Arcade não depende de estado do tabuleiro (currentPlayerIndex, players, posição, StateManager, SessionManager)
+- **Reutilização do MinigameHost**: mesmo host e card de resultado usados pelo tabuleiro, com o novo parâmetro `context: 'arcade'`
+- **Arquitetura modular**: 6 novos arquivos em `src/arcade/` — controller, screen, card, stats, CSS e barrel
+
+### Padronização Visual dos Tabuleiros — v0.29.0-preview ✅
 
 - **Ataque dos Dragões**: minigame Canvas na casa 15 do Castelo dos Dragões — defesa do castelo contra dragões que voam em direção ao castelo
 - **Mecânica**: clique/toque nos dragões para destruí-los antes que alcancem o castelo
@@ -543,7 +553,9 @@ docker compose down
 
 ## 🗺️ Roadmap
 
-- **v0.27.0-preview** — ✅ **Ativo** — Jogo da Memória da Floresta
+- **v0.30.0-preview** — ✅ **Ativo** — Modo Arcade
+- **v0.29.0-preview** — ✅ Padronização visual dos tabuleiros
+- **v0.28.0-preview** — ✅ Ataque dos Dragões
 - **v0.26.0-preview** — ✅ Versão oficial consolidada
 - **v0.16.0-preview** — ✅ Concluído — Visual da Galáxia Estelar (ART-011) + Sistema de Variantes de Tabuleiro (Layouts)
 - **v0.15.0-preview** — ✅ Concluído — Troca Quântica (GAL-002): Casa 7 swap-positions + result card do minigame

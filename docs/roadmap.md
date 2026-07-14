@@ -1,6 +1,20 @@
 # Roadmap Lara World
 
-### v0.29.0-preview — Padronização Visual dos Tabuleiros (Atual) ✅
+### v0.30.0-preview — Modo Arcade (Atual) ✅
+
+- [x] Modo Arcade com galeria de minigames (cards dinâmicos via registry)
+- [x] Botão "🎮 Modo Arcade" na tela inicial
+- [x] Arquitetura modular em `src/arcade/` (6 arquivos: controller, screen, card, stats, CSS, barrel)
+- [x] Reutilização do MinigameHost com parâmetro `context: 'board' | 'arcade'`
+- [x] Card final contextual: "Voltar ao Arcade" / "Voltando ao Modo Arcade..."
+- [x] Ocultação de bonus de casas no contexto Arcade
+- [x] Estatísticas persistentes em `localStorage` (schema v1)
+- [x] Guard de execução `_isRunning` com `try/finally`
+- [x] `setCardsEnabled()` — bloqueio visual durante execução
+- [x] Error handling: `showError()` / `hideError()` + `console.error`
+- [x] Documentação: README, CHANGELOG, visão-geral, arquitetura, regras, roadmap, memorial-técnico
+
+### v0.29.0-preview — Padronização Visual dos Tabuleiros ✅
 
 - [x] Ícones funcionais exclusivos para casas especiais (❓ ⏩ ⏪ 🎲 ⏸️ 🔄 👑 🧩 🏃 🚀 🎯 🐉)
 - [x] Casas normais com ícones temáticos únicos por mundo (zero repetição)

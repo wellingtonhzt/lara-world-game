@@ -5,7 +5,20 @@ const DEFAULT_AUTO_RETURN = 5;
 const DEFAULT_BOT_DELAY = 6000;
 
 export function launchMinigameHost(id, options = {}) {
-  const { isBot = false, playerName = 'Jogador' } = options;
+  const { isBot = false, playerName = 'Jogador', context = 'board' } = options;
+
+  function getReturnPresentation(ctx) {
+    if (ctx === 'arcade') {
+      return {
+        buttonLabel: 'Voltar ao Arcade',
+        countdownLabel: seconds => `Voltando ao Modo Arcade em ${seconds}s...`
+      };
+    }
+    return {
+      buttonLabel: 'Voltar ao tabuleiro',
+      countdownLabel: seconds => `Voltando ao tabuleiro em ${seconds}s...`
+    };
+  }
 
   const config = getMinigame(id);
   const pres = config.presentation || {};
@@ -110,7 +123,7 @@ export function launchMinigameHost(id, options = {}) {
         cardIcon.textContent = pres.successIcon || '\uD83D\uDE80';
         cardTitle.textContent = pres.successTitle || 'Miss\u00E3o conclu\u00EDda!';
         cardDesc.textContent = pres.successMessage || '';
-        if (result.boardDelta > 0) {
+        if (context === 'board' && result.boardDelta > 0) {
           bonusEl.classList.remove('hidden');
           bonusValue.textContent = `+${result.boardDelta} ${result.boardDelta > 1 ? 'casas' : 'casa'}`;
         }
@@ -123,9 +136,11 @@ export function launchMinigameHost(id, options = {}) {
     }
 
     function startReturnCountdown(result) {
+      const ret = getReturnPresentation(context);
       let count = autoReturn;
-      countdownEl.textContent = `Voltando ao tabuleiro em ${count}...`;
+      countdownEl.textContent = ret.countdownLabel(count);
       countdownEl.classList.remove('hidden');
+      cardBtn.textContent = ret.buttonLabel;
       cardBtn.onclick = () => {
         if (countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
         countdownEl.classList.add('hidden');
@@ -139,7 +154,7 @@ export function launchMinigameHost(id, options = {}) {
           countdownEl.classList.add('hidden');
           resolveWith(result);
         } else {
-          countdownEl.textContent = `Voltando ao tabuleiro em ${count}...`;
+          countdownEl.textContent = ret.countdownLabel(count);
         }
       }, 1000);
     }
