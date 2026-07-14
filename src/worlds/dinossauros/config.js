@@ -44,10 +44,10 @@ export const valeDosDinossauros = {
       { id: 20, x: 17, y: 84 },
     ],
     cellIcons: [
-      '\uD83C\uDF1F', '\uD83E\uDEB4', '\uD83C\uDF3F', '\uD83E\uDD95', '\uD83C\uDF34',
-      '\uD83E\uDEA8', '\u26F0\uFE0F', '\uD83E\uDD5A', '\uD83C\uDF0B', '\uD83C\uDF40',
-      '\uD83E\uDD96', '\uD83D\uDC3E', '\uD83E\uDEB4', '\uD83E\uDEA8', '\uD83C\uDF34',
-      '\uD83E\uDEA8', '\uD83C\uDF0B', '\uD83E\uDD85', '\uD83E\uDD96', '\uD83C\uDFC1',
+      '🥚', '❓', '🦴', '⏩', '🌴',
+      '⏪', '🌋', '🎲', '❓', '🏃',
+      '⏪', '🐾', '❓', '🪨', '⏩',
+      '🌱', '⏸️', '🦅', '❓', '👑',
     ],
   },
 
@@ -113,40 +113,40 @@ export const valeDosDinossauros = {
 
   events: {
     2: [
-      { type: 'challenge', description: '\uD83E\uDEB4 Desafio' },
+      { type: 'challenge', description: 'Desafio' },
     ],
     4: [
-      { type: 'move', params: { delta: 3 }, description: '\uD83E\uDD95 Avance 3' },
+      { type: 'move', params: { delta: 3 }, description: 'Avance 3' },
     ],
     6: [
-      { type: 'move', params: { delta: -2 }, description: '\uD83E\uDEA8 Volte 2' },
+      { type: 'move', params: { delta: -2 }, description: 'Volte 2' },
     ],
     8: [
-      { type: 'extraTurn', description: '\uD83E\uDD5A Jogue novamente' },
+      { type: 'extraTurn', description: 'Jogue de novo' },
     ],
       9: [
-      { type: 'challenge', description: '\uD83C\uDF0B Desafio' },
+      { type: 'challenge', description: 'Desafio' },
     ],
      10: [
-      { type: 'dino-runner', description: '\uD83E\uDD96 Dino Runner!' },
+      { type: 'dino-runner', description: 'Dino Runner' },
     ],
     11: [
-      { type: 'move', params: { delta: -4 }, description: '\uD83E\uDD96 Volte 4' },
+      { type: 'move', params: { delta: -4 }, description: 'Volte 4' },
     ],
     13: [
-      { type: 'challenge', description: '\uD83D\uDC3E Desafio' },
+      { type: 'challenge', description: 'Desafio' },
     ],
     15: [
-      { type: 'move', params: { delta: 1 }, description: '\uD83C\uDF34 Avance 1' },
+      { type: 'move', params: { delta: 1 }, description: 'Avance 1' },
     ],
     17: [
-      { type: 'skipTurn', params: { count: 1 }, description: '\uD83C\uDF0B Perde 1 rodada' },
+      { type: 'skipTurn', params: { count: 1 }, description: 'Pule a vez' },
     ],
     19: [
-      { type: 'challenge', description: '\uD83E\uDD85 Desafio' },
+      { type: 'challenge', description: 'Desafio' },
     ],
     20: [
-      { type: 'finishWorld', description: '\uD83C\uDFC1 Vit\u00f3ria' },
+      { type: 'finishWorld', description: 'Chegada' },
     ],
   },
 

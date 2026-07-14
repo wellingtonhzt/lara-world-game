@@ -50,10 +50,10 @@ export const florestaEncantada = {
       20: { x: 10, y: 82 },
     },
     cellIcons: [
-      '\uD83C\uDF1F', '\uD83C\uDF38', '\uD83C\uDF33', '\u2B50', '\uD83E\uDD8B',
-      '\uD83C\uDF40', '\uD83C\uDF88', '\uD83D\uDC31', '\uD83C\uDF6D', '\uD83C\uDF80',
-      '\uD83E\uDDE0', '\uD83D\uDC30', '\uD83C\uDF6C', '\uD83E\uDD84', '\uD83C\uDFAA',
-      '\uD83D\uDC3C', '\uD83C\uDF49', '\uD83D\uDC36', '\uD83C\uDFA0', '\uD83D\uDC51',
+      '🌳', '🍄', '⏩', '❓', '⏪',
+      '🦋', '❓', '🎲', '🐞', '⏸️',
+      '🧩', '❓', '🌻', '🍃', '🔄',
+      '❓', '🌸', '🐿️', '🐾', '👑',
     ],
   },
 
@@ -123,40 +123,40 @@ export const florestaEncantada = {
 
   events: {
     3: [
-      { type: 'move', params: { delta: 2 }, description: 'Avance 2 casas!' },
+      { type: 'move', params: { delta: 2 }, description: 'Avance 2' },
     ],
     4: [
-      { type: 'challenge', description: 'Desafio!' },
+      { type: 'challenge', description: 'Desafio' },
     ],
     5: [
-      { type: 'move', params: { delta: -1 }, description: 'Volte 1 casa!' },
+      { type: 'move', params: { delta: -1 }, description: 'Volte 1' },
     ],
     7: [
-      { type: 'challenge', description: 'Desafio!' },
+      { type: 'challenge', description: 'Desafio' },
     ],
     8: [
-      { type: 'extraTurn', description: 'Jogue novamente!' },
+      { type: 'extraTurn', description: 'Jogue de novo' },
     ],
     10: [
-      { type: 'skipTurn', params: { count: 1 }, description: 'Perdeu uma rodada!' },
+      { type: 'skipTurn', params: { count: 1 }, description: 'Pule a vez' },
     ],
     11: [
-      { type: 'memory-forest', description: '\uD83C\uDF3F Jogo da Mem\u00F3ria da Floresta' },
+      { type: 'memory-forest', description: 'Memória' },
     ],
     12: [
-      { type: 'challenge', description: 'Desafio!' },
+      { type: 'challenge', description: 'Desafio' },
     ],
     15: [
-      { type: 'resetPosition', description: 'Volte para o in\u00edcio!' },
+      { type: 'resetPosition', description: 'Volte ao início' },
     ],
     16: [
-      { type: 'challenge', description: 'Desafio!' },
+      { type: 'challenge', description: 'Desafio' },
     ],
     18: [
-      { type: 'challenge', description: 'Desafio!' },
+      { type: 'challenge', description: 'Desafio' },
     ],
     20: [
-      { type: 'finishWorld', description: '\uD83C\uDFC6 Chegada!' },
+      { type: 'finishWorld', description: 'Chegada' },
     ],
   },
 

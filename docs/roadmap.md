@@ -1,6 +1,16 @@
 # Roadmap Lara World
 
-### v0.28.0-preview — Ataque dos Dragões (Atual) ✅
+### v0.29.0-preview — Padronização Visual dos Tabuleiros (Atual) ✅
+
+- [x] Ícones funcionais exclusivos para casas especiais (❓ ⏩ ⏪ 🎲 ⏸️ 🔄 👑 🧩 🏃 🚀 🎯 🐉)
+- [x] Casas normais com ícones temáticos únicos por mundo (zero repetição)
+- [x] Textos das casas reduzidos para leitura mobile (máximo 3 palavras)
+- [x] Revisão completa dos 5 mundos: Floresta, Dinossauros, Galáxia, Oceanos, Castelo
+- [x] Galáxia casa 17 normalizada (🌟 normal); ⏸️ reservado para "Pule a vez"
+- [x] game.js fallback casasEspeciais atualizado
+- [x] index.html debug renomeado
+
+### v0.28.0-preview — Ataque dos Dragões ✅
 
 - [x] Minigame Canvas: dragões voam em direção ao castelo, clique/toque para destruir, 20s, 4 fases
 - [x] `src/minigames/ataque-dragoes/AtaqueDragoesGame.js` criado

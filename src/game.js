@@ -178,18 +178,18 @@ import { APP_VERSION } from './version.js';
   }
 
   const casasEspeciais = {
-    3: { tipo: "avancar", valor: 2, descricao: "Avance 2 casas!" },
-    4: { tipo: "desafio", descricao: "Desafio!" },
-    5: { tipo: "voltar", valor: 1, descricao: "Volte 1 casa!" },
-    7: { tipo: "desafio", descricao: "Desafio!" },
-     8: { tipo: "jogar-novamente", valor: 0, descricao: "Jogue novamente!" },
-     10: { tipo: "perde-rodada", valor: 0, descricao: "Perdeu uma rodada!" },
-     11: { tipo: "memory-forest", descricao: "🧠 Jogo da Mem\u00F3ria" },
-     12: { tipo: "desafio", descricao: "Desafio!" },
-    15: { tipo: "voltar-inicio", valor: 0, descricao: "Volte para o início!" },
-    16: { tipo: "desafio", descricao: "Desafio!" },
-    18: { tipo: "desafio", descricao: "Desafio!" },
-    20: { tipo: "vitoria", valor: 0, descricao: "🏆 Chegada!" },
+    3: { tipo: "avancar", valor: 2, descricao: "Avance 2" },
+    4: { tipo: "desafio", descricao: "Desafio" },
+    5: { tipo: "voltar", valor: 1, descricao: "Volte 1" },
+    7: { tipo: "desafio", descricao: "Desafio" },
+     8: { tipo: "jogar-novamente", valor: 0, descricao: "Jogue de novo" },
+     10: { tipo: "perde-rodada", valor: 0, descricao: "Pule a vez" },
+     11: { tipo: "memory-forest", descricao: "Memória" },
+     12: { tipo: "desafio", descricao: "Desafio" },
+    15: { tipo: "voltar-inicio", valor: 0, descricao: "Volte ao início" },
+    16: { tipo: "desafio", descricao: "Desafio" },
+    18: { tipo: "desafio", descricao: "Desafio" },
+    20: { tipo: "vitoria", valor: 0, descricao: "Chegada" },
   };
 
   const icons = [

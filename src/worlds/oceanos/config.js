@@ -39,10 +39,10 @@ export const reinoOceanos = {
       20: { x: 10, y: 82 },
     },
     cellIcons: [
-      '\u2B50', '\uD83D\uDC20', '\uD83D\uDC1A', '\uD83E\uDD88', '\uD83D\uDC19',
-      '\uD83C\uDF0A', '\uD83D\uDC33', '\uD83E\uDD80', '\uD83D\uDC21', '\uD83E\uDEB8',
-      '\uD83D\uDC1F', '\uD83D\uDC0B', '\uD83E\uDD91', '\uD83D\uDC2C', '\uD83C\uDF0A',
-      '\uD83E\uDD9E', '\uD83D\uDC20', '\uD83D\uDC27', '\uD83D\uDC22', '\uD83D\uDC51',
+      '🌊', '⏩', '🐙', '❓', '⏪',
+      '🐠', '🪸', '🔄', '🎲', '🐢',
+      '🐟', '❓', '🦈', '🐚', '🐋',
+      '🎯', '⏸️', '❓', '🦞', '👑',
     ],
   },
 
@@ -100,34 +100,34 @@ export const reinoOceanos = {
 
   events: {
     2: [
-      { type: 'move', params: { delta: 1 }, description: '\uD83C\uDF0A Avance 1' },
+      { type: 'move', params: { delta: 1 }, description: 'Avance 1' },
     ],
     4: [
-      { type: 'challenge', description: '\uD83D\uDC20 Desafio' },
+      { type: 'challenge', description: 'Desafio' },
     ],
     5: [
-      { type: 'move', params: { delta: -2 }, description: '\uD83C\uDF2A\uFE0F Volte 2' },
+      { type: 'move', params: { delta: -2 }, description: 'Volte 2' },
     ],
     8: [
-      { type: 'swap-positions', params: {}, description: '\uD83D\uDC1A Troca' },
+      { type: 'swap-positions', params: {}, description: 'Troque de lugar' },
     ],
     9: [
-      { type: 'extraTurn', description: '\uD83D\uDC2C Jogue novamente' },
+      { type: 'extraTurn', description: 'Jogue de novo' },
     ],
     12: [
-      { type: 'challenge', description: '\uD83D\uDC19 Desafio' },
+      { type: 'challenge', description: 'Desafio' },
     ],
     16: [
-      { type: 'recife-placeholder', description: '\uD83C\uDF0A Tesouro das Mar\u00E9s' },
+      { type: 'recife-placeholder', description: 'Match-3' },
     ],
     17: [
-      { type: 'skipTurn', params: { count: 1 }, description: '\uD83C\uDF0A Perde rodada' },
+      { type: 'skipTurn', params: { count: 1 }, description: 'Pule a vez' },
     ],
     18: [
-      { type: 'challenge', description: '\u2B50 Desafio' },
+      { type: 'challenge', description: 'Desafio' },
     ],
     20: [
-      { type: 'finishWorld', description: '\uD83D\uDC51 Vit\u00f3ria' },
+      { type: 'finishWorld', description: 'Chegada' },
     ],
   },
 

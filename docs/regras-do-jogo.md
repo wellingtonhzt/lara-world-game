@@ -101,7 +101,42 @@ A escolha do modo determina quais campos são exibidos no modal e como o Jogador
 | 15 | 🔙 Volte ao início | O personagem volta para a posição 0 (fora do tabuleiro). |
 | 16 | ❓ Desafio educativo | Mesmo efeito da casa 4. |
 | 18 | ❓ Desafio educativo | Mesmo efeito da casa 4. |
- | 20 | 🏆 Vitória! | O jogador vence a partida. |
+|  | 20 | 🏆 Vitória! | O jogador vence a partida. |
+
+## Padrão Visual dos Tabuleiros (v0.29.0-preview)
+
+Regra oficial para apresentação visual das casas em todos os mundos:
+
+**Casas especiais** — cada casa exibe:
+- Número da casa
+- Ícone funcional exclusivo da ação
+- Texto curto da ação (máx. 3 palavras)
+
+**Casas normais** — cada casa exibe:
+- Número da casa
+- Ícone temático do mundo (único, sem repetição)
+- Sem texto descritivo
+
+**Ícones funcionais reservados** (somente casas especiais):
+| Ícone | Ação |
+|-------|------|
+| ❓ | Desafio |
+| ⏩ | Avançar |
+| ⏪ | Voltar |
+| 🎲 | Jogue de novo |
+| ⏸️ | Pule a vez |
+| 🔄 | Troque de lugar |
+| 👑 | Chegada |
+| 🧩 | Memória |
+| 🏃 | Dino Runner |
+| 🚀 | Buraco de Minhoca |
+| 🎯 | Match-3 |
+| 🐉 | Dragões |
+
+**Regras de repetição:**
+- Ícones funcionais podem repetir apenas se representam exatamente a mesma ação (ex: ❓ em 5 casas de Desafio)
+- Ícones normais NUNCA se repetem dentro do mesmo mundo
+- Ícones normais NUNCA usam ícones funcionais reservados
 
 ### Mundo Galáxia — Casas Especiais
 

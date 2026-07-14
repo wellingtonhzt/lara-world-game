@@ -1916,3 +1916,46 @@ O header `max-age=604800, immutable` não era originado pelo Nginx — a configu
 - O fallback SPA `location /` fica por último para não interceptar rotas de arquivos estáticos
 - Durante preview, não se usa `immutable` porque assets são substituídos mantendo o mesmo nome
 - `?v=v0.27.0-preview` no index.html funciona como cache-busting adicional
+
+## Marco — Padronização Visual dos Tabuleiros (v0.29.0-preview)
+
+### Objetivo
+
+Padronizar completamente a apresentação visual das casas em todos os 5 mundos do Lara World, criando um padrão limpo e legível no mobile. Cada casa deve conter apenas: número, ícone e ação (quando existir).
+
+### Arquivos alterados
+
+| Arquivo | Mudança |
+|---|---|
+| `src/worlds/floresta/config.js` | cellIcons[] reescrito (8 normais únicos + 7 funcionais); events com textos mínimos |
+| `src/worlds/dinossauros/config.js` | cellIcons[] reescrito (8 normais únicos + 7 funcionais); events com textos mínimos |
+| `src/worlds/galaxia/config.js` | cellIcons[] reescrito (11 normais únicos + 7 funcionais); events com textos mínimos; casa 17 normalizada |
+| `src/worlds/oceanos/config.js` | cellIcons[] reescrito (10 normais únicos + 8 funcionais); events com textos mínimos |
+| `src/worlds/castelo/config.js` | cellIcons[] reescrito (8 normais únicos + 8 funcionais); events com textos mínimos |
+| `src/game.js` | Fallback casasEspeciais atualizado com textos mínimos e ícones funcionais |
+| `src/index.html` | Botão debug "Gal C15 🚪" renomeado para "🚀 Gal C15" |
+
+### Decisões tomadas
+
+1. **Ícones funcionais exclusivos**: ❓ ⏩ ⏪ 🎲 ⏸️ 🔄 👑 🧩 🏃 🚀 🎯 🐉 — reservados para casas especiais, nunca em casas normais
+2. **Casas normais com ícones únicos**: cada mundo tem seu conjunto temático, sem repetição
+3. **Textos mínimos**: máximo 3 palavras por descrição ("Desafio", "Avance 2", "Volte 1", etc.)
+4. **Mundo inicial com identidade**: 🌳 Floresta, 🥚 Dinossauros, 🌌 Galáxia, 🌊 Oceanos, 🏰 Castelo
+5. **Galáxia casa 17**: normalizada com 🌟 (normal) — 🛰️ conflitava com casa 11
+
+### Regra oficial estabelecida
+
+- Casas especiais: Número + Ícone funcional + Texto curto
+- Casas normais: Número + Ícone temático (sem texto)
+- Ícones funcionais podem repetir apenas para a mesma ação
+- Ícones normais nunca se repetem no mesmo mundo
+- Ícones normais nunca usam ícones funcionais
+
+### Resultado final
+
+- 5 mundos padronizados (100 casas revisadas)
+- 55 casas especiais com ícones funcionais
+- 45 casas normais com ícones temáticos únicos
+- Zero repetição de ícones normais por mundo
+- Todos os textos com no máximo 3 palavras
+- Minigames preservados com nomes corretos

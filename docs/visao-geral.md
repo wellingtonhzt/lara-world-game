@@ -18,7 +18,14 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 
 ## Principais Funcionalidades
 
-### v0.28.0-preview (Atual) — Ataque dos Dragões ✅
+### v0.29.0-preview (Atual) — Padronização Visual dos Tabuleiros ✅
+
+- **Padronização visual**: casas especiais usam ícones funcionais exclusivos (❓ ⏩ ⏪ 🎲 ⏸️ 🔄 👑 🧩 🏃 🚀 🎯 🐉), casas normais usam ícones temáticos únicos por mundo
+- **Textos reduzidos**: todas as descrições de eventos encurtadas para leitura rápida no mobile (máximo 3 palavras)
+- **Revisão dos 5 mundos**: Floresta 🌿, Dinossauros 🦕, Galáxia 🌌, Oceanos 🌊, Castelo 🏰 — cada mundo com identidade visual própria e zero repetição em casas normais
+- **Galáxia ajustada**: casa 17 normalizada com 🌟; ⏸️ reservado exclusivamente para "Pule a vez"
+
+### v0.28.0-preview — Ataque dos Dragões ✅
 
 - **Ataque dos Dragões**: minigame Canvas na casa 15 do Castelo dos Dragões — defesa do castelo contra dragões que voam em direção ao castelo
 - **Mecânica**: clique/toque nos dragões para destruí-los antes que alcancem o castelo

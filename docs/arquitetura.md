@@ -510,6 +510,34 @@ A partir da v0.9.0-preview, o Lara World iniciou a **Fase de Mundos** com a cria
 | **🌊 Reino dos Oceanos** (principal) | `src/worlds/oceanos/config.js` | 20 | 9 | — | `board.positions` |
 | **🐉 Castelo dos Dragões** (principal) | `src/worlds/castelo/config.js` | 20 | 9 | — | `board.cells` (ascendente) |
 
+### Padrão Visual de Ícones (v0.29.0-preview)
+
+Regra oficial para ícones de casas em todos os mundos:
+
+**Casas especiais** — usam ícones funcionais exclusivos:
+| Ícone | Ação |
+|-------|------|
+| ❓ | Desafio |
+| ⏩ | Avançar |
+| ⏪ | Voltar |
+| 🎲 | Jogue de novo |
+| ⏸️ | Pule a vez |
+| 🔄 | Troque de lugar |
+| 👑 | Chegada |
+| 🧩 | Memória (Floresta) |
+| 🏃 | Dino Runner (Dinossauros) |
+| 🚀 | Buraco de Minhoca (Galáxia) |
+| 🎯 | Match-3 (Oceanos) |
+| 🐉 | Dragões (Castelo) |
+
+**Casas normais** — usam ícones temáticos únicos por mundo:
+- Nenhum ícone funcional pode aparecer em casa normal
+- Nenhum ícone normal pode repetir dentro do mesmo mundo
+- Ícones devem combinar com o tema do mundo
+- Casas normais não possuem texto descritivo
+
+**Textos de eventos** — máx. 3 palavras: "Desafio", "Avance N", "Volte N", "Jogue de novo", "Pule a vez", "Troque de lugar", "Chegada", "Memória", "Dino Runner", "Buraco de Minhoca", "Match-3", "Dragões"
+
 ### Seletor de Mundos (UX-014 v2)
 
 O seletor de mundos é uma tela intermediária entre o clique em "⚡ Jogo Rápido" e o modal de configuração. Exibe 6 cards em grid com visual remodelado (5 mundos disponíveis + 1 aleatório):

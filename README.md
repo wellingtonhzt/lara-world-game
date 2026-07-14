@@ -18,7 +18,8 @@
 
 | Versão | Data | Status |
 |--------|------|--------|
-| **v0.28.0-preview** | Jul/2026 | ✅ **Ativo** — Ataque dos Dragões |
+| **v0.29.0-preview** | Jul/2026 | ✅ **Ativo** — Padronização visual dos tabuleiros |
+| v0.28.0-preview | Jul/2026 | ✅ Ataque dos Dragões |
 | v0.27.0-preview | Jul/2026 | ✅ Jogo da Memória da Floresta |
 | v0.17.0-preview | Jul/2026 | ✅ Correção de 3 bugs (submundo, pergunta, aleatório) |
 | v0.18.0-preview | Jul/2026 | ✅ Revisão do sistema de perguntas |

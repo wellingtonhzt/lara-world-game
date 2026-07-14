@@ -21,10 +21,10 @@ export const galaxiaEstelar = {
     defaultLayout: 'padrao',
     layouts: galaxyLayouts,
     cellIcons: [
-      '\u2B50', '\uD83C\uDF1F', '\uD83C\uDF20', '\uD83D\uDE80', '\uD83C\uDF0D',
-      '\uD83C\uDF0E', '\u2604\uFE0F', '\uD83C\uDF12', '\uD83D\uDD2D', '\uD83E\uDE90',
-      '\uD83C\uDF1B', '\uD83C\uDF1E', '\u2728', '\uD83C\uDF15', '\uD83D\uDE80',
-      '\uD83C\uDF0A', '\uD83C\uDF1C', '\uD83D\uDE80', '\uD83C\uDF0C', '\uD83D\uDC51',
+      '🌌', '🌍', '⏩', '⏩', '❓',
+      '🌙', '🔄', '🪐', '🎲', '🔭',
+      '🛰️', '❓', '☄️', '⏪', '🚀',
+      '⏸️', '🌟', '❓', '🌠', '👑',
     ],
   },
 
@@ -81,34 +81,34 @@ export const galaxiaEstelar = {
 
   events: {
     3: [
-      { type: 'move', params: { delta: 2 }, description: '\uD83C\uDF0A Avance 2' },
+      { type: 'move', params: { delta: 2 }, description: 'Avance 2' },
     ],
     5: [
-      { type: 'challenge', description: '\u2B50 Desafio' },
+      { type: 'challenge', description: 'Desafio' },
     ],
      7: [
-        { type: 'swap-positions', params: {}, description: '\uD83C\uDF00 Troca' },
+        { type: 'swap-positions', params: {}, description: 'Troque de lugar' },
       ],
     9: [
-      { type: 'extraTurn', description: '\u26A1 Jogue novamente' },
+      { type: 'extraTurn', description: 'Jogue de novo' },
     ],
     12: [
-      { type: 'challenge', description: '\uD83C\uDF20 Desafio' },
+      { type: 'challenge', description: 'Desafio' },
     ],
     14: [
-      { type: 'move', params: { delta: -3 }, description: '\u2604\uFE0F Volte 3' },
+      { type: 'move', params: { delta: -3 }, description: 'Volte 3' },
     ],
     15: [
-      { type: 'buraco-minhoca', description: '\uD83D\uDE80 Buraco de Minhoca!' },
+      { type: 'buraco-minhoca', description: 'Buraco de Minhoca' },
     ],
     16: [
-      { type: 'skipTurn', params: { count: 1 }, description: '\u2744\uFE0F Perde 1 rodada' },
+      { type: 'skipTurn', params: { count: 1 }, description: 'Pule a vez' },
     ],
     18: [
-      { type: 'challenge', description: '\uD83C\uDF1F Desafio' },
+      { type: 'challenge', description: 'Desafio' },
     ],
     20: [
-      { type: 'finishWorld', description: '\uD83C\uDFC1 Chegada!' },
+      { type: 'finishWorld', description: 'Chegada' },
     ],
   },
 

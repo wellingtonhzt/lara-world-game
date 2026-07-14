@@ -2,6 +2,23 @@
 
 ## [Unreleased]
 
+## [0.29.0-preview] - 2026-07-14
+
+### Adicionado
+- **Padronização visual dos tabuleiros**: nova regra oficial — casas especiais usam ícones funcionais exclusivos (❓ ⏩ ⏪ 🎲 ⏸️ 🔄 👑 🧩 🏃 🚀 🎯 🐉), casas normais usam ícones temáticos únicos por mundo, sem repetição entre si e sem conflito com ícones funcionais
+- **Revisão completa dos 5 mundos**: Floresta 🌿, Dinossauros 🦕, Galáxia 🌌, Oceanos 🌊, Castelo 🏰 — todos os cellIcons reavaliados e padronizados com identidade visual própria
+- **Textos das casas reduzidos**: todas as descrições de eventos foram encurtadas para leitura rápida no mobile (máximo 3 palavras: "Desafio", "Avance 2", "Volte 1", "Jogue de novo", "Pule a vez", "Troque de lugar", "Chegada", "Memória", "Dino Runner", "Buraco de Minhoca", "Match-3", "Dragões")
+- **Ajuste Galáxia casa 17**: normalizada com ícone 🌟 (normal) — ⏸️ reservado exclusivamente para a ação "Pule a vez"
+
+### Alterado
+- **game.js**: fallback `casasEspeciais` atualizado com textos mínimos e ícones funcionais
+- **index.html**: botão debug "Gal C15 🚪" renomeado para "🚀 Gal C15"
+- **Floresta**: cellIcons — 🌳 🍄 🦋 🐞 🌻 🍃 🌸 🐿️ 🐾 (normais); ⏩ ❓ ⏪ 🎲 ⏸️ 🧩 🔄 👑 (especiais)
+- **Dinossauros**: cellIcons — 🥚 🦴 🌴 🌋 🐾 🪨 🌱 🦅 (normais); ❓ ⏩ ⏪ 🎲 🏃 ⏸️ 👑 (especiais)
+- **Galáxia**: cellIcons — 🌌 🌍 ☄️ 🌙 🪐 🔭 🛰️ 💫 🛸 🌠 🌟 (normais); ⏩ ❓ 🔄 🎲 🚀 ⏸️ 👑 (especiais)
+- **Oceanos**: cellIcons — 🌊 🐙 🐠 🪸 🐢 🐟 🦈 🐚 🐋 🦞 (normais); ⏩ ❓ ⏪ 🔄 🎲 🎯 ⏸️ 👑 (especiais)
+- **Castelo**: cellIcons — 🏰 ⚔️ 🛡️ 📜 🗝️ 🔮 🏹 🏺 (normais); ⏩ ❓ ⏪ 🎲 ⏸️ 🐉 🔄 👑 (especiais)
+
 ### Corrigido
 - **Cache HTTP**: Reescrita da política de cache no Nginx (`docker/nginx.conf`) — adicionada diretiva `always` em todos os headers, separação explícita HTML/JS/CSS/mídia, `.map` incluído no grupo de revalidação. Corrige problema onde Cloudflare servia assets JS antigos (`loader.js`) com `max-age=604800, immutable` após deploy.
 
