@@ -44,11 +44,27 @@ export class OceanMatch3 {
     this.rootElement = null;
     this.interactionLocked = false;
     this._botPreviewInterval = null;
+    this._targetReached = false;
   }
 
   start() {
     if (this._started) return;
     this._started = true;
+
+    this._completed = false;
+    this._targetReached = false;
+    this.combinations = 0;
+    this.timeRemaining = this.timeLimit;
+    this.selectedCell = null;
+    this.swapCount = 0;
+    this.validSwapCount = 0;
+    this.invalidSwapCount = 0;
+    this.lastSwap = null;
+    this.isResolving = false;
+    this.cascadeCycles = 0;
+    this._totalCascadeCycles = 0;
+    this.lastMatches = { groups: [], cells: [], hasMatches: false };
+
     this._loadCSS();
     this.container.style.aspectRatio = 'auto';
     this.container.style.minHeight = '350px';
@@ -160,8 +176,8 @@ export class OceanMatch3 {
       <div class="ocean-match3-invalid-msg ocean-match3-hidden">Essa troca n\u00E3o forma combina\u00E7\u00E3o.</div>
       ${isDebug ? `
       <div class="ocean-match3-debug-btns">
-        <button class="ocean-match3-btn ocean-match3-btn-success" data-action="vitoria">\u2705 Simular vit\u00F3ria</button>
-        <button class="ocean-match3-btn ocean-match3-btn-failure" data-action="tempo">\u23F1 Simular fim do tempo</button>
+        <button class="ocean-match3-btn ocean-match3-btn-success" data-action="atingir-meta">\u2705 Atingir meta</button>
+        <button class="ocean-match3-btn ocean-match3-btn-failure" data-action="encerrar-tempo">\u23F1 Encerrar tempo</button>
       </div>` : ''}
     `;
     this.container.appendChild(this.rootElement);
@@ -220,9 +236,15 @@ export class OceanMatch3 {
 
   _updateHUD() {
     const comboEl = (this.rootElement || this.container).querySelector('.ocean-match3-hud-combos');
-    if (comboEl) comboEl.textContent = `Combina\u00E7\u00F5es: ${this.combinations} / ${this.targetCombinations}`;
+    if (comboEl) {
+      const prefix = this._targetReached ? '\u2714 ' : '';
+      comboEl.textContent = `${prefix}Combina\u00E7\u00F5es: ${this.combinations} / ${this.targetCombinations}`;
+    }
     const progEl = (this.rootElement || this.container).querySelector('.ocean-match3-progress');
-    if (progEl) progEl.innerHTML = this._generateProgressHTML();
+    if (progEl) {
+      progEl.innerHTML = this._generateProgressHTML();
+      progEl.classList.toggle('ocean-match3-progress--target-reached', this._targetReached);
+    }
     const timerEl = (this.rootElement || this.container).querySelector('.ocean-match3-hud-timer');
     if (timerEl) {
       if (this._noTimerLimit) {
@@ -233,6 +255,15 @@ export class OceanMatch3 {
         timerEl.classList.toggle('ocean-match3-timer-urgent', this.timeRemaining <= 5);
       }
     }
+  }
+
+  /* ── Target resolution ── */
+
+  _hasReachedTarget() {
+    return (
+      this._targetReached ||
+      this.combinations >= this.targetCombinations
+    );
   }
 
   /* ── Timer ── */
@@ -259,13 +290,15 @@ export class OceanMatch3 {
     this._stopTimer();
     if (this._completed || !this._started) return;
     const combinacoes = this.combinations;
-    let boardDelta = 0;
-    if (combinacoes >= 3 && combinacoes <= 4) boardDelta = 1;
+    const venceu = this._hasReachedTarget();
+    if (venceu) {
+      this._targetReached = true;
+    }
     this._complete({
-      venceu: false,
-      boardDelta,
+      venceu,
+      boardDelta: venceu ? 3 : 0,
       progresso: { atual: combinacoes, objetivo: this.targetCombinations },
-      motivo: 'tempo-encerrado',
+      motivo: venceu ? 'objetivo-concluido' : 'tempo-encerrado',
       stats: { combinacoes, cascatas: this._totalCascadeCycles },
     });
   }
@@ -454,15 +487,9 @@ export class OceanMatch3 {
       this._totalCascadeCycles++;
       this._updateHUD();
 
-      if (this.combinations >= this.targetCombinations) {
-        this._complete({
-          venceu: true,
-          boardDelta: 3,
-          progresso: { atual: this.combinations, objetivo: this.targetCombinations },
-          motivo: 'objetivo-concluido',
-          stats: { combinacoes: this.combinations, cascatas: this._totalCascadeCycles },
-        });
-        return;
+      if (!this._targetReached && this.combinations >= this.targetCombinations) {
+        this._targetReached = true;
+        this._updateHUD();
       }
 
       currentMatches = this._findMatches(this.grid);
@@ -714,20 +741,22 @@ export class OceanMatch3 {
 
   _handleAction(action) {
     if (this.interactionLocked) return;
-    if (action === 'vitoria') {
+    if (action === 'atingir-meta') {
+      if (!this._targetReached) {
+        this.combinations = Math.max(this.combinations, this.targetCombinations);
+        this._targetReached = true;
+        this._updateHUD();
+      }
+    } else if (action === 'encerrar-tempo') {
+      const venceu = this._hasReachedTarget();
+      if (venceu) {
+        this._targetReached = true;
+      }
       this._complete({
-        venceu: true,
-        boardDelta: 3,
+        venceu,
+        boardDelta: venceu ? 3 : 0,
         progresso: { atual: this.combinations, objetivo: this.targetCombinations },
-        motivo: 'objetivo-concluido',
-        stats: { combinacoes: this.combinations, cascatas: this._totalCascadeCycles }
-      });
-    } else if (action === 'tempo') {
-      this._complete({
-        venceu: false,
-        boardDelta: 0,
-        progresso: { atual: this.combinations, objetivo: this.targetCombinations },
-        motivo: 'tempo-encerrado',
+        motivo: venceu ? 'objetivo-concluido' : 'tempo-encerrado',
         stats: { combinacoes: this.combinations, cascatas: this._totalCascadeCycles }
       });
     }
@@ -782,6 +811,7 @@ export class OceanMatch3 {
     }
     this._completed = true;
     this._started = false;
+    this._targetReached = false;
     this.grid = null;
     this.selectedCell = null;
     this.lastSwap = null;

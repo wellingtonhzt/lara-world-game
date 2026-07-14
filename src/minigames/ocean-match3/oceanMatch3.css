@@ -162,6 +162,15 @@
   color: #ff5252 !important;
 }
 
+.ocean-match3-progress--target-reached {
+  animation: ocean-match3-target-glow 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes ocean-match3-target-glow {
+  0% { filter: drop-shadow(0 0 4px rgba(0,230,118,0.5)); }
+  100% { filter: drop-shadow(0 0 12px rgba(0,230,118,0.9)); }
+}
+
 .ocean-match3-invalid-msg {
   text-align: center;
   color: #ff8a80;
