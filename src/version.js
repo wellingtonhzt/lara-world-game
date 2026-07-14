@@ -1,4 +1,4 @@
-export const APP_VERSION = 'v0.29.0-preview';
+export const APP_VERSION = 'v0.30.0-preview';
 
 export function getCacheBust() {
   return `v=${encodeURIComponent(APP_VERSION)}`;

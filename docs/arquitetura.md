@@ -31,6 +31,12 @@ lara-world/
 │   │   ├── sounds.js          # Catálogo de sons (chaves simbólicas)
 │   │   └── index.js           # Instância singleton exportada
 │   ├── minigames/       # Minigames internos
+│   │   ├── engine/            # Motor de minigames
+│   │   │   ├── minigame-host.js     # Host compartilhado (tabuleiro e arcade)
+│   │   │   ├── minigame-registry.js # Registro de minigames
+│   │   │   ├── minigame-result.js   # Normalização de resultados
+│   │   │   ├── loader.js            # Imports de minigames (side-effect)
+│   │   │   └── index.js             # Barrel re-exports
 │   │   ├── meteoro/           # Minigame MeteoroGame (Buraco de Minhoca)
 │   │   │   ├── MeteoroGame.js      # Classe principal do minigame (4-dir, meteoros, vidas)
 │   │   │   ├── meteoroGame.css     # Estilos do jogo (flash, UI, resultado)
@@ -43,6 +49,21 @@ lara-world/
 │   │   │   ├── AtaqueDragoesGame.js # Classe principal (Canvas, dragões, castelo, 20s, 4 fases)
 │   │   │   ├── ataque-dragoes.css   # Estilos do canvas
 │   │   │   └── index.js             # Config e registro do minigame
+│   │   ├── memoria-floresta/  # Minigame Jogo da Memória (Floresta, casa 11)
+│   │   │   ├── MemoryGame.js       # Classe principal (DOM, cartas, cronômetro)
+│   │   │   ├── memoryGame.css      # Estilos do tabuleiro de cartas
+│   │   │   └── index.js            # Config e registro do minigame
+│   │   └── ocean-match3/      # Minigame Ocean Match-3 (Oceanos)
+│   │       ├── OceanMatch3.js      # Classe principal (Canvas, match-3, cronômetro)
+│   │       ├── ocean-match3.css    # Estilos do canvas
+│   │       └── index.js            # Config e registro do minigame
+│   ├── arcade/            # Modo Arcade (jogar minigames avulsos)
+│   │   ├── index.js             # Barrel re-exports de todos os módulos públicos
+│   │   ├── arcade-controller.js # Lifecycle: enter/leave, guard de execução, launch com try/finally
+│   │   ├── arcade-screen.js     # Renderização da galeria de cards, showError/hideError, setCardsEnabled
+│   │   ├── arcade-card.js       # Card individual: createMinigameCard, updateCardStats, escapeHtml
+│   │   ├── arcade-stats.js      # Persistência localStorage (schema v1), recordGame, safeResult
+│   │   └── arcade.css           # Tema escuro, overlay z-index 1400, grid responsivo, .arcade-cards-disabled
 │   ├── assets/          # Recursos visuais do jogo
 │   │   ├── ui/          # Assets da Hero Screen (menu inicial)
 │   │   │   ├── logo-lara-world.webp  # Logo oficial do Lara World — exibido na Hero Screen
@@ -129,7 +150,7 @@ Estrutura semântica dividida em:
   - Card central translúcido (`.menu-content`) com gradiente rosado/creme/azulado, `backdrop-filter: blur(24px)`, borda branca 3px e glow rosa
   - Logo oficial (`.menu-brand`) com `<img class="menu-brand-logo" src="assets/ui/logo-lara-world.webp">` + `<span class="menu-brand-fallback">` como fallback textual — substitui a antiga estrutura `.menu-logo` com emoji 🌍 + gradiente
   - Ilustração Lara removida do card central (antigo `.menu-lara-hero`) — composição simplificada
-  - Dois botões: "⚡ Jogo Rápido" (ativo, glow pulsante) e "🏆 Modo Aventura" (desabilitado, badge "EM BREVE...")
+  - Três botões: "⚡ Jogo Rápido" (ativo, glow pulsante), "🎮 Modo Arcade" (novo) e "🏆 Modo Aventura" (desabilitado, badge "EM BREVE...")
   - Footer com versão lida de `APP_VERSION` (src/version.js)
   - Escondido quando uma partida é iniciada; reexibido via "Voltar ao Menu"
 - **Setup Modal** (`#setup-screen`):
@@ -149,6 +170,14 @@ Estrutura semântica dividida em:
   - Overlay fixo com `z-index: 800`, exibido ao cair em uma casa de portal
   - Título e mensagem dinâmicos, lidos do portal config do mundo atual
   - Botões "Entrar" e "Continuar"
+- **Arcade Screen** (`#arcade-screen`, classe `.arcade-screen`):
+  - Overlay fullscreen com `z-index: 1400` (abaixo de minigame-overlay e main-menu, acima do tabuleiro)
+  - Tema escuro com fundo `#1a1a2e`, header, grid de cards (`.arcade-cards`) e footer com botão "← Menu Principal"
+  - Cada card (`.arcade-card`) exibe: ícone do minigame, título, descrição, duração, taxa de vitória, partidas jogadas
+  - Cards ficam visualmente desabilitados (`.arcade-cards-disabled`) quando um minigame está em execução
+  - Erros são exibidos em `#arcade-error` com texto amigável
+  - Inicializado via `initArcadeScreen(onSelect)` que renderiza cards dinamicamente a partir de `listMinigames()`
+  - Controlado por `enterArcadeMode()` / `leaveArcadeMode()` / `showArcadeScreen()` / `hideArcadeScreen()`
 - **Challenge Modal** (`#challenge-overlay`):
   - Overlay fixo com `z-index: 500`, exibido durante o jogo
   - Título "Desafio!", pergunta (`#challenge-question`) e opções (`#challenge-options`)
@@ -306,9 +335,19 @@ Sorteio de Perguntas (temático por mundo)
   └── Mundo sem mapeamento → usa banco geral (128 perguntas)
 
 Main Menu
-  ├── showMainMenu() → exibe menu inicial, esconde tabuleiro/painel/victory
+  ├── showMainMenu() → exibe menu inicial, esconde tabuleiro/painel/victory, chama leaveArcadeMode()
   ├── hideMainMenu() → esconde menu, prepara tabuleiro
-  └── setupMenuEvents() → registra clique em "⚡ Jogo Rápido" e "🏆 Modo Carreira"
+  └── setupMenuEvents() → registra clique em "⚡ Jogo Rápido", "🎮 Modo Arcade" e "🏆 Modo Carreira"
+
+Modo Arcade
+  ├── initArcadeController(showMainMenu) → injeta callback de saída
+  ├── initArcadeScreen(onSelect) → renderiza cards da galeria
+  ├── enterArcadeMode() → exibe galeria (chamado pelo listener do btn-arcade)
+  ├── leaveArcadeMode() → oculta galeria (chamado em showMainMenu e exitArcadeToMenu)
+  ├── launchArcadeMinigame(id) → abre minigame via MinigameHost(context: 'arcade'), registra stats
+  ├── exitArcadeToMenu() → leaveArcadeMode() + onExit()
+  ├── arcadeBackBtn → listener no #arcade-back-btn, chama exitArcadeToMenu()
+  └── modoJogo = "arcade" → valor de modoJogo para o Arcade
 
 Seletor de Mundos
   ├── showWorldSelector() → exibe grid de 6 cards (5 mundos disponíveis + 1 aleatório)
@@ -419,9 +458,10 @@ Início (DOMContentLoaded)
   ↓
 Menu Inicial (showMainMenu)
   ├── "⚡ Jogo Rápido" → setupModalEvents() configura modoJogo = "rapido", esconde menu
+  ├── "🎮 Modo Arcade" → modoJogo = "arcade", enterArcadeMode(), exibe galeria
   └── "🏆 Modo Carreira" → desabilitado (Em Breve)
   ↓
-Seletor de Mundos (showWorldSelector)
+Seletor de Mundos (showWorldSelector) — apenas Jogo Rápido
   ├── 🌳 Floresta Encantada → selectedWorldId = "floresta-encantada"
   ├── 🦖 Vale dos Dinossauros → selectedWorldId = "vale-dinossauros"
   ├── 🐉 Castelo dos Dragões → selectedWorldId = "castelo-dragoes"
@@ -478,6 +518,47 @@ unlockTurn → scheduleBotTurnIfNeeded()
   │               └── Ao final → switchTurn + unlockTurn (agenda próximo turno humano)
   └── Não → aguarda clique humano
 ```
+
+### Fluxo do Modo Arcade
+
+```
+Menu Inicial (showMainMenu)
+  ↓
+Clique "🎮 Modo Arcade" → modoJogo = "arcade"
+  ↓
+enterArcadeMode()
+  ├── setCardsEnabled(true), hideError(), refreshArcadeCards()
+  └── showArcadeScreen() → exibe galeria de cards
+  ↓
+Galeria de Minigames (arcade-screen)
+  ├── Cada card: nome, ícone, descrição, duração, taxa de vitória, partidas
+  ├── Cards dinamicamente renderizados via listMinigames() do registry
+  └── Clique em card → launchArcadeMinigame(minigameId)
+  ↓
+launchArcadeMinigame(minigameId)
+  ├── Guard: se _isRunning → retorna null (impede duplicatas)
+  ├── _isRunning = true, setCardsEnabled(false)
+  ├── hideArcadeScreen()
+  ├── launchMinigameHost(minigameId, { isBot: false, playerName: 'Jogador', context: 'arcade' })
+  │   ├── Card final: "Voltar ao Arcade" / "Voltando ao Modo Arcade em Xs..."
+  │   ├── Bonus de casas: NÃO exibido (context === 'arcade')
+  │   └── Retorna resultado normalizado
+  ├── recordGame(minigameId, result, durationMs) → atualiza stats em localStorage
+  └── finally: _isRunning = true → false, setCardsEnabled(true), refreshArcadeCards(), showArcadeScreen()
+  ↓
+Voltar à galeria (estatísticas atualizadas nos cards)
+```
+
+### MinigameHost — Parâmetro `context`
+
+O `launchMinigameHost()` aceita campo opcional `context`:
+
+| context | Texto de retorno | Texto do botão | Bonus no card | Destino ao retornar |
+|---------|-----------------|----------------|---------------|---------------------|
+| `'board'` (padrão) | "Voltando ao tabuleiro em Xs..." | "Voltar ao tabuleiro" | Exibido (+N casas) | game.js (aplica boardDelta) |
+| `'arcade'` | "Voltando ao Modo Arcade em Xs..." | "Voltar ao Arcade" | Oculto | arcade-controller.js (volta à galeria) |
+
+Chamadas atuais do tabuleiro em `game.js` não informam `context`, usando o padrão `'board'`. Apenas o Arcade passa `context: 'arcade'` explicitamente.
 
 ## Motor de Mundos (v0.12.0-preview)
 

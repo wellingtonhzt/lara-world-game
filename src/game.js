@@ -6,6 +6,7 @@ import { audioManager } from './audio/index.js';
 import { launchMinigameHost } from './minigames/engine/index.js';
 import { OceanMatch3 } from './minigames/ocean-match3/OceanMatch3.js';
 import './minigames/engine/loader.js';
+import { initArcadeController, initArcadeScreen, enterArcadeMode, leaveArcadeMode, launchArcadeMinigame, exitArcadeToMenu } from './arcade/index.js';
 import { bancoQuestoes, questoesDisponiveis, categoryIndices, worldCategoryMap, getIndicesPorMundo, getCategoriasPorMundo } from './data/questions.js';
 import { APP_VERSION } from './version.js';
 
@@ -1106,6 +1107,7 @@ import { APP_VERSION } from './version.js';
     document.getElementById("main-menu").classList.remove("hidden");
     document.getElementById("setup-screen").classList.add("hidden");
     document.getElementById("world-selector").classList.add("hidden");
+    leaveArcadeMode();
     selectedWorldId = null;
     currentWorldConfig = null;
     selectedLayoutId = null;
@@ -1123,6 +1125,13 @@ import { APP_VERSION } from './version.js';
       modoJogo = "rapido";
       hideMainMenu();
       showWorldSelector();
+    });
+
+    document.getElementById("btn-arcade").addEventListener("click", () => {
+      audioManager.play('buttonClick');
+      modoJogo = "arcade";
+      hideMainMenu();
+      enterArcadeMode();
     });
   }
 
@@ -2676,6 +2685,18 @@ import { APP_VERSION } from './version.js';
         const hist = document.getElementById("history");
         hist.classList.toggle("expanded");
         this.textContent = hist.classList.contains("expanded") ? "\u25B2" : "\u25BC";
+      });
+    }
+
+    initArcadeController(showMainMenu);
+    initArcadeScreen(async (minigameId) => {
+      await launchArcadeMinigame(minigameId);
+    });
+    const arcadeBackBtn = document.getElementById('arcade-back-btn');
+    if (arcadeBackBtn) {
+      arcadeBackBtn.addEventListener('click', () => {
+        audioManager.play('buttonClick');
+        exitArcadeToMenu();
       });
     }
 

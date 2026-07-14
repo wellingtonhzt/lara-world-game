@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lara World</title>
-  <link rel="stylesheet" href="style.css?v=v0.28.0-preview">
+  <link rel="stylesheet" href="style.css?v=v0.30.0-preview">
+  <link rel="stylesheet" href="arcade/arcade.css">
 </head>
 <body>
   <div id="app">
@@ -38,6 +39,10 @@
             <span class="btn-main-text">⚡ Jogo Rápido</span>
             <span class="btn-subtitle">Partida rápida e divertida</span>
           </button>
+          <button id="btn-arcade" class="menu-btn menu-btn-arcade">
+            <span class="btn-main-text">🎮 Modo Arcade</span>
+            <span class="btn-subtitle">Jogue qualquer minigame avulso</span>
+          </button>
           <button id="btn-carreira" class="menu-btn menu-btn-secondary" disabled>
             <span class="btn-main-text">🏆 Modo Aventura</span>
             <span class="btn-subtitle">Novos mundos aguardam você!</span>
@@ -46,7 +51,7 @@
         </div>
       </div>
       <div class="menu-footer">
-        <span id="menu-version" class="menu-version">v0.28.0-preview</span>
+        <span id="menu-version" class="menu-version">v0.30.0-preview</span>
       </div>
     </div>
 
@@ -262,6 +267,18 @@
             <button id="minigame-skip-btn" class="minigame-skip-btn">⏭ Pular</button>
           </div>
         </div>
+      </div>
+    </div>
+
+    <div id="arcade-screen" class="arcade-screen hidden">
+      <div class="arcade-header">
+        <h2>🎮 Modo Arcade</h2>
+        <p>Escolha um minigame para jogar avulso!</p>
+      </div>
+      <div id="arcade-cards" class="arcade-cards"></div>
+      <div id="arcade-error" class="arcade-error hidden"></div>
+      <div class="arcade-footer">
+        <button id="arcade-back-btn" class="arcade-back-btn">← Menu Principal</button>
       </div>
     </div>
 
@@ -542,6 +559,6 @@
     </div>
   </div>
 
-  <script type="module" src="game.js?v=v0.29.0-preview"></script>
+  <script type="module" src="game.js?v=v0.30.0-preview"></script>
 </body>
 </html>

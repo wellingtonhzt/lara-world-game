@@ -1,5 +1,100 @@
 # Memorial Técnico
 
+## Sprint — Modo Arcade (v0.30.0-preview)
+
+### Objetivo
+
+Implementar o Modo Arcade — um novo modo de jogo que permite jogar qualquer minigame registrado de forma avulsa, sem passar pelo tabuleiro. Inclui: tela de galeria com cards, persistência de estatísticas em localStorage, isolamento total em relação ao tabuleiro, e extensão do MinigameHost com parâmetro `context` para card final contextual.
+
+### Arquivos Criados
+
+| Arquivo | Descrição |
+|---------|-----------|
+| `src/arcade/index.js` | Barrel re-exports de todos os módulos públicos do Arcade |
+| `src/arcade/arcade-controller.js` | Lifecycle do Arcade: `enterArcadeMode()`, `leaveArcadeMode()`, `launchArcadeMinigame()`, `exitArcadeToMenu()`, guard `_isRunning` com `try/finally` |
+| `src/arcade/arcade-screen.js` | Renderização da galeria: `initArcadeScreen()`, `showArcadeScreen()`, `hideArcadeScreen()`, `setCardsEnabled()`, `showError()`/`hideError()`, `refreshArcadeCards()` |
+| `src/arcade/arcade-card.js` | Card individual: `createMinigameCard()`, `updateCardStats()`, `escapeHtml()` para injeção segura de dados do registry |
+| `src/arcade/arcade-stats.js` | Persistência localStorage (chave `lara-world-arcade-stats`, schema v1): `loadStats()`, `saveStats()`, `recordGame()`, `getMinigameStats()`, `getWinRate()`, `formatDurationMs()`, `safeResult()` |
+| `src/arcade/arcade.css` | Tema escuro (fundo `#1a1a2e`), overlay `z-index: 1400`, grid responsivo de cards, `.arcade-cards-disabled`, `.arcade-error` |
+
+### Arquivos Alterados
+
+| Arquivo | Tipo de Alteração |
+|---------|-------------------|
+| `src/game.js` | **Modificado** — Import de `arcade/index.js` (6 símbolos), `initArcadeController(showMainMenu)` e `initArcadeScreen()` no `init()`, listener `#btn-arcade` com `modoJogo = "arcade"`, `leaveArcadeMode()` em `showMainMenu()`, `#arcade-back-btn` listener |
+| `src/index.html` | **Modificado** — Botão `#btn-arcade` no menu, seção `#arcade-screen` (overlay com header, cards container, error, footer), import CSS `arcade/arcade.css` |
+| `src/style.css` | **Modificado** — Classe `.menu-btn-arcade` (base), variantes responsivas (tablet ≤768px, phone ≤600px) |
+| `src/minigames/engine/minigame-host.js` | **Modificado** — Campo `context` extraído de options (default `'board'`), helper `getReturnPresentation(ctx)`, `showResult()` com guard `context === 'board'` para bonus, `startReturnCountdown()` com textos contextuais e atualização de `cardBtn.textContent` |
+| `src/arcade/arcade-controller.js` | **Modificado** — Passa `context: 'arcade'` na chamada a `launchMinigameHost()` |
+
+### Decisões Técnicas
+
+| Decisão | Alternativas | Motivo |
+|---------|-------------|--------|
+| Criar módulo separado `src/arcade/` em vez de adicionar lógica em game.js | Adicionar funções diretamente no game.js (que já tem 2700+ linhas) | Separação de responsabilidades; Arcade é um modo completamente independente do tabuleiro |
+| Reutilizar MinigameHost com parâmetro `context` em vez de criar host separado | Criar um MinigameHostArcade duplicado | Evita duplicação; mesmo card, mesmos elementos DOM, mesma lógica — apenas textos mudam |
+| Campo `context` como string ('board'/'arcade') em vez de boolean | `isArcade: true/false` | Mais extensível para futuros contextos; mais legível nas chamadas |
+| Stats em localStorage em vez de IndexedDB | IndexedDB para dados mais complexos | volume pequeno (5 minigames × ~10 campos); localStorage é mais simples e suficiente |
+| Schema v1 com campo `version` | Sem versionamento | Permite migração futura sem quebra |
+| `safeResult()` wrapper para resultado.stats | Acessar stats diretamente | Minigames podem retornar `stats: undefined/null/{}`; wrapper garante objeto válido |
+| Barrel `index.js` re-exports públicos | Imports diretos de cada módulo | Simplifica imports em game.js; esconde estrutura interna do Arcade |
+| `setCardsEnabled(false)` durante execução | Sem bloqueio visual | Evita clique acidental em outros cards enquanto minigame está aberto |
+| `_isRunning` guard com `try/finally` | Sem proteção | Impede dupla instância do mesmo minigame; garante limpeza em caso de erro |
+| Error handling: `console.error` + `showError()` | Erro silencioso | Usuário vê mensagem amigável; desenvolvedor vê detalhes no console |
+| Arcade no z-index 1400 (abaixo de minigame-overlay 1500) | z-index igual ou acima | Arcade é container; minigame é conteúdo — overlay do host precisa ficar acima |
+
+### Correção Durante Implementação
+
+**Import faltando** — Durante a auditoria de recuperação (após interrupção de memória), foi identificado que `initArcadeController` não estava na lista de imports de `arcade/index.js` em `game.js:9`. Isso causava `ReferenceError` dentro de `init()`, impedindo o carregamento completo da página. Corrigido adicionando `initArcadeController` ao import.
+
+### Card Final — Parâmetro `context`
+
+O `launchMinigameHost()` foi estendido com campo opcional `context`:
+
+```js
+launchMinigameHost(id, {
+  isBot: false,
+  playerName: 'Jogador',
+  context: 'arcade' // ou 'board' (padrão)
+});
+```
+
+**Textos no contexto `board`** (inalterados):
+- Countdown: "Voltando ao tabuleiro em Xs..."
+- Botão: "Voltar ao tabuleiro"
+- Bonus: exibido quando `boardDelta > 0` ("+3 casas")
+
+**Textos no contexto `arcade`** (novos):
+- Countdown: "Voltando ao Modo Arcade em Xs..."
+- Botão: "Voltar ao Arcade"
+- Bonus: sempre oculto
+
+### Impacto Técnico
+
+- O Arcade é totalmente isolado do tabuleiro — não depende de `currentPlayerIndex`, `players[]`, posição, `StateManager` nem `SessionManager`
+- O `MinigameHost` continua sendo o único host de minigames — sem duplicação
+- O schema de stats (`lara-world-arcade-stats`) é compatível com futuras expansões (campo `version`)
+- As 5 chamadas existentes do tabuleiro em `game.js` continuam sem informar `context`, usando o padrão `'board'`
+
+### Impacto Funcional
+
+- Novo botão "🎮 Modo Arcade" na tela inicial
+- Tela de galeria com cards de todos os minigames registrados
+- Card final contextual (Arcade vs tabuleiro)
+- Estatísticas persistentes por minigame
+- Bloqueio visual dos cards durante execução
+- Mensagem de erro amigável em caso de falha
+
+### Testes Executados
+
+- `node --check` em todos os JS alterados (game.js, 6 arquivos arcade, minigame-host.js, arcade-controller.js)
+- Validação de imports/exports: todos os símbolos do barrel presentes em game.js
+- Verificação de IDs HTML: `#btn-arcade`, `#arcade-screen`, `#arcade-cards`, `#arcade-error`, `#arcade-back-btn` existem
+- Verificação de guards: `arcadeBackBtn` protegido com `if`
+- Cenário de console: todos os 8 cenários validados (menu, seleção, stats, host, card, retorno, erro, limpeza)
+
+---
+
 ## Sprint — Ataque dos Dragões (v0.28.0-preview)
 
 ### Objetivo

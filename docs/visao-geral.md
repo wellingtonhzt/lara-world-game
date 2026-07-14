@@ -18,7 +18,17 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 
 ## Principais Funcionalidades
 
-### v0.29.0-preview (Atual) — Padronização Visual dos Tabuleiros ✅
+### v0.30.0-preview (Atual) — Modo Arcade ✅
+
+- **Modo Arcade**: novo modo acessível pelo botão "🎮 Modo Arcade" na tela inicial — permite jogar qualquer minigame registrado de forma avulsa, sem tabuleiro
+- **Galeria de minigames**: tela com cards para cada minigame, exibindo nome, ícone, descrição, duração e estatísticas do jogador
+- **Estatísticas persistentes**: dados salvos em `localStorage` (chave `lara-world-arcade-stats`) — partidas, vitórias, derrotas, taxa de acerto, sequência máxima, tempo total jogado
+- **Parâmetro `context` no MinigameHost**: `launchMinigameHost()` aceita `context: 'board' | 'arcade'`, alterando textos de retorno e ocultando efeitos do tabuleiro
+- **Card final contextual**: no Arcade — "Voltar ao Arcade" / "Voltando ao Modo Arcade..." sem menção ao tabuleiro; no tabuleiro — mantém textos atuais
+- **Arquitetura modular**: 6 novos arquivos em `src/arcade/` — controller, screen, card, stats, CSS, barrel
+- **Isolamento**: Arcade não depende de `currentPlayerIndex`, `players[]`, posição, `StateManager` nem `SessionManager`
+
+### v0.29.0-preview — Padronização Visual dos Tabuleiros ✅
 
 - **Padronização visual**: casas especiais usam ícones funcionais exclusivos (❓ ⏩ ⏪ 🎲 ⏸️ 🔄 👑 🧩 🏃 🚀 🎯 🐉), casas normais usam ícones temáticos únicos por mundo
 - **Textos reduzidos**: todas as descrições de eventos encurtadas para leitura rápida no mobile (máximo 3 palavras)
@@ -227,21 +237,33 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 ```
 Menu (Tela Inicial)
   ↓
-Escolher Mundo (Floresta / Dinossauros / Aleatório)
-  ↓
-Configurar Jogadores (nome + sprite)
-  ↓
-Jogar Mundo Principal (20 casas, eventos, desafios)
-  ↓
-(Quando existir) Portal → Área Especial
-  ├── Entrar: mini-trilha com eventos próprios
-  └── Continuar: segue no mundo principal
-  ↓
-Retornar da Área Especial (com bônus parametrizado)
-  ↓
-Concluir Mundo (atingir casa final)
-  ↓
-Vitória → Jogar Novamente / Voltar ao Menu
+┌─── "⚡ Jogo Rápido" ──────────────────────────────┐
+│ Escolher Mundo (Floresta / Dinossauros / Aleatório) │
+│   ↓                                                 │
+│ Configurar Jogadores (nome + sprite)                │
+│   ↓                                                 │
+│ Jogar Mundo Principal (20 casas, eventos, desafios) │
+│   ↓                                                 │
+│ (Quando existir) Portal → Área Especial             │
+│   ├── Entrar: mini-trilha com eventos próprios      │
+│   └── Continuar: segue no mundo principal            │
+│   ↓                                                 │
+│ Retornar da Área Especial (com bônus parametrizado) │
+│   ↓                                                 │
+│ Concluir Mundo (atingir casa final)                 │
+│   ↓                                                 │
+│ Vitória → Jogar Novamente / Voltar ao Menu          │
+└─────────────────────────────────────────────────────┘
+
+┌─── "🎮 Modo Arcade" ──────────────────────────────┐
+│ Galeria de Minigames (cards com estatísticas)       │
+│   ↓                                                 │
+│ Selecionar minigame → MinigameHost (context arcade) │
+│   ↓                                                 │
+│ Card final: "Voltar ao Arcade" (sem tabuleiro)      │
+│   ↓                                                 │
+│ Retornar à galeria (estatísticas atualizadas)       │
+└─────────────────────────────────────────────────────┘
 ```
 
 ## Sobre Áreas Especiais

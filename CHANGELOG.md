@@ -2,6 +2,28 @@
 
 ## [Unreleased]
 
+## [0.30.0-preview] - 2026-07-14
+
+### Adicionado
+- **Modo Arcade**: novo modo de jogo que permite jogar qualquer minigame registrado de forma avulsa, sem precisar passar pelo tabuleiro. Acessível pelo botão "🎮 Modo Arcade" na tela inicial
+- **Galeria de minigames**: tela com cards para cada minigame disponível, exibindo nome, ícone, descrição, duração e estatísticas do jogador
+- **Estatísticas persistentes do Arcade**: dados salvos em `localStorage` (chave `lara-world-arcade-stats`) com schema v1: partidas jogadas, vitórias, derrotas, sequência atual, sequência máxima, tempo total jogado, última jogada e último resultado por minigame
+- **Parâmetro `context` no MinigameHost**: `launchMinigameHost()` agora aceita campo opcional `context: 'board' | 'arcade'` para alternar textos de retorno e ocultar efeitos do tabuleiro no card final
+- **Card final contextual**: no contexto `arcade`, o card exibe "Voltar ao Arcade" e "Voltando ao Modo Arcade em Xs..." — sem menção ao tabuleiro, sem exibição de bônus de casas
+- **Card final no contexto `board` preservado**: textos "Voltar ao tabuleiro", "Voltando ao tabuleiro em Xs..." e exibição de "+N casas" mantidos intactos
+- **Arquitetura `src/arcade/`**: 6 novos arquivos — `index.js` (barrel), `arcade-controller.js` ( lifecycle + guard de execução ), `arcade-screen.js` (renderização da galeria), `arcade-card.js` (card individual), `arcade-stats.js` (persistência localStorage), `arcade.css` (tema escuro)
+- **Isolamento do Arcade em relação ao tabuleiro**: Arcade não depende de `currentPlayerIndex`, `players[]`, posição, `StateManager` nem `SessionManager`
+
+### Alterado
+- **`src/game.js`**: imports de `arcade/index.js`, `initArcadeController(showMainMenu)`, `initArcadeScreen()` no `init()`, listener `#btn-arcade`, `leaveArcadeMode()` em `showMainMenu()`
+- **`src/index.html`**: botão `#btn-arcade` no menu, seção `#arcade-screen` com galeria + footer, import CSS `arcade/arcade.css`
+- **`src/style.css`**: classe `.menu-btn-arcade` com variantes responsivas (tablet ≤768px, phone ≤600px)
+- **`src/minigames/engine/minigame-host.js`**: campo `context` extraído de options (default `'board'`), helper `getReturnPresentation(ctx)` centraliza textos de retorno, `showResult()` oculta bonus quando `context === 'arcade'`, `startReturnCountdown()` usa textos contextuais e atualiza `cardBtn.textContent`
+- **`src/arcade/arcade-controller.js`**: passa `context: 'arcade'` na chamada a `launchMinigameHost()`
+
+### Corrigido
+- **Import faltando**: `initArcadeController` não estava no import de `arcade/index.js` em `game.js`, causando `ReferenceError` que impedia o carregamento da página (corrigido durante auditoria de recuperação)
+
 ## [0.29.0-preview] - 2026-07-14
 
 ### Adicionado
