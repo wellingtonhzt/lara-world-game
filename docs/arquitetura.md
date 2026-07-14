@@ -530,3 +530,16 @@ O estado de submundo agora é genérico (`activeSubworldId`, `subworldEntry`) em
 ## Docker
 
 O Dockerfile usa **nginx:alpine** para servir os arquivos estáticos da pasta `src/`. O `docker-compose.yml` expõe a porta **8080** mapeando para a porta 80 do container. A configuração do Nginx está em `docker/nginx.conf`.
+
+### Política de cache (preview)
+
+A política de cache é definida no Nginx e serve como origem para Cloudflare:
+
+| Tipo | Extensões | Cache-Control |
+|---|---|---|
+| HTML | `.html`, `/` | `no-store, no-cache, must-revalidate, max-age=0` |
+| Código | `.js`, `.mjs`, `.css` | `no-cache, must-revalidate, max-age=0` |
+| Dados | `.json`, `.webmanifest`, `.map` | `no-cache, must-revalidate, max-age=0` |
+| Mídia | `.webp`, `.png`, `.jpg`, `.svg`, `.webm`, `.mp3`, `.woff2`, etc. | `public, max-age=86400` |
+
+Não se usa `immutable` durante a fase preview, pois os assets são substituídos mantendo o mesmo nome. O `?v=` no index.html atua como cache-busting adicional para CSS e JS.

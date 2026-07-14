@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Corrigido
+- **Cache HTTP**: Reescrita da política de cache no Nginx (`docker/nginx.conf`) — adicionada diretiva `always` em todos os headers, separação explícita HTML/JS/CSS/mídia, `.map` incluído no grupo de revalidação. Corrige problema onde Cloudflare servia assets JS antigos (`loader.js`) com `max-age=604800, immutable` após deploy.
+
 ## [0.27.0-preview] - 2026-07-13
 
 ### Adicionado

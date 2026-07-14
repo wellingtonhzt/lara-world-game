@@ -1828,3 +1828,32 @@ Evoluir o Lara World de um jogo single player para suporte a multiplayer local c
 - Personagens sobrepostos recebem offset visual para não se ocultarem
 - Primeiro jogador a atingir a casa 20 vence e encerra a partida
 - Reinício reseta ambos os jogadores simultaneamente
+
+## Marco — Política de Cache HTTP (Nginx + Cloudflare)
+
+### Objetivo
+
+Corrigir problema de cache antigo servido por Cloudflare após deploy, onde `loader.js` e outros assets JS continuavam sendo entregues com `Cache-Control: public, max-age=604800, immutable` mesmo após atualização do container.
+
+### Causa
+
+O header `max-age=604800, immutable` não era originado pelo Nginx — a configuração já definia `no-cache` para JS/CSS. O problema era uma **Cache Rule da Cloudflare** que sobrescrevia os headers da origem.
+
+### Solução
+
+1. **Nginx**: Adicionada diretiva `always` em todos os `add_header` para garantir que os headers sejam enviados em qualquer tipo de resposta. Separada a regra HTML (`location = /` + `location ~* \.html$`) da regra JS/CSS para maior clareza. Adicionado `.map` ao grupo de revalidação.
+
+2. **Cloudflare**: Necessário verificar e ajustar Cache Rules para respeitar headers da origem (bypass para `*.html`, `*.js`, `*.mjs`, `*.css`, `*.json`, `*.webmanifest`).
+
+### Arquivos alterados
+
+| Arquivo | Mudança |
+|---|---|
+| `docker/nginx.conf` | `always` em todos os headers; `location = /` explícito; `location ~* \.html$` separado; `.map` adicionado ao grupo de revalidação; fallback SPA preservado |
+
+### Notas Técnicas
+
+- `location = /` usa `try_files /index.html =404` (não SPA fallback) — index.html é tratado pelo `location ~* \.html$`
+- O fallback SPA `location /` fica por último para não interceptar rotas de arquivos estáticos
+- Durante preview, não se usa `immutable` porque assets são substituídos mantendo o mesmo nome
+- `?v=v0.27.0-preview` no index.html funciona como cache-busting adicional
