@@ -5,6 +5,19 @@
 ### Corrigido
 - **Cache HTTP**: Reescrita da política de cache no Nginx (`docker/nginx.conf`) — adicionada diretiva `always` em todos os headers, separação explícita HTML/JS/CSS/mídia, `.map` incluído no grupo de revalidação. Corrige problema onde Cloudflare servia assets JS antigos (`loader.js`) com `max-age=604800, immutable` após deploy.
 
+## [0.28.0-preview] - 2026-07-13
+
+### Adicionado
+- **Ataque dos Dragões**: novo minigame Canvas na casa 15 do Castelo dos Dragões — jogo de defesa onde o jogador toca nos dragões antes que alcancem o castelo. 20 segundos, 15 dragões para acertar, 3 escudos de defesa. 4 fases de dificuldade progressiva (velocidade e quantidade de dragões simultâneos aumentam). Botão de pausa ausente — jogo é contínuo. Controles: clique/toque no dragão. Resultado: vitória (+3 casas) ou derrota (boardDelta 0, sem penalidade).
+- **Arquivos criados**: `src/minigames/ataque-dragoes/AtaqueDragoesGame.js`, `ataque-dragoes.css`, `index.js`
+- **Debug expandido**: 5 botões novos — abrir ataque dos dragões, simular vitória, simular derrota, retornar, testar bot
+- **Casa 15 do Castelo**: evento alterado de `placeholder` para `ataque-dragoes`
+
+### Alterado
+- **Castelo dos Dragões**: casa 15 agora dispara o minigame Ataque dos Dragões em vez de ser casa sem efeito
+- **Loader de minigames**: import de `'../ataque-dragoes/index.js'` adicionado em `src/minigames/engine/loader.js`
+- **game.js**: novo case `"ataque-dragoes"` em `processSpecialCell()`, wrapper `launchAtaqueDragoes()`, 8 handlers de debug
+
 ## [0.27.0-preview] - 2026-07-13
 
 ### Adicionado

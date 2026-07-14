@@ -1,6 +1,15 @@
 # Roadmap Lara World
 
-### v0.27.0-preview — Jogo da Memória da Floresta (Atual) ✅
+### v0.28.0-preview — Ataque dos Dragões (Atual) ✅
+
+- [x] Minigame Canvas: dragões voam em direção ao castelo, clique/toque para destruir, 20s, 4 fases
+- [x] `src/minigames/ataque-dragoes/AtaqueDragoesGame.js` criado
+- [x] Registrado no loader.js e via registerMinigame()
+- [x] Casa 15 do Castelo dos Dragões usa evento `ataque-dragoes`
+- [x] Debug panel com 5 botões: abrir, vencer, derrota, retornar, bot
+- [x] Documentação atualizada
+
+### v0.27.0-preview — Jogo da Memória da Floresta ✅
 
 - [x] Minigame DOM: 12 cartas (6 pares), 30s, vitória com 4+ pares
 - [x] `src/minigames/memoria-floresta/MemoryGame.js` criado
@@ -349,7 +358,7 @@
 - **Sistema de conquistas** — medalhas e progressão do jogador
 - **Modo Aventura** — campanha com progressão entre mundos
 - **Animações da interface** — transições e micro-interações
-- **Minigame exclusivo do Castelo dos Dragões** — evento especial para a casa reservada (casa 12)
+- **Minigame exclusivo do Castelo dos Dragões** — evento especial para a casa 15 (Ataque dos Dragões — ✅ Concluído)
 
 ### Assets do Reino dos Oceanos
 

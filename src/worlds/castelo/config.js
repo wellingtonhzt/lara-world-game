@@ -42,7 +42,7 @@ export const casteloDosDragoes = {
       '\uD83C\uDFF0', '\uD83D\uDC09', '\uD83E\uDEBD', '\u2694\uFE0F', '\u2753',
       '\uD83D\uDEE1\uFE0F', '\uD83E\uDDF1', '\uD83D\uDD25', '\uD83C\uDFB2', '\uD83D\uDC32',
       '\uD83D\uDCA4', '\uD83D\uDC09', '\uD83D\uDC51', '\u2753', '\uD83D\uDD2E',
-      '\uD83D\uDD25', '\uD83D\uDD04', '\u2B50', '\u2753', '\uD83C\uDFC6',
+      '\uD83D\uDC09', '\uD83D\uDD25', '\uD83D\uDD04', '\u2B50', '\uD83C\uDFC6',
     ],
   },
 
@@ -95,6 +95,7 @@ export const casteloDosDragoes = {
     11: [{ type: 'skipTurn', params: { count: 1 }, description: '\uD83D\uDCA4 Perde uma rodada' }],
     12: [{ type: 'placeholder', description: '\uD83D\uDC09 Em breve' }],
     14: [{ type: 'challenge', description: '\u2753 Desafio' }],
+    15: [{ type: 'ataque-dragoes', description: '\uD83D\uDC09 Ataque dos Drag\u00F5es \u2014 Proteja o castelo!' }],
     16: [{ type: 'move', params: { delta: -2 }, description: '\uD83D\uDD25 Volte 2' }],
     18: [{ type: 'swap-positions', params: {}, description: '\uD83D\uDD04 Troque de lugar' }],
     20: [{ type: 'finishWorld', description: '\uD83C\uDFC6 Vit\u00F3ria' }],

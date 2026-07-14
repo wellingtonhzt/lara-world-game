@@ -131,12 +131,30 @@ A escolha do modo determina quais campos são exibidos no modal e como o Jogador
 | 11 | 😴 Perde uma rodada | O jogador perde a próxima rodada. |
 | 12 | 🐉 Em breve | Casa reservada para evolução futura (sem efeito atual). |
 | 14 | ❓ Desafio educativo | Mesmo efeito das demais casas de desafio. |
+| **15** | **🐉 Ataque dos Dragões** | **Abre o minigame Ataque dos Dragões. O jogador toca nos dragões para destruí-los antes que alcancem o castelo. Resultado: vitória (+3 bônus) ou derrota (boardDelta 0, sem penalidade).** |
 | 16 | 🔥 Volte 2 | O personagem volta 2 casas. |
 | 18 | 🔀 Troque de lugar | O personagem troca de posição com o adversário. |
 | 20 | 🏆 Vitória! | O jogador vence a partida. |
 
-- O Castelo dos Dragões **não possui submundo**, **não possui portal** e **não possui minigame**
+- O Castelo dos Dragões **não possui submundo**, **não possui portal**
 - O layout do tabuleiro é ascendente (escalada até o castelo), começando na base (y=90) e terminando no topo (y=18)
+
+### Minigame: Ataque dos Dragões (Castelo dos Dragões)
+
+- **Acesso**: ao cair na casa 15 do Castelo dos Dragões, o minigame é iniciado automaticamente com contagem regressiva (3, 2, 1, Começar!)
+- **Objetivo**: destruir dragões tocando/clique neles antes que alcancem o castelo
+- **Duração**: 20 segundos
+- **Meta**: acertar pelo menos 15 dragões
+- **Defesa**: 3 escudos — cada dragão que alcancem o castelo consome 1 escudo
+- **Controles**: clique no mouse ou toque na tela (suporte mobile completo)
+- **4 fases de dificuldade**:
+  - 0-5s: até 2 dragões simultâneos, velocidade 80
+  - 5-10s: até 3 dragões simultâneos, velocidade 100
+  - 10-15s: até 4 dragões simultâneos, velocidade 120
+  - 15-20s: até 5 dragões simultâneos, velocidade 140
+- **Resultado**: vitória (15+ dragões acertados) = +3 casas de bônus | derrota = boardDelta 0 (sem penalidade)
+- **Bônus sem cascata**: o movimento de bônus não dispara outras casas especiais
+- **Fluxo do Bot**: se a máquina cair na casa 15, o minigame é resolvido automaticamente com 55% de chance de vitória
 
 ### Minigame: MeteoroGame (Buraco de Minhoca)
 
@@ -169,4 +187,4 @@ A escolha do modo determina quais campos são exibidos no modal e como o Jogador
 - **Casa 5 na posição 1**: se estiver na casa 1 e cair na casa 5, o personagem volta para a posição 0 e fica fora do tabuleiro. Na próxima jogada, avançará para a casa 1 ou além.
 - **Após a vitória**: o jogo é encerrado, o botão "Jogar Dado" é desabilitado e um overlay de vitória com confetes animados, fogos serpentina e troféu é exibido. Duas opções estão disponíveis: **"🔁 Jogar Novamente"** (reinicia no mesmo modo) ou **"🏠 Voltar ao Menu"** (retorna à tela inicial).
 - **Reinício**: o botão "Reiniciar" exibe o modal de configuração novamente, permitindo que os jogadores alterem seus nomes e sprites antes de iniciar uma nova partida.
-- **Modo debug**: adicione `?debug=1` à URL para ativar um painel com controles de teste. Seção Galáxia: Gal C9, Gal C14, Gal C15 🚪. Seção Minigame: 🎮 Abrir, ✅ Vencer, ❌ Perder, ↩️ Retornar. Demais seções: Casa 11, Entrar na Floresta, Casa 5 Atalho, Casa 8 Saída, Voltar ao Principal. O modo debug não afeta partidas normais.
+- **Modo debug**: adicione `?debug=1` à URL para ativar um painel com controles de teste. Seção Galáxia: Gal C9, Gal C14, Gal C15 🚪. Seção Minigame: 🎮 Abrir, ✅ Vencer, ❌ Perder, ↩️ Retornar. Seção Castelo dos Dragões: 🐉 C15, 🔄 C18, 🎮 Abrir, ✅ Vencer, ❌ Perder, ↩️ Retornar, 🤖 Bot. Demais seções: Casa 11, Entrar na Floresta, Casa 5 Atalho, Casa 8 Saída, Voltar ao Principal. O modo debug não afeta partidas normais.

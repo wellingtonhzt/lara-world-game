@@ -18,8 +18,8 @@
 
 | Versão | Data | Status |
 |--------|------|--------|
-| **v0.27.0-preview** | Jul/2026 | ✅ **Ativo** — Jogo da Memória da Floresta |
-| v0.26.0-preview | Jul/2026 | ✅ Versão oficial consolidada |
+| **v0.28.0-preview** | Jul/2026 | ✅ **Ativo** — Ataque dos Dragões |
+| v0.27.0-preview | Jul/2026 | ✅ Jogo da Memória da Floresta |
 | v0.17.0-preview | Jul/2026 | ✅ Correção de 3 bugs (submundo, pergunta, aleatório) |
 | v0.18.0-preview | Jul/2026 | ✅ Revisão do sistema de perguntas |
 | v0.16.0-preview | Jul/2026 | ✅ Concluído |
@@ -41,7 +41,23 @@
 
 ---
 
-## ✨ Funcionalidades Atuais (v0.27.0-preview)
+## ✨ Funcionalidades Atuais (v0.28.0-preview)
+
+### Ataque dos Dragões — Novo Minigame ✅
+
+- **Ataque dos Dragões**: minigame Canvas na casa 15 do Castelo dos Dragões — defesa do castelo contra dragões que voam em direção ao castelo
+- **Mecânica**: clique/toque nos dragões para destruí-los antes que alcancem o castelo
+- **Duração**: 20 segundos | **Meta**: 15 dragões acertados | **Defesa**: 3 escudos
+- **4 fases de dificuldade**: velocidade e quantidade de dragões simultâneos aumentam a cada 5 segundos
+- **Resultado**: vitória (+3 casas, sem cascata) ou derrota (boardDelta 0, sem penalidade)
+- **Bot com 55% de chance**: a máquina resolve automaticamente o minigame
+- **Controles**: clique no mouse ou toque na tela (suporte mobile completo)
+
+### Jogo da Memória da Floresta
+
+- **Jogo da Memória da Floresta**: minigame DOM na casa 11 da Floresta Encantada — 12 cartas (6 pares com emojis de floresta), cronômetro de 30s, vitória com 4+ pares
+- **Floresta Misteriosa removida**: WorldConfig, subworld, CSS e debug da antiga Área Especial removidos
+- **Infraestrutura de subworlds preservada**: sistema genérico mantido para uso futuro
 
 ### Correção de 3 Bugs
 

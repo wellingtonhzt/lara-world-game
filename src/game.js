@@ -170,6 +170,7 @@ import { APP_VERSION } from './version.js';
         case 'dino-runner': result[cell] = { tipo: 'dino-runner', descricao: d }; break;
         case 'recife-placeholder': result[cell] = { tipo: 'recife-placeholder', descricao: d }; break;
         case 'memory-forest': result[cell] = { tipo: 'memory-forest', descricao: d }; break;
+        case 'ataque-dragoes': result[cell] = { tipo: 'ataque-dragoes', descricao: d }; break;
         case 'placeholder': result[cell] = { tipo: 'placeholder', descricao: d }; break;
       }
     }
@@ -804,6 +805,27 @@ import { APP_VERSION } from './version.js';
         } else {
           audioManager.play('wrongAnswer');
           addHistory(`\uD83C\uDF32 ${player.name} encontrou ${resultado.stats?.paresEncontrados ?? 0} pares. B\u00F4nus: 0`, "especial");
+        }
+        return false;
+      }
+      case "ataque-dragoes": {
+        addHistory(`\uD83D\uDC09 ${info.descricao}`, "especial");
+        const ataqueResult = await launchAtaqueDragoes({ isBot: player.isBot });
+        if (ataqueResult.venceu) {
+          const destino = Math.min(player.posicao + ataqueResult.boardDelta, getTotalCasas());
+          audioManager.play('specialAdvance');
+          if (destino > player.posicao) {
+            await animatePlayerMovement(player.posicao, destino);
+          }
+          player.posicao = destino;
+          addHistory(`\u2B50 ${player.name} protegeu o castelo e avan\u00E7ou +${ataqueResult.boardDelta} casas!`, "especial");
+          if (player.posicao >= getTotalCasas()) {
+            await handleVictory();
+            return false;
+          }
+        } else {
+          audioManager.play('wrongAnswer');
+          addHistory(`\uD83D\uDC09 ${player.name} foi superado pelos drag\u00F5es! B\u00F4nus: 0`, "especial");
         }
         return false;
       }
@@ -2374,6 +2396,99 @@ import { APP_VERSION } from './version.js';
             break;
           }
 
+          // ── Testes Rápidos: Castelo dos Dragões ──
+          case "castelo-casa15": {
+            if (gameState.activeSubworldId) { addLog('\u26A0\uFE0F Est\u00e1 em submundo.'); break; }
+            if (currentWorldConfig?.id !== 'castelo-dragoes') { addLog('\u26A0\uFE0F Teste v\u00e1lido apenas no Castelo dos Drag\u00F5es'); break; }
+            await debugMoveAndProcess(15);
+            break;
+          }
+          case "castelo-casa18": {
+            if (gameState.activeSubworldId) { addLog('\u26A0\uFE0F Est\u00e1 em submundo.'); break; }
+            if (currentWorldConfig?.id !== 'castelo-dragoes') { addLog('\u26A0\uFE0F Teste v\u00e1lido apenas no Castelo dos Drag\u00F5es'); break; }
+            await debugMoveAndProcess(18);
+            break;
+          }
+          case "ataque-dragoes-minigame": {
+            addLog('\uD83C\uDFAE Abrindo Ataque dos Drag\u00F5es manualmente...');
+            gameState.isMoving = true;
+            elements.rollBtn.disabled = true;
+            const ataqueResult = await launchAtaqueDragoes();
+            gameState.isMoving = false;
+            elements.rollBtn.disabled = false;
+            if (ataqueResult.venceu) {
+              const p = getCurrentPlayer();
+              const destino = Math.min(p.posicao + ataqueResult.boardDelta, getTotalCasas());
+              if (destino > p.posicao) {
+                await animatePlayerMovement(p.posicao, destino);
+              }
+              p.posicao = destino;
+              addLog(`\u2705 Ataque dos Drag\u00F5es vencido! Avan\u00E7ou +${ataqueResult.boardDelta} \u2192 casa ${destino}`);
+            } else {
+              addLog(`\uD83D\uDCA5 Ataque dos Drag\u00F5es perdido! B\u00F4nus: 0`);
+            }
+            updateUI();
+            setEventResult({ eventType: 'ataque-dragoes (debug)', posBefore: getCurrentPlayer().posicao, posAfter: getCurrentPlayer().posicao });
+            break;
+          }
+          case "ataque-dragoes-vitoria": {
+            const pAD = getCurrentPlayer();
+            const BONUS_AD = 3;
+            const destinoAD = Math.min(pAD.posicao + BONUS_AD, getTotalCasas());
+            addLog('\u2705 Simulando vit\u00F3ria no Ataque dos Drag\u00F5es...');
+            gameState.isMoving = true;
+            elements.rollBtn.disabled = true;
+            if (destinoAD > pAD.posicao) {
+              await animatePlayerMovement(pAD.posicao, destinoAD);
+            }
+            pAD.posicao = destinoAD;
+            gameState.isMoving = false;
+            elements.rollBtn.disabled = false;
+            updateUI();
+            addLog(`\u2705 B\u00F4nus aplicado: +${BONUS_AD} \u2192 casa ${destinoAD} (sem cascata)`);
+            if (pAD.posicao >= getTotalCasas()) {
+              await handleVictory();
+            }
+            setEventResult({ eventType: 'ataque-dragoes vit\u00F3ria (simulado)', posBefore: pAD.posicao - BONUS_AD, posAfter: destinoAD, cascaded: 'N\u00E3o (debug)' });
+            break;
+          }
+          case "ataque-dragoes-derrota": {
+            addLog('\u274C Simulando derrota no Ataque dos Drag\u00F5es...');
+            addLog('\uD83D\uDC09 Drag\u00F5es foram r\u00E1pidos! B\u00F4nus: 0');
+            setEventResult({ eventType: 'ataque-dragoes derrota (simulado)', posBefore: getCurrentPlayer().posicao, posAfter: getCurrentPlayer().posicao, cascaded: 'N\u00E3o' });
+            break;
+          }
+          case "ataque-dragoes-retornar": {
+            document.getElementById('minigame-overlay').classList.add('hidden');
+            gameState.isMoving = false;
+            elements.rollBtn.disabled = false;
+            addLog('\u21A9\uFE0F Overlay do Ataque dos Drag\u00F5es fechado. Estado restaurado.');
+            setEventResult({ eventType: 'retorno ataque-dragoes (debug)', posBefore: getCurrentPlayer().posicao, posAfter: getCurrentPlayer().posicao });
+            break;
+          }
+          case "ataque-dragoes-bot": {
+            addLog('\uD83E\uDD16 Abrindo Ataque dos Drag\u00F5es em modo bot...');
+            gameState.isMoving = true;
+            elements.rollBtn.disabled = true;
+            const ataqueBotResult = await launchAtaqueDragoes({ isBot: true });
+            gameState.isMoving = false;
+            elements.rollBtn.disabled = false;
+            if (ataqueBotResult.venceu) {
+              const pMB = getCurrentPlayer();
+              const destinoMB = Math.min(pMB.posicao + ataqueBotResult.boardDelta, getTotalCasas());
+              if (destinoMB > pMB.posicao) {
+                await animatePlayerMovement(pMB.posicao, destinoMB);
+              }
+              pMB.posicao = destinoMB;
+              addLog(`\u2705 Bot venceu Ataque dos Drag\u00F5es! Avan\u00E7ou +${ataqueBotResult.boardDelta} \u2192 casa ${destinoMB}`);
+            } else {
+              addLog(`\uD83D\uDCA5 Bot perdeu Ataque dos Drag\u00F5es! B\u00F4nus: 0`);
+            }
+            updateUI();
+            setEventResult({ eventType: 'ataque-dragoes bot (debug)', posBefore: getCurrentPlayer().posicao, posAfter: getCurrentPlayer().posicao });
+            break;
+          }
+
           // ── Limpar Logs ──
           case "clear-logs":
             debugLog.length = 0;
@@ -2496,6 +2611,13 @@ import { APP_VERSION } from './version.js';
   async function launchOceanMatch3(options = {}) {
     OceanMatch3.debugTimeLimit = _debugOceanTimeConfig;
     return launchMinigameHost('ocean-match3', {
+      isBot: options.isBot || false,
+      playerName: getCurrentPlayer().name
+    });
+  }
+
+  async function launchAtaqueDragoes(options = {}) {
+    return launchMinigameHost('ataque-dragoes', {
       isBot: options.isBot || false,
       playerName: getCurrentPlayer().name
     });

@@ -39,6 +39,10 @@ lara-world/
 │   │   │   ├── DinoRunnerGame.js   # Classe principal (Canvas, pulo, obstáculos, 30s, 3 fases)
 │   │   │   ├── dino-runner.css     # Estilos do canvas
 │   │   │   └── index.js            # Config e registro do minigame
+│   │   ├── ataque-dragoes/    # Minigame Ataque dos Dragões (Castelo dos Dragões, casa 15)
+│   │   │   ├── AtaqueDragoesGame.js # Classe principal (Canvas, dragões, castelo, 20s, 4 fases)
+│   │   │   ├── ataque-dragoes.css   # Estilos do canvas
+│   │   │   └── index.js             # Config e registro do minigame
 │   ├── assets/          # Recursos visuais do jogo
 │   │   ├── ui/          # Assets da Hero Screen (menu inicial)
 │   │   │   ├── logo-lara-world.webp  # Logo oficial do Lara World — exibido na Hero Screen

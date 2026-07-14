@@ -1,5 +1,64 @@
 # Memorial Técnico
 
+## Sprint — Ataque dos Dragões (v0.28.0-preview)
+
+### Objetivo
+
+Implementar o minigame Ataque dos Dragões para a casa 15 do Castelo dos Dragões — um jogo de defesa em Canvas onde o jogador toca nos dragões antes que alcancem o castelo. Seguir o padrão estabelecido por MeteoroGame e DinoRunner (evento em `eventsToSpecialCells`, handler em `processSpecialCell`, debug buttons, `launchAtaqueDragoes()`, `MinigameHost`).
+
+### Arquivos Criados
+
+| Arquivo | Descrição |
+|---------|-----------|
+| `src/minigames/ataque-dragoes/AtaqueDragoesGame.js` | Classe principal do minigame (~656 linhas): canvas, castelo, dragões, 4 fases de dificuldade, contagem regressiva, HUD, efeitos visuais, proteção contra resolução dupla |
+| `src/minigames/ataque-dragoes/ataque-dragoes.css` | Estilos do canvas: 100% width/height, `touch-action: none` |
+| `src/minigames/ataque-dragoes/index.js` | Registro via `registerMinigame()` com id `ataque-dragoes`, config de recompensas, bot presentation, loading dinâmico de CSS |
+
+### Arquivos Alterados
+
+| Arquivo | Tipo de Alteração |
+|---------|-------------------|
+| `src/minigames/engine/loader.js` | **Modificado** — Adicionado import `'../ataque-dragoes/index.js'` |
+| `src/worlds/castelo/config.js` | **Modificado** — Evento casa 15 alterado de `placeholder` (sem efeito) para `ataque-dragoes` |
+| `src/game.js` | **Modificado** — `case 'ataque-dragoes'` adicionado em `eventsToSpecialCells()` e `processSpecialCell()`; `launchAtaqueDragoes()` wrapper; debug buttons adicionados (5 novos: abrir, vencer, derrota, retornar, bot) |
+| `src/index.html` | **Modificado** — Debug buttons do Castelo: 5 botões novos (🎮 Abrir, ✅ Vencer, ❌ Perder, ↩️ Retornar, 🤖 Bot) |
+| `src/version.js` | **Modificado** — `APP_VERSION` de `v0.27.0-preview` para `v0.28.0-preview` |
+
+### Decisões Técnicas
+
+| Decisão | Alternativas | Motivo |
+|---------|-------------|--------|
+| Canvas 2D puro para o minigame | DOM + CSS ou sprite sheets | Sem dependências externas; performance adequada para múltiplos dragões simultâneos; segue o padrão do MeteoroGame e DinoRunner |
+| Casa 15 como localização | Casa 12 (reservada como placeholder) | Casa 15 já existia com evento `placeholder`; casa 12 continua reservada para evolução futura |
+| Bot com 55% de chance | 50% como outros minigames | Dragões são mais lentos que meteoros; justifica chance levemente maior |
+| 4 fases progressivas | Dificuldade constante | Progressão natural de desafio — jogador aprende a mecânica nos primeiros 5 segundos |
+| 3 escudos de defesa | Sem sistema de vidas | Mecânica de defesa é mais clara que "vidas" — escudo consome quando dragão chega ao castelo |
+| `ataque-dragoes` em vez de reusar outro evento | Criar novo tipo de evento | Evento semanticamente claro, sem ambiguidade com outros minigames |
+
+### Impacto Técnico
+
+- O minigame segue o padrão estabelecido por MeteoroGame e DinoRunner
+- A infraestrutura genérica de MinigameHost é reutilizada integralmente
+- A casa 12 do Castelo continua reservada como `placeholder` para evolução futura
+- O Castelo dos Dragões agora possui 1 minigame (Ataque dos Dragões) em 20 casas
+
+### Impacto Funcional
+
+- A casa 15 do Castelo dos Dragões agora abre o Ataque dos Dragões
+- O jogador vê contagem regressiva (3, 2, 1, Começar!) antes de iniciar
+- O minigame tem 20s, 15 dragões para acertar e 3 escudos de defesa
+- 4 fases de dificuldade progressiva (velocidade e quantidade de dragões)
+- Bot resolve automaticamente em ~5s com 55% de chance
+- Bônus de +3 casas (sem cascata) na vitória
+
+### Testes Executados
+
+- `node --check` em todos os JS alterados
+- Teste manual: minigame abre, joga, vitória e derrota funcionam
+- Teste do bot: simulação funciona corretamente
+
+---
+
 ## Sprint — Jogo da Memória da Floresta (v0.27.0-preview)
 
 ### Objetivo
