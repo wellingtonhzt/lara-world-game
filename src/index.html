@@ -8,8 +8,14 @@
 </head>
 <body>
   <div id="app">
-    <header>
-      <h1>🌍 Lara World</h1>
+    <header class="game-header">
+      <img
+        class="game-header-logo"
+        src="assets/ui/lara-world-logo.webp"
+        alt="Lara World"
+        onerror="this.style.display='none';this.nextElementSibling.style.display='block'"
+      >
+      <span class="game-header-logo-fallback" style="display:none">Lara World</span>
       <span id="world-indicator" class="hidden">🌀 Submundo</span>
     </header>
 
