@@ -1237,7 +1237,7 @@ body {
 
 .victory-stats {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.4fr);
   padding: 12px 8px;
   background: linear-gradient(135deg, #fff0c9, #fff9e9);
   border: 2px solid #f1d38a;
@@ -1284,6 +1284,13 @@ body {
   line-height: 1.15;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.victory-stat:nth-child(3) .victory-stat-value {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .victory-buttons {
@@ -1386,7 +1393,11 @@ body {
   .victory-ribbon { min-width: 78%; padding-inline: 25px; }
   .victory-ribbon::before { left: -16px; }
   .victory-ribbon::after { right: -16px; }
-  .victory-stats { padding: 8px 4px; border-radius: 18px; }
+  .victory-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 8px 4px;
+    border-radius: 18px;
+  }
   .victory-stat {
     grid-template-columns: 1fr;
     grid-template-areas: 'icon' 'label' 'value';
@@ -1396,6 +1407,17 @@ body {
   }
   .victory-stat-icon { font-size: 1.35rem; }
   .victory-stat-value { font-size: .95rem; }
+  .victory-stat:nth-child(3) {
+    grid-column: 1 / -1;
+    grid-template-columns: auto 1fr;
+    grid-template-areas: 'icon label' 'icon value';
+    gap: 0 9px;
+    margin-top: 5px;
+    padding-top: 7px;
+    border-top: 2px solid rgba(213, 166, 72, .28);
+    border-left: 0;
+    text-align: left;
+  }
   .victory-buttons { grid-template-columns: 1fr; gap: 9px; }
   .victory-buttons .btn { min-height: 48px; padding: 11px 15px; }
   .victory-tip { padding: 8px 12px; }
