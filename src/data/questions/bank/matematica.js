@@ -1,0 +1,17 @@
+export const matematicaQuestions = [
+  { id: "mat-adicao-001", category: "matematica", subcategory: "adicao", question: "Quanto é 2 + 2?", options: ["3", "4", "5"], correctOption: 1, explanation: "", level: 1, tags: ["adicao", "basico"], active: true },
+  { id: "mat-subtracao-001", category: "matematica", subcategory: "subtracao", question: "Quanto é 5 - 3?", options: ["1", "2", "3"], correctOption: 1, explanation: "", level: 1, tags: ["subtracao", "basico"], active: true },
+  { id: "mat-adicao-002", category: "matematica", subcategory: "adicao", question: "Quanto é 3 + 4?", options: ["6", "7", "8"], correctOption: 1, explanation: "", level: 1, tags: ["adicao", "basico"], active: true },
+  { id: "mat-subtracao-002", category: "matematica", subcategory: "subtracao", question: "Quanto é 10 - 6?", options: ["3", "4", "5"], correctOption: 1, explanation: "", level: 1, tags: ["subtracao", "basico"], active: true },
+  { id: "mat-multiplicacao-001", category: "matematica", subcategory: "multiplicacao", question: "Quanto é 2 × 3?", options: ["5", "6", "7"], correctOption: 1, explanation: "", level: 2, tags: ["multiplicacao", "tabuada"], active: true },
+  { id: "mat-adicao-003", category: "matematica", subcategory: "adicao", question: "Quanto é 1 + 1?", options: ["1", "2", "3"], correctOption: 1, explanation: "", level: 1, tags: ["adicao", "basico"], active: true },
+  { id: "mat-adicao-004", category: "matematica", subcategory: "adicao", question: "Quanto é 4 + 3?", options: ["6", "7", "8"], correctOption: 1, explanation: "", level: 1, tags: ["adicao", "basico"], active: true },
+  { id: "mat-subtracao-003", category: "matematica", subcategory: "subtracao", question: "Quanto é 8 - 5?", options: ["2", "3", "4"], correctOption: 1, explanation: "", level: 1, tags: ["subtracao", "basico"], active: true },
+  { id: "mat-adicao-005", category: "matematica", subcategory: "adicao", question: "Quanto é 6 + 2?", options: ["7", "8", "9"], correctOption: 1, explanation: "", level: 1, tags: ["adicao", "basico"], active: true },
+  { id: "mat-subtracao-004", category: "matematica", subcategory: "subtracao", question: "Quanto é 9 - 4?", options: ["4", "5", "6"], correctOption: 1, explanation: "", level: 1, tags: ["subtracao", "basico"], active: true },
+  { id: "mat-adicao-006", category: "matematica", subcategory: "adicao", question: "Quanto é 5 + 5?", options: ["9", "10", "11"], correctOption: 1, explanation: "", level: 1, tags: ["adicao", "basico"], active: true },
+  { id: "mat-subtracao-005", category: "matematica", subcategory: "subtracao", question: "Quanto é 7 - 2?", options: ["4", "5", "6"], correctOption: 1, explanation: "", level: 1, tags: ["subtracao", "basico"], active: true },
+  { id: "mat-operacoes-001", category: "matematica", subcategory: "operacoes", question: "Qual é o dobro de 4?", options: ["6", "8", "10"], correctOption: 1, explanation: "", level: 2, tags: ["dobro", "operacoes"], active: true },
+  { id: "mat-divisao-001", category: "matematica", subcategory: "divisao", question: "Quanto é 10 ÷ 2?", options: ["4", "5", "6"], correctOption: 1, explanation: "", level: 2, tags: ["divisao", "tabuada"], active: true },
+  { id: "mat-multiplicacao-002", category: "matematica", subcategory: "multiplicacao", question: "Quanto é 3 × 3?", options: ["6", "9", "12"], correctOption: 1, explanation: "", level: 2, tags: ["multiplicacao", "tabuada"], active: true },
+];
