@@ -2,6 +2,19 @@
 
 ## [Unreleased]
 
+## [0.33.0-preview] - 2026-07-15
+
+### Adicionado
+- **Board Alive**: feedback curto na casa final, iluminação sequencial do caminho, pouso suave do token e impacto final do dado
+- **Casas especiais vivas**: animação contínua discreta para desafio, portal, minigames e chegada
+- **Turno visual**: glow aplicado somente ao token e avatar do jogador ativo
+- **Efeitos ambientais configuráveis**: `theme.ambientEffect` nos WorldConfigs com presets genéricos para folhas, estrelas, bolhas, poeira e brasas
+
+### Alterado
+- **Barra de progresso**: easing ajustado para crescimento e redução mais suaves
+- **Acessibilidade e performance**: animações baseadas em CSS, partículas limitadas e desativação via `prefers-reduced-motion`
+- **Versão e cache-busting**: atualizados para `v0.33.0-preview`
+
 ## [0.32.0-preview] - 2026-07-15
 
 ### Adicionado

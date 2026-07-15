@@ -62,6 +62,7 @@ export const reinoOceanos = {
       cellDefault: '#01579b',
       cellSpecial: '#004d6e',
     },
+    ambientEffect: { preset: 'rise', symbol: '○', count: 7, color: '#b3e5fc' },
     decorations: [
       { type: 'emoji', content: '\u2601\uFE0F', className: 'deco-cloud-1' },
       { type: 'emoji', content: '\u2601\uFE0F', className: 'deco-cloud-2' },

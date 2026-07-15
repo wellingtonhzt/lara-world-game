@@ -154,6 +154,12 @@ lara-world/
 
 O callback `onShow` atualiza `#last-event` no HUD. `#history` permanece como registro interno acumulativo, mantendo `addHistory()` compatível.
 
+## Board Alive e efeitos ambientais
+
+`renderizarTrilha()` expõe o tipo visual de cada evento em `data-event-type`; o CSS anima apenas o ícone de desafios, portais, minigames e chegada. `animatePlayerMovement()` reutiliza o ciclo já existente para alternar `casa-percorrida` em uma única casa e aplica `casa-ativada` no destino, sem criar timers adicionais.
+
+Os efeitos dos mundos seguem o contrato opcional `theme.ambientEffect: { preset, symbol, count, color }`. `applyWorldTheme()` cria uma camada genérica com quantidade limitada de partículas, e `clearWorldTheme()` a remove por meio do ciclo de `.theme-deco`. A engine não contém condicionais baseadas em IDs de mundo.
+
 > Nota: a pasta `src/assets/` foi criada na v0.11.0-preview para iniciar a fase de identidade visual. A subpasta `worlds/` abriga assets por mundo (`background.webp`, `path.webp`), atualmente com floresta/, dinossauros/, galaxia/, oceanos/ e castelo/. Cada mundo possui seu próprio background e textura de caminho, com fallback CSS garantido se o asset não existir. A Galáxia Estelar recebeu sua infraestrutura visual na v0.16.0-preview (ART-011). A infraestrutura do `path.webp` foi preparada na v0.12.0-preview (background-image no `.path-line`, seletores por mundo). A subpasta `ui/` foi criada na UX-013 para abrigar assets da Hero Screen (`lara-hero.webp`, `menu-background.webp`), posteriormente expandida na v0.25.0-preview com `logo-lara-world.webp` (logo oficial). Todos os 3 assets existem atualmente com fallback CSS/textual garantido. A subpasta `world-icons/` foi criada na UX-014/ART-009 para abrigar as ilustrações oficiais dos mundos (6 assets), com container 96×96px e fallback de emoji — atualmente todos os 6 assets existem e são funcionalmente carregados. As subpastas `avatars/` e `tokens/` foram criadas na UX-015/ART-010 para abrigar os assets de personagens oficiais — `avatars/` para preview circular no setup (108×108px, `object-fit: contain`) e `tokens/` para representação in-game (62×62px circular, `object-fit: cover`), ambos com fallback para emoji. A subpasta `audio/` foi criada na AUD-001 (v0.13.0-preview) para abrigar assets de áudio (.webm), com subpastas por categoria: `ui/`, `dice/`, `board/`, `quiz/`, `rewards/`, `music/`. Consulte [docs/audio.md](./audio.md) para detalhes completos.
 
 ## Arquitetura do Frontend

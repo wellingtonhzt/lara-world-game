@@ -210,7 +210,8 @@ body {
   border-radius: inherit;
   background: linear-gradient(90deg, #e91e63, #ff8f00);
   box-shadow: 0 0 10px rgba(233, 30, 99, .32);
-  transition: width .45s cubic-bezier(.22, 1, .36, 1);
+  transition: width .55s cubic-bezier(.22, 1, .36, 1);
+  will-change: width;
 }
 .pos-p2 .progress-fill { background: linear-gradient(90deg, #2196f3, #7c4dff); box-shadow: 0 0 10px rgba(33,150,243,.32); }
 
@@ -325,15 +326,70 @@ body {
   }
 }
 
-@keyframes casa-pulse {
-  0%, 100% {
-    transform: translate(-50%, -50%) scale(1.06);
-    filter: drop-shadow(0 0 6px rgba(233, 30, 99, 0.25));
-  }
-  50% {
-    transform: translate(-50%, -50%) scale(1.14);
-    filter: drop-shadow(0 0 14px rgba(233, 30, 99, 0.4));
-  }
+@keyframes casa-chegada {
+  0% { transform: translate(-50%, -50%) scale(1); filter: none; }
+  45% { transform: translate(-50%, -50%) scale(1.12); filter: drop-shadow(0 0 13px rgba(255, 193, 7, .62)); }
+  100% { transform: translate(-50%, -50%) scale(1); filter: none; }
+}
+
+/* Ambient effects are data-driven by theme.ambientEffect in each WorldConfig. */
+.theme-ambient-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.theme-ambient-particle {
+  position: absolute;
+  left: var(--ambient-left);
+  font-size: clamp(.55rem, 1.2vw, .9rem);
+  line-height: 1;
+  opacity: 0;
+  color: var(--ambient-color);
+  animation-delay: var(--ambient-delay) !important;
+  animation-duration: var(--ambient-duration) !important;
+  animation-timing-function: linear !important;
+  animation-iteration-count: infinite !important;
+  will-change: transform, opacity;
+}
+
+@keyframes ambient-fall {
+  0% { top: -8%; transform: translateX(-8px) rotate(0); opacity: 0; }
+  15%, 80% { opacity: .36; }
+  100% { top: 104%; transform: translateX(20px) rotate(260deg); opacity: 0; }
+}
+@keyframes ambient-twinkle {
+  0%, 100% { top: 18%; transform: scale(.65); opacity: .08; }
+  50% { top: 18%; transform: scale(1.12); opacity: .48; }
+}
+@keyframes ambient-rise {
+  0% { top: 104%; transform: translateX(0) scale(.7); opacity: 0; }
+  18%, 76% { opacity: .32; }
+  100% { top: -8%; transform: translateX(13px) scale(1.05); opacity: 0; }
+}
+@keyframes ambient-drift {
+  0% { top: 82%; transform: translateX(-22px) scale(.7); opacity: 0; }
+  25%, 70% { opacity: .24; }
+  100% { top: 68%; transform: translateX(48px) scale(1.18); opacity: 0; }
+}
+
+.theme-ambient-layer[data-ambient-preset="fall"] .theme-ambient-particle { animation-name: ambient-fall; }
+.theme-ambient-layer[data-ambient-preset="twinkle"] .theme-ambient-particle { animation-name: ambient-twinkle; top: var(--ambient-top); }
+.theme-ambient-layer[data-ambient-preset="rise"] .theme-ambient-particle { animation-name: ambient-rise; }
+.theme-ambient-layer[data-ambient-preset="drift"] .theme-ambient-particle { animation-name: ambient-drift; }
+
+@keyframes casa-caminho {
+  0% { filter: brightness(1); }
+  45% { filter: brightness(1.16) drop-shadow(0 0 8px rgba(33, 150, 243, .5)); }
+  100% { filter: brightness(1); }
+}
+
+@keyframes especial-respiro {
+  0%, 100% { transform: translateY(0) scale(1); filter: drop-shadow(0 2px 2px rgba(0,0,0,.08)); }
+  50% { transform: translateY(-2px) scale(1.045); filter: drop-shadow(0 3px 5px rgba(124,77,255,.2)); }
 }
 
 .casa .casa-numero {
@@ -456,7 +512,23 @@ body {
 
 .casa.casa-ativada {
   z-index: 5;
-  animation: casa-pulse 1.2s ease-in-out infinite;
+  animation: casa-chegada .72s cubic-bezier(.22, 1, .36, 1) 1;
+}
+
+.casa.casa-percorrida {
+  z-index: 4;
+  animation: casa-caminho .28s ease-out 1;
+}
+
+.casa[data-event-type="desafio"] .casa-icone,
+.casa[data-event-type="portal"] .casa-icone,
+.casa[data-event-type="memory-forest"] .casa-icone,
+.casa[data-event-type="dino-runner"] .casa-icone,
+.casa[data-event-type="buraco-minhoca"] .casa-icone,
+.casa[data-event-type="recife-placeholder"] .casa-icone,
+.casa[data-event-type="ataque-dragoes"] .casa-icone,
+.casa[data-event-type="vitoria"] .casa-icone {
+  animation: especial-respiro 2.8s ease-in-out infinite;
 }
 
 /* ═══════════════════════════════════════
@@ -1373,6 +1445,40 @@ body {
 #lara.animar-lara-pos,
 #lara-p2.animar-lara-pos {
   animation: pulse 0.35s ease;
+}
+
+@keyframes personagem-chegada {
+  0% { transform: translateY(-4px) scale(1.04); }
+  45% { transform: translateY(2px) scale(.98); }
+  72% { transform: translateY(-2px) scale(1.02); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+@keyframes dado-impacto {
+  0% { transform: scale(1); }
+  38% { transform: scale(1.12) rotate(-2deg); box-shadow: inset 0 -5px 0 rgba(184,149,106,.22), 0 0 0 7px rgba(255,193,7,.14), 0 10px 22px rgba(255,143,0,.28); }
+  100% { transform: scale(1); }
+}
+
+#lara.animar-lara-chegada,
+#lara-p2.animar-lara-chegada { animation: personagem-chegada .48s cubic-bezier(.22, 1, .36, 1); }
+
+#lara.jogador-ativo,
+#lara-p2.jogador-ativo { box-shadow: 0 0 0 4px rgba(255,255,255,.72), 0 0 18px 6px rgba(255,193,7,.38), 0 5px 20px rgba(0,0,0,.12); }
+
+.status-player-visual.jogador-ativo { border-radius: 50%; filter: drop-shadow(0 0 6px rgba(255,193,7,.72)); }
+#dice-display.dado-impacto { animation: dado-impacto .38s cubic-bezier(.22, 1, .36, 1); }
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-ambient-layer { display: none; }
+  .casa.casa-ativada,
+  .casa.casa-percorrida,
+  .casa[data-event-type] .casa-icone,
+  #lara.animar-lara-pos,
+  #lara-p2.animar-lara-pos,
+  #lara.animar-lara-chegada,
+  #lara-p2.animar-lara-chegada,
+  #dice-display.dado-impacto { animation: none !important; }
 }
 
 /* ═══════════════════════════════════════

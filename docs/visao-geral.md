@@ -18,7 +18,16 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 
 ## Principais Funcionalidades
 
-### v0.32.0-preview (Atual) — Eventos e Narração Visual ✅
+### v0.33.0-preview (Atual) — Board Alive ✅
+
+- **Movimento vivo**: destaque exclusivo em cada casa percorrida e glow curto no destino
+- **Feedback do personagem e dado**: pouso com bounce suave e impacto ao revelar o resultado
+- **Casas especiais**: desafio, portal, minigame e chegada têm respiração visual discreta
+- **Turno e progresso**: jogador ativo destacado e barras com easing bidirecional
+- **Ambiente por configuração**: folhas, estrelas, bolhas, poeira e brasas declaradas em `theme.ambientEffect`
+- **Performance**: CSS animations, até dez partículas por tema e suporte a movimento reduzido
+
+### v0.32.0-preview — Eventos e Narração Visual ✅
 
 - **Narração centralizada**: overlay informa dado, deslocamento, eventos especiais, desafios, minigames e turnos
 - **Fila sequencial**: somente uma mensagem aparece por vez; chamadas retornam Promise e podem ser aguardadas pelo fluxo

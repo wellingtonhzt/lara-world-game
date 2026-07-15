@@ -75,6 +75,7 @@ export const florestaEncantada = {
       cellDefault: '#fef7e6',
       cellSpecial: '#fff8e1',
     },
+    ambientEffect: { preset: 'fall', symbol: '🍃', count: 6, color: '#66bb6a' },
     decorations: [
       { type: 'emoji', content: '\u2601\uFE0F', className: 'deco-cloud-1' },
       { type: 'emoji', content: '\u2601\uFE0F', className: 'deco-cloud-2' },

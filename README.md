@@ -18,7 +18,8 @@
 
 | Versão | Data | Status |
 |--------|------|--------|
-| **v0.32.0-preview** | Jul/2026 | ✅ **Ativo** — Eventos e Narração Visual |
+| **v0.33.0-preview** | Jul/2026 | ✅ **Ativo** — Board Alive |
+| v0.32.0-preview | Jul/2026 | ✅ Eventos e Narração Visual |
 | v0.31.0-preview | Jul/2026 | ✅ Sobre & Tutorial |
 | v0.30.0-preview | Jul/2026 | ✅ Modo Arcade |
 | v0.29.0-preview | Jul/2026 | ✅ Padronização visual dos tabuleiros |
@@ -41,6 +42,14 @@
 | v0.3.0 | Jul/2026 | ✅ Concluído |
 | v0.2.0 | Jul/2026 | ✅ Concluído |
 | v0.1.0 | Jul/2026 | ✅ Concluído |
+
+---
+
+## 🌟 Board Alive
+
+O tabuleiro responde visualmente à partida: casas percorridas acendem uma por vez, o destino recebe um glow curto, o personagem pousa com bounce suave e o dado ganha impacto ao revelar o resultado. Casas especiais respiram discretamente, o jogador ativo recebe brilho e as barras de progresso animam avanço e retrocesso.
+
+Cada WorldConfig também pode declarar `theme.ambientEffect`. Os cinco mundos usam efeitos leves próprios — folhas, estrelas, bolhas, poeira e brasas — sem regras específicas por mundo na engine e com desativação automática em `prefers-reduced-motion`.
 
 ---
 

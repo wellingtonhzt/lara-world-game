@@ -62,6 +62,7 @@ export const casteloDosDragoes = {
       cellDefault: '#6a1b9a',
       cellSpecial: '#4a148c',
     },
+    ambientEffect: { preset: 'rise', symbol: '◆', count: 5, color: '#ff8f00' },
     decorations: [
       { type: 'emoji', content: '\uD83C\uDFF0', className: 'deco-castle-1' },
       { type: 'emoji', content: '\uD83C\uDFF0', className: 'deco-castle-2' },

@@ -1,5 +1,29 @@
 # Memorial Técnico
 
+## Sprint UX-003 — Board Alive (v0.33.0-preview)
+
+### Diagnóstico
+
+O movimento já possuía um ciclo de 180 ms por casa e animação simples no token; a barra já era controlada por `--progress`; HUD e tokens eram atualizados centralmente em `updateUI()`; os temas já aceitavam dados e decorações. Isso permitiu adicionar feedback visual sem tocar em regras, turnos, minigames ou tempos.
+
+### Animações adicionadas
+
+- `casa-percorrida`: glow curto, removido antes de iluminar a próxima casa.
+- `casa-ativada`: escala e glow únicos no destino, substituindo o pulso infinito anterior.
+- `animar-lara-chegada`: bounce discreto com easing de parada.
+- `dado-impacto`: escala e halo após a definição do resultado.
+- `jogador-ativo`: brilho alternado pelo `currentPlayerIndex` no token e HUD.
+- `especial-respiro`: animação de baixa amplitude no ícone de desafio, portal, minigame e chegada.
+- Barra de progresso com easing de 550 ms para avanço e redução.
+
+### Efeitos ambientais e performance
+
+Foi criado o contrato `theme.ambientEffect`, usado pelos cinco WorldConfigs: folhas na Floresta, estrelas na Galáxia, bolhas nos Oceanos, poeira em Dinossauros e brasas no Castelo. A renderização é genérica, limitada a dez partículas e usa `transform`/`opacity`. Não há novos timers de gameplay; a iluminação do caminho reutiliza o loop de movimento. Todos os novos movimentos são desativados por `prefers-reduced-motion`.
+
+### Validação
+
+Sintaxe verificada em `game.js` e nos cinco WorldConfigs; `git diff --check` aprovado. A suíte permaneceu no baseline de 303 testes aprovados e três falhas assíncronas preexistentes do Ocean Match-3.
+
 ## Sprint UX-002 — Sistema de Eventos e Narração Visual (v0.32.0-preview)
 
 ### Objetivo e diagnóstico

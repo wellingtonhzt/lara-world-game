@@ -296,6 +296,11 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
         progress.setAttribute("aria-valuenow", value);
         progress.setAttribute("aria-label", `Progresso de ${player.name}`);
       }
+      const statusVisual = document.getElementById(`p${number}-visual`);
+      const boardToken = getPlayerElement(player);
+      const isActive = index === gameState.currentPlayerIndex;
+      statusVisual?.classList.toggle('jogador-ativo', isActive);
+      boardToken?.classList.toggle('jogador-ativo', isActive);
     });
 
     const turnEmoji = document.getElementById("turn-emoji");
@@ -427,6 +432,7 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
       const info = especiais[i];
       if (info) {
         casa.classList.add(info.tipo === "vitoria" ? "casa-vitoria" : "casa-especial");
+        casa.dataset.eventType = info.tipo;
       }
 
       const icone = document.createElement("span");
@@ -508,9 +514,14 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
 
     const player = customPlayer || getCurrentPlayer();
     const el = getPlayerElement(player);
+    let previousCell = null;
 
     for (const pos of positions) {
       if (pos >= 1 && pos <= getTotalCasas()) {
+        const cell = document.getElementById(`casa-${pos}`);
+        previousCell?.classList.remove('casa-percorrida');
+        cell?.classList.add('casa-percorrida');
+        previousCell = cell;
         positionPlayerAt(pos, player);
         el.classList.remove("animar-lara-pos");
         void el.offsetWidth;
@@ -520,6 +531,16 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
       await delay(180);
     }
 
+    previousCell?.classList.remove('casa-percorrida');
+    document.querySelectorAll('.casa-ativada').forEach(cell => cell.classList.remove('casa-ativada'));
+    const destinationCell = document.getElementById(`casa-${to}`);
+    if (destinationCell) {
+      void destinationCell.offsetWidth;
+      destinationCell.classList.add('casa-ativada');
+    }
+    el.classList.remove('animar-lara-chegada');
+    void el.offsetWidth;
+    el.classList.add('animar-lara-chegada');
     player.posicao = to;
   }
 
@@ -544,6 +565,9 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
           elements.diceDisplay.textContent = getDadoEmoji(valor);
           elements.diceValue.textContent = valor;
           elements.diceDisplay.classList.remove("animar-dado");
+          elements.diceDisplay.classList.remove("dado-impacto");
+          void elements.diceDisplay.offsetWidth;
+          elements.diceDisplay.classList.add("dado-impacto");
           setTimeout(resolve, 250);
         }
       }, 80);
@@ -1185,6 +1209,27 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
         el.textContent = deco.content || '';
         elements.trackContainer.appendChild(el);
       });
+    }
+
+    const ambient = theme.ambientEffect;
+    if (ambient?.symbol && ambient?.preset) {
+      const layer = document.createElement('div');
+      layer.className = 'theme-ambient-layer theme-deco';
+      layer.dataset.ambientPreset = ambient.preset;
+      layer.style.setProperty('--ambient-color', ambient.color || 'currentColor');
+      layer.setAttribute('aria-hidden', 'true');
+      const count = Math.max(1, Math.min(Number(ambient.count) || 6, 10));
+      for (let index = 0; index < count; index++) {
+        const particle = document.createElement('span');
+        particle.className = 'theme-ambient-particle';
+        particle.textContent = ambient.symbol;
+        particle.style.setProperty('--ambient-left', `${8 + ((index * 17) % 86)}%`);
+        particle.style.setProperty('--ambient-top', `${8 + ((index * 23) % 76)}%`);
+        particle.style.setProperty('--ambient-delay', `${-(index * 1.15)}s`);
+        particle.style.setProperty('--ambient-duration', `${7 + (index % 4)}s`);
+        layer.appendChild(particle);
+      }
+      elements.trackContainer.appendChild(layer);
     }
   }
 

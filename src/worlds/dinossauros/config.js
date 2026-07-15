@@ -69,6 +69,7 @@ export const valeDosDinossauros = {
       cellDefault: '#fff8e1',
       cellSpecial: '#ffe0b2',
     },
+    ambientEffect: { preset: 'drift', symbol: '•', count: 6, color: '#d7b77a' },
     decorations: [
       { type: 'emoji', content: '\u2601\uFE0F', className: 'deco-cloud-1' },
       { type: 'emoji', content: '\u2601\uFE0F', className: 'deco-cloud-2' },

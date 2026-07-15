@@ -1,5 +1,17 @@
 # Roadmap Lara World
 
+### v0.33.0-preview — Board Alive ✅
+
+- [x] Destaque temporário da casa final
+- [x] Iluminação de uma única casa durante o percurso
+- [x] Bounce e parada suave do personagem
+- [x] Animação discreta de casas especiais
+- [x] Transição suave da barra de progresso
+- [x] Glow do jogador ativo e impacto final do dado
+- [x] Infraestrutura `theme.ambientEffect` em cinco WorldConfigs
+- [x] Partículas limitadas, CSS animations e `prefers-reduced-motion`
+- [x] Validação, versionamento e documentação
+
 ### v0.32.0-preview — Eventos e Narração Visual ✅
 
 - [x] Módulo independente de overlay com fila baseada em Promise

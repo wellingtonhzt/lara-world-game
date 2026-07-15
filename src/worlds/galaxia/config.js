@@ -44,6 +44,7 @@ export const galaxiaEstelar = {
       cellDefault: '#1a1a4e',
       cellSpecial: '#2a1a5e',
     },
+    ambientEffect: { preset: 'twinkle', symbol: '✦', count: 7, color: '#fff59d' },
     decorations: [
       { type: 'emoji', content: '\u2B50', className: 'deco-star-1' },
       { type: 'emoji', content: '\u2B50', className: 'deco-star-2' },
