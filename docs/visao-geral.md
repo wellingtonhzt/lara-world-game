@@ -18,7 +18,15 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 
 ## Principais Funcionalidades
 
-### v0.31.0-preview (Atual) — Sobre & Tutorial ✅
+### v0.32.0-preview (Atual) — Eventos e Narração Visual ✅
+
+- **Narração centralizada**: overlay informa dado, deslocamento, eventos especiais, desafios, minigames e turnos
+- **Fila sequencial**: somente uma mensagem aparece por vez; chamadas retornam Promise e podem ser aguardadas pelo fluxo
+- **Integração com HUD**: toda narração atualiza “Último Evento”, sem eliminar o histórico interno
+- **Sincronização segura**: reset, menu e vitória limpam mensagens e timers pendentes
+- **Acessibilidade**: `aria-live`, contraste, mensagens curtas, responsividade e movimento reduzido
+
+### v0.31.0-preview — Sobre & Tutorial ✅
 
 - **Sobre o Lara World**: tela com informações do jogo, recursos atuais, em desenvolvimento e créditos — acessível pelo botão "ℹ️ Sobre" na tela inicial
 - **Como Jogar**: tutorial interativo com 7 passos de onboarding, indicador de progresso, navegação por teclado e mouse. Overlay glass card, persistência em localStorage, não abre automaticamente

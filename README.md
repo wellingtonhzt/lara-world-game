@@ -18,7 +18,8 @@
 
 | Versão | Data | Status |
 |--------|------|--------|
-| **v0.31.0-preview** | Jul/2026 | ✅ **Ativo** — Sobre & Tutorial |
+| **v0.32.0-preview** | Jul/2026 | ✅ **Ativo** — Eventos e Narração Visual |
+| v0.31.0-preview | Jul/2026 | ✅ Sobre & Tutorial |
 | v0.30.0-preview | Jul/2026 | ✅ Modo Arcade |
 | v0.29.0-preview | Jul/2026 | ✅ Padronização visual dos tabuleiros |
 | v0.27.0-preview | Jul/2026 | ✅ Jogo da Memória da Floresta |
@@ -40,6 +41,12 @@
 | v0.3.0 | Jul/2026 | ✅ Concluído |
 | v0.2.0 | Jul/2026 | ✅ Concluído |
 | v0.1.0 | Jul/2026 | ✅ Concluído |
+
+---
+
+## ✨ Eventos e Narração Visual
+
+As ações da partida são narradas por um overlay temporário sobre o tabuleiro. Resultado do dado, movimento, casas especiais, desafios, minigames e mudanças de turno aparecem em sequência, com mensagens curtas em PT-BR. A fila bloqueia sobreposições, respeita `prefers-reduced-motion` e atualiza simultaneamente o campo **Último Evento** do HUD.
 
 ---
 

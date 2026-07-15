@@ -24,6 +24,9 @@ lara-world/
 │   ├── index.html       # Página principal
 │   ├── style.css        # Estilos do jogo
 │   ├── game.js          # Lógica do jogo (ES Module)
+│   ├── ui/               # Componentes visuais compartilhados
+│   │   ├── game-event-overlay.js  # Fila e ciclo de vida da narração
+│   │   └── game-event-overlay.css # Tipos visuais e responsividade
 │   ├── data/            # Dados estruturados do jogo
 │   │   └── questions.js # Banco de perguntas (128 perguntas, 9 categorias)
 │   ├── audio/           # Módulo de áudio
@@ -144,6 +147,12 @@ lara-world/
 ├── Dockerfile           # Build da imagem Docker
 └── docker-compose.yml   # Orquestração Docker
 ```
+
+## Sistema de Eventos Visuais
+
+`game.js` emite descrições sem regras próprias por mundo para `queueGameEvent()`. O módulo de UI normaliza o evento, apresenta um item por vez e resolve uma Promise após a saída. `clearGameEvents()` cancela o item ativo e toda a fila com resolução única, sendo chamado em reset, retorno ao menu e vitória. Os títulos dos minigames vêm de `MinigameRegistry.presentation`, evitando duplicar regras no componente visual.
+
+O callback `onShow` atualiza `#last-event` no HUD. `#history` permanece como registro interno acumulativo, mantendo `addHistory()` compatível.
 
 > Nota: a pasta `src/assets/` foi criada na v0.11.0-preview para iniciar a fase de identidade visual. A subpasta `worlds/` abriga assets por mundo (`background.webp`, `path.webp`), atualmente com floresta/, dinossauros/, galaxia/, oceanos/ e castelo/. Cada mundo possui seu próprio background e textura de caminho, com fallback CSS garantido se o asset não existir. A Galáxia Estelar recebeu sua infraestrutura visual na v0.16.0-preview (ART-011). A infraestrutura do `path.webp` foi preparada na v0.12.0-preview (background-image no `.path-line`, seletores por mundo). A subpasta `ui/` foi criada na UX-013 para abrigar assets da Hero Screen (`lara-hero.webp`, `menu-background.webp`), posteriormente expandida na v0.25.0-preview com `logo-lara-world.webp` (logo oficial). Todos os 3 assets existem atualmente com fallback CSS/textual garantido. A subpasta `world-icons/` foi criada na UX-014/ART-009 para abrigar as ilustrações oficiais dos mundos (6 assets), com container 96×96px e fallback de emoji — atualmente todos os 6 assets existem e são funcionalmente carregados. As subpastas `avatars/` e `tokens/` foram criadas na UX-015/ART-010 para abrigar os assets de personagens oficiais — `avatars/` para preview circular no setup (108×108px, `object-fit: contain`) e `tokens/` para representação in-game (62×62px circular, `object-fit: cover`), ambos com fallback para emoji. A subpasta `audio/` foi criada na AUD-001 (v0.13.0-preview) para abrigar assets de áudio (.webm), com subpastas por categoria: `ui/`, `dice/`, `board/`, `quiz/`, `rewards/`, `music/`. Consulte [docs/audio.md](./audio.md) para detalhes completos.
 

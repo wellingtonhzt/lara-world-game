@@ -2,6 +2,19 @@
 
 ## [Unreleased]
 
+## [0.32.0-preview] - 2026-07-15
+
+### Adicionado
+- **Game Event Overlay**: narração temporária e sequencial para dado, movimento, bônus, penalidades, desafios, minigames e mudança de turno
+- **Módulo `src/ui/game-event-overlay.js`**: API `showGameEvent()`, `queueGameEvent()` e `clearGameEvents()`, fila com Promise, prevenção de resolução duplicada e cancelamento de timers
+- **Estilos `src/ui/game-event-overlay.css`**: dez variações visuais, glass discreto, responsividade e `prefers-reduced-motion`
+
+### Alterado
+- **HUD**: “Último Evento” passa a ser atualizado por um helper único; o histórico interno acumulativo foi preservado separadamente
+- **Fluxo da partida**: desafios, minigames, bot e turnos aguardam a narração visual sem alterar regras ou resultados
+- **Limpeza de sessão**: reset, menu e vitória cancelam fila visual e timer agendado do bot
+- **Versão e cache-busting**: atualizados para `v0.32.0-preview`
+
 ## [0.31.0-preview] - 2026-07-14
 
 ### Adicionado

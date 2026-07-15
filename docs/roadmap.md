@@ -1,5 +1,16 @@
 # Roadmap Lara World
 
+### v0.32.0-preview — Eventos e Narração Visual ✅
+
+- [x] Módulo independente de overlay com fila baseada em Promise
+- [x] Dez tipos visuais e durações centralizadas
+- [x] Narração de dado, movimento, eventos especiais, desafios e minigames
+- [x] Mudança de turno humano/humano e humano/bot
+- [x] Integração com “Último Evento” e preservação do histórico interno
+- [x] Limpeza no reset, menu e vitória, incluindo timer do bot
+- [x] Responsividade, ARIA e `prefers-reduced-motion`
+- [x] Versionamento, cache-busting e documentação
+
 ### v0.31.0-preview — Sobre & Tutorial ✅
 
 - [x] Tela "Sobre o Lara World" com informações, recursos e créditos

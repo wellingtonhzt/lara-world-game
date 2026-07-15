@@ -4,6 +4,10 @@
 
 Levar seu personagem da casa inicial (posição 0) até a **casa 20** (vitória). O primeiro jogador a atingir ou ultrapassar a casa 20 vence a partida.
 
+## Narração Visual
+
+Durante a jogada, mensagens temporárias explicam o resultado do dado, o movimento, casas especiais, desafios, minigames e a mudança de turno. Essas mensagens são apenas informativas: não modificam resultados, deslocamentos, recompensas, penalidades ou ordem dos turnos. O campo **Último Evento** do HUD repete a narração mais recente.
+
 ## Tela Inicial (Menu Principal)
 
 Ao abrir o jogo, a **Tela Inicial** é exibida com cinco opções:

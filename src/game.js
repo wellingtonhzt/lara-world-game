@@ -3,7 +3,7 @@ import { loadAllWorlds } from './worlds/loader.js';
 // florestaMisteriosa removido — a casa 11 agora usa o minigame memory-forest
 
 import { audioManager } from './audio/index.js';
-import { launchMinigameHost } from './minigames/engine/index.js';
+import { launchMinigameHost, getMinigame } from './minigames/engine/index.js';
 import { OceanMatch3 } from './minigames/ocean-match3/OceanMatch3.js';
 import './minigames/engine/loader.js';
 import { initArcadeController, initArcadeScreen, enterArcadeMode, leaveArcadeMode, launchArcadeMinigame, exitArcadeToMenu } from './arcade/index.js';
@@ -11,6 +11,7 @@ import { initAboutScreen, showAboutScreen, hideAboutScreen } from './about/index
 import { initTutorialScreen, showTutorialScreen, hideTutorialScreen, hasSeenTutorial } from './tutorial/index.js';
 import { bancoQuestoes, questoesDisponiveis, categoryIndices, worldCategoryMap, getIndicesPorMundo, getCategoriasPorMundo } from './data/questions.js';
 import { APP_VERSION } from './version.js';
+import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURATIONS } from './ui/game-event-overlay.js';
 
 (function () {
   const TOTAL_CASAS = 20;
@@ -38,6 +39,7 @@ import { APP_VERSION } from './version.js';
   let isSinglePlayer = false;
   let selectedLayoutId = null;
   let botTurnScheduled = false;
+  let botTurnTimer = null;
   let modoJogo = null;
   let drawState = { rolls: [null, null], drawWinnerIndex: null };
 
@@ -240,8 +242,38 @@ import { APP_VERSION } from './version.js';
     gameState.currentPlayerIndex = (gameState.currentPlayerIndex + 1) % PLAYER_COUNT;
   }
 
+  function updateLastEvent(event) {
+    const target = document.getElementById('last-event');
+    if (!target) return;
+    const item = document.createElement('p');
+    item.className = 'hist-item';
+    item.textContent = `${event.icon} ${event.title}${event.message ? ` — ${event.message}` : ''}`;
+    target.replaceChildren(item);
+  }
+
+  function narrate(event) {
+    return queueGameEvent(event);
+  }
+
+  function narrateTurn() {
+    const player = getCurrentPlayer();
+    return narrate({
+      icon: player.isBot ? '🤖' : '⭐',
+      title: player.isBot ? 'Vez da Máquina' : `Vez de ${player.name}`,
+      type: 'turn',
+      duration: GAME_EVENT_DURATIONS.turn,
+    });
+  }
+
+  function narrateMinigame(id, icon) {
+    let title = 'Minigame!';
+    try { title = getMinigame(id).presentation?.title || title; } catch { /* fallback visual */ }
+    return narrate({ icon, title: `${title}!`, type: 'minigame', duration: GAME_EVENT_DURATIONS.minigame });
+  }
+
   function updateUI() {
     const p = getCurrentPlayer();
+    const total = getTotalCasas();
     if (elements.currentPlayerName) {
       elements.currentPlayerName.textContent = p.name;
     }
@@ -249,6 +281,22 @@ import { APP_VERSION } from './version.js';
     if (elements.p2Pos) elements.p2Pos.textContent = players[1].posicao;
     if (elements.p1Label) elements.p1Label.textContent = players[0].name;
     if (elements.p2Label) elements.p2Label.textContent = players[1].name;
+
+    const turnKicker = document.getElementById("turn-kicker");
+    if (turnKicker) turnKicker.textContent = p.isBot ? "🤖 VEZ DA MÁQUINA" : "⭐ SUA VEZ";
+    players.forEach((player, index) => {
+      const number = index + 1;
+      const progress = document.getElementById(`p${number}-progress`);
+      const totalEl = document.getElementById(`p${number}-total`);
+      const value = Math.max(0, Math.min(player.posicao, total));
+      if (totalEl) totalEl.textContent = total;
+      if (progress) {
+        progress.style.setProperty("--progress", `${(value / total) * 100}%`);
+        progress.setAttribute("aria-valuemax", total);
+        progress.setAttribute("aria-valuenow", value);
+        progress.setAttribute("aria-label", `Progresso de ${player.name}`);
+      }
+    });
 
     const turnEmoji = document.getElementById("turn-emoji");
     const turnImg = document.getElementById("turn-img");
@@ -513,7 +561,6 @@ import { APP_VERSION } from './version.js';
       : "hist-info";
     p.innerHTML = `<span class="${cls}">${texto}</span>`;
     elements.history.appendChild(p);
-    elements.history.scrollTop = elements.history.scrollHeight;
   }
 
   function clearHistory() {
@@ -556,6 +603,7 @@ import { APP_VERSION } from './version.js';
         const destino = Math.min(posicao + info.valor, getTotalCasas());
         audioManager.play('specialAdvance');
         addHistory(`\u2B50 ${info.descricao} \u2192 casa ${destino}`, "especial");
+        await narrate({ icon: '⏩', title: `Avance mais ${info.valor} ${info.valor === 1 ? 'casa' : 'casas'}!`, type: 'bonus' });
         await animatePlayerMovement(posicao, destino);
         player.posicao = destino;
         if (player.posicao >= getTotalCasas()) {
@@ -572,6 +620,7 @@ import { APP_VERSION } from './version.js';
         const destino = Math.max(posicao - info.valor, 0);
         audioManager.play('specialBack');
         addHistory(`\uD83D\uDC22 ${info.descricao} \u2192 casa ${destino}`, "especial");
+        await narrate({ icon: '⏪', title: `Volte ${info.valor} ${info.valor === 1 ? 'casa' : 'casas'}`, type: 'penalty' });
         if (destino > 0) {
           await animatePlayerMovement(posicao, destino);
         }
@@ -584,6 +633,7 @@ import { APP_VERSION } from './version.js';
       }
       case "jogar-novamente": {
         addHistory(`🎯 ${info.descricao}`, "especial");
+        await narrate({ icon: '🎲', title: 'Jogue novamente!', type: 'bonus' });
         return true;
       }
       case "portal": {
@@ -645,10 +695,12 @@ import { APP_VERSION } from './version.js';
       case "perde-rodada": {
         player.rodadasPerdidas++;
         addHistory(`😴 ${info.descricao}`, "especial");
+        await narrate({ icon: '⏸️', title: 'Você perderá a próxima rodada', type: 'penalty' });
         return false;
       }
       case "voltar-inicio": {
         addHistory(`🔙 ${info.descricao}`, "especial");
+        await narrate({ icon: '🔁', title: 'Volte ao início!', type: 'penalty' });
         if (player.posicao !== 0) {
           await animatePlayerMovement(player.posicao, 0);
         }
@@ -661,6 +713,7 @@ import { APP_VERSION } from './version.js';
         if (!desafio) return false;
         audioManager.play('challengeOpen');
         addHistory(`\u2753 ${player.name} caiu em um desafio!`, "especial");
+        await narrate({ icon: '❓', title: 'Desafio!', message: 'Mostre o que você sabe', type: 'challenge' });
         const acertou = await resolveChallenge(desafio);
         if (acertou) {
           audioManager.play('correctAnswer');
@@ -671,6 +724,7 @@ import { APP_VERSION } from './version.js';
           player.posicao = destino;
           positionPlayerAt(destino);
           addHistory(`\u2705 ${player.name} acertou! Avan\u00e7ou para casa ${destino}`, "especial");
+          await narrate({ icon: '✅', title: 'Muito bem!', message: 'Avance 1 casa', type: 'success', duration: GAME_EVENT_DURATIONS.answer });
           if (player.posicao >= getTotalCasas()) {
             if (gameState.activeSubworldId) return await handleBoardLimitReached();
             await handleVictory();
@@ -685,6 +739,7 @@ import { APP_VERSION } from './version.js';
           player.posicao = destino;
           positionPlayerAt(destino);
           addHistory(`\u274C ${player.name} errou! Voltou para casa ${destino}`, "especial");
+          await narrate({ icon: '❌', title: 'Quase!', message: 'Volte 1 casa', type: 'failure', duration: GAME_EVENT_DURATIONS.answer });
         }
         return false;
       }
@@ -701,6 +756,7 @@ import { APP_VERSION } from './version.js';
           positionPlayerAt(otherPlayer.posicao, otherPlayer);
           updateUI();
           addHistory(`\uD83C\uDF00 ${player.name} trocou de posi\u00E7\u00E3o com ${otherPlayer.name}!`, "especial");
+          await narrate({ icon: '🔄', title: 'Posições trocadas!', type: 'neutral' });
         } else {
           addHistory(`\uD83C\uDF00 ${info.descricao} — ambos na mesma casa, nada acontece.`, "info");
         }
@@ -708,6 +764,7 @@ import { APP_VERSION } from './version.js';
       }
       case "recife-placeholder": {
         addHistory(`\uD83C\uDF0A ${info.descricao}`, "especial");
+        await narrateMinigame('ocean-match3', '🎯');
         let resultado;
         try {
           resultado = await launchOceanMatch3({ isBot: player.isBot });
@@ -724,6 +781,7 @@ import { APP_VERSION } from './version.js';
           }
           player.posicao = destino;
           addHistory(`\uD83C\uDF1F ${player.name} encontrou o tesouro e avan\u00E7ou +${resultado.boardDelta} casas!`, "especial");
+          await narrate({ icon: '🌟', title: 'Tesouro encontrado!', message: `Avance ${resultado.boardDelta} casas`, type: 'success' });
           if (player.posicao >= getTotalCasas()) {
             await handleVictory();
             return false;
@@ -731,6 +789,7 @@ import { APP_VERSION } from './version.js';
         } else {
           audioManager.play('wrongAnswer');
           addHistory(`\uD83C\uDF0A ${player.name} ficou sem tempo! B\u00F4nus: 0`, "especial");
+          await narrate({ icon: '🌊', title: 'O tempo acabou!', type: 'failure' });
         }
         return false;
       }
@@ -740,6 +799,7 @@ import { APP_VERSION } from './version.js';
       }
       case "dino-runner": {
         addHistory(`\uD83E\uDD96 ${info.descricao}`, "especial");
+        await narrateMinigame('dino-runner', '🏃');
         const dinoResult = await launchDinoRunner({ isBot: player.isBot });
         const delta = dinoResult.boardDelta || 0;
         if (delta > 0) {
@@ -753,6 +813,7 @@ import { APP_VERSION } from './version.js';
             ? `\uD83C\uDF1F ${player.name} completou o Dino Runner e avan\u00E7ou +${delta} casas!`
             : `\uD83C\uDF1F ${player.name} alcan\u00E7ou a \u00E1rea dif\u00EDcil do Dino Runner e ganhou +${delta} casas!`;
           addHistory(msg, "especial");
+          await narrate({ icon: '🌟', title: 'Boa corrida!', message: `Avance ${delta} casas`, type: 'success' });
           if (player.posicao >= getTotalCasas()) {
             await handleVictory();
             return false;
@@ -760,11 +821,13 @@ import { APP_VERSION } from './version.js';
         } else {
           audioManager.play('wrongAnswer');
           addHistory(`\uD83D\uDCA5 ${player.name} colidiu no Dino Runner! B\u00F4nus: 0`, "especial");
+          await narrate({ icon: '💥', title: 'Quase conseguiu!', type: 'failure' });
         }
         return false;
       }
       case "buraco-minhoca": {
         addHistory(`\uD83D\uDE80 ${info.descricao}`, "especial");
+        await narrateMinigame('meteor-game', '🚀');
         const resultado = await launchMeteoroGame({ isBot: player.isBot });
         if (resultado.venceu) {
           const destino = Math.min(player.posicao + resultado.boardDelta, getTotalCasas());
@@ -774,6 +837,7 @@ import { APP_VERSION } from './version.js';
           }
           player.posicao = destino;
           addHistory(`\uD83C\uDF1F ${player.name} atravessou o Buraco de Minhoca e avan\u00E7ou +${resultado.boardDelta} casas!`, "especial");
+          await narrate({ icon: '🌟', title: 'Missão completa!', message: `Avance ${resultado.boardDelta} casas`, type: 'success' });
           if (player.posicao >= getTotalCasas()) {
             await handleVictory();
             return false;
@@ -781,11 +845,13 @@ import { APP_VERSION } from './version.js';
         } else {
           audioManager.play('wrongAnswer');
           addHistory(`\uD83D\uDCA5 ${player.name} foi atingido por meteoros! B\u00F4nus: 0`, "especial");
+          await narrate({ icon: '💥', title: 'Os meteoros venceram!', type: 'failure' });
         }
         return false;
       }
       case "memory-forest": {
         addHistory(`\uD83C\uDF3F ${info.descricao}`, "especial");
+        await narrateMinigame('memory-forest', '🧩');
         let resultado;
         try {
           resultado = await launchMemoryForest({ isBot: player.isBot });
@@ -801,6 +867,7 @@ import { APP_VERSION } from './version.js';
           }
           player.posicao = destino;
           addHistory(`\uD83C\uDF1F ${player.name} encontrou ${resultado.stats?.paresEncontrados ?? 0} pares e avan\u00E7ou +${resultado.boardDelta} casas!`, "especial");
+          await narrate({ icon: '🌟', title: 'Memória incrível!', message: `Avance ${resultado.boardDelta} casas`, type: 'success' });
           if (player.posicao >= getTotalCasas()) {
             await handleVictory();
             return false;
@@ -808,11 +875,13 @@ import { APP_VERSION } from './version.js';
         } else {
           audioManager.play('wrongAnswer');
           addHistory(`\uD83C\uDF32 ${player.name} encontrou ${resultado.stats?.paresEncontrados ?? 0} pares. B\u00F4nus: 0`, "especial");
+          await narrate({ icon: '🌲', title: 'Tente outra vez!', type: 'failure' });
         }
         return false;
       }
       case "ataque-dragoes": {
         addHistory(`\uD83D\uDC09 ${info.descricao}`, "especial");
+        await narrateMinigame('ataque-dragoes', '🐉');
         const ataqueResult = await launchAtaqueDragoes({ isBot: player.isBot });
         if (ataqueResult.venceu) {
           const destino = Math.min(player.posicao + ataqueResult.boardDelta, getTotalCasas());
@@ -822,6 +891,7 @@ import { APP_VERSION } from './version.js';
           }
           player.posicao = destino;
           addHistory(`\u2B50 ${player.name} protegeu o castelo e avan\u00E7ou +${ataqueResult.boardDelta} casas!`, "especial");
+          await narrate({ icon: '🏰', title: 'Castelo protegido!', message: `Avance ${ataqueResult.boardDelta} casas`, type: 'success' });
           if (player.posicao >= getTotalCasas()) {
             await handleVictory();
             return false;
@@ -829,6 +899,7 @@ import { APP_VERSION } from './version.js';
         } else {
           audioManager.play('wrongAnswer');
           addHistory(`\uD83D\uDC09 ${player.name} foi superado pelos drag\u00F5es! B\u00F4nus: 0`, "especial");
+          await narrate({ icon: '🐉', title: 'Os dragões escaparam!', type: 'failure' });
         }
         return false;
       }
@@ -883,6 +954,10 @@ import { APP_VERSION } from './version.js';
   /* ── Victory ── */
 
   async function handleVictory() {
+    clearGameEvents();
+    if (botTurnTimer) clearTimeout(botTurnTimer);
+    botTurnTimer = null;
+    botTurnScheduled = false;
     audioManager.play('victory');
     const player = getCurrentPlayer();
     const el = getPlayerElement(player);
@@ -925,7 +1000,8 @@ import { APP_VERSION } from './version.js';
     if (p.isBot && gameState.jogoAtivo && !gameState.jogoFinalizado && !botTurnScheduled) {
       botTurnScheduled = true;
       elements.rollBtn.disabled = true;
-      setTimeout(async () => {
+      botTurnTimer = setTimeout(async () => {
+        botTurnTimer = null;
         botTurnScheduled = false;
         if (getCurrentPlayer().isBot && gameState.jogoAtivo && !gameState.jogoFinalizado) {
           await jogarDado();
@@ -956,8 +1032,10 @@ import { APP_VERSION } from './version.js';
           ? ` (${player.rodadasPerdidas} restante(s))`
           : "";
       addHistory(`😴 ${player.name} perdeu esta rodada!${restante}`, "especial");
+      await narrate({ icon: '⏸️', title: `${player.name} perdeu a rodada`, type: 'penalty' });
       switchTurn();
       updateUI();
+      await narrateTurn();
       unlockTurn();
       return;
     }
@@ -966,11 +1044,13 @@ import { APP_VERSION } from './version.js';
     audioManager.play('diceRoll');
     await animateDice(resultado);
     audioManager.play('diceResult');
+    await narrate({ icon: '🎲', title: `${player.name} tirou ${resultado}!`, type: 'dice', duration: GAME_EVENT_DURATIONS.dice });
 
     const from = player.posicao;
     const target = Math.min(from + resultado, getTotalCasas());
 
     if (target > from) {
+      await narrate({ icon: '🏃', title: `Avançando ${target - from} ${target - from === 1 ? 'casa' : 'casas'}`, type: 'movement', duration: GAME_EVENT_DURATIONS.movement });
       await animatePlayerMovement(from, target);
     } else if (target === 0) {
       positionPlayerAt(0);
@@ -979,6 +1059,10 @@ import { APP_VERSION } from './version.js';
     player.posicao = target;
 
     addHistory(`🎲 ${player.name} tirou ${resultado} → casa ${target}`, "dado");
+
+    if (target < getTotalCasas() && !getCasasEspeciais()[target]) {
+      await narrate({ icon: '🌻', title: `${player.name} chegou à casa ${target}`, type: 'neutral', duration: 700 });
+    }
 
     if (target >= getTotalCasas()) {
       console.log("[JOGAR] target >= total, activeSubworldId=" + gameState.activeSubworldId);
@@ -992,6 +1076,7 @@ import { APP_VERSION } from './version.js';
         gameState.isMoving = false;
         switchTurn();
         updateUI();
+        await narrateTurn();
         unlockTurn();
         console.log("[JOGAR] subworld completion, unlockTurn called");
         return;
@@ -1035,6 +1120,7 @@ import { APP_VERSION } from './version.js';
       switchTurn();
     }
     updateUI();
+    await narrateTurn();
     unlockTurn();
     console.log("[JOGAR] switchTurn+unlockTurn done, isMoving=" + gameState.isMoving + ", rollBtn.disabled=" + elements.rollBtn.disabled);
   }
@@ -1042,6 +1128,10 @@ import { APP_VERSION } from './version.js';
   /* ── Reset ── */
 
   function resetGameState() {
+    clearGameEvents();
+    if (botTurnTimer) clearTimeout(botTurnTimer);
+    botTurnTimer = null;
+    botTurnScheduled = false;
     players.forEach(p => { p.posicao = 0; p.rodadasPerdidas = 0; });
     gameState.currentPlayerIndex = 0;
     gameState.jogoAtivo = true;
@@ -1106,6 +1196,10 @@ import { APP_VERSION } from './version.js';
   /* ── Main Menu ── */
 
   function showMainMenu() {
+    clearGameEvents();
+    if (botTurnTimer) clearTimeout(botTurnTimer);
+    botTurnTimer = null;
+    botTurnScheduled = false;
     document.getElementById("main-menu").classList.remove("hidden");
     document.getElementById("setup-screen").classList.add("hidden");
     document.getElementById("world-selector").classList.add("hidden");
@@ -2667,6 +2761,7 @@ import { APP_VERSION } from './version.js';
     enableWorldCard('reino-oceanos');
     enableWorldCard('castelo-dragoes');
     audioManager.init();
+    initGameEventOverlay(elements.trackContainer, { onShow: updateLastEvent });
 
     document.addEventListener('click', function firstInteraction() {
       document.removeEventListener('click', firstInteraction);

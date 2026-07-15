@@ -1,5 +1,24 @@
 # Memorial Técnico
 
+## Sprint UX-002 — Sistema de Eventos e Narração Visual (v0.32.0-preview)
+
+### Objetivo e diagnóstico
+
+Centralizar mensagens visuais da partida sem alterar gameplay. A auditoria encontrou os pontos de emissão em `jogarDado()`, `processSpecialCell()`, desafios, wrappers de minigame, troca de turno e agendamento do bot. O HUD da UX-001 já oferecia “Último Evento”, mas `addHistory()` havia sido reduzido ao item mais recente; a UX-002 separou novamente o registro interno acumulativo da apresentação no HUD.
+
+### Implementação
+
+- Criados `src/ui/game-event-overlay.js` e `src/ui/game-event-overlay.css`.
+- API com fila sequencial, Promise, dez tipos, durações centralizadas, resolução única e limpeza cancelável.
+- Eventos integrados: dado, movimento, chegada normal, avanço, retrocesso, jogada extra, perda de rodada, retorno ao início, troca de posições, desafio, cinco minigames e mudança de turno.
+- Minigames usam `presentation.title` do registry; o overlay não contém regras específicas por mundo.
+- Reset, menu e vitória chamam `clearGameEvents()` e cancelam o timer referenciado do bot.
+- `#last-event` recebe a narração atual; `#history` continua recebendo todos os registros de `addHistory()`.
+
+### Acessibilidade e layout
+
+O overlay usa `aria-live="polite"`, `aria-atomic`, contraste por tipo, textos curtos e suporte a `prefers-reduced-motion`. Breakpoints cobrem tablet, celular vertical e celular horizontal sem ocupar todo o tabuleiro.
+
 ## Sprint — Sobre & Tutorial (v0.31.0-preview)
 
 ### Objetivo
