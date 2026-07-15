@@ -64,6 +64,15 @@ lara-world/
 │   │   ├── arcade-card.js       # Card individual: createMinigameCard, updateCardStats, escapeHtml
 │   │   ├── arcade-stats.js      # Persistência localStorage (schema v1), recordGame, safeResult
 │   │   └── arcade.css           # Tema escuro, overlay z-index 1400, grid responsivo, .arcade-cards-disabled
+│   ├── about/             # Tela "Sobre o Lara World"
+│   │   ├── index.js             # Barrel re-exports
+│   │   ├── about-screen.js      # Lógica: initAboutScreen, showAboutScreen, hideAboutScreen
+│   │   └── about.css            # Glass card hero, overlay z-index 950, responsivo
+│   ├── tutorial/          # Tutorial "Como Jogar" (7 passos)
+│   │   ├── index.js             # Barrel re-exports
+│   │   ├── tutorial-data.js     # Dados dos 7 passos (icon, title, text)
+│   │   ├── tutorial-screen.js   # Lógica: init, show, hide, hasSeen, reset, navegação
+│   │   └── tutorial.css         # Glass card hero, overlay z-index 960, dots, nav, responsivo
 │   ├── assets/          # Recursos visuais do jogo
 │   │   ├── ui/          # Assets da Hero Screen (menu inicial)
 │   │   │   ├── logo-lara-world.webp  # Logo oficial do Lara World — exibido na Hero Screen

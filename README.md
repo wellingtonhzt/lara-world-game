@@ -18,7 +18,8 @@
 
 | Versão | Data | Status |
 |--------|------|--------|
-| **v0.30.0-preview** | Jul/2026 | ✅ **Ativo** — Modo Arcade |
+| **v0.31.0-preview** | Jul/2026 | ✅ **Ativo** — Sobre & Tutorial |
+| v0.30.0-preview | Jul/2026 | ✅ Modo Arcade |
 | v0.29.0-preview | Jul/2026 | ✅ Padronização visual dos tabuleiros |
 | v0.27.0-preview | Jul/2026 | ✅ Jogo da Memória da Floresta |
 | v0.17.0-preview | Jul/2026 | ✅ Correção de 3 bugs (submundo, pergunta, aleatório) |
@@ -42,7 +43,13 @@
 
 ---
 
-## ✨ Funcionalidades Atuais (v0.30.0-preview)
+## ✨ Funcionalidades Atuais (v0.31.0-preview)
+
+### Sobre & Tutorial ✅
+
+- **Sobre o Lara World**: tela com informações do jogo, recursos atuais, em desenvolvimento e créditos — acessível pelo botão "ℹ️ Sobre" na tela inicial
+- **Como Jogar**: tutorial interativo com 7 passos, indicador de progresso, navegação por teclado e mouse — acessível pelo botão "📖 Como Jogar" na tela inicial
+- **Modularização**: módulos separados em `src/about/` e `src/tutorial/` com arquitetura barrel, seguindo o padrão do Arcade
 
 ### Modo Arcade ✅
 

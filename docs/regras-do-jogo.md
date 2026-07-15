@@ -6,11 +6,13 @@ Levar seu personagem da casa inicial (posição 0) até a **casa 20** (vitória)
 
 ## Tela Inicial (Menu Principal)
 
-Ao abrir o jogo, a **Tela Inicial** é exibida com três opções:
+Ao abrir o jogo, a **Tela Inicial** é exibida com cinco opções:
 
 - **⚡ Jogo Rápido** — inicia uma partida no modo Single Player (Humano vs Máquina) com configuração simplificada (apenas nome e sprite do Jogador 1)
 - **🎮 Modo Arcade** — abre a galeria de minigames para jogar qualquer minigame registrado de forma avulsa, sem tabuleiro
 - **🏆 Modo Carreira** — botão desabilitado visualmente com texto "(Em Breve)", reservado para futura progressão com fases e pontuação
+- **📖 Como Jogar** — abre um tutorial interativo com 7 passos explicando os controles e regras do jogo
+- **ℹ️ Sobre** — exibe informações sobre o jogo, recursos atuais, em desenvolvimento e créditos
 
 Clique em **"⚡ Jogo Rápido"** para acessar o modal de configuração e começar a jogar.
 

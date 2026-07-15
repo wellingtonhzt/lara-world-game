@@ -1997,6 +1997,39 @@ body:has(.main-menu:not(.hidden)) {
   color: #880e4f;
   padding: 3px 14px;
   border-radius: 20px;
+}
+
+.menu-secondary-group {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 12px;
+  width: 100%;
+}
+
+.menu-secondary-group .menu-btn-secondary {
+  flex: 1;
+  max-width: 200px;
+  padding: 8px 16px 7px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  opacity: 1;
+  background: linear-gradient(135deg, #ffecb3, #ffe082);
+  color: #8d6e63;
+  box-shadow: 0 2px 0 #d7ccc8, 0 4px 12px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255,255,255,0.7);
+  border: 1px solid rgba(200, 170, 140, 0.35);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.menu-secondary-group .menu-btn-secondary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 0 #d7ccc8, 0 6px 18px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255,255,255,0.7);
+}
+
+.menu-secondary-group .menu-btn-secondary:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: 0 1px 0 #d7ccc8, 0 2px 6px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255,255,255,0.7);
+}
   margin-top: 4px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
@@ -3371,6 +3404,8 @@ body[data-world="castelo-dragoes"] .path-line {
   .menu-btn-primary { max-width: 100%; padding: 20px 28px 16px; font-size: 1.2rem; }
   .menu-btn-arcade { max-width: 100%; padding: 14px 24px 12px; font-size: 1.1rem; }
   .menu-btn-secondary { max-width: 100%; padding: 9px 22px 8px; }
+  .menu-secondary-group { flex-direction: column; gap: 8px; }
+  .menu-secondary-group .menu-btn-secondary { max-width: 100%; }
 
   .game-header-logo { max-height: 46px; }
 

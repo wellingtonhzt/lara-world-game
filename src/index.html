@@ -4,8 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lara World</title>
-  <link rel="stylesheet" href="style.css?v=v0.30.0-preview">
+  <link rel="stylesheet" href="style.css?v=v0.31.0-preview">
   <link rel="stylesheet" href="arcade/arcade.css">
+  <link rel="stylesheet" href="about/about.css">
+  <link rel="stylesheet" href="tutorial/tutorial.css">
 </head>
 <body>
   <div id="app">
@@ -48,10 +50,18 @@
             <span class="btn-subtitle">Novos mundos aguardam você!</span>
             <span class="badge-embreve">EM BREVE...</span>
           </button>
+          <div class="menu-secondary-group">
+            <button id="btn-tutorial" class="menu-btn menu-btn-secondary">
+              <span class="btn-main-text">📖 Como Jogar</span>
+            </button>
+            <button id="btn-about" class="menu-btn menu-btn-secondary">
+              <span class="btn-main-text">ℹ️ Sobre</span>
+            </button>
+          </div>
         </div>
       </div>
       <div class="menu-footer">
-        <span id="menu-version" class="menu-version">v0.30.0-preview</span>
+        <span id="menu-version" class="menu-version">v0.31.0-preview</span>
       </div>
     </div>
 
@@ -559,6 +569,12 @@
     </div>
   </div>
 
-  <script type="module" src="game.js?v=v0.30.0-preview"></script>
+  <!-- About Screen Overlay -->
+  <div id="about-overlay" class="about-overlay hidden"></div>
+
+  <!-- Tutorial Screen Overlay -->
+  <div id="tutorial-overlay" class="tutorial-overlay hidden"></div>
+
+  <script type="module" src="game.js?v=v0.31.0-preview"></script>
 </body>
 </html>

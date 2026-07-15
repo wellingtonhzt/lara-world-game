@@ -1,6 +1,17 @@
 # Roadmap Lara World
 
-### v0.30.0-preview — Modo Arcade (Atual) ✅
+### v0.31.0-preview — Sobre & Tutorial ✅
+
+- [x] Tela "Sobre o Lara World" com informações, recursos e créditos
+- [x] Tutorial "Como Jogar" com 7 passos, progresso e navegação
+- [x] Botões secundários no menu: "📖 Como Jogar" e "ℹ️ Sobre"
+- [x] Modularização: `src/about/` e `src/tutorial/` com arquitetura barrel
+- [x] Persistência do tutorial em localStorage (`lara-world-tutorial-seen`)
+- [x] Suporte a teclado: setas, Esc, gerenciamento de foco
+- [x] Acessibilidade: `prefers-reduced-motion`, ARIA, foco retornado ao botão trigger
+- [x] Documentação: README, CHANGELOG, visão-geral, arquitetura, roadmap, memorial-técnico
+
+### v0.30.0-preview — Modo Arcade ✅
 
 - [x] Modo Arcade com galeria de minigames (cards dinâmicos via registry)
 - [x] Botão "🎮 Modo Arcade" na tela inicial

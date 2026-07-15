@@ -18,7 +18,14 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 
 ## Principais Funcionalidades
 
-### v0.30.0-preview (Atual) — Modo Arcade ✅
+### v0.31.0-preview (Atual) — Sobre & Tutorial ✅
+
+- **Sobre o Lara World**: tela com informações do jogo, recursos atuais, em desenvolvimento e créditos — acessível pelo botão "ℹ️ Sobre" na tela inicial
+- **Como Jogar**: tutorial interativo com 7 passos de onboarding, indicador de progresso, navegação por teclado e mouse. Overlay glass card, persistência em localStorage, não abre automaticamente
+- **Modularização**: módulos separados em `src/about/` e `src/tutorial/` com arquitetura barrel, seguindo o padrão do Arcade
+- **Botões secundários**: "📖 Como Jogar" e "ℹ️ Sobre" abaixo dos botões primários no menu inicial
+
+### v0.30.0-preview — Modo Arcade ✅
 
 - **Modo Arcade**: novo modo acessível pelo botão "🎮 Modo Arcade" na tela inicial — permite jogar qualquer minigame registrado de forma avulsa, sem tabuleiro
 - **Galeria de minigames**: tela com cards para cada minigame, exibindo nome, ícone, descrição, duração e estatísticas do jogador

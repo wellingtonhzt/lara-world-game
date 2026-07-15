@@ -7,6 +7,8 @@ import { launchMinigameHost } from './minigames/engine/index.js';
 import { OceanMatch3 } from './minigames/ocean-match3/OceanMatch3.js';
 import './minigames/engine/loader.js';
 import { initArcadeController, initArcadeScreen, enterArcadeMode, leaveArcadeMode, launchArcadeMinigame, exitArcadeToMenu } from './arcade/index.js';
+import { initAboutScreen, showAboutScreen, hideAboutScreen } from './about/index.js';
+import { initTutorialScreen, showTutorialScreen, hideTutorialScreen, hasSeenTutorial } from './tutorial/index.js';
 import { bancoQuestoes, questoesDisponiveis, categoryIndices, worldCategoryMap, getIndicesPorMundo, getCategoriasPorMundo } from './data/questions.js';
 import { APP_VERSION } from './version.js';
 
@@ -1108,6 +1110,8 @@ import { APP_VERSION } from './version.js';
     document.getElementById("setup-screen").classList.add("hidden");
     document.getElementById("world-selector").classList.add("hidden");
     leaveArcadeMode();
+    hideAboutScreen();
+    hideTutorialScreen();
     selectedWorldId = null;
     currentWorldConfig = null;
     selectedLayoutId = null;
@@ -1120,6 +1124,11 @@ import { APP_VERSION } from './version.js';
   }
 
   function setupMenuEvents() {
+    var aboutButton = document.getElementById("btn-about");
+    var tutorialButton = document.getElementById("btn-tutorial");
+    console.log('[ABOUT] botão encontrado', aboutButton);
+    console.log('[TUTORIAL] botão encontrado', tutorialButton);
+
     document.getElementById("btn-rapido").addEventListener("click", () => {
       audioManager.play('buttonClick');
       modoJogo = "rapido";
@@ -1132,6 +1141,20 @@ import { APP_VERSION } from './version.js';
       modoJogo = "arcade";
       hideMainMenu();
       enterArcadeMode();
+    });
+
+    document.getElementById("btn-tutorial").addEventListener("click", () => {
+      console.log('[TUTORIAL] clique recebido');
+      audioManager.play('buttonClick');
+      hideMainMenu();
+      showTutorialScreen();
+    });
+
+    document.getElementById("btn-about").addEventListener("click", () => {
+      console.log('[ABOUT] clique recebido');
+      audioManager.play('buttonClick');
+      hideMainMenu();
+      showAboutScreen();
     });
   }
 
@@ -2635,6 +2658,7 @@ import { APP_VERSION } from './version.js';
   /* ── Init ── */
 
   function init() {
+    console.log('[INIT] início');
     const verEl = document.getElementById('menu-version');
     if (verEl) verEl.textContent = APP_VERSION;
     initGalleryTokens();
@@ -2700,12 +2724,16 @@ import { APP_VERSION } from './version.js';
       });
     }
 
+    initAboutScreen();
+    initTutorialScreen();
+
     showMainMenu();
     setupMenuEvents();
     setupWorldSelectorEvents();
     setupModalEvents();
     setupDebugMode();
     _updateDebugTimeLabel();
+    console.log('[INIT] concluído');
   }
 
   document.addEventListener("DOMContentLoaded", async () => {

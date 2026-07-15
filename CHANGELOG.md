@@ -2,6 +2,21 @@
 
 ## [Unreleased]
 
+## [0.31.0-preview] - 2026-07-14
+
+### Adicionado
+- **Sobre o Lara World**: tela com informações do jogo, recursos atuais, em desenvolvimento e créditos — acessível pelo botão "ℹ️ Sobre" na tela inicial. Overlay glass card com design consistente com o menu
+- **Como Jogar**: tutorial interativo com 7 passos de onboarding, indicador de progresso (dots), navegação por teclado (setas, Esc) e mouse. Overlay glass card, persistência em localStorage (`lara-world-tutorial-seen`), não abre automaticamente
+- **Módulo `src/about/`**: 3 arquivos — `about-screen.js` (lógica), `about.css` (estilos), `index.js` (barrel). Funções: `initAboutScreen()`, `showAboutScreen()`, `hideAboutScreen()`
+- **Módulo `src/tutorial/`**: 4 arquivos — `tutorial-data.js` (dados dos 7 passos), `tutorial-screen.js` (lógica), `tutorial.css` (estilos), `index.js` (barrel). Funções: `initTutorialScreen()`, `showTutorialScreen()`, `hideTutorialScreen()`, `hasSeenTutorial()`, `resetTutorialSeen()`
+- **Botões secundários no menu**: "📖 Como Jogar" e "ℹ️ Sobre" abaixo dos botões primários, com visual reduzido (classe `menu-btn-secondary`)
+
+### Alterado
+- **`src/game.js`**: imports de `about/index.js` e `tutorial/index.js`, `initAboutScreen()` e `initTutorialScreen()` no `init()`, listeners `#btn-tutorial` e `#btn-about` em `setupMenuEvents()`, `hideAboutScreen()` e `hideTutorialScreen()` em `showMainMenu()`
+- **`src/index.html`**: links CSS `about/about.css` e `tutorial/tutorial.css`, botões secundários `#btn-tutorial` e `#btn-about` no menu, overlay containers `#about-overlay` e `#tutorial-overlay`
+- **`src/version.js`**: versão atualizada para `v0.31.0-preview`
+- **Cache-busting**: query params `?v=v0.31.0-preview` em CSS e JS no index.html
+
 ## [0.30.0-preview] - 2026-07-14
 
 ### Adicionado

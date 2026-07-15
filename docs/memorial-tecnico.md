@@ -1,5 +1,57 @@
 # Memorial Técnico
 
+## Sprint — Sobre & Tutorial (v0.31.0-preview)
+
+### Objetivo
+
+Implementar duas telas secundárias no menu principal: "Sobre o Lara World" (informações do jogo) e "Como Jogar" (tutorial interativo de 7 passos). Ambas seguem o padrão modular do Arcade, com overlay glass card, suporte a teclado, acessibilidade e persistência do tutorial em localStorage.
+
+### Arquivos Criados
+
+| Arquivo | Descrição |
+|---------|-----------|
+| `src/about/index.js` | Barrel re-exports de `initAboutScreen`, `showAboutScreen`, `hideAboutScreen` |
+| `src/about/about-screen.js` | Lógica: renderização dinâmica do conteúdo via DOM, handlers de teclado (Esc) e clique no overlay, controle de visibilidade |
+| `src/about/about.css` | Glass card hero (fundo `rgba(255,255,255,0.92)`), overlay `z-index: 950`, responsivo (tablet/phone), `prefers-reduced-motion` |
+| `src/tutorial/index.js` | Barrel re-exports de `initTutorialScreen`, `showTutorialScreen`, `hideTutorialScreen`, `hasSeenTutorial`, `resetTutorialSeen` |
+| `src/tutorial/tutorial-data.js` | Array `TUTORIAL_STEPS` com 7 objetos `{icon, title, text}` e constante `TUTORIAL_SEEN_KEY` |
+| `src/tutorial/tutorial-screen.js` | Lógica: navegação (prev/next), dots de progresso, handlers de teclado (setas, Esc), localStorage, renderização dinâmica |
+| `src/tutorial/tutorial.css` | Glass card hero, overlay `z-index: 960`, dots de progresso, botões de navegação, `prefers-reduced-motion`, responsivo |
+
+### Arquivos Alterados
+
+| Arquivo | Tipo de Alteração |
+|---------|-------------------|
+| `src/index.html` | **Modificado** — Links CSS `about/about.css` e `tutorial/tutorial.css`, botões secundários `#btn-tutorial` e `#btn-about` no menu, containers `#about-overlay` e `#tutorial-overlay` |
+| `src/game.js` | **Modificado** — Imports de `about/index.js` e `tutorial/index.js`, `initAboutScreen()` e `initTutorialScreen()` no `init()`, listeners `#btn-tutorial` e `#btn-about` em `setupMenuEvents()`, `hideAboutScreen()` e `hideTutorialScreen()` em `showMainMenu()` |
+| `src/version.js` | **Modificado** — Versão atualizada de `v0.30.0-preview` para `v0.31.0-preview` |
+
+### Decisões Técnicas
+
+| Decisão | Alternativas | Motivo |
+|---------|-------------|--------|
+| Overlay com `z-index: 950` (About) e `960` (Tutorial) | z-index igual ao menu (900) | Precisa ficar acima do menu mas abaixo do setup (1000) e arcade (1400) |
+| Conteúdo renderizado via DOM (`createElement`) em vez de innerHTML com template string | Template strings com dados do usuário | Evita risco de XSS; `textContent` é seguro por padrão |
+| Tutorial com 7 passos fixos em array de dados separado (`tutorial-data.js`) | Dados inline no screen.js | Separação de dados e lógica; facilita manutenção e tradução futura |
+| Persistência em `localStorage` com chave `lara-world-tutorial-seen` | Cookie ou sessionStorage | Persiste entre sessões; simples; volume mínimo |
+| Não abrir tutorial automaticamente na primeira visita | Auto-open no `init()` | Respeita escolha do usuário; botão "Como Jogar" é discoverable |
+| `hasSeenTutorial()` exportada mas não usada no init | Usar para auto-open futuro | Permite habilitar auto-open sem modificar game.js |
+| `resetTutorialSeen()` exportada | Apenas para debug/teste | Permite resetar estado do tutorial sem manipular localStorage manualmente |
+
+### Camada de z-index (atualizada)
+
+| Elemento | z-index |
+|----------|---------|
+| `#setup-screen` | 1000 |
+| `#draw-overlay` | 1000 |
+| `#minigame-host` | 1500 |
+| `#arcade-screen` | 1400 |
+| `#tutorial-overlay` | 960 |
+| `#about-overlay` | 950 |
+| `.main-menu` | base |
+
+---
+
 ## Sprint — Modo Arcade (v0.30.0-preview)
 
 ### Objetivo
