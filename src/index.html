@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="ui/game-event-overlay.css?v=v0.35.0-preview">
   <link rel="stylesheet" href="arcade/arcade.css">
   <link rel="stylesheet" href="about/about.css">
+  <link rel="stylesheet" href="quiz/quiz.css?v=v0.35.0-preview">
   <link rel="stylesheet" href="tutorial/tutorial.css">
 </head>
 <body>
@@ -45,6 +46,10 @@
           <button id="btn-arcade" class="menu-btn menu-btn-arcade">
             <span class="btn-main-text">🎮 Modo Arcade</span>
             <span class="btn-subtitle">Jogue qualquer minigame avulso</span>
+          </button>
+          <button id="btn-quiz" class="menu-btn menu-btn-quiz">
+            <span class="btn-main-text">❓ Quiz Lara World</span>
+            <span class="btn-subtitle">Teste seus conhecimentos!</span>
           </button>
           <button id="btn-carreira" class="menu-btn menu-btn-secondary" disabled>
             <span class="btn-main-text">🏆 Modo Aventura</span>
@@ -291,6 +296,10 @@
       <div class="arcade-footer">
         <button id="arcade-back-btn" class="arcade-back-btn">← Menu Principal</button>
       </div>
+    </div>
+
+    <div id="quiz-screen" class="quiz-screen hidden">
+      <div id="quiz-content" class="quiz-content"></div>
     </div>
 
     <div id="victory-overlay" class="victory-overlay hidden" role="dialog" aria-modal="true"

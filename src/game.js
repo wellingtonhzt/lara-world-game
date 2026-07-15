@@ -9,6 +9,7 @@ import './minigames/engine/loader.js';
 import { initArcadeController, initArcadeScreen, enterArcadeMode, leaveArcadeMode, launchArcadeMinigame, exitArcadeToMenu } from './arcade/index.js';
 import { initAboutScreen, showAboutScreen, hideAboutScreen } from './about/index.js';
 import { initTutorialScreen, showTutorialScreen, hideTutorialScreen, hasSeenTutorial } from './tutorial/index.js';
+import { initQuizScreen, showQuizScreen, hideQuizScreen } from './quiz/index.js';
 import { QuestionEngine } from './data/questions/index.js';
 import { APP_VERSION } from './version.js';
 import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURATIONS } from './ui/game-event-overlay.js';
@@ -1366,6 +1367,7 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
     leaveArcadeMode();
     hideAboutScreen();
     hideTutorialScreen();
+    hideQuizScreen();
     selectedWorldId = null;
     currentWorldConfig = null;
     selectedLayoutId = null;
@@ -1395,6 +1397,12 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
       modoJogo = "arcade";
       hideMainMenu();
       enterArcadeMode();
+    });
+
+    document.getElementById("btn-quiz").addEventListener("click", () => {
+      audioManager.play('buttonClick');
+      hideMainMenu();
+      showQuizScreen();
     });
 
     document.getElementById("btn-tutorial").addEventListener("click", () => {
@@ -2995,6 +3003,7 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
 
     initAboutScreen();
     initTutorialScreen();
+    initQuizScreen(showMainMenu);
 
     showMainMenu();
     setupMenuEvents();
