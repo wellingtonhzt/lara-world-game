@@ -253,15 +253,17 @@ Regra oficial para apresentação visual das casas em todos os mundos:
 - **Exceção — saída da floresta não cascateia**: o bônus de +2 (atalho) ou +3 (saída) ao retornar do Mundo da Floresta não ativa casas especiais.
 - **Limite do submundo**: ao atingir a última casa de um submundo por avanço automático ou acerto de desafio, o jogador não vence o jogo — ele retorna ao mundo principal com +2 casas de bônus. A vitória só é declarada se o bônux levar à casa 20 do mundo principal.
 - **Mundo Aleatório**: ao selecionar "🎲 Mundo Aleatório", um mundo principal é sorteado igualmente entre os 5 disponíveis (Floresta, Dinossauros, Galáxia, Oceanos, Castelo).
-- **Sorteio de perguntas**: a cada desafio, uma pergunta é sorteada do Banco de Questões (128 perguntas, 9 categorias). O sorteio é temático por mundo:
-  - 🌌 **Galáxia Estelar**: prioriza Espaço, Lógica e Conhecimentos Gerais
-  - 🌳 **Floresta Encantada**: prioriza Animais, Natureza, Cores e Formas, Lógica
-  - 🦕 **Dinossauros**: prioriza Dinossauros, Animais, Natureza, Matemática
-  - 🌊 **Reino dos Oceanos**: prioriza Natureza, Animais, Matemática, Português, Espaço
-  - 🐉 **Castelo dos Dragões**: prioriza Lógica, Matemática, Português, Conhecimentos Gerais
-  - Se o pool temático acabar, usa o banco geral como fallback
-- O jogo evita repetir a mesma pergunta durante a mesma partida (controle via `gameState.questoesUsadas`). Quando todas as perguntas do pool temático forem utilizadas, o ciclo recomeça.
-- O bot usa o mesmo algoritmo de sorteio (60% de acerto).
+- **Sorteio de perguntas**: a cada desafio, uma pergunta é sorteada pelo Question Engine (128 perguntas, 9 categorias). Cada mundo possui `questionPolicy` com pesos por categoria e faixa de nível:
+  - 🌳 **Floresta Encantada**: Animais 30, Natureza 25, Cores e Formas 15, Lógica 10, Matemática 10, Português 10
+  - 🦕 **Dinossauros**: Dinossauros 35, Natureza 25, Animais 20, Matemática 10, Português 10
+  - 🌌 **Galáxia Estelar**: Espaço 40, Lógica 20, Conhecimentos Gerais 20, Matemática 10, Natureza 10
+  - 🌊 **Reino dos Oceanos**: Natureza 30, Animais 25, Conhecimentos Gerais 15, Matemática 15, Português 15
+  - 🐉 **Castelo dos Dragões**: Lógica 30, Conhecimentos Gerais 25, Matemática 20, Português 15, Dinossauros 10
+  - Todos os mundos usam faixa de nível 1-3
+  - Anti-repetição por ID: perguntas não se repetem antes do esgotamento do pool compatível (`usedQuestionIds`). Quando todas as perguntas do pool forem utilizadas, o ciclo recomeça
+  - Se a política do mundo não retornar resultado, o pool é limpo e tentado novamente; se ainda assim falhar, tenta sem restrições; se falhar por completo, retorna null sem penalizar o jogador
+- Acerto continua avançando 1 casa. Erro continua retornando 1 casa. Sem cascata. Falha técnica ao carregar pergunta não penaliza o jogador (turno segue sem alteração de posição).
+- O bot usa o mesmo algoritmo de sorteio (60% de chance de acerto).
 - **Casa 5 na posição 1**: se estiver na casa 1 e cair na casa 5, o personagem volta para a posição 0 e fica fora do tabuleiro. Na próxima jogada, avançará para a casa 1 ou além.
 - **Após a vitória**: o jogo é encerrado, o botão "Jogar Dado" é desabilitado e um overlay de vitória com confetes animados, fogos serpentina e troféu é exibido. Duas opções estão disponíveis: **"🔁 Jogar Novamente"** (reinicia no mesmo modo) ou **"🏠 Voltar ao Menu"** (retorna à tela inicial).
 - **Reinício**: o botão "Reiniciar" exibe o modal de configuração novamente, permitindo que os jogadores alterem seus nomes e sprites antes de iniciar uma nova partida.

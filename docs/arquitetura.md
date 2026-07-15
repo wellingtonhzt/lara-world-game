@@ -28,7 +28,14 @@ lara-world/
 │   │   ├── game-event-overlay.js  # Fila e ciclo de vida da narração
 │   │   └── game-event-overlay.css # Tipos visuais e responsividade
 │   ├── data/            # Dados estruturados do jogo
-│   │   └── questions.js # Banco de perguntas (128 perguntas, 9 categorias)
+│   │   ├── questions/       # Question Engine
+│   │   │   ├── index.js           # QuestionEngine (facade)
+│   │   │   ├── question-repository.js # Armazenamento com defensive copies
+│   │   │   ├── question-selector.js   # Seleção com pesos, tags e fallback
+│   │   │   ├── question-validator.js  # Validação estrutural
+│   │   │   ├── category-catalog.js    # Catálogo de categorias
+│   │   │   └── bank/                 # 9 arquivos de categoria (128 perguntas)
+│   │   └── world-manifest.js  # Manifesto de IDs de mundos
 │   ├── audio/           # Módulo de áudio
 │   │   ├── AudioManager.js    # Gerenciador central (Web Audio API)
 │   │   ├── sounds.js          # Catálogo de sons (chaves simbólicas)
@@ -265,22 +272,19 @@ constantes / configuração
   ├── subworldConfigs     → {} — lookup de áreas especiais (vazio no momento)
   ├── PLAYER_COUNT (2)
   ├── players[]           → array de objetos {id, name, emoji, posicao, rodadasPerdidas, element, isBot, tokenId}
-  ├── gameState           → {currentPlayerIndex, jogoAtivo, jogoFinalizado, isMoving, questoesUsadas,
-  │                         activeSubworldId, subworldEntry, entrouNoPortal}
+   ├── gameState           → {currentPlayerIndex, jogoAtivo, jogoFinalizado, isMoving, usedQuestionIds,
+   │                         activeSubworldId, subworldEntry, entrouNoPortal}
   ├── modoJogo            → string | null ("rapido" no Jogo Rápido, null no menu)
   ├── isSinglePlayer      → boolean global
   ├── botTurnScheduled    → boolean
   ├── casasEspeciais[]    → mapa de configuração do mundo principal (12 casas)
   ├── boardPositions{}    → coordenadas percentuais do mundo principal (fallback se board.positions não existir)
   ├── icons[]             → emoji por casa no principal
-  └── Importado de `./data/questions.js`:
-       ├── bancoQuestoes{}         → banco categorizado (9 categorias, 128 perguntas)
-       ├── questoesDisponiveis[]   → flat pool do banco
-       ├── categoryIndices{}       → categoria → índices no flat pool
-       ├── worldCategoryMap{}      → mundo → categorias temáticas
-       ├── getIndicesPorMundo(id)  → retorna índices temáticos ou null (fallback geral)
-       ├── getCategoriasPorMundo(id) → retorna categorias do mundo
-       └── validateQuestionBank()   → percorre todo o banco reportando perguntas com resposta ausente ou fora das opções
+   └── Importado de `./engine/world-registry.js`:
+        ├── get(id)            → retorna WorldConfig por ID
+        ├── getDefault()       → retorna WorldConfig padrão
+        ├── random(filter?)    → retorna WorldConfig aleatório
+        └── init(configs[])    → registra mundos
 
 Getters World-Aware
   ├── getTotalCasas()      → currentWorldConfig.board.totalCells ou TOTAL_CASAS (fallback)
@@ -353,13 +357,13 @@ Troca de Layout
        ├── Chama applyLayout(layoutId) que persiste no localStorage e re-renderiza SVG
        └── Botões de layout (renderLayoutSelector) e debug (renderDebugLayoutButtons) usam este comando
 
-Sorteio de Perguntas (temático por mundo)
-  ├── sortearQuestao() → filtra por mundo (activeSubworldId || selectedWorldId)
-  ├── Pool temático via getIndicesPorMundo() → se <5 itens, fallback geral
-  ├── gameState.questoesUsadas (Set) → rastreia índices já sorteados (global)
-  ├── Remove usados do pool → se pool vazio, limpa Set e recomeça
+Sorteio de Perguntas (via Question Engine)
+  ├── sortearQuestao() → lê questionPolicy do mundo ativo
+  ├── QuestionEngine.select(context) → seleção com pesos, levelRange, excludeIds
+  ├── gameState.usedQuestionIds (Set) → rastreia IDs já sorteados (anti-repetição)
+  ├── Fallback: limpa usedQuestionIds → tenta sem excludeIds → tenta sem política → null seguro
   ├── Bot (60% acerto) e humano usam o mesmo sortearQuestao()
-  └── Mundo sem mapeamento → usa banco geral (128 perguntas)
+  └── questionPolicy definida em cada WorldConfig
 
 Main Menu
   ├── showMainMenu() → exibe menu inicial, esconde tabuleiro/painel/victory, chama leaveArcadeMode()
@@ -399,7 +403,7 @@ Modo Debug
 
 Gerenciamento de Estado
   ├── resetGameState() → reseta estado (posições, rodadasPerdidas, activeSubworldId, subworldEntry,
-  │                       entrouNoPortal, questoesUsadas, jogoAtivo, jogoFinalizado)
+  │                       entrouNoPortal, usedQuestionIds, jogoAtivo, jogoFinalizado)
   └── reiniciarJogo() → chama resetGameState(), depois showSetupScreen()
 
 Setup Screen
@@ -464,7 +468,7 @@ Cada jogador mantém seu próprio estado:
 
 O estado compartilhado do jogo:
 ```javascript
-{ currentPlayerIndex, jogoAtivo, jogoFinalizado, isMoving, questoesUsadas,
+{ currentPlayerIndex, jogoAtivo, jogoFinalizado, isMoving, usedQuestionIds,
   activeSubworldId, subworldEntry, entrouNoPortal }
 ```
 
@@ -607,6 +611,11 @@ A partir da v0.9.0-preview, o Lara World iniciou a **Fase de Mundos** com a cria
 | **Core** | `src/core/constants.js`, `utils.js`, `types.js` | Constantes, funções auxiliares, tipos JSDoc |
 | **World Manifest** | `src/data/world-manifest.js` | Array WORLD_IDS com todos os IDs de mundos (comentados) |
 | **Loader** | `src/worlds/loader.js` | Imports estáticos dos WorldConfigs |
+| **QuestionEngine** | `src/data/questions/index.js` | Fachada: select, selectMany, findById, getCategories, getSubcategories, validate, getStatistics |
+| **QuestionRepository** | `src/data/questions/question-repository.js` | Armazenamento imutável com defensive copies via `_copyQuestion()` |
+| **QuestionSelector** | `src/data/questions/question-selector.js` | Seleção com pesos, levelRange, excludeIds, tags, subcategories e fallback |
+| **QuestionValidator** | `src/data/questions/question-validator.js` | Validação estrutural do banco (never mutates) |
+| **CategoryCatalog** | `src/data/questions/category-catalog.js` | Catálogo de categorias e subcategorias |
 
 ### WorldConfigs
 

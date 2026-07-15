@@ -225,6 +225,58 @@ if (allQ.length > 0) {
   assert(check.question !== 'MUTATED', 'selectMany mutation does not corrupt bank');
 }
 
+console.log('\n--- Integration: World Policies ---');
+const worldPolicies = {
+  'floresta-encantada': { animais: 30, natureza: 25, cores_e_formas: 15, logica: 10, matematica: 10, portugues: 10 },
+  'dinossauros': { dinossauros: 35, natureza: 25, animais: 20, matematica: 10, portugues: 10 },
+  'galaxia-estelar': { espaco: 40, logica: 20, conhecimentos_gerais: 20, matematica: 10, natureza: 10 },
+  'reino-oceanos': { natureza: 30, animais: 25, conhecimentos_gerais: 15, matematica: 15, portugues: 15 },
+  'castelo-dragoes': { logica: 30, conhecimentos_gerais: 25, matematica: 20, portugues: 15, dinossauros: 10 },
+};
+
+for (const [worldId, weights] of Object.entries(worldPolicies)) {
+  const cats = Object.keys(weights);
+  for (const cat of cats) {
+    const exists = QuestionEngine.getCategories().includes(cat);
+    assert(exists, `${worldId}: category "${cat}" exists`);
+  }
+  const ctx = { categoryWeights: weights, levelRange: { min: 1, max: 3 } };
+  const q = QuestionEngine.select(ctx);
+  assert(q !== null, `${worldId}: returns a question`);
+  if (q) {
+    assert(cats.includes(q.category), `${worldId}: category "${q.category}" is in policy`);
+  }
+}
+
+console.log('\n--- Integration: Anti-repetition ---');
+const antiRepCtx = { categoryWeights: { matematica: 100 }, levelRange: { min: 1, max: 5 } };
+const seen = new Set();
+for (let i = 0; i < 10; i++) {
+  const q = QuestionEngine.select({ ...antiRepCtx, excludeIds: [...seen] });
+  if (q) {
+    assert(!seen.has(q.id), `Anti-repetition: question ${q.id} not repeated`);
+    seen.add(q.id);
+  }
+}
+assert(seen.size > 0, 'Anti-repetition: collected questions');
+
+console.log('\n--- Integration: Fallback ---');
+const fallbackQ = QuestionEngine.select({ categoryWeights: {}, excludeIds: ['all-ids-excluded-12345'] });
+assert(fallbackQ !== null, 'Fallback: returns question when context has no valid weights');
+
+console.log('\n--- Integration: Bot behavior ---');
+const botQ = QuestionEngine.select({ categoryWeights: { logica: 100 } });
+if (botQ) {
+  const correctIdx = botQ.correctOption;
+  const wrongIndices = botQ.options.map((_, i) => i).filter(i => i !== correctIdx);
+  assert(wrongIndices.length > 0, 'Bot: wrong alternatives exist');
+  assert(!wrongIndices.includes(correctIdx), 'Bot: wrong alternatives exclude correctOption');
+}
+
+console.log('\n--- Integration: Null question safety ---');
+const nullSafety = QuestionEngine.select({ levelRange: { min: 99, max: 99 } });
+assert(nullSafety === null, 'Null question: returns null for impossible constraints');
+
 console.log('\n========================================');
 console.log(`Results: ${passed} passed, ${failed} failed`);
 

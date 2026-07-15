@@ -155,15 +155,18 @@ export const valeDosDinossauros = {
 
   portals: [],
 
-  // ── Question Categories ──
+  // ── Question Policy ──
 
-  questionCategories: [
-    'dinossauros',
-    'natureza',
-    'animais',
-    'matematica',
-    'portugues',
-  ],
+  questionPolicy: {
+    categoryWeights: {
+      dinossauros: 35,
+      natureza: 25,
+      animais: 20,
+      matematica: 10,
+      portugues: 10,
+    },
+    levelRange: { min: 1, max: 3 },
+  },
 
   // ── Assets ──
 

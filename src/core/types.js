@@ -1,4 +1,10 @@
 /**
+ * @typedef {Object} QuestionPolicy
+ * @property {Object.<string, number>} categoryWeights - Pesos percentuais por categoria
+ * @property {{ min?: number, max?: number }} [levelRange] - Faixa de nível (1-5)
+ */
+
+/**
  * @typedef {Object} WorldConfig
  * @property {string} id - Identificador único do mundo ("floresta-encantada")
  * @property {string} name - Nome exibido ("🌳 Floresta Encantada")
@@ -10,7 +16,7 @@
  * @property {RulesConfig} rules - Regras específicas do mundo
  * @property {ObjectiveConfig[]} objectives - Objetivos de vitória
  * @property {PortalConfig[]} portals - Portais do mundo
- * @property {string[]} questionCategories - Categorias de perguntas referenciadas
+ * @property {QuestionPolicy} [questionPolicy] - Política de seleção de perguntas
  * @property {AssetsConfig} assets - Assets do mundo (sons, sprites, bg)
  * @property {Object.<number, EventConfig[]>} events - Mapa casa → eventos
  * @property {Object.<string, Function>} [customEventHandlers] - Handlers de eventos customizados
@@ -161,11 +167,14 @@
  * @typedef {Object} QuestionItem
  * @property {string} id - ID único da pergunta
  * @property {string} category - Categoria
- * @property {number} difficulty - Dificuldade (1-3)
- * @property {string} pergunta - Texto da pergunta
- * @property {string[]} opcoes - Opções de resposta
- * @property {number} correta - Índice da resposta correta
- * @property {string} [explicacao] - Explicação da resposta
+ * @property {string} subcategory - Subcategoria
+ * @property {string} question - Texto da pergunta
+ * @property {string[]} options - Opções de resposta
+ * @property {number} correctOption - Índice da resposta correta
+ * @property {string} explanation - Explicação da resposta
+ * @property {number} level - Nível de dificuldade (1-5)
+ * @property {string[]} tags - Tags para filtragem
+ * @property {boolean} active - Se a pergunta está ativa
  */
 
 /**

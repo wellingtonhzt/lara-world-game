@@ -115,11 +115,18 @@ export const galaxiaEstelar = {
 
   portals: [],
 
-  questionCategories: [
-    'espaco',
-    'matematica',
-    'natureza',
-  ],
+  // ── Question Policy ──
+
+  questionPolicy: {
+    categoryWeights: {
+      espaco: 40,
+      logica: 20,
+      conhecimentos_gerais: 20,
+      matematica: 10,
+      natureza: 10,
+    },
+    levelRange: { min: 1, max: 3 },
+  },
 
   assets: {
     backgrounds: {

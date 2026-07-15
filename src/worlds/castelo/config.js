@@ -104,9 +104,18 @@ export const casteloDosDragoes = {
 
   portals: [],
 
-  questionCategories: [
-    'logica', 'matematica', 'portugues', 'conhecimentosgerais',
-  ],
+  // ── Question Policy ──
+
+  questionPolicy: {
+    categoryWeights: {
+      logica: 30,
+      conhecimentos_gerais: 25,
+      matematica: 20,
+      portugues: 15,
+      dinossauros: 10,
+    },
+    levelRange: { min: 1, max: 3 },
+  },
 
   assets: {
     backgrounds: { main: null, loading: null, victory: null, portal: null },

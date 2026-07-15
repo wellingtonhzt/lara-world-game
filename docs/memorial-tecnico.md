@@ -1,5 +1,105 @@
 # Memorial Técnico
 
+## Sprint QE-002 — Integração do Question Engine ao Tabuleiro (v0.35.0-preview)
+
+### Diagnóstico do Legado
+
+O sistema anterior (`src/data/questions.js`) era um arquivo monolítico com banco de perguntas inline (`bancoQuestoes`), mapeamento temático hardcoded (`worldCategoryMap`), seleção por índices em arrays mutáveis e dependência direta de `game.js`. Questões tinham schema antigo (`pergunta`, `opcoes`, `resposta`, `dificuldade`), sem separação de concerns e sem API pública reutilizável.
+
+### Implementação
+
+**Arquitetura criada (Sprint QE-001):**
+- `QuestionEngine` (fachada), `QuestionRepository` (armazenamento com defensive copies), `QuestionSelector` (seleção com pesos/fallback), `QuestionValidator` (validação sem mutação), `CategoryCatalog` (catálogo de categorias)
+- 128 perguntas migradas de 9 categorias para `src/data/questions/bank/`
+- Schema novo: `{ id, category, subcategory, question, options, correctOption, explanation, level, tags, active }`
+
+**Integração ao tabuleiro (Sprint QE-002):**
+- `sortearQuestao()` refatorada: lê `questionPolicy` do `currentWorldConfig`, constrói `SelectionContext`, chama `QuestionEngine.select()`
+- Fallback em 3 camadas: (1) limpa `usedQuestionIds`, (2) tenta sem `excludeIds`, (3) tenta sem política → retorna null seguro
+- `showChallengeModal()` adaptado: `desafio.question`, `desafio.options[i]`, `desafio.correctOption`
+- Debug `renderQuestions()` reescrito para usar API pública do QuestionEngine
+- `questionPolicy` adicionada aos 5 WorldConfigs com pesos temáticos
+- Anti-repetição: `usedQuestionIds` (Set) com reset automático ao esgotar pool
+
+### Arquivos Modificados
+
+| Arquivo | Tipo | Descrição |
+|---------|------|-----------|
+| `src/game.js` | Modificado | Import, sortearQuestao, showChallengeModal, renderQuestions, usedQuestionIds |
+| `src/core/types.js` | Modificado | QuestionPolicy typedef, QuestionItem atualizado |
+| `src/engine/world-registry.js` | Modificado | Validação questionPolicy completa |
+| `src/worlds/floresta/config.js` | Modificado | questionCategories → questionPolicy |
+| `src/worlds/dinossauros/config.js` | Modificado | questionCategories → questionPolicy |
+| `src/worlds/galaxia/config.js` | Modificado | questionCategories → questionPolicy |
+| `src/worlds/oceanos/config.js` | Modificado | questionCategories → questionPolicy (correção: worldCategoryMap não tinha reino-oceanos) |
+| `src/worlds/castelo/config.js` | Modificado | questionCategories → questionPolicy (correção: tipografia `conhecimentosgerais` → `conhecimentos_gerais`) |
+| `src/version.js` | Modificado | v0.34.0-preview → v0.35.0-preview |
+| `src/index.html` | Modificado | Cache-busting e footer em 4 refs |
+| `scripts/test-question-engine.mjs` | Modificado | 71 → 122 testes |
+| `scripts/compare-migration.mjs` | Modificado | Reescrito para validar banco novo sem legado |
+| `README.md` | Modificado | Status v0.35.0-preview |
+| `CHANGELOG.md` | Modificado | Entrada v0.35.0-preview |
+| `docs/visao-geral.md` | Modificado | Seção QE-002 |
+
+### Arquivo Removido
+
+| Arquivo | Descrição |
+|---------|-----------|
+| `src/data/questions.js` | Sistema legado (bancoQuestoes, worldCategoryMap, categoryIndices, getIndicesPorMundo, getCategoriasPorMundo) — substituído pelo Question Engine |
+
+### Políticas dos Cinco Mundos
+
+| Mundo | Categorias (pesos) | Soma | Faixa de Nível |
+|-------|-------------------|------|----------------|
+| 🌳 Floresta Encantada | animais:30, natureza:25, cores_e_formas:15, logica:10, matematica:10, portugues:10 | 100 | 1-3 |
+| 🦖 Dinossauros | dinossauros:35, natureza:25, animais:20, matematica:10, portugues:10 | 100 | 1-3 |
+| 🌌 Galáxia Estelar | espaco:40, logica:20, conhecimentos_gerais:20, matematica:10, natureza:10 | 100 | 1-3 |
+| 🌊 Reino dos Oceanos | natureza:30, animais:25, conhecimentos_gerais:15, matematica:15, portugues:15 | 100 | 1-3 |
+| 🐉 Castelo dos Dragões | logica:30, conhecimentos_gerais:25, matematica:20, portugues:15, dinossauros:10 | 100 | 1-3 |
+
+### Correção do Reino dos Oceanos
+
+O `worldCategoryMap` legado não continha entrada para `reino-oceanos`, o que fazia o mundo cair no fallback geral indiscriminadamente. A nova `questionPolicy` resolve isso com política própria (Natureza 30, Animais 25, etc.).
+
+### Fallback Seguro
+
+Quando `sortearQuestao()` retorna `null`:
+1. Nenhum modal quebrado é aberto (`if (!desafio) return false` — linha 750)
+2. Nenhuma posição é alterada
+3. Nenhum som de erro de resposta é executado
+4. Nenhuma pergunta é adicionada aos usados
+5. O turno prossegue com segurança
+6. O jogador não recebe penalidade
+
+### Anti-repetição
+
+- `usedQuestionIds` (Set) criado em `gameState` (linha 31)
+- Limpo em: `resetGameState()` (linha 1276), início de partida (linha 1552), após draw (linha 1838)
+- IDs adicionados apenas após `QuestionEngine.select()` retornar pergunta válida (linha 625)
+- Pool resetado somente quando `QuestionEngine.select()` retorna null (linha 613)
+- Nova tentativa após reset usa política do mundo antes do fallback global
+
+### Testes
+
+- `test-question-engine.mjs`: 122/122 aprovados (seleção, anti-repetição, fallback, mutação, 5 world policies, bot, null safety)
+- `compare-migration.mjs`: 15/15 aprovados (contagem, categorias, IDs únicos, schema, distribuição de níveis)
+- `check-version.mjs`: todas referências v0.35.0-preview sincronizadas
+- `node --check`: todos os 12 JS modificados aprovados
+
+### Impactos Técnicos e Funcionais
+
+- **Zero alteração de gameplay**: regras de acerto/erro/cascata/bot inalteradas
+- **Zero alteração de arquitetura**: Question Engine isolada, engine não conhece mundos
+- **Mundo sem questionPolicy**: usa fallback global (todas categorias, sem pesos)
+- **Pergunta com nível fora da faixa**: excluída do pool, não gera erro
+- **Regras preservadas**: acerto avança 1, erro volta 1, sem cascata, bot 60%
+
+### Versão
+
+`v0.35.0-preview`
+
+---
+
 ## Sprint UX-004 — Tela de Vitória Premium (v0.34.0-preview)
 
 ### Diagnóstico

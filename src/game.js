@@ -9,7 +9,7 @@ import './minigames/engine/loader.js';
 import { initArcadeController, initArcadeScreen, enterArcadeMode, leaveArcadeMode, launchArcadeMinigame, exitArcadeToMenu } from './arcade/index.js';
 import { initAboutScreen, showAboutScreen, hideAboutScreen } from './about/index.js';
 import { initTutorialScreen, showTutorialScreen, hideTutorialScreen, hasSeenTutorial } from './tutorial/index.js';
-import { bancoQuestoes, questoesDisponiveis, categoryIndices, worldCategoryMap, getIndicesPorMundo, getCategoriasPorMundo } from './data/questions.js';
+import { QuestionEngine } from './data/questions/index.js';
 import { APP_VERSION } from './version.js';
 import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURATIONS } from './ui/game-event-overlay.js';
 
@@ -28,7 +28,7 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
     jogoAtivo: true,
     jogoFinalizado: false,
     isMoving: false,
-    questoesUsadas: new Set(),
+    usedQuestionIds: new Set(),
     activeSubworldId: null,
     subworldEntry: { 1: null, 2: null },
     entrouNoPortal: false,
@@ -599,25 +599,33 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
   /* ── Special Cells ── */
 
   function sortearQuestao() {
-    const mundoId = gameState.activeSubworldId || selectedWorldId;
-    const eligibleIndices = getIndicesPorMundo(mundoId) ?? questoesDisponiveis.map((_, i) => i);
-    const usadas = gameState.questoesUsadas;
-    let pool = eligibleIndices.filter(i => !usadas.has(i));
-    if (pool.length === 0) {
-      usadas.clear();
-      if (eligibleIndices.length < 5) {
-        pool = questoesDisponiveis.map((_, i) => i).filter(i => !usadas.has(i));
-        if (pool.length === 0) {
-          usadas.clear();
-          pool = questoesDisponiveis.map((_, i) => i);
-        }
-      } else {
-        pool = eligibleIndices;
-      }
+    const policy = currentWorldConfig?.questionPolicy;
+
+    const selectionContext = {
+      categoryWeights: policy?.categoryWeights ?? {},
+      levelRange: policy?.levelRange ?? { min: 1, max: 5 },
+      excludeIds: [...gameState.usedQuestionIds],
+    };
+
+    let question = QuestionEngine.select(selectionContext);
+
+    if (!question) {
+      gameState.usedQuestionIds.clear();
+      question = QuestionEngine.select({
+        ...selectionContext,
+        excludeIds: [],
+      });
     }
-    const idx = pool[Math.floor(Math.random() * pool.length)];
-    usadas.add(idx);
-    return questoesDisponiveis[idx];
+
+    if (!question) {
+      question = QuestionEngine.select({});
+    }
+
+    if (question) {
+      gameState.usedQuestionIds.add(question.id);
+    }
+
+    return question;
   }
 
   async function processSpecialCell(posicao, _cascadeVisited = new Set()) {
@@ -1265,7 +1273,7 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
     gameState.jogoAtivo = true;
     gameState.jogoFinalizado = false;
     gameState.isMoving = false;
-    gameState.questoesUsadas.clear();
+    gameState.usedQuestionIds.clear();
     gameState.activeSubworldId = null;
     gameState.subworldEntry = { 1: null, 2: null };
     gameState.entrouNoPortal = false;
@@ -1541,7 +1549,7 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
     victoryMetrics.gameStartedAt = Date.now();
     victoryMetrics.totalRolls = 0;
     hideSetupScreen();
-    gameState.questoesUsadas.clear();
+    gameState.usedQuestionIds.clear();
     renderizarTrilha();
     renderSvgPath();
     updateUI();
@@ -1827,7 +1835,7 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
     victoryMetrics.gameStartedAt = Date.now();
     victoryMetrics.totalRolls = 0;
     hideDrawScreen();
-    gameState.questoesUsadas.clear();
+    gameState.usedQuestionIds.clear();
     renderizarTrilha();
     renderSvgPath();
     updateUI();
@@ -1847,16 +1855,16 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
       const questionEl = document.getElementById("challenge-question");
       const optionsEl = document.getElementById("challenge-options");
 
-      questionEl.textContent = desafio.pergunta;
+      questionEl.textContent = desafio.question;
       optionsEl.innerHTML = "";
 
-      desafio.opcoes.forEach((opcao, index) => {
+      desafio.options.forEach((opcao, index) => {
         const btn = document.createElement("button");
         btn.className = "challenge-btn";
         btn.textContent = `${String.fromCharCode(65 + index)}) ${opcao}`;
         btn.addEventListener("click", () => {
           overlay.classList.add("hidden");
-          resolve(opcao === desafio.resposta);
+          resolve(index === desafio.correctOption);
         });
         optionsEl.appendChild(btn);
       });
@@ -2801,27 +2809,37 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
       const mundoEl = document.getElementById('dq-mundo');
       const listEl = document.getElementById('dq-list');
       if (!listEl) return;
-      const total = questoesDisponiveis.length;
-      const usadas = gameState.questoesUsadas.size;
+
+      const stats = QuestionEngine.getStatistics();
+      const total = stats.totalQuestions;
+      const usadas = gameState.usedQuestionIds.size;
+
       if (totalEl) totalEl.textContent = `${total}`;
       if (usadasEl) usadasEl.textContent = `${usadas}/${total}`;
+
       if (mundoEl) {
+        const policy = currentWorldConfig?.questionPolicy;
+        const cats = policy ? Object.keys(policy.categoryWeights) : [];
         const mid = gameState.activeSubworldId || selectedWorldId;
-        const cats = getCategoriasPorMundo(mid);
         mundoEl.textContent = cats.length > 0 ? `${mid} (${cats.join(', ')})` : `${mid || 'nenhum'} (geral)`;
       }
+
+      const validation = QuestionEngine.validate();
       const html = [];
-      for (const [cat, questoes] of Object.entries(bancoQuestoes)) {
-        html.push(`<div class="debug-dq-cat"><strong>${cat}</strong> (${questoes.length})</div>`);
-        questoes.forEach((q, i) => {
-          const realIdx = categoryIndices[cat][i];
-          const usada = usadas > 0 && gameState.questoesUsadas.has(realIdx);
-          const difLabel = q.dificuldade ? ` [${q.dificuldade}]` : '';
+      html.push(`<div class="debug-dq-cat"><strong>Estatísticas</strong></div>`);
+      html.push(`<div class="debug-dq-item">Total: ${stats.totalQuestions} | Ativas: ${stats.activeQuestions}</div>`);
+      html.push(`<div class="debug-dq-item">Usadas: ${usadas} | Warnings: ${validation.warnings.length} | Errors: ${validation.errors.length}</div>`);
+
+      for (const [cat, count] of Object.entries(stats.byCategory)) {
+        html.push(`<div class="debug-dq-cat"><strong>${cat}</strong> (${count})</div>`);
+        const questions = QuestionEngine.selectMany({ categoryWeights: { [cat]: 100 }, levelRange: { min: 1, max: 5 } }, count);
+        questions.forEach(q => {
+          const usada = gameState.usedQuestionIds.has(q.id);
           html.push(`<div class="debug-dq-item${usada ? ' debug-dq-usada' : ''}">`);
-          html.push(`<span class="debug-dq-idx">#${realIdx}</span>`);
-          html.push(`<span class="debug-dq-pergunta">${q.pergunta}</span>`);
-          html.push(`<span class="debug-dq-opcoes">${q.opcoes.join(', ')}</span>`);
-          html.push(`<span class="debug-dq-resposta">${q.resposta}${difLabel}</span>`);
+          html.push(`<span class="debug-dq-idx">#${q.id}</span>`);
+          html.push(`<span class="debug-dq-pergunta">${q.question}</span>`);
+          html.push(`<span class="debug-dq-opcoes">${q.options.join(', ')}</span>`);
+          html.push(`<span class="debug-dq-resposta">[${q.level}] ${q.options[q.correctOption]}</span>`);
           html.push(`</div>`);
         });
       }

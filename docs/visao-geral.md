@@ -18,14 +18,16 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 
 ## Principais Funcionalidades
 
-### v0.34.0-preview (Atual) — Tela de Vitória Premium ✅
+### v0.35.0-preview (Atual) — Question Engine ✅
 
-- **Celebração premium**: card creme, borda dourada, ribbon rosa, coroa, confetes finitos e avatar oficial do vencedor
-- **Resumo da partida**: duração, total de lançamentos e mundo, coletados apenas durante a sessão atual
-- **Mensagens por contexto**: textos positivos para vitória humana, vitória da máquina e modo com dois jogadores
-- **Entrada rápida**: sequência visual de aproximadamente 650 ms, sem atrasar as ações
-- **Acessibilidade**: diálogo modal, anúncio do vencedor, ciclo e restauração de foco, contraste e movimento reduzido
-- **Responsividade**: estatísticas e botões se reorganizam em celulares e telas baixas
+- **Question Engine completa**: módulo `src/data/questions/` com `QuestionEngine`, `QuestionRepository`, `QuestionSelector`, `QuestionValidator` e `CategoryCatalog`
+- **128 perguntas** em 9 categorias, selectionContext com pesos, nível, excludeIds, tags e subcategorias
+- **`questionPolicy` nos WorldConfigs**: cada mundo declara pesos por categoria e faixa de nível (1-3)
+- **Anti-repetição por ID**: `usedQuestionIds` em gameState com reset automático ao esgotar pool
+- **Fallback seguro**: 3 camadas (clear → global → null seguro) sem penalizar jogador
+- **Sistema legado removido**: `src/data/questions.js` deletado
+- **122 testes** cobrindo seleção, anti-repetição, fallback, mutação, políticas dos 5 mundos e comportamento do bot
+- **Validação**: `questionPolicy` validada em world-registry.js (pesos, levelRange, categorias)
 
 ### v0.33.0-preview — Board Alive ✅
 
@@ -117,7 +119,7 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 
 ### v0.18.0-preview — Revisão do Sistema de Perguntas ✅
 
-- **Banco expandido para 128 perguntas**: 9 categorias (Matemática, Português, Animais, Espaço, Natureza, Dinossauros, Lógica, Cores e Formas, Conhecimentos Gerais), extraído para módulo próprio `src/data/questions.js`
+- **Banco expandido para 128 perguntas**: 9 categorias (Matemática, Português, Animais, Espaço, Natureza, Dinossauros, Lógica, Cores e Formas, Conhecimentos Gerais) — hoje integradas ao Question Engine em `src/data/questions/`
 - **Seleção temática**: perguntas filtradas por mundo — Galáxia (Espaço/Lógica), Floresta (Animais/Natureza/Cores/Lógica), Dinossauros (Dinossauros/Animais/Natureza/Matemática)
 - **Auditoria em debug (`?debug=1`)**: botão "📚 Mostrar" exibe todas as perguntas com categoria, dificuldade, opções, resposta e indicador de usadas
 - **Cascata pós-desafio removida**: acertar ou errar não dispara mais o efeito da casa seguinte

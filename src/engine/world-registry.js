@@ -239,6 +239,52 @@ function validateWorldConfig(config) {
     }
   }
 
+  if (config.questionPolicy !== undefined && config.questionPolicy !== null) {
+    const qp = config.questionPolicy;
+    if (typeof qp !== 'object' || Array.isArray(qp)) {
+      throw new InvalidWorldConfigError('questionPolicy must be a non-null object');
+    }
+    if (!qp.categoryWeights || typeof qp.categoryWeights !== 'object' || Array.isArray(qp.categoryWeights)) {
+      throw new InvalidWorldConfigError('questionPolicy.categoryWeights must be a non-null object');
+    }
+    const catKeys = Object.keys(qp.categoryWeights);
+    if (catKeys.length === 0) {
+      throw new InvalidWorldConfigError('questionPolicy.categoryWeights must have at least one category');
+    }
+    let hasPositiveWeight = false;
+    for (const [cat, weight] of Object.entries(qp.categoryWeights)) {
+      if (typeof weight !== 'number' || !Number.isFinite(weight)) {
+        throw new InvalidWorldConfigError(`questionPolicy.categoryWeights["${cat}"] must be a finite number`);
+      }
+      if (weight < 0) {
+        throw new InvalidWorldConfigError(`questionPolicy.categoryWeights["${cat}"] cannot be negative`);
+      }
+      if (weight > 0) hasPositiveWeight = true;
+    }
+    if (!hasPositiveWeight) {
+      throw new InvalidWorldConfigError('questionPolicy.categoryWeights must have at least one weight > 0');
+    }
+    if (qp.levelRange !== undefined && qp.levelRange !== null) {
+      const lr = qp.levelRange;
+      if (typeof lr !== 'object' || Array.isArray(lr)) {
+        throw new InvalidWorldConfigError('questionPolicy.levelRange must be a non-null object');
+      }
+      if (lr.min !== undefined) {
+        if (!Number.isInteger(lr.min) || lr.min < 1 || lr.min > 5) {
+          throw new InvalidWorldConfigError('questionPolicy.levelRange.min must be an integer between 1 and 5');
+        }
+      }
+      if (lr.max !== undefined) {
+        if (!Number.isInteger(lr.max) || lr.max < 1 || lr.max > 5) {
+          throw new InvalidWorldConfigError('questionPolicy.levelRange.max must be an integer between 1 and 5');
+        }
+      }
+      if (lr.min !== undefined && lr.max !== undefined && lr.min > lr.max) {
+        throw new InvalidWorldConfigError('questionPolicy.levelRange.min cannot be greater than max');
+      }
+    }
+  }
+
   if (typeof config.requiredEngineVersion === 'string') {
     const warn = `World "${config.id}" requires engine version ${config.requiredEngineVersion}. Ensure the engine is compatible.`;
     console.warn(`[WorldRegistry] ${warn}`);

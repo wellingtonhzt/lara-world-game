@@ -134,13 +134,18 @@ export const reinoOceanos = {
 
   portals: [],
 
-  questionCategories: [
-    'natureza',
-    'animais',
-    'matematica',
-    'portugues',
-    'espaco',
-  ],
+  // ── Question Policy ──
+
+  questionPolicy: {
+    categoryWeights: {
+      natureza: 30,
+      animais: 25,
+      conhecimentos_gerais: 15,
+      matematica: 15,
+      portugues: 15,
+    },
+    levelRange: { min: 1, max: 3 },
+  },
 
   assets: {
     backgrounds: {

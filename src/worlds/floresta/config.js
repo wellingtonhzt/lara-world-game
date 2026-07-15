@@ -168,19 +168,22 @@ export const florestaEncantada = {
 
   portals: [],
 
-  // ── Question Categories ──
+  // ── Question Policy ──
   //
-  // Categorias de perguntas disponíveis neste mundo.
-  // Referenciam o catálogo global em data/questions/
+  // Política de seleção de perguntas para este mundo.
+  // O QuestionEngine usa categoryWeights para sortear perguntas temáticas.
 
-  questionCategories: [
-    'matematica',
-    'portugues',
-    'animais',
-    'espaco',
-    'natureza',
-    'dinossauros',
-  ],
+  questionPolicy: {
+    categoryWeights: {
+      animais: 30,
+      natureza: 25,
+      cores_e_formas: 15,
+      logica: 10,
+      matematica: 10,
+      portugues: 10,
+    },
+    levelRange: { min: 1, max: 3 },
+  },
 
   // ── Assets ──
 

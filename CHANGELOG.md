@@ -2,6 +2,27 @@
 
 ## [Unreleased]
 
+## [0.35.0-preview] - 2026-07-15
+
+### Adicionado
+- **Question Engine completa**: módulo `src/data/questions/` com `QuestionEngine`, `QuestionRepository`, `QuestionSelector`, `QuestionValidator` e `CategoryCatalog`
+- **128 perguntas migradas** em 9 categorias: matemática, português, animais, espaço, natureza, dinossauros, lógica, cores e formas, conhecimentos gerais
+- **`questionPolicy` nos WorldConfigs**: 5 mundos configurados com pesos por categoria e faixa de nível
+- **Anti-repetição por sessão**: `usedQuestionIds` em gameState com reset automático ao esgotar pool
+- **Fallback seguro**: fallback em camadas (clear excludeIds → tentar todas categorias → null seguro) sem penalizar jogador
+- **Validação de `questionPolicy`** em world-registry.js
+- **122 testes** cobrindo seleção, anti-repetição, fallback, mutação, políticas de mundo e comportamento do bot
+
+### Alterado
+- **`sortearQuestao()`**: agora usa `QuestionEngine.select()` com `questionPolicy` do mundo ativo
+- **`showChallengeModal()`**: adaptado ao novo schema (`question`, `options[]`, `correctOption`)
+- **Debug do banco**: usa API pública do QuestionEngine (`getStatistics`, `getCategories`, `selectMany`)
+- **`types.js`**: adicionado `QuestionPolicy` typedef; `QuestionItem` atualizado para novo schema
+- **Versão e cache-busting**: atualizados para `v0.35.0-preview`
+
+### Removido
+- **Sistema legado**: `src/data/questions.js` removido (100% substituído pelo Question Engine)
+
 ## [0.34.0-preview] - 2026-07-15
 
 ### Adicionado

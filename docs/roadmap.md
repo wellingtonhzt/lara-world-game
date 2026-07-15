@@ -1,5 +1,17 @@
 # Roadmap Lara World
 
+### QE-002 — Integração do Question Engine ao Tabuleiro ✅
+
+- [x] questionPolicy nos 5 WorldConfigs (floresta, dinossauros, galaxia, oceanos, castelo)
+- [x] sortearQuestao() refatorada para QuestionEngine.select()
+- [x] showChallengeModal() adaptado ao novo schema (question, options, correctOption)
+- [x] Anti-repetição por ID (usedQuestionIds) com reset ao esgotar pool
+- [x] Fallback seguro em camadas (clear → global → null seguro)
+- [x] Sistema legado removido (src/data/questions.js)
+- [x] questionPolicy validação em world-registry.js
+- [x] 122 testes aprovados, validação do banco 15/15
+- [x] Versionamento v0.35.0-preview e documentação
+
 ### v0.34.0-preview — Tela de Vitória Premium ✅
 
 - [x] Card celebrativo com borda dourada, ribbon, coroa e avatar oficial
