@@ -18,7 +18,8 @@
 
 | Versão | Data | Status |
 |--------|------|--------|
-| **v0.33.0-preview** | Jul/2026 | ✅ **Ativo** — Board Alive |
+| **v0.34.0-preview** | Jul/2026 | ✅ **Ativo** — Tela de Vitória Premium |
+| v0.33.0-preview | Jul/2026 | ✅ Board Alive |
 | v0.32.0-preview | Jul/2026 | ✅ Eventos e Narração Visual |
 | v0.31.0-preview | Jul/2026 | ✅ Sobre & Tutorial |
 | v0.30.0-preview | Jul/2026 | ✅ Modo Arcade |

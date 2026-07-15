@@ -187,9 +187,12 @@ Estrutura semântica dividida em:
     - Cada botão (`.emoji-btn`) possui `data-emoji`, `data-avatar` e `data-token`; no bootstrap, `initGalleryTokens()` transforma cada botão em span + img com fallback visual para `assets/tokens/{avatar}.webp`
   - Botão **"Iniciar Jogo"** — esconde o modal e renderiza o tabuleiro
 - **Victory Overlay** (`#victory-overlay`):
-  - Overlay fixo com confetes animados (`.confetti-piece`) e fogos serpentina (`.serpentine`)
-  - Título "🏆 Vitória!", mensagem personalizada com nome do vencedor
-  - Container `.victory-actions` com dois botões: "🔁 Jogar Novamente" (dispara `reiniciarJogo()`) e "🏠 Voltar ao Menu" (dispara `showMainMenu()`)
+  - Diálogo modal fixo com blur, confetes finitos (`.confetti-piece`) e serpentinas decorativas
+  - Card creme com borda dourada, ribbon rosa, coroa, título, token oficial com fallback emoji e mensagens positivas por modo
+  - Faixa de estatísticas construída por `buildVictoryStats()` com duração, total de lançamentos e mundo da sessão atual
+  - Coleta isolada em `victoryMetrics` (`gameStartedAt`, `totalRolls`), sem persistência ou impacto no gameplay
+  - Botões originais `#victory-play-again-btn` e `#victory-main-menu-btn`, com handlers únicos preservados
+  - Entrada sequencial de aproximadamente 650 ms, responsividade, ciclo/restauração de foco e `prefers-reduced-motion`
 - **Portal Modal** (`#portal-overlay`):
   - Overlay fixo com `z-index: 800`, exibido ao cair em uma casa de portal
   - Título e mensagem dinâmicos, lidos do portal config do mundo atual

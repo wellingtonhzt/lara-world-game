@@ -2,6 +2,19 @@
 
 ## [Unreleased]
 
+## [0.34.0-preview] - 2026-07-15
+
+### Adicionado
+- **Tela de Vitória Premium**: card creme responsivo com borda dourada, ribbon rosa, coroa, avatar oficial, mensagem positiva, estatísticas e faixa “Dica Lara”
+- **Estatísticas de sessão**: coleta incremental e não persistente de duração e lançamentos, combinada ao nome real do mundo
+- **Acessibilidade do diálogo**: semântica modal, anúncio do resultado, foco inicial, ciclo de Tab, restauração de foco e foco visível
+
+### Alterado
+- **Celebração**: sequência de entrada de aproximadamente 650 ms, confetes finitos e suporte completo a `prefers-reduced-motion`
+- **Responsividade**: conteúdo adaptado para desktop, notebook, tablet, celular vertical, paisagem e telas baixas
+- **Fluxos de vitória**: mensagens secundárias específicas para humano, máquina e dois jogadores, sem alterar regras ou ações existentes
+- **Versão e cache-busting**: atualizados para `v0.34.0-preview`
+
 ## [0.33.0-preview] - 2026-07-15
 
 ### Adicionado

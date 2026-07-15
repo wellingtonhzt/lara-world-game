@@ -1,5 +1,17 @@
 # Roadmap Lara World
 
+### v0.34.0-preview — Tela de Vitória Premium ✅
+
+- [x] Card celebrativo com borda dourada, ribbon, coroa e avatar oficial
+- [x] Mensagens positivas para humano, máquina e modo com dois jogadores
+- [x] Coleta incremental de duração e total de lançamentos
+- [x] Faixa de estatísticas com tempo, jogadas e mundo
+- [x] Entrada sequencial de aproximadamente 650 ms e confetes finitos
+- [x] Botões existentes preservados, sem listeners duplicados
+- [x] Diálogo modal, ciclo/restauração de foco e `aria-live`
+- [x] Layout responsivo e `prefers-reduced-motion`
+- [x] Versionamento, cache-busting e documentação
+
 ### v0.33.0-preview — Board Alive ✅
 
 - [x] Destaque temporário da casa final

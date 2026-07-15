@@ -42,6 +42,8 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
   let botTurnTimer = null;
   let modoJogo = null;
   let drawState = { rolls: [null, null], drawWinnerIndex: null };
+  const victoryMetrics = { gameStartedAt: null, totalRolls: 0 };
+  let focusBeforeVictory = null;
 
   /* ── Subworld config map ── */
 
@@ -366,6 +368,9 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
     p2Label: document.getElementById("p2-label"),
     victoryOverlay: document.getElementById("victory-overlay"),
     victoryMessage: document.getElementById("victory-message"),
+    victorySubtitle: document.getElementById("victory-subtitle"),
+    victoryStats: document.getElementById("victory-stats"),
+    victoryTipMessage: document.getElementById("victory-tip-message"),
     victoryPlayAgainBtn: document.getElementById("victory-play-again-btn"),
     victoryMainMenuBtn: document.getElementById("victory-main-menu-btn"),
   };
@@ -977,6 +982,111 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
 
   /* ── Victory ── */
 
+  function formatGameDuration(startedAt, endedAt = Date.now()) {
+    if (!Number.isFinite(startedAt)) return null;
+    const totalSeconds = Math.max(0, Math.floor((endedAt - startedAt) / 1000));
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  }
+
+  function buildVictoryStats() {
+    const stats = [];
+    const duration = formatGameDuration(victoryMetrics.gameStartedAt);
+    if (duration) stats.push({ icon: '⏱️', label: 'Tempo de jogo', value: duration });
+    if (Number.isInteger(victoryMetrics.totalRolls)) {
+      stats.push({ icon: '🎲', label: 'Total de jogadas', value: String(victoryMetrics.totalRolls) });
+    }
+    if (currentWorldConfig?.name) {
+      stats.push({ icon: '🌍', label: 'Mundo', value: currentWorldConfig.name });
+    }
+    return stats;
+  }
+
+  function updateVictoryScreen(player) {
+    const victoryEmoji = document.getElementById("victory-emoji");
+    const victoryImg = document.getElementById("victory-img");
+    applyVisualFallback(victoryEmoji, victoryImg, player.emoji, player.tokenId ? `assets/tokens/${player.tokenId}.webp` : null);
+
+    if (elements.victoryMessage) {
+      elements.victoryMessage.textContent = `${player.name} venceu o jogo!`;
+    }
+    if (elements.victorySubtitle) {
+      elements.victorySubtitle.textContent = player.isBot
+        ? 'Mas foi uma partida incrível!'
+        : isSinglePlayer
+          ? 'Que aventura incrível! Você chegou ao final!'
+          : 'Parabéns pela grande aventura!';
+    }
+    if (elements.victoryTipMessage) {
+      elements.victoryTipMessage.textContent = isSinglePlayer
+        ? 'Continue explorando novos mundos!'
+        : 'Cada partida traz uma nova aventura!';
+    }
+    if (elements.victoryStats) {
+      elements.victoryStats.replaceChildren();
+      buildVictoryStats().forEach(({ icon, label, value }) => {
+        const item = document.createElement('div');
+        item.className = 'victory-stat';
+
+        const iconElement = document.createElement('span');
+        iconElement.className = 'victory-stat-icon';
+        iconElement.setAttribute('aria-hidden', 'true');
+        iconElement.textContent = icon;
+
+        const labelElement = document.createElement('span');
+        labelElement.className = 'victory-stat-label';
+        labelElement.textContent = label;
+
+        const valueElement = document.createElement('strong');
+        valueElement.className = 'victory-stat-value';
+        valueElement.textContent = value;
+
+        item.append(iconElement, labelElement, valueElement);
+        elements.victoryStats.appendChild(item);
+      });
+    }
+  }
+
+  function showVictoryScreen() {
+    if (!elements.victoryOverlay) return;
+    focusBeforeVictory = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    elements.victoryOverlay.classList.remove('hidden');
+    requestAnimationFrame(() => elements.victoryPlayAgainBtn?.focus());
+  }
+
+  function resetVictoryScreen() {
+    elements.victoryOverlay?.classList.add('hidden');
+    elements.victoryStats?.replaceChildren();
+  }
+
+  function focusVisibleScreen(preferredSelector) {
+    requestAnimationFrame(() => {
+      const preferred = document.querySelector(preferredSelector);
+      if (preferred instanceof HTMLElement && !preferred.closest('.hidden')) {
+        preferred.focus();
+      } else if (focusBeforeVictory instanceof HTMLElement && !focusBeforeVictory.closest('.hidden')) {
+        focusBeforeVictory.focus();
+      }
+      focusBeforeVictory = null;
+    });
+  }
+
+  function trapVictoryFocus(event) {
+    if (event.key !== 'Tab' || elements.victoryOverlay?.classList.contains('hidden')) return;
+    const focusable = Array.from(elements.victoryOverlay.querySelectorAll('button:not([disabled]), [tabindex]:not([tabindex="-1"])'));
+    if (focusable.length === 0) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  }
+
   async function handleVictory() {
     clearGameEvents();
     if (botTurnTimer) clearTimeout(botTurnTimer);
@@ -998,15 +1108,8 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
 
     addHistory(`🎉🎉 PARABÉNS, ${player.name} venceu! 🎉🎉`, "vitoria");
 
-    const victoryEmoji = document.getElementById("victory-emoji");
-    const victoryImg = document.getElementById("victory-img");
-    applyVisualFallback(victoryEmoji, victoryImg, player.emoji, player.tokenId ? `assets/tokens/${player.tokenId}.webp` : null);
-    if (elements.victoryMessage) {
-      elements.victoryMessage.textContent = `${player.name} venceu o jogo!`;
-    }
-    if (elements.victoryOverlay) {
-      elements.victoryOverlay.classList.remove("hidden");
-    }
+    updateVictoryScreen(player);
+    showVictoryScreen();
   }
 
   /* ── End Turn ── */
@@ -1064,6 +1167,7 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
       return;
     }
 
+    victoryMetrics.totalRolls += 1;
     const resultado = Math.floor(Math.random() * 6) + 1;
     audioManager.play('diceRoll');
     await animateDice(resultado);
@@ -1165,6 +1269,9 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
     gameState.activeSubworldId = null;
     gameState.subworldEntry = { 1: null, 2: null };
     gameState.entrouNoPortal = false;
+    victoryMetrics.gameStartedAt = null;
+    victoryMetrics.totalRolls = 0;
+    resetVictoryScreen();
 
     elements.diceDisplay.textContent = "🎲";
     elements.diceValue.textContent = "-";
@@ -1431,6 +1538,8 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
     }
 
     botTurnScheduled = false;
+    victoryMetrics.gameStartedAt = Date.now();
+    victoryMetrics.totalRolls = 0;
     hideSetupScreen();
     gameState.questoesUsadas.clear();
     renderizarTrilha();
@@ -1715,6 +1824,8 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
     const startBtn = document.getElementById("draw-start-btn");
     startBtn.disabled = true;
     gameState.currentPlayerIndex = drawState.drawWinnerIndex;
+    victoryMetrics.gameStartedAt = Date.now();
+    victoryMetrics.totalRolls = 0;
     hideDrawScreen();
     gameState.questoesUsadas.clear();
     renderizarTrilha();
@@ -2817,28 +2928,28 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
 
     elements.rollBtn.addEventListener("click", jogarDado);
     elements.resetBtn.addEventListener("click", reiniciarJogo);
+    document.addEventListener('keydown', trapVictoryFocus);
     if (elements.victoryPlayAgainBtn) {
       elements.victoryPlayAgainBtn.addEventListener("click", () => {
         audioManager.play('buttonClick');
-        if (elements.victoryOverlay) {
-          elements.victoryOverlay.classList.add("hidden");
-        }
+        resetVictoryScreen();
         resetGameState();
         if (modoJogo === "rapido") {
           showSetupScreen();
+          focusVisibleScreen('#setup-screen button:not([disabled]), #setup-screen input');
         } else {
           showMainMenu();
+          focusVisibleScreen('#main-menu button:not([disabled])');
         }
       });
     }
     if (elements.victoryMainMenuBtn) {
       elements.victoryMainMenuBtn.addEventListener("click", () => {
         audioManager.play('buttonClick');
-        if (elements.victoryOverlay) {
-          elements.victoryOverlay.classList.add("hidden");
-        }
+        resetVictoryScreen();
         resetGameState();
         showMainMenu();
+        focusVisibleScreen('#main-menu button:not([disabled])');
       });
     }
     document.getElementById("draw-start-btn").addEventListener("click", continueAfterDraw);

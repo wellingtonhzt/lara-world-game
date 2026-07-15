@@ -18,7 +18,16 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 
 ## Principais Funcionalidades
 
-### v0.33.0-preview (Atual) — Board Alive ✅
+### v0.34.0-preview (Atual) — Tela de Vitória Premium ✅
+
+- **Celebração premium**: card creme, borda dourada, ribbon rosa, coroa, confetes finitos e avatar oficial do vencedor
+- **Resumo da partida**: duração, total de lançamentos e mundo, coletados apenas durante a sessão atual
+- **Mensagens por contexto**: textos positivos para vitória humana, vitória da máquina e modo com dois jogadores
+- **Entrada rápida**: sequência visual de aproximadamente 650 ms, sem atrasar as ações
+- **Acessibilidade**: diálogo modal, anúncio do vencedor, ciclo e restauração de foco, contraste e movimento reduzido
+- **Responsividade**: estatísticas e botões se reorganizam em celulares e telas baixas
+
+### v0.33.0-preview — Board Alive ✅
 
 - **Movimento vivo**: destaque exclusivo em cada casa percorrida e glow curto no destino
 - **Feedback do personagem e dado**: pouso com bounce suave e impacto ao revelar o resultado

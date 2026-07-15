@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lara World</title>
-  <link rel="stylesheet" href="style.css?v=v0.33.0-preview">
-  <link rel="stylesheet" href="ui/game-event-overlay.css?v=v0.33.0-preview">
+  <link rel="stylesheet" href="style.css?v=v0.34.0-preview">
+  <link rel="stylesheet" href="ui/game-event-overlay.css?v=v0.34.0-preview">
   <link rel="stylesheet" href="arcade/arcade.css">
   <link rel="stylesheet" href="about/about.css">
   <link rel="stylesheet" href="tutorial/tutorial.css">
@@ -62,7 +62,7 @@
         </div>
       </div>
       <div class="menu-footer">
-        <span id="menu-version" class="menu-version">v0.33.0-preview</span>
+        <span id="menu-version" class="menu-version">v0.34.0-preview</span>
       </div>
     </div>
 
@@ -293,38 +293,61 @@
       </div>
     </div>
 
-    <div id="victory-overlay" class="victory-overlay hidden">
-      <div class="confetti-piece" style="left: 2%; background: #e91e63; animation-delay: 0s; width: 10px; height: 14px;"></div>
-      <div class="confetti-piece" style="left: 10%; background: #ffd700; animation-delay: 0.3s; width: 6px; height: 10px; border-radius: 50%;"></div>
-      <div class="confetti-piece" style="left: 18%; background: #7b1fa2; animation-delay: 0.6s; width: 8px; height: 12px;"></div>
-      <div class="confetti-piece" style="left: 26%; background: #2196f3; animation-delay: 0.9s; width: 7px; height: 7px; border-radius: 50%;"></div>
-      <div class="confetti-piece" style="left: 34%; background: #ff8f00; animation-delay: 1.2s; width: 9px; height: 13px;"></div>
-      <div class="confetti-piece" style="left: 40%; background: #4caf50; animation-delay: 0.1s; width: 6px; height: 10px;"></div>
-      <div class="confetti-piece" style="left: 48%; background: #e91e63; animation-delay: 0.5s; width: 8px; height: 8px; border-radius: 50%;"></div>
-      <div class="confetti-piece" style="left: 56%; background: #ffd700; animation-delay: 0.8s; width: 10px; height: 14px;"></div>
-      <div class="confetti-piece" style="left: 64%; background: #7b1fa2; animation-delay: 1.1s; width: 6px; height: 6px; border-radius: 50%;"></div>
-      <div class="confetti-piece" style="left: 72%; background: #f44336; animation-delay: 1.4s; width: 8px; height: 12px;"></div>
-      <div class="confetti-piece" style="left: 78%; background: #2196f3; animation-delay: 0.2s; width: 9px; height: 9px; border-radius: 50%;"></div>
-      <div class="confetti-piece" style="left: 84%; background: #ff8f00; animation-delay: 0.7s; width: 7px; height: 11px;"></div>
-      <div class="confetti-piece" style="left: 90%; background: #4caf50; animation-delay: 1.0s; width: 8px; height: 8px; border-radius: 50%;"></div>
-      <div class="confetti-piece" style="left: 95%; background: #e91e63; animation-delay: 1.5s; width: 6px; height: 10px;"></div>
-      <div class="confetti-piece" style="left: 46%; background: #ffd700; animation-delay: 0.4s; width: 11px; height: 15px;"></div>
+    <div id="victory-overlay" class="victory-overlay hidden" role="dialog" aria-modal="true"
+      aria-labelledby="victory-title" aria-describedby="victory-message victory-subtitle">
+      <div class="victory-confetti" aria-hidden="true">
+        <span class="confetti-piece" style="--x: 4%; --color: #e91e63; --delay: 0ms; --rotate: 18deg;"></span>
+        <span class="confetti-piece confetti-round" style="--x: 11%; --color: #ffd54f; --delay: 90ms; --rotate: -12deg;"></span>
+        <span class="confetti-piece" style="--x: 19%; --color: #8e44ad; --delay: 180ms; --rotate: 32deg;"></span>
+        <span class="confetti-piece confetti-star" style="--x: 27%; --color: #42a5f5; --delay: 60ms;">★</span>
+        <span class="confetti-piece" style="--x: 36%; --color: #ff8f00; --delay: 240ms; --rotate: -26deg;"></span>
+        <span class="confetti-piece" style="--x: 45%; --color: #43a047; --delay: 120ms; --rotate: 14deg;"></span>
+        <span class="confetti-piece confetti-round" style="--x: 55%; --color: #ec407a; --delay: 210ms; --rotate: 8deg;"></span>
+        <span class="confetti-piece confetti-star" style="--x: 64%; --color: #ffd700; --delay: 30ms;">★</span>
+        <span class="confetti-piece" style="--x: 73%; --color: #7e57c2; --delay: 150ms; --rotate: -18deg;"></span>
+        <span class="confetti-piece" style="--x: 82%; --color: #ef5350; --delay: 270ms; --rotate: 24deg;"></span>
+        <span class="confetti-piece confetti-round" style="--x: 90%; --color: #29b6f6; --delay: 75ms; --rotate: -8deg;"></span>
+        <span class="confetti-piece confetti-star" style="--x: 96%; --color: #ffb300; --delay: 195ms;">★</span>
+      </div>
 
-      <div class="serpentine serpentine-1"></div>
-      <div class="serpentine serpentine-2"></div>
+      <div class="serpentine serpentine-1" aria-hidden="true"></div>
+      <div class="serpentine serpentine-2" aria-hidden="true"></div>
 
-      <div class="victory-content">
-        <h2 id="victory-title"><span id="victory-trophy">🏆</span> Vitória!</h2>
-        <div class="victory-player-visual">
+      <section class="victory-content" tabindex="-1">
+        <header class="victory-header">
+          <span class="victory-crown" aria-hidden="true">♛</span>
+          <div class="victory-ribbon">
+            <span class="victory-sparkle" aria-hidden="true">✦</span>
+            <h2 id="victory-title">Vitória!</h2>
+            <span class="victory-sparkle" aria-hidden="true">✦</span>
+          </div>
+        </header>
+
+        <div class="victory-player-visual" aria-hidden="true">
           <span class="visual-emoji" id="victory-emoji">🧒</span>
           <img class="visual-img" id="victory-img" src="" alt="">
         </div>
-        <p id="victory-message"></p>
+
+        <div class="victory-copy" aria-live="polite" aria-atomic="true">
+          <p id="victory-message"></p>
+          <p id="victory-subtitle" class="victory-subtitle"></p>
+        </div>
+
+        <div id="victory-stats" class="victory-stats" aria-label="Estatísticas da partida"></div>
+
         <div class="victory-buttons">
-          <button id="victory-play-again-btn" class="btn btn-primary">🔁 Jogar Novamente</button>
+          <button id="victory-play-again-btn" class="btn btn-primary">↻ Jogar Novamente</button>
           <button id="victory-main-menu-btn" class="btn btn-secondary">🏠 Voltar ao Menu</button>
         </div>
-      </div>
+
+        <aside class="victory-tip">
+          <span class="victory-tip-icon" aria-hidden="true">⭐</span>
+          <div>
+            <strong>Dica Lara</strong>
+            <p id="victory-tip-message">Cada partida traz uma nova aventura!</p>
+          </div>
+        </aside>
+      </section>
     </div>
 
     <main class="game-layout">
@@ -579,6 +602,6 @@
   <!-- Tutorial Screen Overlay -->
   <div id="tutorial-overlay" class="tutorial-overlay hidden"></div>
 
-  <script type="module" src="game.js?v=v0.33.0-preview"></script>
+  <script type="module" src="game.js?v=v0.34.0-preview"></script>
 </body>
 </html>

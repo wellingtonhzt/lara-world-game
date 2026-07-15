@@ -1,5 +1,27 @@
 # Memorial Técnico
 
+## Sprint UX-004 — Tela de Vitória Premium (v0.34.0-preview)
+
+### Diagnóstico
+
+A vitória já era centralizada em `handleVictory()`, reutilizava `applyVisualFallback()` e possuía handlers únicos para jogar novamente e voltar ao menu. O estado fornecia vencedor, token, modo, mundo e posição, mas não duração nem total de lançamentos. A contagem de perguntas não era histórica e, por isso, permaneceu fora da interface.
+
+### Implementação
+
+- `#victory-overlay` foi preservado e recebeu um card creme responsivo com borda dourada, ribbon rosa, coroa, avatar oficial, mensagens, estatísticas, ações e faixa “Dica Lara”.
+- `victoryMetrics` coleta somente `gameStartedAt` e `totalRolls` durante a sessão, sem persistência e sem percorrer histórico.
+- `formatGameDuration()`, `buildVictoryStats()`, `updateVictoryScreen()`, `showVictoryScreen()` e `resetVictoryScreen()` separam coleta, renderização e ciclo visual.
+- Single Player diferencia vitória humana e da máquina; dois jogadores usam mensagem neutra e celebrativa. Os IDs e listeners originais dos botões foram mantidos.
+- A entrada ocorre em aproximadamente 650 ms: overlay, card, cabeçalho, avatar, estatísticas e ações. Confetes executam uma única vez.
+
+### Acessibilidade e layout
+
+O overlay usa `role="dialog"`, `aria-modal`, `aria-live`, foco inicial na ação principal, ciclo de Tab e restauração para a tela seguinte. Desktop usa ações lado a lado; celulares empilham botões; telas baixas reduzem espaços e mantêm scroll interno apenas como proteção. `prefers-reduced-motion` remove a sequência e os confetes.
+
+### Validação
+
+`node --check` foi aprovado nos JavaScript alterados, assim como `git diff --check` e `node scripts/check-version.mjs`. A suíte manteve o baseline de 303 testes aprovados e três falhas assíncronas preexistentes do Ocean Match-3.
+
 ## Sprint UX-003 — Board Alive (v0.33.0-preview)
 
 ### Diagnóstico
