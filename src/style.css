@@ -4798,8 +4798,72 @@ body[data-world="castelo-dragoes"] .path-line {
   }
 }
 
+/* ═══════════════════════════════════════
+   FLOATING MOBILE DRAW-START BUTTON
+   ═══════════════════════════════════════ */
+.draw-float-btn {
+  display: none;
+}
+
+@media (max-width: 840px) {
+  .draw-active .draw-float-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    position: fixed;
+    bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1600;
+    min-width: 200px;
+    min-height: 56px;
+    padding: 14px 28px;
+    border: none;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(135deg, #e91e63, #9c27b0);
+    box-shadow:
+      0 6px 20px rgba(233, 30, 99, 0.35),
+      0 2px 6px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    transition: opacity 0.2s, transform 0.15s;
+  }
+
+  .draw-active .draw-float-btn:not([disabled]):active {
+    transform: translateX(-50%) scale(0.95);
+  }
+
+  .draw-active .draw-float-btn[disabled] {
+    opacity: 0.45;
+    cursor: not-allowed;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .draw-active .draw-float-btn:focus-visible {
+    outline: 3px solid #e91e63;
+    outline-offset: 3px;
+  }
+
+  .draw-active .draw-float-btn.is-reroll {
+    background: linear-gradient(135deg, #ff8f00, #f44336);
+    box-shadow:
+      0 6px 20px rgba(255, 143, 0, 0.35),
+      0 2px 6px rgba(0, 0, 0, 0.15);
+  }
+
+  .draw-active .draw-float-btn.is-reroll:focus-visible {
+    outline-color: #ff8f00;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .roll-float-btn {
+  .roll-float-btn,
+  .draw-float-btn {
     transition: none !important;
   }
 }

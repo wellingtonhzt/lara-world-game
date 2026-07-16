@@ -41,7 +41,7 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
   let botTurnScheduled = false;
   let botTurnTimer = null;
   let modoJogo = null;
-  let drawState = { rolls: [null, null], drawWinnerIndex: null };
+  let drawState = { rolls: [null, null], drawWinnerIndex: null, isTie: false, tieCount: 0 };
   const victoryMetrics = { gameStartedAt: null, totalRolls: 0 };
   let focusBeforeVictory = null;
 
@@ -361,6 +361,7 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
     history: document.getElementById("history"),
     rollBtn: document.getElementById("roll-btn"),
     rollBtnFloat: document.getElementById("roll-btn-float"),
+    drawBtnFloat: document.getElementById("draw-start-btn-float"),
     resetBtn: document.getElementById("reset-btn"),
     currentPlayerName: document.getElementById("current-player-name"),
     p1Pos: document.getElementById("p1-pos"),
@@ -1373,6 +1374,7 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
     modoJogo = null;
     clearWorldTheme();
     hideFloatingRollBtn();
+    hideDrawFloatBtn();
   }
 
   function hideMainMenu() {
@@ -1385,6 +1387,43 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
 
   function hideFloatingRollBtn() {
     document.getElementById("app").classList.remove("game-active");
+  }
+
+  function showDrawFloatBtn() {
+    document.getElementById("app").classList.add("draw-active");
+  }
+
+  function hideDrawFloatBtn() {
+    document.getElementById("app").classList.remove("draw-active");
+  }
+
+  function updateDrawFloatBtn() {
+    const overlay = document.getElementById("draw-overlay");
+    const floatBtn = elements.drawBtnFloat;
+    if (!floatBtn || !overlay) return;
+
+    const overlayVisible = !overlay.classList.contains("hidden");
+    const hasWinner = drawState.drawWinnerIndex !== null && drawState.drawWinnerIndex !== undefined;
+    const isTie = drawState.isTie;
+
+    if (!overlayVisible || (!hasWinner && !isTie)) {
+      hideDrawFloatBtn();
+      return;
+    }
+
+    showDrawFloatBtn();
+    floatBtn.disabled = false;
+    floatBtn.setAttribute("aria-disabled", "false");
+
+    if (isTie) {
+      floatBtn.textContent = "🎲 Rolar novamente";
+      floatBtn.setAttribute("aria-label", "Iniciar nova rodada de desempate");
+      floatBtn.classList.add("is-reroll");
+    } else {
+      floatBtn.textContent = "▶ Começar";
+      floatBtn.setAttribute("aria-label", "Começar partida");
+      floatBtn.classList.remove("is-reroll");
+    }
   }
 
   function setupMenuEvents() {
@@ -1730,10 +1769,12 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
     drawPlayer0.classList.add("active");
 
     document.getElementById("draw-overlay").classList.remove("hidden");
+    hideDrawFloatBtn();
   }
 
   function hideDrawScreen() {
     document.getElementById("draw-overlay").classList.add("hidden");
+    hideDrawFloatBtn();
   }
 
   function waitForPlayerRoll(playerIndex) {
@@ -1781,7 +1822,7 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
 
   async function startDrawSequence() {
     showDrawScreen();
-    let tieCount = 0;
+    drawState.tieCount = 0;
 
     while (true) {
       drawState.rolls = [null, null];
@@ -1799,14 +1840,16 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
 
       if (v1 === v2) {
         drawState.drawWinnerIndex = null;
+        drawState.isTie = false;
         document.getElementById("draw-start-btn").disabled = true;
         document.getElementById("draw-player-0").classList.remove("winner");
         document.getElementById("draw-player-1").classList.remove("winner");
         document.getElementById("draw-overlay").classList.add("is-tie");
 
-        if (tieCount >= 2) {
+        if (drawState.tieCount >= 2) {
           const winnerIndex = Math.random() < 0.5 ? 0 : 1;
           drawState.drawWinnerIndex = winnerIndex;
+          drawState.isTie = false;
           const msgs = [
             "Empate cósmico! O jogo escolheu quem começa.",
             "Depois de tantos empates, a sorte decidiu!",
@@ -1819,10 +1862,11 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
           document.getElementById("draw-overlay").classList.remove("is-tie");
           document.getElementById("draw-start-btn").classList.remove("hidden");
           document.getElementById("draw-start-btn").disabled = false;
+          updateDrawFloatBtn();
           break;
         }
 
-        tieCount++;
+        drawState.tieCount++;
         document.getElementById("draw-status").textContent = "🤝 Empate! Vamos rolar novamente!";
         document.getElementById("draw-dice-box-0").textContent = "🎲";
         document.getElementById("draw-dice-box-1").textContent = "🎲";
@@ -1835,11 +1879,14 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
         await delay(1500);
         document.getElementById("draw-overlay").classList.remove("is-tie");
         document.getElementById("draw-player-0").classList.add("active");
+        drawState.isTie = true;
+        updateDrawFloatBtn();
         continue;
       }
 
       const winnerIndex = v1 > v2 ? 0 : 1;
       drawState.drawWinnerIndex = winnerIndex;
+      drawState.isTie = false;
 
       document.getElementById(`draw-player-${winnerIndex}`).classList.add("winner");
       document.getElementById(`draw-player-${1 - winnerIndex}`).classList.add("loser");
@@ -1849,6 +1896,7 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
         `🏆 ${winner.name} começa a aventura!`;
       document.getElementById("draw-start-btn").classList.remove("hidden");
       document.getElementById("draw-start-btn").disabled = false;
+      updateDrawFloatBtn();
       break;
     }
   }
@@ -3028,6 +3076,22 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
           trackEl.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
         }
         elements.rollBtn.click();
+      });
+    }
+
+    if (elements.drawBtnFloat) {
+      elements.drawBtnFloat.addEventListener("click", () => {
+        if (drawState.isTie) {
+          const targetBtn = document.getElementById("draw-roll-btn-0");
+          if (targetBtn && !targetBtn.disabled) {
+            targetBtn.click();
+          }
+        } else {
+          const drawStartBtn = document.getElementById("draw-start-btn");
+          if (drawStartBtn && !drawStartBtn.disabled) {
+            drawStartBtn.click();
+          }
+        }
       });
     }
 
