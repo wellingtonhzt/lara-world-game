@@ -1,5 +1,18 @@
 # Roadmap Lara World
 
+### Botão Flutuante "Jogar Dado" Mobile ✅
+
+- [x] `#roll-btn-float` inserido no HTML com `aria-label` e `disabled`
+- [x] CSS `.roll-float-btn`: fixo bottom-center, gradiente laranja→vermelho, z-index 100, safe-area inset
+- [x] Visível apenas em `@media (max-width: 840px)` durante `.game-active`
+- [x] `MutationObserver` sincroniza estado `disabled` entre `#roll-btn` e `#roll-btn-float`
+- [x] Listener: `scrollIntoView` com `prefers-reduced-motion` + delegação ao `#rollBtn.click()`
+- [x] Hooks: `showFloatingRollBtn()` em `continueAfterDraw()`, `hideFloatingRollBtn()` em `showMainMenu()`
+- [x] `panel-area` com `padding-bottom: 100px` em mobile para não ocultar botão original
+- [x] Desktop não afetado — botão sempre oculto acima de 840px
+- [x] Nenhuma regra, turno, animação ou minigame alterado
+- [x] Validação: `node --check`, `git diff --check` aprovados
+
 ### v0.36.0-preview — Modernização da Preparação da Partida ✅
 
 - [x] Redesign completo do seletor de mundos

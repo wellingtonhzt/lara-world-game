@@ -64,6 +64,15 @@ As ações da partida são narradas por um overlay temporário sobre o tabuleiro
 
 ## ✨ Funcionalidades Atuais (v0.36.0-preview)
 
+### Botão Flutuante "Jogar Dado" no Mobile ✅
+
+- **Problema resolvido**: no mobile, o botão "Jogar Dado" ficava abaixo do tabuleiro, obrigando o jogador a rolar para baixo para tocar e para cima para assistir à ação
+- **Solução**: botão flutuante `#roll-btn-float` sincronizado com o botão original, fixo na parte inferior central durante partidas ativas em telas ≤840px
+- **Sincronização automática**: `MutationObserver` mantém o estado (habilitado/desabilitado) espelhado entre o botão original e o flutuante
+- **Scroll inteligente**: ao tocar, faz `scrollIntoView` no tabuleiro antes de executar a jogada
+- **Desktop inalterado**: botão sempre oculto em telas acima de 840px; layout e painel original preservados
+- **Sem alteração de gameplay**: nenhuma regra, turno, probabilidade, animação ou minigame foi modificado
+
 ### Experiência inicial unificada ✅
 
 - **Hero Screen**: ponto de entrada com acesso ao Jogo Rápido, Modo Arcade, tutorial e informações do projeto
@@ -605,6 +614,7 @@ docker compose down
 
 ## 🗺️ Roadmap
 
+- **Botão Flutuante Mobile** — ✅ **Concluído** — Botão "Jogar Dado" flutuante sincronizado para mobile
 - **v0.36.0-preview** — ✅ **Ativo** — Preparação da Partida Premium
 - **v0.35.0-preview** — ✅ Question Engine
 - **v0.34.0-preview** — ✅ Tela de Vitória Premium

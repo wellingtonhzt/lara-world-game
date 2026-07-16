@@ -2,6 +2,18 @@
 
 ## [Unreleased]
 
+### Adicionado
+- **Botão flutuante "Jogar Dado" no mobile**: novo `#roll-btn-float` sincronizado com `#roll-btn` original, visível apenas em telas ≤840px durante partidas ativas. Soluciona o problema deUX onde o jogador precisava rolar para baixo para tocar no botão e para cima para assistir à ação
+
+### Alterado
+- **`src/index.html`**: novo `<button id="roll-btn-float">` inserido após `</main>`, reutilizando o listener `#roll-btn` via delegação
+- **`src/style.css`**: `.roll-float-btn` fixo na parte inferior central, `z-index: 100`, gradiente laranja→vermelho, `env(safe-area-inset-bottom)`, `.game-active` para visibilidade condicional, `prefers-reduced-motion`, `.panel-area` padding-bottom 100px para mobile
+- **`src/game.js`**: cache `rollBtnFloat`, `MutationObserver` em `#roll-btn.disabled`, `showFloatingRollBtn()`/`hideFloatingRollBtn()` via `.game-active` em `#app`, `scrollIntoView` com `prefers-reduced-motion` em `#track-container`, hooks em `continueAfterDraw()` e `showMainMenu()`
+
+### Notas
+- Nenhuma regra do jogo, lógica de turno, comportamento da Máquina, mecânica de dados, animações existentes, minigames ou layout desktop foram alterados
+- Botão reutiliza o clique original `#roll-btn.click()` — sem lógica duplicada
+
 ## [0.36.0-preview] - 2026-07-15
 
 ### Adicionado

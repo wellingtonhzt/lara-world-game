@@ -1,5 +1,71 @@
 # Memorial Técnico
 
+## Sprint UX-MOBILE — Botão Flutuante "Jogar Dado" no Mobile
+
+### Objetivo
+
+Resolver o problema de usabilidade no mobile onde o botão "Jogar Dado" ficava abaixo do tabuleiro, obrigando o jogador a rolar para baixo para tocar e para cima para assistir à ação. A solução é um botão flutuante sincronizado que aparece apenas durante a partida em telas estreitas.
+
+### Diagnóstico
+
+- O `#roll-btn` original ficava no `panel-area` (lateral direita), que no mobile empilhava abaixo do `#track-container`
+- Após lançar o dado, o jogador precisava tocar no botão (abaixo do tabuleiro) e depois rolar de volta para cima para acompanhar o movimento
+- Não havia nenhum mecanismo de auto-scroll ou fixação do botão no mobile
+- O `#roll-btn` recebia estado `disabled` via classes CSS (`.disabled`) e era re-habilitado por `unlockTurn()`, `showMainMenu()` e `continueAfterDraw()`
+
+### Implementação
+
+- **HTML** (`src/index.html`): novo `<button id="roll-btn-float" class="roll-float-btn" aria-label="Jogar dado" disabled>` inserido logo após `</main>`, preservando a semântica do componente original
+- **CSS** (`src/style.css`):
+  - `.roll-float-btn`: `position: fixed`, bottom 24px, center, `z-index: 100`, gradiente laranja→vermelho, sombra 3D, `display: none`
+  - `.game-active .roll-float-btn`: `display: flex` em `@media (max-width: 840px)`
+  - `env(safe-area-inset-bottom)` para celulares com notch
+  - `.roll-float-btn:disabled`: `opacity: 0.45`, `pointer-events: none`
+  - `.roll-float-btn:focus-visible`: outline laranja 3px
+  - `.game-active .panel-area`: `padding-bottom: 100px` em mobile para não ocultar o botão original
+  - `@media (prefers-reduced-motion: reduce)`: todos os `transition` e `animation` removidos
+- **JavaScript** (`src/game.js`):
+  - Cache `rollBtnFloat` no objeto `elements`
+  - `showFloatingRollBtn()`: adiciona `.game-active` ao `#app` → botão flutuante fica visível
+  - `hideFloatingRollBtn()`: remove `.game-active` → botão some
+  - `MutationObserver`盯着`#roll-btn`attributes `class` e `disabled`: sincroniza estado do botão flutuante (desabilitado/habilitado)
+  - Listener de clique no `rollBtnFloat`: `#track-container.scrollIntoView({ behavior: 'smooth', block: 'nearest' })` com proteção `prefers-reduced-motion`, seguido de `elements.rollBtn.click()`
+  - Hooks: `showFloatingRollBtn()` chamado em `continueAfterDraw()` (após o sorteio); `hideFloatingRollBtn()` chamado em `showMainMenu()` (ao voltar ao menu)
+
+### Decisões Técnicas
+
+| Decisão | Alternativas | Motivo |
+|---------|-------------|--------|
+| Botão flutuante delegando ao `#roll-btn.click()` | Duplicar a lógica `jogarDado()` | Preserva um único ponto de verdade; qualquer mudança no botão original afeta ambos automaticamente |
+| `MutationObserver` em vez de chamar show/hide manualmente em cada ponto | Chamar show/hide em `jogarDado()`, `unlockTurn()`, `switchTurn()`, etc. | Menos acoplamento; o observer reage a qualquer alteração de estado, inclusive futuras |
+| `scrollIntoView({ block: 'nearest' })` em vez de `scrollIntoView({ block: 'center' })` | `center`, `start`, `end` | `nearest` mantém a posição natural se já visível; `center` forçaria scroll desnecessário |
+| `.game-active` no `#app` como controle de visibilidade | Classe no `body` ou variável global | Mais específico que `body`; `#app` é o container raiz do jogo e não conflita com outras classes |
+| `z-index: 100` para o botão flutuante | 999, 1000, 2000 | Acima do tabuleiro e overlay, abaixo de minigames (1500) e menu (2000) |
+
+### Arquivos Modificados
+
+| Arquivo | Tipo de Alteração |
+|---------|-------------------|
+| `src/index.html` | **Modificado** — `<button id="roll-btn-float">` adicionado após `</main>` |
+| `src/style.css` | **Modificado** — `.roll-float-btn`, `.game-active .roll-float-btn`, `.game-active .panel-area` (mobile), `prefers-reduced-motion` |
+| `src/game.js` | **Modificado** — `rollBtnFloat` no cache, `showFloatingRollBtn()`, `hideFloatingRollBtn()`, `MutationObserver`, listener de clique, hooks em `continueAfterDraw()` e `showMainMenu()` |
+
+### Impacto Funcional
+
+- O botão flutuante aparece somente durante partidas ativas em telas ≤840px
+- Toca no botão original → o jogador assiste ao dado rolar e ao token se mover sem precisar rolar
+- Desktop não é afetado (botão sempre oculto acima de 840px)
+- Nenhuma regra, turno, probabilidade, animação, minigame ou modo de jogo foi alterado
+- O botão original permanece visível e funcional abaixo do tabuleiro (acessível como antes)
+
+### Validação
+
+- `node --check src/game.js` — aprovado (sem erros de sintaxe)
+- `git diff --check` — aprovado (sem problemas de whitespace)
+- `git diff --stat`: 3 arquivos modificados, 97 inserções
+
+---
+
 ## Sprint DOC-UX — Preparação da Partida Premium (v0.36.0-preview)
 
 ### Objetivo

@@ -4741,3 +4741,65 @@ body[data-world="castelo-dragoes"] .path-line {
 .debug-dq-pergunta { flex: 1; }
 .debug-dq-opcoes { color: #8af; min-width: 120px; }
 .debug-dq-resposta { color: #0f0; min-width: 60px; }
+
+/* ═══════════════════════════════════════
+   FLOATING MOBILE ROLL BUTTON
+   ═══════════════════════════════════════ */
+.roll-float-btn {
+  display: none;
+}
+
+@media (max-width: 840px) {
+  .game-active .roll-float-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    position: fixed;
+    bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    min-width: 200px;
+    min-height: 56px;
+    padding: 14px 28px;
+    border: none;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(135deg, #ff8f00, #f44336);
+    box-shadow:
+      0 6px 20px rgba(244, 67, 54, 0.35),
+      0 2px 6px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    transition: opacity 0.2s, transform 0.15s;
+  }
+
+  .game-active .roll-float-btn:not([disabled]):active {
+    transform: translateX(-50%) scale(0.95);
+  }
+
+  .game-active .roll-float-btn[disabled] {
+    opacity: 0.45;
+    cursor: not-allowed;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .game-active .roll-float-btn:focus-visible {
+    outline: 3px solid #ff8f00;
+    outline-offset: 3px;
+  }
+
+  .game-active .panel-area {
+    padding-bottom: 100px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .roll-float-btn {
+    transition: none !important;
+  }
+}

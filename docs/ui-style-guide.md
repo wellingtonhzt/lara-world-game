@@ -78,6 +78,16 @@ Este documento define as diretrizes visuais do Lara World. Todo novo asset, tela
 - **Token nos botões**: cada botão exibe o token asset (object-fit cover circular) via `initGalleryTokens()` com fallback para emoji
 - **Regra**: a galeria nunca deve mostrar broken image — sempre cai para emoji
 
+### Botão Flutuante Mobile (Jogar Dado)
+- **Posição**: `position: fixed`, `bottom: 24px`, centralizado horizontalmente, `z-index: 100`
+- **Visibilidade**: aparece apenas em `@media (max-width: 840px)` durante partidas ativas (`.game-active` no `#app`)
+- **Visual**: gradiente `linear-gradient(135deg, #ff6b35, #d63031)`, borda branca 2px, sombra 3D, border-radius 16px
+- **Tamanho**: padding 14px 32px, fonte 1.1rem bold, gap 8px com ícone 🎲
+- **Estado disabled**: `opacity: 0.45`, `pointer-events: none` (sincronizado via `MutationObserver`)
+- **Focus-visible**: outline laranja 3px para acessibilidade por teclado
+- **Safe area**: `env(safe-area-inset-bottom)` para celulares com notch
+- **Motion**: `prefers-reduced-motion: reduce` desativa todas as transições e animações
+
 ## 5. Personagens
 
 ### Lara (Protagonista)

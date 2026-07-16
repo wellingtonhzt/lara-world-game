@@ -360,6 +360,7 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
     diceValue: document.getElementById("dice-value"),
     history: document.getElementById("history"),
     rollBtn: document.getElementById("roll-btn"),
+    rollBtnFloat: document.getElementById("roll-btn-float"),
     resetBtn: document.getElementById("reset-btn"),
     currentPlayerName: document.getElementById("current-player-name"),
     p1Pos: document.getElementById("p1-pos"),
@@ -1371,10 +1372,19 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
     selectedLayoutId = null;
     modoJogo = null;
     clearWorldTheme();
+    hideFloatingRollBtn();
   }
 
   function hideMainMenu() {
     document.getElementById("main-menu").classList.add("hidden");
+  }
+
+  function showFloatingRollBtn() {
+    document.getElementById("app").classList.add("game-active");
+  }
+
+  function hideFloatingRollBtn() {
+    document.getElementById("app").classList.remove("game-active");
   }
 
   function setupMenuEvents() {
@@ -1854,6 +1864,7 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
     victoryMetrics.gameStartedAt = Date.now();
     victoryMetrics.totalRolls = 0;
     hideDrawScreen();
+    showFloatingRollBtn();
     gameState.usedQuestionIds.clear();
     renderizarTrilha();
     renderSvgPath();
@@ -2997,6 +3008,26 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
         const hist = document.getElementById("history");
         hist.classList.toggle("expanded");
         this.textContent = hist.classList.contains("expanded") ? "\u25B2" : "\u25BC";
+      });
+    }
+
+    if (elements.rollBtnFloat) {
+      const syncFloatState = () => {
+        const disabled = elements.rollBtn.disabled;
+        elements.rollBtnFloat.disabled = disabled;
+        elements.rollBtnFloat.setAttribute("aria-disabled", String(disabled));
+      };
+      const btnObserver = new MutationObserver(syncFloatState);
+      btnObserver.observe(elements.rollBtn, { attributes: true, attributeFilter: ["disabled"] });
+      syncFloatState();
+
+      elements.rollBtnFloat.addEventListener("click", () => {
+        const trackEl = document.getElementById("track-container");
+        if (trackEl) {
+          const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+          trackEl.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
+        }
+        elements.rollBtn.click();
       });
     }
 

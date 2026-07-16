@@ -18,6 +18,18 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 
 ## Principais Funcionalidades
 
+### Botão Flutuante "Jogar Dado" no Mobile ✅
+
+- **Problema resolvido**: no mobile, o botão "Jogar Dado" ficava abaixo do tabuleiro, obrigando o jogador a rolar para baixo para tocar e para cima para assistir à ação
+- **Solução**: botão flutuante `#roll-btn-float` sincronizado com `#roll-btn` original, fixo na parte inferior central da tela durante partidas ativas
+- **Visibilidade condicional**: aparece apenas em telas ≤840px quando o jogo está ativo (`.game-active` no `#app`); some ao voltar ao menu
+- **Sincronização automática**: `MutationObserver` em `#roll-btn.disabled` mantém todos os estados (habilitado/desabilitado) espelhados no botão flutuante
+- **Scroll inteligente**: ao tocar, faz `scrollIntoView({ block: 'nearest' })` no `#track-container` antes de delegar o clique ao botão original
+- **Acessibilidade**: `aria-label="Jogar dado"`, `focus-visible` com outline laranja, `prefers-reduced-motion` desativa transições
+- **Área segura**: `env(safe-area-inset-bottom)` respeita celulares com notch
+- **Desktop inalterado**: botão sempre oculto acima de 840px; layout e painel original intocados
+- **Sem alteração de gameplay**: nenhuma regra, turno, probabilidade, animação, minigame ou modo de jogo foi modificado
+
 ### v0.36.0-preview (Atual) — Preparação da Partida Premium ✅
 
 - **Novo fluxo de entrada**: Hero Screen → Seleção de Mundo → Preparar Jogo → Quem começa? → Partida

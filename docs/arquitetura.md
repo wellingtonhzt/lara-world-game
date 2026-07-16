@@ -248,6 +248,13 @@ Estrutura semântica dividida em:
   - Status: indicador de turno e posições de ambos os jogadores
   - Botões: Jogar Dado e Reiniciar
   - `#history`: histórico cronológico de jogadas
+- **Botão Flutuante Mobile** (`#roll-btn-float`, classe `.roll-float-btn`):
+  - Botão fixo no canto inferior central, `z-index: 100`, visível apenas em `@media (max-width: 840px)` durante partidas ativas
+  - Sincronizado com `#roll-btn` original via `MutationObserver` em `#roll-btn.disabled`
+  - `scrollIntoView({ block: 'nearest' })` em `#track-container` antes de delegar o clique ao `#rollBtn.click()`
+  - `env(safe-area-inset-bottom)` para celulares com notch; `prefers-reduced-motion` desativa transições
+  - `.game-active` no `#app` controla visibilidade: adicionado em `continueAfterDraw()`, removido em `showMainMenu()`
+  - `.game-active .roll-float-btn` { `display: flex` } em mobile; `.game-active .panel-area` { `padding-bottom: 100px` } para não ocultar o botão original
 - **Debug Panel** (`#debug-panel`):
   - Exibido apenas quando `?debug=1` na URL
   - 5 botões: Casa 11, Entrar na Floresta, Casa 5 (Atalho), Casa 8 (Saída), Voltar ao Principal
@@ -269,6 +276,7 @@ Estrutura semântica dividida em:
 - **Casa especial**: cores por `data-position` (3 amarela, 4 roxa desafio, 5 rosa, 7 roxa desafio, 8 laranja, 10 roxa, 12 roxa desafio, 15 vermelha, 16 roxa desafio, 18 roxa desafio, 20 verde com glow)
 - **Animações**: `pulse` (movimento), `bounce` (dado), `celebrar` (vitória)
 - **Responsivo**: `@media (max-width: 840px)` com empilhamento vertical, células 64×46px
+- **Botão Flutuante Mobile**: `.roll-float-btn` (fixed, bottom 24px, center, z-index 100, gradiente laranja→vermelho), `.game-active .roll-float-btn` (display flex em ≤840px), `.roll-float-btn:disabled` (opacity 0.45), `.game-active .panel-area` (padding-bottom 100px em mobile), `env(safe-area-inset-bottom)`, `prefers-reduced-motion`
 
 ### game.js
 
@@ -378,9 +386,16 @@ Sorteio de Perguntas (via Question Engine)
   └── questionPolicy definida em cada WorldConfig
 
 Main Menu
-  ├── showMainMenu() → exibe menu inicial, esconde tabuleiro/painel/victory, chama leaveArcadeMode()
+  ├── showMainMenu() → exibe menu inicial, esconde tabuleiro/painel/victory, chama leaveArcadeMode(), hideFloatingRollBtn()
   ├── hideMainMenu() → esconde menu, prepara tabuleiro
   └── setupMenuEvents() → registra clique em "⚡ Jogo Rápido", "🎮 Modo Arcade" e "🏆 Modo Carreira"
+
+Botão Flutuante Mobile
+  ├── rollBtnFloat → cache do elemento #roll-btn-float em elements
+  ├── showFloatingRollBtn() → adiciona .game-active ao #app (ativa botão flutuante em mobile ≤840px)
+  ├── hideFloatingRollBtn() → remove .game-active do #app (oculta botão flutuante)
+  ├── MutationObserver em #roll-btn → observa attributes class/disabled, sincroniza estado com rollBtnFloat
+  └── Listener no rollBtnFloat → scrollIntoView({ block: 'nearest' }) em #track-container (com pref-reduced-motion guard) + rollBtn.click()
 
 Modo Arcade
   ├── initArcadeController(showMainMenu) → injeta callback de saída
