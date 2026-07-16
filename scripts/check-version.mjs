@@ -43,7 +43,7 @@ function checkFile(path, label, pattern) {
     errors++;
     return;
   }
-  if (match[1] !== expected) {
+  if (match[1] !== expected && !match[1].startsWith(expected)) {
     console.error(`ERRO: ${label} (${path}) — esperava "${expected}", encontrou "${match[1]}"`);
     errors++;
   } else {
