@@ -1,5 +1,17 @@
 # Roadmap Lara World
 
+### v0.36.0-preview — Modernização da Preparação da Partida ✅
+
+- [x] Redesign completo do seletor de mundos
+- [x] Redesign da tela “Preparar Jogo”
+- [x] Redesign da tela “Quem começa?”
+- [x] Fluxo visual unificado entre Hero Screen e tabuleiro
+- [x] Hierarquia visual, feedbacks e microinterações aprimorados
+- [x] Responsividade para desktop, tablet, celular e telas baixas
+- [x] Acessibilidade, foco visível, ARIA e `prefers-reduced-motion`
+- [x] Regras do jogo e comportamento da Máquina preservados
+- [x] Versionamento, cache-busting e documentação sincronizados
+
 ### QE-002 — Integração do Question Engine ao Tabuleiro ✅
 
 - [x] questionPolicy nos 5 WorldConfigs (floresta, dinossauros, galaxia, oceanos, castelo)

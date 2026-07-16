@@ -184,15 +184,25 @@ Estrutura semântica dividida em:
   - Três botões: "⚡ Jogo Rápido" (ativo, glow pulsante), "🎮 Modo Arcade" (novo) e "🏆 Modo Aventura" (desabilitado, badge "EM BREVE...")
   - Footer com versão lida de `APP_VERSION` (src/version.js)
   - Escondido quando uma partida é iniciada; reexibido via "Voltar ao Menu"
-- **Setup Modal** (`#setup-screen`):
-  - Overlay fixo com `z-index: 1000`, exibido após clicar em "Jogo Rápido"
-  - Card do Jogador 1 e Jogador 2, cada um com:
+- **Setup Screen — “Preparar Jogo”** (`#setup-screen`):
+  - Overlay fixo exibido após a seleção de um mundo; o conteúdo central usa `.setup-content`
+  - Cabeçalho com título e `.setup-subtitle`, seguido do seletor de modo `.mode-selector`
+  - Opções 1P/2P usam `.mode-option`, `.mode-icon` e `.mode-copy`; no modo 1P o segundo card é ocultado pela lógica existente
+  - `.setup-players` organiza os cards dos participantes e o elemento decorativo `.setup-versus`
+  - Card do Jogador 1 e Jogador 2 (`.setup-player-card.card-p1` / `.card-p2`), cada um com:
     - `.avatar-preview`: preview circular 108×108px (`.avatar-frame`) com `<span class="avatar-emoji">` + `<img class="avatar-img">` para o asset `assets/avatars/{id}.webp` e `.avatar-player-name`
     - Campo de nome (`<input>`) e label "Personagem:"
     - Grade "🧑 Avatares" (`.avatar-grid`) com 4 botões oficiais: Lara (`🧒`), Léo (`🧑`), Dino (`🦖`), Byte (`💻`)
     - Grade de 4 personagens oficiais: Lara, Léo, Dino, Byte (todos com assets .webp + fallback emoji)
     - Cada botão (`.emoji-btn`) possui `data-emoji`, `data-avatar` e `data-token`; no bootstrap, `initGalleryTokens()` transforma cada botão em span + img com fallback visual para `assets/tokens/{avatar}.webp`
-  - Botão **"Iniciar Jogo"** — esconde o modal e renderiza o tabuleiro
+  - Botão **“Iniciar Jogo”** (`.setup-start-btn`) — inicia o fluxo de sorteio quando a configuração está válida
+- **Draw Screen — “Quem começa?”** (`#draw-overlay`):
+  - Diálogo modal acessível (`role="dialog"`, `aria-modal="true"`) exibido entre o setup e a partida
+  - `.draw-content` contém `.draw-header`, dois cards `.draw-player`, `.draw-vs`, `#draw-status`, `.draw-help` e `#draw-start-btn`
+  - Cada participante preserva IDs estáveis para avatar, nome, dado, resultado e botão; assets de token usam o mesmo fallback para emoji do restante do jogo
+  - Classes temporárias `.active`, `.rolling`, `.winner` e `.loser` representam somente feedback visual; `.is-tie` pertence ao overlay durante o empate
+  - No single player, `#draw-roll-btn-1` permanece oculto e a Máquina rola automaticamente; no multiplayer local os dois botões são manuais
+  - Resultados e status usam `aria-live`; o sorteio mantém o limite de dois empates e desempate automático no terceiro
 - **Victory Overlay** (`#victory-overlay`):
   - Diálogo modal fixo com blur, confetes finitos (`.confetti-piece`) e serpentinas decorativas
   - Card creme com borda dourada, ribbon rosa, coroa, título, token oficial com fallback emoji e mensagens positivas por modo
@@ -217,13 +227,14 @@ Estrutura semântica dividida em:
   - Título "Desafio!", pergunta (`#challenge-question`) e opções (`#challenge-options`)
   - Botões de alternativa criados dinamicamente via JS
 - **Header**: Título com emoji decorativo, `#world-indicator` mostrando mundo/área atual (texto dinâmico)
-- **World Selector Overlay** (`#world-selector`):
+- **World Selector — “Escolha seu Mundo”** (`#world-selector`):
   - Overlay exibido entre o menu e o setup
   - Fundo com 7 gradientes radiais + `menu-background.webp` (opacity 0.60) + shapes flutuantes + sparkles (mesmo visual da Hero Screen)
   - Card central glass com gradiente rosado/creme/azulado, `backdrop-filter: blur(24px)`, borda 3px, glow rosa
   - Subtítulo "Cada mundo guarda uma aventura diferente."
-  - Grid com 6 cards: 🌳 Floresta, 🦖 Dinossauros, 3 futuros (🔒), 🎲 Aleatório
-  - Cards com identidade por mundo (bordas coloridas via data-world) e container 96×96px para ilustrações futuras
+  - Grid com 6 cards e ilustrações oficiais: Floresta, Dinossauros, Galáxia, Oceanos, Castelo e Aleatório
+  - Floresta, Galáxia, Oceanos e Aleatório estão habilitados; Dinossauros e Castelo possuem `disabled` na interface atual
+  - Cards usam identidade por mundo via `data-world`, container `.world-card-illustration`, asset `.world-card-img`, fallback `.world-card-emoji` e badges de disponibilidade
   - Botão "← Menu Principal" premium (gradiente pink-dourado + sombra 3D)
 - **Board Area** (esquerda):
   - `#track-container`: container com gradiente de céu/grama (ou background temático por mundo), decorações (nuvens, árvores, flores, dinossauros, floresta)
@@ -247,9 +258,10 @@ Estrutura semântica dividida em:
 ### style.css
 
 - **Layout**: Flexbox com `board-area` (flex: 1) e `panel-area` (240px fixos)
-- **Setup Modal** (`#setup-overlay`): `position: fixed`, `inset: 0`, `z-index: 1000`, `background: rgba(0,0,0,0.5)`, `display: flex` centralizado
-- **Player Cards** (`.player-card`): fundo branco com borda arredondada, padding interno, sombra suave. Destaque visual (borda dourada) para o card ativo
-- **Emoji Grid** (`.emoji-grid`): `display: flex` com `flex-wrap: wrap`, gaps entre os itens. Cada emoji (`.emoji-option`): 48×48px, cursor pointer, borda transparente. Selecionado: borda azul com fundo claro
+- **World Selector**: `.world-selector`, `.world-selector-content`, `.world-grid`, `.world-card`, variantes por `data-world`, estados `disabled`, `.world-card-random` e breakpoints próprios
+- **Preparar Jogo**: `.setup-screen`, `.setup-content`, `.mode-selector`, `.mode-option`, `.setup-players`, `.setup-player-card`, `.avatar-preview`, `.avatar-grid` e `.setup-start-btn`; grid se adapta de dois cards para empilhamento
+- **Quem começa?**: `.draw-overlay`, `.draw-content`, `.draw-players`, `.draw-player`, `.draw-dice-box`, `.draw-dice-value`, `.draw-roll-btn`, `.draw-vs`, `.draw-status` e `.draw-help`; estados visuais são classes temporárias
+- **Acessibilidade de movimento**: as novas animações das telas de preparação são removidas em `@media (prefers-reduced-motion: reduce)`
 - **Tabuleiro**: `#track-container` com `position: relative` e gradiente de fundo
 - **Células** (`.casa`): `position: absolute` com `transform: translate(-50%,-50%)` para centralização. Cada casa recebe `left` e `top` em percentual via JS
 - **Caminho SVG**: `#trail-path` com `stroke-width: 5` (ART-005), opacity ~0.25, `background-image` preparado para path.webp com seletores por mundo (ART-006), SVG stroke como fallback ativo
@@ -381,7 +393,7 @@ Modo Arcade
   └── modoJogo = "arcade" → valor de modoJogo para o Arcade
 
 Seletor de Mundos
-  ├── showWorldSelector() → exibe grid de 6 cards (5 mundos disponíveis + 1 aleatório)
+  ├── showWorldSelector() → exibe grid de 6 cards (3 mundos habilitados, 2 bloqueados e 1 aleatório)
   ├── hideWorldSelector() → esconde seletor
   └── selectWorld(id) → currentWorldConfig = WorldRegistry.get(id) || (random + get), aplica data-world
   └── "random" → currentWorldConfig = random(w => w.type === 'main'), sorteia entre mundos principais
@@ -498,11 +510,20 @@ Seletor de Mundos (showWorldSelector) — apenas Jogo Rápido
   ├── 🐉 Castelo dos Dragões → selectedWorldId = "castelo-dragoes"
   └── 🎲 Aleatório → selectedWorldId = "random"
   ↓
-Modal de Configuração (showSetupScreen)
-  ├── Card do Jogador 1 → nome + sprite (modo 1P forçado no Jogo Rápido)
+Preparar Jogo (showSetupScreen)
+  ├── Seleção de modo 1P/2P
+  ├── Nome + personagem oficial de cada participante
   └── Clique "Iniciar Jogo"
   ↓
-startGame() → esconde modal, renderiza tabuleiro, inicia partida
+startGame() → salva configuração e chama startDrawSequence()
+  ↓
+Quem começa? (#draw-overlay)
+  ├── Jogador 1 rola manualmente
+  ├── Jogador 2 rola manualmente, ou Máquina rola automaticamente
+  ├── Empate repete; terceiro empate consecutivo usa desempate automático
+  └── #draw-start-btn confirma o vencedor do sorteio
+  ↓
+continueAfterDraw() → define currentPlayerIndex, renderiza o tabuleiro e inicia a partida
   ↓
 Indicador mostra jogador ativo
   ↓
@@ -657,15 +678,15 @@ Regra oficial para ícones de casas em todos os mundos:
 
 ### Seletor de Mundos (UX-014 v2)
 
-O seletor de mundos é uma tela intermediária entre o clique em "⚡ Jogo Rápido" e o modal de configuração. Exibe 6 cards em grid com visual remodelado (5 mundos disponíveis + 1 aleatório):
+O seletor de mundos é uma tela intermediária entre o clique em “⚡ Jogo Rápido” e “Preparar Jogo”. Exibe seis cards ilustrados em grid; quatro ações estão habilitadas na interface atual (Floresta, Galáxia, Oceanos e Aleatório) e duas estão bloqueadas (Dinossauros e Castelo):
 
 - **Painel glass** — mesmo estilo da Hero Screen: gradiente rosado/creme/azulado, `backdrop-filter: blur(24px)`, borda branca 3px, glow rosa
 - **Fundo temático** — 7 gradientes radiais + `menu-background.webp` (opacity 0.60) + shapes flutuantes + sparkles
 - **🌳 Floresta Encantada** — selecionável, borda verde
-- **🦖 Vale dos Dinossauros** — selecionável, borda âmbar
+- **🦖 Vale dos Dinossauros** — bloqueado, borda âmbar
 - **🌌 Galáxia Estelar** — selecionável, borda roxa
 - **🌊 Reino dos Oceanos** — selecionável, borda azul
-- **🐉 Castelo dos Dragões** — selecionável, borda lilás
+- **🐉 Castelo dos Dragões** — bloqueado, borda lilás
 - **🎲 Mundo Aleatório** — destaque visual com glow pulsante roxo
 
 Cada card possui container `.world-card-illustration` de 96×96px preparado para futuras ilustrações, com fallback de emoji via `onerror`.

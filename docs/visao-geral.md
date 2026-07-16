@@ -18,7 +18,17 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 
 ## Principais Funcionalidades
 
-### v0.35.0-preview (Atual) — Question Engine ✅
+### v0.36.0-preview (Atual) — Preparação da Partida Premium ✅
+
+- **Novo fluxo de entrada**: Hero Screen → Seleção de Mundo → Preparar Jogo → Quem começa? → Partida
+- **Seletor de mundos modernizado**: painel glass, ilustrações oficiais, cores temáticas, opção aleatória em destaque e bloqueios visualmente claros
+- **Preparar Jogo modernizada**: modos 1P/2P descritivos, cards equilibrados, previews maiores e galeria dos quatro personagens oficiais
+- **Sorteio inicial modernizado**: cards rosa/azul, dado como elemento principal, estado ativo, placares, empate e vencedor destacados
+- **Identidade unificada**: as três etapas usam a mesma linguagem cartoon infantil premium, com gradientes suaves, bordas arredondadas e sombras macias
+- **Responsividade e acessibilidade**: desktop, tablet, celular, telas baixas, foco visível, diálogo semântico, anúncios ao vivo e `prefers-reduced-motion`
+- **Gameplay preservado**: nenhuma regra, probabilidade, ordem, tempo ou comportamento automático da Máquina foi modificado
+
+### v0.35.0-preview — Question Engine ✅
 
 - **Question Engine completa**: módulo `src/data/questions/` com `QuestionEngine`, `QuestionRepository`, `QuestionSelector`, `QuestionValidator` e `CategoryCatalog`
 - **128 perguntas** em 9 categorias, selectionContext com pesos, nível, excludeIds, tags e subcategorias
@@ -270,14 +280,16 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 ## Fluxo do Jogo
 
 ```
-Menu (Tela Inicial)
+Hero Screen (Tela Inicial)
   ↓
 ┌─── "⚡ Jogo Rápido" ──────────────────────────────┐
-│ Escolher Mundo (Floresta / Dinossauros / Aleatório) │
+│ Seleção de Mundo                                    │
 │   ↓                                                 │
-│ Configurar Jogadores (nome + sprite)                │
+│ Preparar Jogo (modo + nomes + personagens)          │
 │   ↓                                                 │
-│ Jogar Mundo Principal (20 casas, eventos, desafios) │
+│ Quem começa? (sorteio inicial)                      │
+│   ↓                                                 │
+│ Partida (20 casas, eventos, desafios e minigames)   │
 │   ↓                                                 │
 │ (Quando existir) Portal → Área Especial             │
 │   ├── Entrar: mini-trilha com eventos próprios      │

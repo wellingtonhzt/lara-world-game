@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lara World</title>
-  <link rel="stylesheet" href="style.css?v=v0.35.0-preview">
-  <link rel="stylesheet" href="ui/game-event-overlay.css?v=v0.35.0-preview">
+  <link rel="stylesheet" href="style.css?v=v0.36.0-preview">
+  <link rel="stylesheet" href="ui/game-event-overlay.css?v=v0.36.0-preview">
   <link rel="stylesheet" href="arcade/arcade.css">
   <link rel="stylesheet" href="about/about.css">
   <link rel="stylesheet" href="tutorial/tutorial.css">
@@ -62,7 +62,7 @@
         </div>
       </div>
       <div class="menu-footer">
-        <span id="menu-version" class="menu-version">v0.35.0-preview</span>
+        <span id="menu-version" class="menu-version">v0.36.0-preview</span>
       </div>
     </div>
 
@@ -133,14 +133,17 @@
     <div id="setup-screen" class="setup-screen hidden">
       <div class="setup-content">
         <h2>🚀 Preparar Jogo</h2>
+        <p class="setup-subtitle">Escolha os jogadores e seus personagens para começar!</p>
         <div class="mode-selector">
           <label class="mode-option mode-2p selected">
             <input type="radio" name="game-mode" value="2p" checked>
-            👥 2 Jogadores
+            <span class="mode-icon" aria-hidden="true">👥</span>
+            <span class="mode-copy"><strong>2 Jogadores</strong><small>Joguem juntos no mesmo dispositivo</small></span>
           </label>
           <label class="mode-option mode-1p">
             <input type="radio" name="game-mode" value="1p">
-            👤 1 Jogador
+            <span class="mode-icon" aria-hidden="true">👤</span>
+            <span class="mode-copy"><strong>1 Jogador</strong><small>Enfrente a máquina</small></span>
           </label>
         </div>
         <div id="layout-selector" class="layout-selector hidden">
@@ -167,6 +170,7 @@
               <button class="emoji-btn" data-emoji="💻" data-avatar="byte" data-token="byte">💻</button>
             </div>
           </div>
+          <div class="setup-versus" aria-hidden="true"><span>VS</span></div>
           <div class="setup-player-card card-p2 player2-card">
             <h3>👤 Jogador 2</h3>
             <div class="avatar-preview">
@@ -191,11 +195,11 @@
       </div>
     </div>
 
-    <div id="draw-overlay" class="draw-overlay hidden">
+    <div id="draw-overlay" class="draw-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="draw-title" aria-describedby="draw-instructions">
       <div class="draw-content">
         <div class="draw-header">
-          <h2>🎲 Quem começa?</h2>
-          <p>Cada jogador rola o dado. Quem tirar o maior número inicia!</p>
+          <h2 id="draw-title"><span aria-hidden="true">🎲</span> Quem começa?</h2>
+          <p id="draw-instructions">Cada jogador rola o dado. Quem tirar o maior número inicia!</p>
         </div>
         <div class="draw-players">
           <div class="draw-player" id="draw-player-0">
@@ -207,7 +211,7 @@
               <span class="draw-player-name" id="draw-name-0">Lara</span>
             </div>
             <div class="draw-dice-box" id="draw-dice-box-0">🎲</div>
-            <div class="draw-dice-value" id="draw-value-0">-</div>
+            <div class="draw-dice-value" id="draw-value-0" aria-live="polite" aria-label="Resultado do Jogador 1">-</div>
             <button class="draw-roll-btn btn btn-primary" id="draw-roll-btn-0">🎲 Rolar</button>
           </div>
           <div class="draw-vs">
@@ -222,11 +226,12 @@
               <span class="draw-player-name" id="draw-name-1">Máquina</span>
             </div>
             <div class="draw-dice-box" id="draw-dice-box-1">🎲</div>
-            <div class="draw-dice-value" id="draw-value-1">-</div>
+            <div class="draw-dice-value" id="draw-value-1" aria-live="polite" aria-label="Resultado do segundo participante">-</div>
             <button class="draw-roll-btn btn btn-primary" id="draw-roll-btn-1">🎲 Rolar</button>
           </div>
         </div>
-        <div class="draw-status" id="draw-status"></div>
+        <div class="draw-status" id="draw-status" aria-live="polite"></div>
+        <div class="draw-help"><span aria-hidden="true">⭐</span><p><strong>Como funciona:</strong> Quem tirar o maior número começa a partida.<br>Em caso de empate, os dados serão rolados novamente.</p></div>
         <button id="draw-start-btn" class="btn btn-primary hidden">▶ Começar</button>
       </div>
     </div>
@@ -602,6 +607,6 @@
   <!-- Tutorial Screen Overlay -->
   <div id="tutorial-overlay" class="tutorial-overlay hidden"></div>
 
-  <script type="module" src="game.js?v=v0.35.0-preview"></script>
+  <script type="module" src="game.js?v=v0.36.0-preview"></script>
 </body>
 </html>

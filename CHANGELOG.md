@@ -2,6 +2,25 @@
 
 ## [Unreleased]
 
+## [0.36.0-preview] - 2026-07-15
+
+### Adicionado
+- **Fluxo de preparação unificado**: Hero Screen → Seleção de Mundo → Preparar Jogo → Quem começa? → Partida
+- **Estados visuais do sorteio**: participante ativo, dado rolando, empate, vencedor e perdedor, sem alterar a regra de definição do primeiro turno
+- **Acessibilidade no sorteio**: semântica de diálogo, descrições associadas e anúncios de resultados e mensagens via `aria-live`
+
+### Alterado
+- **Seletor de mundos**: redesign completo com painel glass, ilustrações oficiais, identidade cromática por mundo, destaque para escolha aleatória e estados bloqueados legíveis
+- **Tela “Preparar Jogo”**: composição premium com seletor de modo descritivo, cards rosa/azul, previews maiores, galeria dos quatro personagens oficiais e ação principal reforçada
+- **Tela “Quem começa?”**: painel compacto, cards de confronto, avatares ampliados, dado em destaque, placares de resultado, elemento VS e faixa de instruções
+- **Responsividade**: ajustes para desktop, tablet, celular e viewports de pouca altura nas etapas de preparação
+- **Hierarquia visual**: títulos, instruções, ações primárias, estados disabled e feedbacks reorganizados para leitura infantil mais imediata
+- **Animações e transições**: entradas suaves, microinterações de cards e botões, rolagem do dado e feedback de resultado, com suporte a `prefers-reduced-motion`
+- **Versão e cache-busting**: atualizados para `v0.36.0-preview`
+
+### Notas
+- Nenhuma regra do jogo, probabilidade, tempo de sorteio, comportamento da Máquina ou mecânica do tabuleiro foi alterada
+
 ## [0.35.0-preview] - 2026-07-15
 
 ### Adicionado

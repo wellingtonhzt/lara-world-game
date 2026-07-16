@@ -1,5 +1,57 @@
 # Memorial Técnico
 
+## Sprint DOC-UX — Preparação da Partida Premium (v0.36.0-preview)
+
+### Objetivo
+
+Unificar visualmente o caminho entre a Hero Screen e o tabuleiro, modernizando o seletor de mundos, a tela “Preparar Jogo” e a tela “Quem começa?” sem modificar regras, probabilidades ou mecânicas da partida.
+
+### Diagnóstico
+
+- O seletor de mundos já fazia a transição entre menu e setup, mas precisava de hierarquia visual e estados de disponibilidade mais claros.
+- O setup tinha os elementos funcionais necessários, porém modo, participantes, previews e ação principal não formavam uma etapa visual coesa.
+- O sorteio inicial usava `#draw-overlay`, dois participantes, dados e botões corretos, mas apresentava espaço vazio, pouca diferenciação entre os lados e feedback visual limitado.
+- A documentação ainda omitia “Quem começa?” no fluxo e continha nomes e seletores legados para o setup.
+
+### Implementação
+
+- **Seleção de Mundo**: painel glass, cards ilustrados com identidade cromática, destaque para “Mundo Aleatório”, estados disabled legíveis e responsividade.
+- **Preparar Jogo**: título e subtítulo, opções de modo com texto auxiliar, cards rosa/azul, elemento VS, previews ampliados, nomes dos quatro personagens e botão principal com estados completos.
+- **Quem começa?**: diálogo acessível, painel compacto, cards simétricos, identificação por participante, avatares ampliados, área própria para dado, placares, VS central e faixa curta de instruções.
+- **Estados do sorteio**: classes `.active`, `.rolling`, `.winner`, `.loser`, `.result-pop` e `.is-tie` ligadas ao fluxo existente.
+- **Responsividade e movimento**: breakpoints para telas estreitas e baixas, além de `prefers-reduced-motion`.
+- **Documentação e versão**: fluxo, arquitetura, roadmap, changelog, memorial, `APP_VERSION` e cache-busting sincronizados em `v0.36.0-preview`.
+
+### Decisões Técnicas
+
+- IDs e listeners existentes foram preservados; as novas classes representam apenas apresentação temporária.
+- Assets existentes de mundos, avatares, tokens e dados foram reutilizados; nenhum asset novo foi criado.
+- A Máquina continua sem botão manual no single player e usa o mesmo fluxo automático.
+- O botão de retorno não foi adicionado ao sorteio porque esse fluxo não existia.
+- Animações usam principalmente `transform`, `opacity` e `box-shadow`, com desativação para movimento reduzido.
+
+### Impacto Técnico
+
+- `src/index.html`: estrutura visual do setup e semântica/acessibilidade do sorteio ampliadas; IDs funcionais preservados.
+- `src/style.css`: novos blocos localizados para world selector, setup e draw screen, incluindo estados e breakpoints.
+- `src/game.js`: somente classes visuais temporárias e rótulos dos participantes foram integrados ao sorteio existente.
+- `src/version.js` e query strings de `src/index.html`: versão atualizada para `v0.36.0-preview`.
+
+### Impacto Funcional
+
+- O fluxo percebido passa a ser: Hero Screen → Seleção de Mundo → Preparar Jogo → Quem começa? → Partida.
+- Participantes, vez de rolar, empate e vencedor têm feedback visual mais imediato.
+- Single player, multiplayer local, nomes, personagens e fallbacks continuam funcionando como antes.
+- Nenhuma regra de tabuleiro, ordem de turno, geração aleatória, duração ou limite de empates foi alterada.
+
+### Validação
+
+- `node --check src/game.js`
+- `git diff --check`
+- `node scripts/check-version.mjs`
+- Revisão estática do fluxo 1P/2P, rolagem automática da Máquina, empate e desempate automático
+- Auditoria cruzada de README, CHANGELOG e toda a documentação em `docs/` para localizar referências às telas e ao fluxo anterior
+
 ## Sprint QE-002 — Integração do Question Engine ao Tabuleiro (v0.35.0-preview)
 
 ### Diagnóstico do Legado

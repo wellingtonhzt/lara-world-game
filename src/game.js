@@ -1694,8 +1694,12 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
     document.getElementById("draw-value-0").textContent = "-";
     document.getElementById("draw-value-1").textContent = "-";
 
-    document.getElementById("draw-player-0").classList.remove("winner");
-    document.getElementById("draw-player-1").classList.remove("winner");
+    const drawPlayer0 = document.getElementById("draw-player-0");
+    const drawPlayer1 = document.getElementById("draw-player-1");
+    drawPlayer0.className = "draw-player";
+    drawPlayer1.className = "draw-player";
+    drawPlayer0.dataset.label = "Jogador 1";
+    drawPlayer1.dataset.label = isSinglePlayer ? "Máquina" : "Jogador 2";
 
     drawState.drawWinnerIndex = null;
 
@@ -1713,6 +1717,8 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
       document.getElementById("draw-roll-btn-1").disabled = false;
     }
 
+    drawPlayer0.classList.add("active");
+
     document.getElementById("draw-overlay").classList.remove("hidden");
   }
 
@@ -1727,6 +1733,7 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
         audioManager.play('diceRoll');
         btn.disabled = true;
         btn.onclick = null;
+        document.getElementById(`draw-player-${playerIndex}`).classList.add("rolling");
         const value = Math.floor(Math.random() * 6) + 1;
         animateDrawDice(playerIndex, value).then(() => {
           audioManager.play('diceResult');
@@ -1737,6 +1744,7 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
   }
 
   async function autoBotRoll(playerIndex) {
+    document.getElementById(`draw-player-${playerIndex}`).classList.add("active");
     await delay(800);
     const value = Math.floor(Math.random() * 6) + 1;
     await animateDrawDice(playerIndex, value);
@@ -1754,6 +1762,10 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
 
     box.textContent = getDadoEmoji(valor);
     valueEl.textContent = valor;
+    document.getElementById(`draw-player-${playerIndex}`).classList.remove("rolling", "active");
+    valueEl.classList.remove("result-pop");
+    void valueEl.offsetWidth;
+    valueEl.classList.add("result-pop");
     await delay(250);
   }
 
@@ -1769,6 +1781,7 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
       if (isSinglePlayer) {
         drawState.rolls[1] = await autoBotRoll(1);
       } else {
+        document.getElementById("draw-player-1").classList.add("active");
         drawState.rolls[1] = await waitForPlayerRoll(1);
       }
 
@@ -1779,6 +1792,7 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
         document.getElementById("draw-start-btn").disabled = true;
         document.getElementById("draw-player-0").classList.remove("winner");
         document.getElementById("draw-player-1").classList.remove("winner");
+        document.getElementById("draw-overlay").classList.add("is-tie");
 
         if (tieCount >= 2) {
           const winnerIndex = Math.random() < 0.5 ? 0 : 1;
@@ -1791,6 +1805,8 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
           document.getElementById("draw-status").textContent =
             msgs[Math.floor(Math.random() * msgs.length)];
           document.getElementById(`draw-player-${winnerIndex}`).classList.add("winner");
+          document.getElementById(`draw-player-${1 - winnerIndex}`).classList.add("loser");
+          document.getElementById("draw-overlay").classList.remove("is-tie");
           document.getElementById("draw-start-btn").classList.remove("hidden");
           document.getElementById("draw-start-btn").disabled = false;
           break;
@@ -1807,6 +1823,8 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
           document.getElementById("draw-roll-btn-1").disabled = false;
         }
         await delay(1500);
+        document.getElementById("draw-overlay").classList.remove("is-tie");
+        document.getElementById("draw-player-0").classList.add("active");
         continue;
       }
 
@@ -1814,6 +1832,7 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
       drawState.drawWinnerIndex = winnerIndex;
 
       document.getElementById(`draw-player-${winnerIndex}`).classList.add("winner");
+      document.getElementById(`draw-player-${1 - winnerIndex}`).classList.add("loser");
 
       const winner = players[winnerIndex];
       document.getElementById("draw-status").textContent =
