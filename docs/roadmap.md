@@ -1,5 +1,14 @@
 # Roadmap Lara World
 
+### v0.37.0-preview — Cache Busting dos Assets de Áudio ✅
+
+- [x] `AudioManager` integrado ao `getCacheBust()` central
+- [x] Efeitos e músicas carregados por URLs versionadas antes do `fetch`
+- [x] `sounds.js` preservado com caminhos limpos
+- [x] Seis efeitos ativos; 10 assets do catálogo ainda pendentes
+- [x] Prevenção de cache antigo e respostas `404` reutilizadas após deploy
+- [ ] Cache de `AudioBuffer` permanece como melhoria futura
+
 ### Botão Flutuante "Jogar Dado" Mobile ✅
 
 - [x] `#roll-btn-float` inserido no HTML com `aria-label` e `disabled`

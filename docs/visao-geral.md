@@ -30,7 +30,14 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 - **Desktop inalterado**: botão sempre oculto acima de 840px; layout e painel original intocados
 - **Sem alteração de gameplay**: nenhuma regra, turno, probabilidade, animação, minigame ou modo de jogo foi modificado
 
-### v0.36.0-preview (Atual) — Preparação da Partida Premium ✅
+### v0.37.0-preview (Atual) — Cache Busting dos Assets de Áudio ✅
+
+- **Carregamento versionado**: o `AudioManager` acrescenta a versão central de `APP_VERSION` às URLs antes do `fetch`
+- **Catálogo desacoplado**: `sounds.js` mantém caminhos limpos; efeitos e músicas usam automaticamente `?v=v0.37.0-preview`
+- **Deploy consistente**: a nova URL evita respostas antigas ou `404` armazenados após adicionar ou substituir assets sonoros
+- **Escopo preservado**: seis efeitos ativos, 10 pendentes e nenhuma alteração de gameplay
+
+### v0.36.0-preview — Preparação da Partida Premium ✅
 
 - **Novo fluxo de entrada**: Hero Screen → Seleção de Mundo → Preparar Jogo → Quem começa? → Partida
 - **Seletor de mundos modernizado**: painel glass, ilustrações oficiais, cores temáticas, opção aleatória em destaque e bloqueios visualmente claros

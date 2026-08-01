@@ -1,4 +1,5 @@
 import { SOUNDS } from './sounds.js';
+import { getCacheBust } from '../version.js';
 
 const STORAGE_KEY = 'laraAudioConfig';
 
@@ -176,7 +177,9 @@ export class AudioManager {
   }
 
   async _decode(path) {
-    const response = await fetch(path);
+    const separator = path.includes('?') ? '&' : '?';
+    const versionedPath = `${path}${separator}${getCacheBust()}`;
+    const response = await fetch(versionedPath);
     if (!response.ok) throw new Error(`Audio not found: ${path}`);
     const arrayBuffer = await response.arrayBuffer();
     return this._ctx.decodeAudioData(arrayBuffer);

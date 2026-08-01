@@ -1,5 +1,30 @@
 # Memorial Técnico
 
+## Sprint — Cache Busting dos Assets de Áudio (v0.37.0-preview)
+
+### Problema Observado
+
+Após a publicação da segunda entrega de efeitos sonoros, a URL sem query string continuou retornando `404`, enquanto a mesma URL com uma query nova retornou `200`. O contraste confirmou a reutilização de uma resposta antiga em cache após o deploy, sem necessidade de alterar a política do servidor ou expor detalhes sensíveis da infraestrutura.
+
+### Decisão Técnica
+
+O cache busting foi centralizado em `AudioManager._decode()`, único ponto de download e decode do catálogo. O módulo importa `getCacheBust()` de `src/version.js`, cria uma URL versionada localmente e a entrega ao `fetch`. Caminhos sem query recebem `?`; caminhos que já possuem query recebem `&`.
+
+```text
+AudioManager → getCacheBust() → URL versionada → fetch → decodeAudioData
+```
+
+O catálogo `sounds.js` permanece sem versões manuais e não é mutado. A mesma regra cobre efeitos e futura música. A mudança não adiciona cache de `AudioBuffer`, preload, pooling nem altera tratamento de erros, volumes, mute ou gameplay.
+
+### Resultado
+
+- `APP_VERSION` atualizada para `v0.37.0-preview`
+- Seis efeitos existentes carregados com `?v=v0.37.0-preview`
+- Respostas antigas e `404` deixam de ser reutilizados quando a versão do projeto avança
+- Regra estabelecida: toda entrega que alterar assets públicos de áudio deve atualizar `APP_VERSION`
+
+---
+
 ## Sprint UX-MOBILE — Botão Flutuante "Jogar Dado" no Mobile
 
 ### Objetivo

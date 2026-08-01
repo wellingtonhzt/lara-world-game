@@ -34,8 +34,8 @@ O sistema de áudio do Lara World foi projetado para ser centralizado, resilient
 ### 2.2 Fluxo de Reprodução
 
 1. **Registro**: `init()` percorre o catálogo `sounds.js` e registra cada entrada em `this._sounds`
-2. **Play**: `play(key)` busca a entrada → verifica `muted` → verifica `category === 'effects'` → cria `AudioContext` (lazy) → faz fetch do arquivo → decodifica → conecta ao `effectsGain` → inicia
-3. **Music**: `playMusic(key)` mesma lógica, mas usa `musicGain`, faz `loop = true`, e para a música anterior automaticamente
+2. **Play**: `play(key)` busca a entrada → verifica `muted` → verifica `category === 'effects'` → cria `AudioContext` (lazy) → adiciona a versão à URL → faz fetch do arquivo → decodifica → conecta ao `effectsGain` → inicia
+3. **Music**: `playMusic(key)` usa o mesmo carregamento versionado, mas conecta ao `musicGain`, faz `loop = true`, e para a música anterior automaticamente
 4. **Erro**: qualquer falha (arquivo não encontrado, decode error, AudioContext suspenso) é silenciosamente ignorada — o jogo nunca quebra por áudio
 
 ### 2.3 Persistência
@@ -71,6 +71,21 @@ A primeira e a segunda entregas somam seis dos 16 assets WebM do catálogo, todo
 | Segunda | `wrongAnswer` | `assets/audio/quiz/wrong.webm` |
 
 As outras 10 entradas do catálogo continuam sem arquivo físico correspondente e permanecem cobertas pela degradação graciosa descrita acima.
+
+### 2.7 Cache Busting Automático
+
+O `AudioManager` importa `getCacheBust()` de `src/version.js` e acrescenta sua saída à URL imediatamente antes do `fetch`. Com `APP_VERSION = 'v0.37.0-preview'`, por exemplo:
+
+```text
+assets/audio/quiz/challenge.webm
+→ assets/audio/quiz/challenge.webm?v=v0.37.0-preview
+```
+
+Se o caminho já tiver query string, a versão é anexada com `&`. O catálogo `sounds.js` continua armazenando somente caminhos limpos, sem conhecer a versão. Efeitos e músicas passam pelo mesmo `_decode()` e, portanto, recebem o mesmo cache busting.
+
+Esse mecanismo evita reutilizar respostas antigas — inclusive `404` armazenados — após um deploy. Ele não é cache de `AudioBuffer`: cada reprodução continua seguindo a estratégia de download e decode descrita nas limitações atuais.
+
+> Toda entrega que adicionar, remover ou substituir assets públicos de áudio deve atualizar `APP_VERSION`.
 
 ---
 

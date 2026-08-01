@@ -18,7 +18,8 @@
 
 | Versão | Data | Status |
 |--------|------|--------|
-| **v0.36.0-preview** | Jul/2026 | ✅ **Ativo** — Preparação da Partida Premium |
+| **v0.37.0-preview** | Ago/2026 | ✅ **Ativo** — Cache busting dos assets de áudio |
+| v0.36.0-preview | Jul/2026 | ✅ Preparação da Partida Premium |
 | v0.35.0-preview | Jul/2026 | ✅ Question Engine |
 | v0.34.0-preview | Jul/2026 | ✅ Tela de Vitória Premium |
 | v0.33.0-preview | Jul/2026 | ✅ Board Alive |
@@ -62,7 +63,13 @@ As ações da partida são narradas por um overlay temporário sobre o tabuleiro
 
 ---
 
-## ✨ Funcionalidades Atuais (v0.36.0-preview)
+## ✨ Funcionalidades Atuais (v0.37.0-preview)
+
+### Cache busting dos assets de áudio ✅
+
+- **Carregamento versionado**: o `AudioManager` acrescenta automaticamente `?v=v0.37.0-preview` às URLs de efeitos e músicas antes do download
+- **Fonte única**: a versão vem de `APP_VERSION`; o catálogo mantém caminhos limpos e independentes da versão
+- **Cache antigo evitado**: novas versões deixam de reutilizar respostas antigas ou `404` armazenados após o deploy
 
 ### Botão Flutuante "Jogar Dado" no Mobile ✅
 
@@ -555,7 +562,7 @@ No Jogo Rápido, a seleção define o mundo; “Preparar Jogo” configura modo,
 
 ## 📜 História do Projeto
 
-O Lara World começou como um MVP de tabuleiro simples para 1 jogador e evoluiu para multiplayer local, mundos configuráveis, minigames, Question Engine, Modo Arcade e uma identidade visual própria. A versão atual, **v0.36.0-preview**, consolida a experiência inicial em cinco etapas — Hero Screen, Seleção de Mundo, Preparar Jogo, Quem começa? e Partida — sem alterar as regras do tabuleiro. Consulte o [Changelog](CHANGELOG.md) para o histórico completo e o [Guia de Estilo](docs/ui-style-guide.md) para as diretrizes visuais oficiais.
+O Lara World começou como um MVP de tabuleiro simples para 1 jogador e evoluiu para multiplayer local, mundos configuráveis, minigames, Question Engine, Modo Arcade e uma identidade visual própria. A versão atual, **v0.37.0-preview**, adiciona carregamento versionado aos assets sonoros, preservando a experiência consolidada de Hero Screen, Seleção de Mundo, Preparar Jogo, Quem começa? e Partida. Consulte o [Changelog](CHANGELOG.md) para o histórico completo e o [Guia de Estilo](docs/ui-style-guide.md) para as diretrizes visuais oficiais.
 
 ---
 
@@ -615,7 +622,8 @@ docker compose down
 ## 🗺️ Roadmap
 
 - **Botão Flutuante Mobile** — ✅ **Concluído** — Botão "Jogar Dado" flutuante sincronizado para mobile
-- **v0.36.0-preview** — ✅ **Ativo** — Preparação da Partida Premium
+- **v0.37.0-preview** — ✅ **Ativo** — Cache busting dos assets de áudio
+- **v0.36.0-preview** — ✅ Preparação da Partida Premium
 - **v0.35.0-preview** — ✅ Question Engine
 - **v0.34.0-preview** — ✅ Tela de Vitória Premium
 - **v0.33.0-preview** — ✅ Board Alive

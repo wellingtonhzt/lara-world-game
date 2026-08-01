@@ -3,8 +3,6 @@
 ## [Unreleased]
 
 ### Adicionado
-- **Efeitos sonoros de desafios**: abertura de desafios, respostas corretas e respostas incorretas
-- **Primeira leva de efeitos sonoros**: clique de interface, rolagem do dado e resultado do dado
 - **Botão flutuante "Jogar Dado" no mobile**: novo `#roll-btn-float` sincronizado com `#roll-btn` original, visível apenas em telas ≤840px durante partidas ativas. Soluciona o problema deUX onde o jogador precisava rolar para baixo para tocar no botão e para cima para assistir à ação
 
 ### Alterado
@@ -15,6 +13,20 @@
 ### Notas
 - Nenhuma regra do jogo, lógica de turno, comportamento da Máquina, mecânica de dados, animações existentes, minigames ou layout desktop foram alterados
 - Botão reutiliza o clique original `#roll-btn.click()` — sem lógica duplicada
+
+## [0.37.0-preview] - 2026-08-01
+
+### Adicionado
+- **Primeira leva de efeitos sonoros**: clique de interface, rolagem do dado e resultado do dado
+- **Efeitos sonoros de desafios**: abertura de desafios, respostas corretas e respostas incorretas
+
+### Alterado
+- **Cache busting automático de áudio**: `AudioManager` usa `getCacheBust()` e `APP_VERSION` para versionar todas as URLs antes do `fetch`
+- **Seis efeitos ativos**: interface, dados e quiz são carregados com `?v=v0.37.0-preview`, mantendo caminhos limpos em `sounds.js`
+- **Deploy resiliente a cache antigo**: a nova query evita reutilizar respostas anteriores, inclusive `404` armazenados pelo navegador ou CDN
+
+### Notas
+- Nenhuma regra de gameplay, integração sonora, configuração de volume ou arquivo de áudio foi alterado
 
 ## [0.36.0-preview] - 2026-07-15
 
