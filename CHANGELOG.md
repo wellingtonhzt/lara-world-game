@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Adicionado
+- **Primeira leva de efeitos sonoros**: clique de interface, rolagem do dado e resultado do dado
 - **Botão flutuante "Jogar Dado" no mobile**: novo `#roll-btn-float` sincronizado com `#roll-btn` original, visível apenas em telas ≤840px durante partidas ativas. Soluciona o problema deUX onde o jogador precisava rolar para baixo para tocar no botão e para cima para assistir à ação
 
 ### Alterado

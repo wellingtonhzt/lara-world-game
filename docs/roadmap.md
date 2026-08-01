@@ -453,7 +453,7 @@
 
 ### 🎯 Próximas Prioridades
 
-- **Assets de áudio .webm** — produzir/baixar todos os 16 sons do catálogo (atualmente todos pendentes)
+- **Assets de áudio .webm** — primeira leva concluída com `buttonClick`, `diceRoll` e `diceResult`; os outros 13 sons do catálogo permanecem pendentes
 - **Integração de música ambiente** — chamar `audioManager.playMusic('backgroundMusic')` em `game.js`
 - **Integração de sons de modal** — conectar `modalOpen`/`modalClose` nas aberturas/fechamentos
 - **Integração de treasure e gameOver** — conectar sons pendentes do catálogo

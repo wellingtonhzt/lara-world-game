@@ -57,6 +57,18 @@ Navegadores bloqueiam `AudioContext` até a primeira interação do usuário. O 
 
 Se o arquivo de áudio não existir no servidor, `fetch()` retorna 404 → `_decode()` lança erro → o catch silencia. O jogo continua funcionando normalmente. Isso permite cadastrar sons no catálogo antes mesmo dos assets estarem prontos.
 
+### 2.6 Assets Ativos
+
+A primeira leva de efeitos sonoros possui três assets WebM ativos e integrados:
+
+| Chave | Caminho |
+|-------|---------|
+| `buttonClick` | `assets/audio/ui/click.webm` |
+| `diceRoll` | `assets/audio/dice/roll.webm` |
+| `diceResult` | `assets/audio/dice/result.webm` |
+
+As outras 13 entradas do catálogo continuam sem arquivo físico correspondente e permanecem cobertas pela degradação graciosa descrita acima.
+
 ---
 
 ## 3. Estrutura de Diretórios
