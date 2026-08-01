@@ -175,7 +175,7 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 - **21 pontos de integração**: cliques, dados, movimento, casas especiais, desafios e vitória com chamadas a `audioManager.play()`
 - **Volumes independentes** (mestre, música, efeitos) com persistência automática em `localStorage`
 - **Mute com persistência**: estado salvo entre sessões
-- **Assets de áudio**: primeira leva ativa com `buttonClick`, `diceRoll` e `diceResult`; as outras 13 entradas do catálogo permanecem sem arquivo físico
+- **Assets de áudio**: seis efeitos ativos e testados (`buttonClick`, `diceRoll`, `diceResult`, `challengeOpen`, `correctAnswer`, `wrongAnswer`); as outras 10 entradas do catálogo permanecem sem arquivo físico
 - **Degradação graciosa**: qualquer falha de áudio é silenciosamente ignorada
 
 ### v0.12.0-preview — Board Layout 2.0 + Hero Screen ✅

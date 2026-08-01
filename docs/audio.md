@@ -59,15 +59,18 @@ Se o arquivo de áudio não existir no servidor, `fetch()` retorna 404 → `_dec
 
 ### 2.6 Assets Ativos
 
-A primeira leva de efeitos sonoros possui três assets WebM ativos e integrados:
+A primeira e a segunda entregas somam seis dos 16 assets WebM do catálogo, todos ativos, integrados e testados no jogo:
 
-| Chave | Caminho |
-|-------|---------|
-| `buttonClick` | `assets/audio/ui/click.webm` |
-| `diceRoll` | `assets/audio/dice/roll.webm` |
-| `diceResult` | `assets/audio/dice/result.webm` |
+| Entrega | Chave | Caminho |
+|---------|-------|---------|
+| Primeira | `buttonClick` | `assets/audio/ui/click.webm` |
+| Primeira | `diceRoll` | `assets/audio/dice/roll.webm` |
+| Primeira | `diceResult` | `assets/audio/dice/result.webm` |
+| Segunda | `challengeOpen` | `assets/audio/quiz/challenge.webm` |
+| Segunda | `correctAnswer` | `assets/audio/quiz/correct.webm` |
+| Segunda | `wrongAnswer` | `assets/audio/quiz/wrong.webm` |
 
-As outras 13 entradas do catálogo continuam sem arquivo físico correspondente e permanecem cobertas pela degradação graciosa descrita acima.
+As outras 10 entradas do catálogo continuam sem arquivo físico correspondente e permanecem cobertas pela degradação graciosa descrita acima.
 
 ---
 
