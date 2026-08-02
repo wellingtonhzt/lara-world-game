@@ -86,11 +86,11 @@ As quatro entradas restantes — `modalOpen`, `modalClose`, `treasure` e `gameOv
 
 ### 2.8 Cache Busting Automático
 
-O `AudioManager` importa `getCacheBust()` de `src/version.js` e acrescenta sua saída à URL imediatamente antes do `fetch`. Com `APP_VERSION = 'v0.40.0-preview'`, por exemplo:
+O `AudioManager` importa `getCacheBust()` de `src/version.js` e acrescenta sua saída à URL imediatamente antes do `fetch`. Com `APP_VERSION = 'v0.41.0-preview'`, por exemplo:
 
 ```text
 assets/audio/quiz/challenge.webm
-→ assets/audio/quiz/challenge.webm?v=v0.40.0-preview
+→ assets/audio/quiz/challenge.webm?v=v0.41.0-preview
 ```
 
 Se o caminho já tiver query string, a versão é anexada com `&`. O catálogo `sounds.js` continua armazenando somente caminhos limpos, sem conhecer a versão. Efeitos e músicas passam pelo mesmo `_decode()` e, portanto, recebem o mesmo cache busting.

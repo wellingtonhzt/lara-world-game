@@ -2,7 +2,7 @@
 
 ## Visão geral
 
-O Modo Aventura conecta os cinco mundos do Lara World em uma campanha única. A funcionalidade está implementada e testada na branch `feat/modo-aventura`, mas ainda não foi integrada à `main`, publicada na demonstração online ou incluída em uma nova versão.
+O Modo Aventura conecta os cinco mundos do Lara World em uma campanha única e integra a release `v0.41.0-preview`. O deploy e a validação da demonstração online são etapas posteriores.
 
 O objetivo é completar toda a campanha, acumular pontos e terminar com a maior pontuação. Diferentemente do Jogo Rápido, a conclusão de um mundo não encerra a sessão: o resultado é registrado, o mapa é atualizado e o próximo mundo é liberado.
 
@@ -138,13 +138,13 @@ A cobertura da funcionalidade inclui:
 - Temas musicais por mundo.
 - Métricas proporcionais para minigames com formatos diferentes.
 - Refinamento do balanceamento com dados de partidas reais.
-- Investigar referências `assets/worlds/floresta/path.webp` e `assets/worlds/dinossauros/path.webp`, que podem estar ausentes ou obsoletas.
+- Texturas `path.webp` permanecem como evolução visual futura; referências ativas a arquivos inexistentes foram removidas e os fallbacks sólidos continuam em uso.
 - Acompanhar um teste intermitente do Question Engine.
 - Corrigir três falhas preexistentes do Ocean Match-3 nos testes de simulação de vitória, conclusão e tempo.
 
 ## Estado de entrega
 
-- Implementação e testes: concluídos na branch `feat/modo-aventura`.
-- Integração na `main`: pendente.
-- Atualização de versão, tag e deploy: pendentes.
-- Disponibilidade na demo pública: não anunciada.
+- Implementação, testes e release `v0.41.0-preview`: concluídos.
+- Integração na `main`: concluída pela release.
+- Tag: não criada, pois não é exigida pelo processo atual.
+- Deploy e validação da demo pública: pendentes.

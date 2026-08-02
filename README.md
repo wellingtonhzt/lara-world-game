@@ -18,7 +18,8 @@
 
 | Versão | Data | Status |
 |--------|------|--------|
-| **v0.40.0-preview** | Ago/2026 | ✅ **Ativo** — Música de fundo global no tabuleiro |
+| **v0.41.0-preview** | Ago/2026 | ✅ **Ativo** — Modo Aventura |
+| v0.40.0-preview | Ago/2026 | ✅ Música de fundo global no tabuleiro |
 | v0.39.0-preview | Ago/2026 | ✅ Controle global de som |
 | v0.38.0-preview | Ago/2026 | ✅ Sons de tabuleiro e cache de buffers |
 | v0.37.0-preview | Ago/2026 | ✅ Cache busting dos assets de áudio |
@@ -66,9 +67,9 @@ As ações da partida são narradas por um overlay temporário sobre o tabuleiro
 
 ---
 
-## ✨ Funcionalidades Atuais (v0.40.0-preview)
+## ✨ Funcionalidades Atuais (v0.41.0-preview)
 
-### 🗺️ Modo Aventura — disponível na branch `feat/modo-aventura`
+### 🗺️ Modo Aventura
 
 Percorra os cinco mundos em uma campanha contínua, acumule pontos em desafios, minigames e vitórias, e tente zerar o Lara World.
 
@@ -78,7 +79,7 @@ Percorra os cinco mundos em uma campanha contínua, acumule pontos em desafios, 
 - Mapa ilustrado responsivo para desktop e mobile
 - Estado separado do Jogo Rápido, com proteção contra eventos duplicados
 
-No **Jogo Rápido**, cada partida usa um mundo escolhido e termina com sua vitória. No **Modo Aventura**, os cinco mundos formam uma única campanha e a pontuação continua entre eles. A funcionalidade ainda não está anunciada como disponível na demo pública ou na `main`.
+No **Jogo Rápido**, cada partida usa um mundo escolhido e termina com sua vitória. No **Modo Aventura**, os cinco mundos formam uma única campanha e a pontuação continua entre eles. O deploy da demo para esta release será realizado posteriormente.
 
 [Leia a documentação completa do Modo Aventura](docs/modo-aventura.md).
 
@@ -101,11 +102,11 @@ No **Jogo Rápido**, cada partida usa um mundo escolhido e termina com sua vitó
 
 - **Cinco novos efeitos**: movimento, avanço especial, retrocesso especial, entrada em minigame e vitória
 - **Reprodução eficiente**: buffers decodificados são reutilizados e carregamentos simultâneos do mesmo asset compartilham uma única operação
-- **Cache busting atualizado**: os assets usam URLs com `?v=v0.40.0-preview`
+- **Cache busting atualizado**: os assets usam URLs com `?v=v0.41.0-preview`
 
 ### Cache busting dos assets de áudio ✅
 
-- **Carregamento versionado**: o `AudioManager` acrescenta automaticamente `?v=v0.40.0-preview` às URLs de efeitos e músicas antes do download
+- **Carregamento versionado**: o `AudioManager` acrescenta automaticamente `?v=v0.41.0-preview` às URLs de efeitos e músicas antes do download
 - **Fonte única**: a versão vem de `APP_VERSION`; o catálogo mantém caminhos limpos e independentes da versão
 - **Cache antigo evitado**: novas versões deixam de reutilizar respostas antigas ou `404` armazenados após o deploy
 
@@ -252,7 +253,7 @@ Documentação detalhada em [docs/audio.md](docs/audio.md).
 - **Fundo temático** — `menu-background.webp` (opacity 0.50) sobre 7 gradientes radiais via `::before`, shapes flutuantes e sparkles animados ✦
 - **Card central translúcido** — `.menu-content` com gradiente rosado/creme/azulado, `backdrop-filter: blur(24px)`, borda branca 3px, glow rosa e sombra multicamadas
 - **⚡ Jogo Rápido** — card/botão principal com glow pulsante, gradiente pink escuro, sombra 3D e subtítulo descritivo
-- **🗺️ Modo Aventura** — campanha dos cinco mundos, funcional na branch `feat/modo-aventura` e ainda não publicada na demo
+- **🗺️ Modo Aventura** — campanha contínua dos cinco mundos com pontuação acumulada
 - **Ilustração Lara removida** — o elemento decorativo sobreposto ao card foi removido para simplificar a composição
 - **Decorações animadas** — formas flutuantes abstratas (`.menu-bg-shapes`) com animação `menu-float` e sparkles (`.menu-sparkles`) com animação `sparkle-drift`
 - **Assets UI** — `src/assets/ui/` com `logo-lara-world.webp` (ativo), `lara-hero.webp` e `menu-background.webp`
@@ -318,7 +319,7 @@ Documentação detalhada em [docs/audio.md](docs/audio.md).
 - **Fundo temático** — 7 gradientes radiais + `menu-background.webp` (opacity 0.50) via `::before`, shapes flutuantes e sparkles animados
 - **Card central translúcido** — `.menu-content` com gradiente rosado/creme/azulado, `backdrop-filter: blur(24px)`, borda branca 3px, glow rosa e sombra multicamadas
 - **⚡ Jogo Rápido** — card/botão principal com glow pulsante, gradiente pink escuro, sombra 3D e subtítulo "Partida rápida e divertida"
-- **🗺️ Modo Aventura** — card de campanha habilitado na branch `feat/modo-aventura`; publicação na `main` e na demo ainda pendente
+- **🗺️ Modo Aventura** — card de campanha habilitado; deploy da demo pendente
 - **Decorações CSS** — formas flutuantes abstratas (`.menu-bg-shapes`) e sparkles animados (`✦`)
 - **Rodapé** — versão lida de `APP_VERSION` (src/version.js) exibida na parte inferior
 
@@ -606,7 +607,7 @@ No Modo Aventura, o fluxo parte do mapa inicial, passa por um único sorteio e p
 
 ## 📜 História do Projeto
 
-O Lara World começou como um MVP de tabuleiro simples para 1 jogador e evoluiu para multiplayer local, mundos configuráveis, minigames, Question Engine, Modo Arcade e uma identidade visual própria. A versão atual, **v0.40.0-preview**, adiciona uma música de fundo global às partidas no tabuleiro, com transporte seguro, pausa nos minigames e integração ao mute. Consulte o [Changelog](CHANGELOG.md) para o histórico completo e o [Guia de Estilo](docs/ui-style-guide.md) para as diretrizes visuais oficiais.
+O Lara World começou como um MVP de tabuleiro simples para 1 jogador e evoluiu para multiplayer local, mundos configuráveis, minigames, Question Engine, Modo Arcade e uma identidade visual própria. A versão atual, **v0.41.0-preview**, conecta os cinco mundos no Modo Aventura, com pontuação acumulada, mapas responsivos e resultados por etapa. Consulte o [Changelog](CHANGELOG.md) para o histórico completo e o [Guia de Estilo](docs/ui-style-guide.md) para as diretrizes visuais oficiais.
 
 ---
 
@@ -665,9 +666,9 @@ docker compose down
 
 ## 🗺️ Roadmap
 
-- **Modo Aventura** — ✅ Implementado e testado na branch; merge, versão e deploy pendentes
+- **v0.41.0-preview** — ✅ **Ativo** — Modo Aventura; deploy pendente
 - **Botão Flutuante Mobile** — ✅ **Concluído** — Botão "Jogar Dado" flutuante sincronizado para mobile
-- **v0.40.0-preview** — ✅ **Ativo** — Música de fundo global no tabuleiro
+- **v0.40.0-preview** — ✅ Música de fundo global no tabuleiro
 - **v0.39.0-preview** — ✅ Controle global de som
 - **v0.38.0-preview** — ✅ Sons de tabuleiro e cache de buffers
 - **v0.37.0-preview** — ✅ Cache busting dos assets de áudio

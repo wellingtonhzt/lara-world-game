@@ -216,7 +216,7 @@ Estrutura semântica dividida em:
   - Card central translúcido (`.menu-content`) com gradiente rosado/creme/azulado, `backdrop-filter: blur(24px)`, borda branca 3px e glow rosa
   - Logo oficial (`.menu-brand`) com `<img class="menu-brand-logo" src="assets/ui/logo-lara-world.webp">` + `<span class="menu-brand-fallback">` como fallback textual — substitui a antiga estrutura `.menu-logo` com emoji 🌍 + gradiente
   - Ilustração Lara removida do card central (antigo `.menu-lara-hero`) — composição simplificada
-  - Três entradas de jogo: "⚡ Jogo Rápido", "🗺️ Modo Aventura" e "🎮 Modo Arcade"; a aventura está funcional na branch e ainda não publicada na `main`
+  - Três entradas de jogo: "⚡ Jogo Rápido", "🗺️ Modo Aventura" e "🎮 Modo Arcade"
   - Footer com versão lida de `APP_VERSION` (src/version.js)
   - Escondido quando uma partida é iniciada; reexibido via "Voltar ao Menu"
 - **Setup Screen — “Preparar Jogo”** (`#setup-screen`):

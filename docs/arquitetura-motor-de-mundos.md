@@ -1,6 +1,6 @@
 # Arquitetura do Motor de Mundos — Lara World
 
-> **Nota de estado:** este documento preserva o desenho conceitual original do motor, inclusive referências históricas a “Modo Carreira”. A implementação atual adotou o nome **Modo Aventura** e módulos próprios em `src/adventure/`; consulte [Modo Aventura](./modo-aventura.md) para o contrato efetivamente implementado na branch `feat/modo-aventura`.
+> **Nota de estado:** este documento preserva o desenho conceitual original do motor, inclusive referências históricas a “Modo Carreira”. A implementação atual adotou o nome **Modo Aventura** e módulos próprios em `src/adventure/`; consulte [Modo Aventura](./modo-aventura.md) para o contrato implementado em `v0.41.0-preview`.
 
 > **Documento oficial de arquitetura**
 > Aprovado nas sprints A0 e A0.1

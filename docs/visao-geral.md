@@ -18,11 +18,11 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 
 ## Principais Funcionalidades
 
-### Modo Aventura — concluído na branch, publicação pendente
+### v0.41.0-preview (Atual) — Modo Aventura ✅
 
 O Modo Aventura conecta Floresta, Dinossauros, Galáxia, Oceanos e Castelo em uma campanha contínua. Ele oferece pontuação acumulada, alternância fixa de quem começa, mapa responsivo, resultados intermediários e resultado final para humano/humano ou humano/Máquina. A campanha não persiste após recarregar a página.
 
-Esta funcionalidade está implementada e testada em `feat/modo-aventura`, mas ainda não pertence à `main` nem à demo pública. Consulte [Modo Aventura](./modo-aventura.md).
+Esta funcionalidade integra a release `v0.41.0-preview`; o deploy da demo será realizado posteriormente. Consulte [Modo Aventura](./modo-aventura.md).
 
 ### Modos de jogo
 
@@ -32,7 +32,7 @@ Esta funcionalidade está implementada e testada em `feat/modo-aventura`, mas ai
 | Modo Aventura | Mapa → setup → sorteio → cinco mundos → resultado final | Pontuação e resultados acumulados durante a campanha. |
 | Modo Arcade | Galeria → minigame isolado → retorno à galeria | Sem tabuleiro, campanha ou pontuação da aventura. |
 
-### v0.40.0-preview (Atual) — Música de Fundo Global ✅
+### v0.40.0-preview — Música de Fundo Global ✅
 
 - **Trilha do tabuleiro**: “Gunma-chan Gambol”, de Yubatake, inicia após ação válida e toca em loop durante a partida
 - **Transporte resiliente**: pré-carregamento, proteção contra duplicação, cancelamento de loads obsoletos e descarte seguro de sources
@@ -270,7 +270,7 @@ Esta funcionalidade está implementada e testada em `feat/modo-aventura`, mas ai
 
 - **Menu Inicial** (`#main-menu`) — tela inicial com título e dois botões
 - **⚡ Jogo Rápido** — inicia partida single player com configuração simplificada
-- **🗺️ Modo Aventura** — campanha dos cinco mundos, funcional na branch de desenvolvimento e ainda não publicada
+- **🗺️ Modo Aventura** — campanha dos cinco mundos com pontuação e resultados acumulados
 - **Tela de vitória com duas saídas** — "🔁 Jogar Novamente" (mesmo modo) e "🏠 Voltar ao Menu"
 - **`modoJogo`** — variável de estado que controla o modo de jogo atual
 - **`resetGameState()`** — função extraída para resetar estado sem exibir setup

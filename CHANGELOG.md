@@ -1,9 +1,9 @@
 # Changelog
 
-## [Unreleased]
+## [0.41.0-preview] - 2026-08-02
 
 ### Adicionado
-- **Modo Aventura (branch `feat/modo-aventura`)**: campanha contínua pelos cinco mundos, com modos humano/humano e humano/Máquina, alternância de quem começa e resultado final
+- **Modo Aventura**: campanha contínua pelos cinco mundos, com modos humano/humano e humano/Máquina, alternância de quem começa e resultado final
 - **Pontuação acumulada da campanha**: respostas corretas, minigames vencidos e vitórias de mundo geram eventos idempotentes, snapshots e breakdown por participante
 - **Mapa responsivo da aventura**: paisagens próprias para desktop e mobile, trilha SVG, destinos concluídos/atual/bloqueados, sprites oficiais e placar acumulado
 - **Documentação técnica do modo**: fluxo, regras, arquitetura, interface, áudio, persistência e limitações em `docs/modo-aventura.md`
@@ -12,12 +12,13 @@
 ### Alterado
 - **Telas da jornada**: setup, conclusão de mundo, mapa intermediário e resultado final compartilham hierarquia de ações, responsividade, foco visível e suporte a teclado
 - **Proteção do fluxo**: callbacks antigos e eventos duplicados não alteram mundos posteriores; o estado da aventura permanece separado do estado do tabuleiro
+- **Assets de caminho**: referências obsoletas a `path.webp` inexistentes foram removidas; os strokes e patterns sólidos continuam como fallback visual
 - **`src/index.html`**: novo `<button id="roll-btn-float">` inserido após `</main>`, reutilizando o listener `#roll-btn` via delegação
 - **`src/style.css`**: `.roll-float-btn` fixo na parte inferior central, `z-index: 100`, gradiente laranja→vermelho, `env(safe-area-inset-bottom)`, `.game-active` para visibilidade condicional, `prefers-reduced-motion`, `.panel-area` padding-bottom 100px para mobile
 - **`src/game.js`**: cache `rollBtnFloat`, `MutationObserver` em `#roll-btn.disabled`, `showFloatingRollBtn()`/`hideFloatingRollBtn()` via `.game-active` em `#app`, `scrollIntoView` com `prefers-reduced-motion` em `#track-container`, hooks em `continueAfterDraw()` e `showMainMenu()`
 
 ### Notas
-- O Modo Aventura está funcional e testado na branch, mas ainda não foi integrado à `main`, versionado ou publicado na demo
+- O Modo Aventura integra a release `v0.41.0-preview`; o deploy da demo permanece como etapa posterior
 - A campanha não persiste após recarregar a página
 - Nenhuma regra do jogo, lógica de turno, comportamento da Máquina, mecânica de dados, animações existentes, minigames ou layout desktop foram alterados
 - Botão reutiliza o clique original `#roll-btn.click()` — sem lógica duplicada
