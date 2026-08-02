@@ -12,6 +12,14 @@ import { initTutorialScreen, showTutorialScreen, hideTutorialScreen, hasSeenTuto
 import { QuestionEngine } from './data/questions/index.js';
 import { APP_VERSION } from './version.js';
 import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURATIONS } from './ui/game-event-overlay.js';
+import {
+  GAME_MODES,
+  StaleWorldOperationError,
+  createAdventureRuntime,
+  isAdventureGame,
+  isQuickGame,
+  toAdventureParticipants,
+} from './adventure/adventure-runtime.js';
 
 (function () {
   const TOTAL_CASAS = 20;
@@ -19,8 +27,8 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
 
   /* ── Players ── */
   const players = [
-    { id: 1, name: 'Lara', emoji: '🧒', posicao: 0, rodadasPerdidas: 0, element: null, isBot: false, tokenId: 'lara' },
-    { id: 2, name: 'Amigo', emoji: '🧑', posicao: 0, rodadasPerdidas: 0, element: null, isBot: false, tokenId: 'leo' },
+    { id: 1, slot: 0, name: 'Lara', emoji: '🧒', posicao: 0, rodadasPerdidas: 0, element: null, isBot: false, tokenId: 'lara' },
+    { id: 2, slot: 1, name: 'Amigo', emoji: '🧑', posicao: 0, rodadasPerdidas: 0, element: null, isBot: false, tokenId: 'leo' },
   ];
 
   const gameState = {
@@ -44,6 +52,35 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
   let drawState = { rolls: [null, null], drawWinnerIndex: null, isTie: false, tieCount: 0 };
   const victoryMetrics = { gameStartedAt: null, totalRolls: 0 };
   let focusBeforeVictory = null;
+  const adventureRuntime = createAdventureRuntime({ resolveWorld: get });
+
+  function isQuickGameSession() {
+    return isQuickGame(modoJogo);
+  }
+
+  function isAdventureGameSession() {
+    return isAdventureGame(modoJogo);
+  }
+
+  function isBoardGameSession() {
+    return isQuickGameSession() || isAdventureGameSession();
+  }
+
+  function getWorldOperationToken() {
+    return isAdventureGameSession() ? adventureRuntime.getCurrentWorld()?.worldRunId ?? null : null;
+  }
+
+  function isWorldOperationCurrent(worldRunId) {
+    return !isAdventureGameSession() || adventureRuntime.isCurrentWorldRun(worldRunId);
+  }
+
+  function assertWorldOperationCurrent(worldRunId) {
+    if (isAdventureGameSession()) adventureRuntime.assertCurrentWorldRun(worldRunId);
+  }
+
+  function createSubworldEntryState() {
+    return Object.fromEntries(players.map(player => [player.id, null]));
+  }
 
   /* ── Subworld config map ── */
 
@@ -499,8 +536,8 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
 
     players.forEach(other => {
       if (other.id !== p.id && other.posicao === casaNumero) {
-        offsetX = p.id === 1 ? -12 : 12;
-        offsetY = p.id === 1 ? -8 : 8;
+        offsetX = p.slot === 0 ? -12 : 12;
+        offsetY = p.slot === 0 ? -8 : 8;
       }
     });
 
@@ -514,6 +551,7 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
 
   async function animatePlayerMovement(from, to, customPlayer) {
     if (from === to) return;
+    const worldRunId = getWorldOperationToken();
 
     const step = from < to ? 1 : -1;
     const positions = [];
@@ -526,6 +564,7 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
     let previousCell = null;
 
     for (const pos of positions) {
+      assertWorldOperationCurrent(worldRunId);
       if (pos >= 1 && pos <= getTotalCasas()) {
         const cell = document.getElementById(`casa-${pos}`);
         previousCell?.classList.remove('casa-percorrida');
@@ -538,6 +577,7 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
         audioManager.play('playerMove');
       }
       await delay(180);
+      assertWorldOperationCurrent(worldRunId);
     }
 
     previousCell?.classList.remove('casa-percorrida');
@@ -1101,9 +1141,7 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
 
   async function handleVictory() {
     clearGameEvents();
-    if (botTurnTimer) clearTimeout(botTurnTimer);
-    botTurnTimer = null;
-    botTurnScheduled = false;
+    cancelBotTurn();
     audioManager.stopMusic();
     audioManager.play('victory');
     const player = getCurrentPlayer();
@@ -1120,6 +1158,11 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
     el.classList.add("animar-vitoria");
 
     addHistory(`🎉🎉 PARABÉNS, ${player.name} venceu! 🎉🎉`, "vitoria");
+
+    if (isAdventureGameSession()) {
+      const completion = adventureRuntime.completeWorld({ winnerId: player.slot === 0 ? 'p1' : 'p2' });
+      return completion;
+    }
 
     updateVictoryScreen(player);
     showVictoryScreen();
@@ -1140,13 +1183,16 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
     if (p.isBot && gameState.jogoAtivo && !gameState.jogoFinalizado && !botTurnScheduled) {
       botTurnScheduled = true;
       elements.rollBtn.disabled = true;
-      botTurnTimer = setTimeout(async () => {
+      const runBotTurn = async () => {
         botTurnTimer = null;
         botTurnScheduled = false;
         if (getCurrentPlayer().isBot && gameState.jogoAtivo && !gameState.jogoFinalizado) {
           await jogarDado();
         }
-      }, 1000);
+      };
+      botTurnTimer = isAdventureGameSession()
+        ? adventureRuntime.scheduleBotForCurrentWorld(runBotTurn, 1000)
+        : setTimeout(runBotTurn, 1000);
     }
   }
 
@@ -1232,6 +1278,10 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
     try {
       extraTurn = await processSpecialCell(target);
     } catch (err) {
+      if (err instanceof StaleWorldOperationError) {
+        gameState.isMoving = false;
+        return;
+      }
       console.error('[JOGAR] processSpecialCell error:', err);
       extraTurn = false;
     }
@@ -1268,19 +1318,24 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
 
   /* ── Reset ── */
 
-  function resetGameState() {
-    clearGameEvents();
+  function cancelBotTurn() {
     if (botTurnTimer) clearTimeout(botTurnTimer);
+    adventureRuntime.cancelBotTimer();
     botTurnTimer = null;
     botTurnScheduled = false;
+  }
+
+  function resetCurrentWorldState({ starterIndex = 0 } = {}) {
+    clearGameEvents();
+    cancelBotTurn();
     players.forEach(p => { p.posicao = 0; p.rodadasPerdidas = 0; });
-    gameState.currentPlayerIndex = 0;
+    gameState.currentPlayerIndex = starterIndex;
     gameState.jogoAtivo = true;
     gameState.jogoFinalizado = false;
     gameState.isMoving = false;
     gameState.usedQuestionIds.clear();
     gameState.activeSubworldId = null;
-    gameState.subworldEntry = { 1: null, 2: null };
+    gameState.subworldEntry = createSubworldEntryState();
     gameState.entrouNoPortal = false;
     victoryMetrics.gameStartedAt = null;
     victoryMetrics.totalRolls = 0;
@@ -1301,6 +1356,10 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
     clearHistory();
     elements.rollBtn.disabled = false;
     document.getElementById("world-indicator").classList.add("hidden");
+  }
+
+  function resetGameState() {
+    resetCurrentWorldState();
   }
 
   function reiniciarJogo() {
@@ -1363,9 +1422,8 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
   function showMainMenu() {
     clearGameEvents();
     audioManager.stopMusic();
-    if (botTurnTimer) clearTimeout(botTurnTimer);
-    botTurnTimer = null;
-    botTurnScheduled = false;
+    cancelBotTurn();
+    if (adventureRuntime.hasActiveAdventure()) adventureRuntime.abandonAdventure();
     document.getElementById("main-menu").classList.remove("hidden");
     document.getElementById("setup-screen").classList.add("hidden");
     document.getElementById("world-selector").classList.add("hidden");
@@ -1439,7 +1497,7 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
     document.getElementById("btn-rapido").addEventListener("click", () => {
       audioManager.play('buttonClick');
       audioManager.preloadMusic('backgroundMusic');
-      modoJogo = "rapido";
+      modoJogo = GAME_MODES.QUICK;
       hideMainMenu();
       showWorldSelector();
     });
@@ -1913,7 +1971,11 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
 
     const startBtn = document.getElementById("draw-start-btn");
     startBtn.disabled = true;
-    gameState.currentPlayerIndex = drawState.drawWinnerIndex;
+    if (isAdventureGameSession()) {
+      startAdventureSession(drawState.drawWinnerIndex);
+    } else {
+      gameState.currentPlayerIndex = drawState.drawWinnerIndex;
+    }
     victoryMetrics.gameStartedAt = Date.now();
     victoryMetrics.totalRolls = 0;
     hideDrawScreen();
@@ -1929,6 +1991,44 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
     if (getCurrentPlayer().isBot && gameState.jogoAtivo && !gameState.jogoFinalizado) {
       scheduleBotTurnIfNeeded();
     }
+  }
+
+  function applyAdventureWorld(descriptor) {
+    selectedWorldId = descriptor.worldId;
+    currentWorldConfig = descriptor.worldConfig;
+    selectedLayoutId = loadLayoutPreference(selectedWorldId) || null;
+    descriptor.participants.forEach((participant, index) => {
+      Object.assign(players[index], {
+        slot: participant.slot,
+        name: participant.name,
+        emoji: participant.emoji,
+        tokenId: participant.tokenId,
+        isBot: participant.isBot,
+        posicao: participant.posicao,
+        rodadasPerdidas: participant.rodadasPerdidas,
+      });
+    });
+    isSinglePlayer = players[1].isBot;
+    clearWorldTheme();
+    applyWorldTheme();
+    resetCurrentWorldState({ starterIndex: descriptor.starterIndex });
+    return descriptor;
+  }
+
+  function startAdventureSession(initialStarterIndex) {
+    modoJogo = GAME_MODES.ADVENTURE;
+    return applyAdventureWorld(adventureRuntime.startAdventure({
+      participants: toAdventureParticipants(players),
+      initialStarterId: initialStarterIndex === 0 ? 'p1' : 'p2',
+    }));
+  }
+
+  function resetAdventureWorld() {
+    return applyAdventureWorld(adventureRuntime.resetWorld());
+  }
+
+  function advanceAdventureWorld() {
+    return applyAdventureWorld(adventureRuntime.advanceWorld());
   }
 
   /* ── Challenge Modal ── */
@@ -1989,9 +2089,11 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
   }
 
   async function resolveChallenge(desafio) {
+    const worldRunId = getWorldOperationToken();
     const player = getCurrentPlayer();
     if (player.isBot) {
       await delay(600);
+      assertWorldOperationCurrent(worldRunId);
       const acertou = Math.random() < 0.6;
       if (acertou) {
         addHistory(`🤖 ${player.name} acertou o desafio!`, "especial");
@@ -2000,10 +2102,13 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
       }
       return acertou;
     }
-    return showChallengeModal(desafio);
+    const result = await showChallengeModal(desafio);
+    assertWorldOperationCurrent(worldRunId);
+    return result;
   }
 
   async function resolvePortal() {
+    const worldRunId = getWorldOperationToken();
     const player = getCurrentPlayer();
     const portalCfg = getPortalConfigForCell(player.posicao);
     const swCfg = portalCfg?.targetWorldId ? subworldConfigs[portalCfg.targetWorldId] : null;
@@ -2011,6 +2116,7 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
 
     if (player.isBot) {
       await delay(500);
+      assertWorldOperationCurrent(worldRunId);
       const entrou = Math.random() < 0.5;
       if (entrou) {
         addHistory(`🤖 ${player.name} decidiu entrar em ${swName}!`, "especial");
@@ -2019,7 +2125,9 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
       }
       return entrou;
     }
-    return showPortalModal(portalCfg);
+    const result = await showPortalModal(portalCfg);
+    assertWorldOperationCurrent(worldRunId);
+    return result;
   }
 
   /* ── Debug ── */
@@ -2961,14 +3069,17 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
   /* ── Minigame host wrapper ── */
 
   async function launchBoardMinigame(minigameId, options = {}) {
+    const worldRunId = getWorldOperationToken();
     audioManager.pauseMusic();
     try {
-      return await launchMinigameHost(minigameId, {
+      const result = await launchMinigameHost(minigameId, {
         isBot: options.isBot || false,
         playerName: getCurrentPlayer().name
       });
+      assertWorldOperationCurrent(worldRunId);
+      return result;
     } finally {
-      if (gameState.jogoAtivo && !gameState.jogoFinalizado && modoJogo === 'rapido') {
+      if (isWorldOperationCurrent(worldRunId) && gameState.jogoAtivo && !gameState.jogoFinalizado && isBoardGameSession()) {
         audioManager.resumeMusic();
       }
     }
@@ -3028,7 +3139,7 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
         audioManager.play('buttonClick');
         const minigameHidden = document.getElementById('minigame-overlay')?.classList.contains('hidden');
         const boardVisible = document.getElementById('app')?.classList.contains('game-active');
-        if (modoJogo === 'rapido' && boardVisible && gameState.jogoAtivo && !gameState.jogoFinalizado && minigameHidden) {
+        if (isBoardGameSession() && boardVisible && gameState.jogoAtivo && !gameState.jogoFinalizado && minigameHidden) {
           audioManager.playMusic('backgroundMusic');
         }
       } else {
@@ -3067,7 +3178,7 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
         audioManager.play('buttonClick');
         resetVictoryScreen();
         resetGameState();
-        if (modoJogo === "rapido") {
+        if (isQuickGameSession()) {
           showSetupScreen();
           focusVisibleScreen('#setup-screen button:not([disabled]), #setup-screen input');
         } else {
