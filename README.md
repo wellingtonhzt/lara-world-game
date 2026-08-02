@@ -132,7 +132,7 @@ No **Jogo Rápido**, cada partida usa um mundo escolhido e termina com sua vitó
 ### Sobre & Tutorial ✅
 
 - **Sobre o Lara World**: tela com informações do jogo, recursos atuais, em desenvolvimento e créditos — acessível pelo botão "ℹ️ Sobre" na tela inicial
-- **Como Jogar**: tutorial interativo com 7 passos, indicador de progresso, navegação por teclado e mouse — acessível pelo botão "📖 Como Jogar" na tela inicial
+- **Como Jogar**: tutorial interativo com 9 passos, incluindo Jogo Rápido, Modo Aventura, Arcade e pontuação, com navegação por teclado e mouse
 - **Modularização**: módulos separados em `src/about/` e `src/tutorial/` com arquitetura barrel, seguindo o padrão do Arcade
 
 ### Modo Arcade ✅

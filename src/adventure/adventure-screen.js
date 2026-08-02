@@ -218,7 +218,7 @@ export function createAdventureScreen({ root, onStartSetup, onStartNextWorld, on
       <section class="adventure-rules" aria-labelledby="adventure-rules-title">
         <h2 id="adventure-rules-title">Como marcar pontos</h2>
         <ul><li>✅ Resposta correta <strong>+10</strong> <small>(até 2)</small></li><li>🎮 Minigame vencido <strong>+20</strong></li><li>🏆 Vitória no mundo <strong>+30</strong></li></ul>
-        <p>São pontuadas até 2 respostas corretas por participante em cada mundo. Complete os cinco mundos e termine com mais pontos para zerar o Lara World.</p>
+        <p>Complete os cinco mundos e termine com mais pontos para zerar o Lara World.</p>
       </section>
       <div class="adventure-actions"><button id="adventure-start-btn" class="btn btn-primary">Começar aventura</button><button id="adventure-exit-btn" class="btn btn-secondary">Voltar ao menu</button></div>
     </div>`, 'intro');

@@ -86,9 +86,9 @@ lara-world/
 │   │   ├── index.js             # Barrel re-exports
 │   │   ├── about-screen.js      # Lógica: initAboutScreen, showAboutScreen, hideAboutScreen
 │   │   └── about.css            # Glass card hero, overlay z-index 950, responsivo
-│   ├── tutorial/          # Tutorial "Como Jogar" (7 passos)
+│   ├── tutorial/          # Tutorial "Como Jogar" (9 passos)
 │   │   ├── index.js             # Barrel re-exports
-│   │   ├── tutorial-data.js     # Dados dos 7 passos (icon, title, text)
+│   │   ├── tutorial-data.js     # Dados dos 9 passos (icon, title, text)
 │   │   ├── tutorial-screen.js   # Lógica: init, show, hide, hasSeen, reset, navegação
 │   │   └── tutorial.css         # Glass card hero, overlay z-index 960, dots, nav, responsivo
 │   ├── assets/          # Recursos visuais do jogo

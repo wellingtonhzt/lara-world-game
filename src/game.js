@@ -1549,6 +1549,7 @@ import { createAdventureScreen } from './adventure/adventure-screen.js';
 
     document.getElementById("btn-carreira").addEventListener("click", () => {
       audioManager.play('buttonClick');
+      audioManager.preloadMusic('backgroundMusic');
       modoJogo = GAME_MODES.ADVENTURE;
       hideMainMenu();
       adventureScreen.showIntro(adventureRuntime.getCampaignPreview());

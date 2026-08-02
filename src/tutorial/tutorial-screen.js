@@ -1,6 +1,6 @@
 /* ============================================
    Lara World — Tutorial Screen (src/tutorial/tutorial-screen.js)
-   7-step onboarding with progress, keyboard, localStorage
+   9-step onboarding with progress, keyboard, localStorage
    ============================================ */
 
 import { TUTORIAL_STEPS, TUTORIAL_SEEN_KEY } from './tutorial-data.js';

@@ -216,9 +216,10 @@ test('adventure destinations reuse official quick-mode world artwork with safe f
   assert.match(source, /aria-hidden="true"[^>]*focusable="false"/);
 });
 
-test('scoring copy makes the two-correct-answers-per-world limit explicit', () => {
+test('intro copy stays concise while result screens preserve scoring limits', () => {
   const source = fs.readFileSync(new URL('../src/adventure/adventure-screen.js', import.meta.url), 'utf8');
-  assert.match(source, /até 2 respostas corretas por participante em cada mundo/);
+  assert.match(source, /Complete os cinco mundos e termine com mais pontos para zerar o Lara World\./);
+  assert.doesNotMatch(source, /São pontuadas até 2 respostas corretas por participante em cada mundo/);
   assert.match(source, /Respostas pontuadas<\/span><strong>\$\{summary\.challenges\}\/2/);
   assert.match(source, /Respostas pontuadas<\/span><strong>\$\{item\.challenges\}\/10/);
 });

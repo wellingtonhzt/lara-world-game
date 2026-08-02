@@ -65,7 +65,7 @@ function _renderContent() {
   h3Pres.textContent = 'Apresentação';
   sectionPresentation.appendChild(h3Pres);
   var pPres = document.createElement('p');
-  pPres.textContent = 'Lara World é um jogo de trilha infantil para navegador, com mundos temáticos, desafios educativos e minigames. O projeto busca oferecer uma experiência simples, divertida e acessível para crianças, permitindo jogar sozinho, contra a máquina ou com outra pessoa no mesmo dispositivo.';
+  pPres.textContent = 'Lara World é um jogo de trilha infantil para navegador, com cinco mundos temáticos, desafios educativos e minigames. Você pode disputar uma partida rápida, percorrer uma campanha completa no Modo Aventura ou jogar minigames avulsos no Arcade, sozinho contra a Máquina ou com outra pessoa no mesmo dispositivo.';
   sectionPresentation.appendChild(pPres);
   card.appendChild(sectionPresentation);
 
@@ -78,11 +78,12 @@ function _renderContent() {
   var features = [
     '5 mundos temáticos',
     'Jogo Rápido',
+    'Modo Aventura com campanha e pontuação acumulada',
     'Modo Arcade',
     'Multiplayer local',
     'Single Player contra a máquina',
-    'Desafios educativos',
-    'Minigames exclusivos',
+    '128 desafios educativos em 9 categorias',
+    '5 minigames temáticos',
     'Estatísticas do Modo Arcade'
   ];
   features.forEach(function (f) {
@@ -100,7 +101,9 @@ function _renderContent() {
   sectionDev.appendChild(h3Dev);
   var ulDev = document.createElement('ul');
   var devItems = [
-    'Modo Aventura',
+    'Salvar e continuar a campanha',
+    'Histórico de aventuras e ranking',
+    'Temas musicais por mundo',
     'Novos mundos',
     'Novos minigames',
     'Expansão do banco de perguntas',

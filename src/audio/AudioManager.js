@@ -49,8 +49,8 @@ export class AudioManager {
       source.start(0);
       this._activeEffects[soundKey] = source;
       source.onended = () => { delete this._activeEffects[soundKey]; };
-    } catch {
-      /* ignore silently — file not found, decode error, etc. */
+    } catch (error) {
+      this._reportPlaybackFailure('effect', soundKey, error);
     }
   }
 
@@ -69,6 +69,15 @@ export class AudioManager {
     if (!entry || !entry.path) return;
     if (entry.category !== 'music') return;
 
+    try {
+      await this._ensureCtx();
+    } catch (error) {
+      this._reportPlaybackFailure('music-context', soundKey, error);
+      return;
+    }
+
+    // A mesma source volta a produzir áudio assim que um contexto suspenso é
+    // retomado. Não encerre antes de recuperar o AudioContext.
     if (this._musicKey === soundKey && this._musicSource) return;
     if (this._musicKey === soundKey && this._musicPaused) {
       return this.resumeMusic();
@@ -88,8 +97,8 @@ export class AudioManager {
     try {
       await this._ensureCtx();
       await this._decode(entry.path);
-    } catch {
-      /* ignore silently — playback will retry when the board starts */
+    } catch (error) {
+      this._reportPlaybackFailure('music-preload', soundKey, error);
     }
   }
 
@@ -124,8 +133,8 @@ export class AudioManager {
         return;
       }
       this._startMusicSource(offset);
-    } catch {
-      /* ignore silently */
+    } catch (error) {
+      this._reportPlaybackFailure('music', soundKey, error);
     }
   }
 
@@ -232,7 +241,12 @@ export class AudioManager {
 
   async _ensureCtx() {
     if (this._ctx && this._ctx.state !== 'closed') {
-      if (this._ctx.state === 'suspended') await this._ctx.resume();
+      if (this._ctx.state === 'suspended' || this._ctx.state === 'interrupted') {
+        await this._ctx.resume();
+      }
+      if (this._ctx.state !== 'running') {
+        throw new Error(`AudioContext unavailable: ${this._ctx.state}`);
+      }
       return this._ctx;
     }
     this._ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -248,8 +262,17 @@ export class AudioManager {
     this._effectsGain.gain.value = this._effectsVol;
     this._effectsGain.connect(this._masterGain);
 
-    if (this._ctx.state === 'suspended') await this._ctx.resume();
+    if (this._ctx.state === 'suspended' || this._ctx.state === 'interrupted') {
+      await this._ctx.resume();
+    }
+    if (this._ctx.state !== 'running') {
+      throw new Error(`AudioContext unavailable: ${this._ctx.state}`);
+    }
     return this._ctx;
+  }
+
+  _reportPlaybackFailure(operation, soundKey, error) {
+    console.warn(`[AudioManager] ${operation} failed for "${soundKey}"`, error);
   }
 
   async _decode(path) {
