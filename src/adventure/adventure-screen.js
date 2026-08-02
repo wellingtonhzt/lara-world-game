@@ -1,3 +1,5 @@
+import { getCacheBust } from '../version.js';
+
 const STATUS_LABELS = Object.freeze({
   completed: 'Concluído',
   current: 'Mundo atual',
@@ -15,6 +17,12 @@ function escapeHtml(value) {
 
 function cleanWorldName(name) {
   return String(name || '').replace(/^\p{Extended_Pictographic}\uFE0F?\s*/u, '').trim();
+}
+
+function getOfficialWorldImage(worldId) {
+  return globalThis.document
+    ?.querySelector(`.world-card[data-world="${worldId}"] .world-card-img`)
+    ?.getAttribute('src') || '';
 }
 
 export function summarizeBreakdown(entries, participantId) {
@@ -66,19 +74,49 @@ export function getFinalCampaignMessage(data, winner) {
 
 function renderWorldPath(progress, participants) {
   const names = Object.fromEntries((participants || []).map(item => [item.id, item.name]));
-  return `<ol class="adventure-path" aria-label="Percurso da aventura">
+  const routeSegments = progress.slice(1).map((world, index) => {
+    const previous = progress[index];
+    const state = world.status === 'completed'
+      ? 'completed'
+      : (world.status === 'current' || (index === 0 && previous.status === 'current')) ? 'current' : 'locked';
+    const paths = [
+      'M 18 34 C 29 31, 38 41, 49 36',
+      'M 49 36 C 60 42, 70 29, 82 35',
+      'M 82 35 C 88 49, 76 59, 68 72',
+      'M 68 72 C 56 79, 43 74, 31 73',
+    ];
+    const mobilePoints = [[30, 11], [65, 30], [38, 49], [64, 68], [40, 88]];
+    const [fromX, fromY] = mobilePoints[index];
+    const [toX, toY] = mobilePoints[index + 1];
+    return { state, desktopPath: paths[index], mobilePath: `M ${fromX} ${fromY} C ${fromX} ${fromY + 8}, ${toX} ${toY - 8}, ${toX} ${toY}` };
+  });
+  const desktopRoute = routeSegments.map(segment => `<path class="adventure-route-segment adventure-route-segment--${segment.state}" d="${segment.desktopPath}" pathLength="100" />`).join('');
+  const mobileRoute = routeSegments.map(segment => `<path class="adventure-route-segment adventure-route-segment--${segment.state}" d="${segment.mobilePath}" pathLength="100" />`).join('');
+  return `<div class="adventure-map-region">
+    <picture class="adventure-map-art" aria-hidden="true">
+      <source media="(max-width: 760px)" srcset="assets/images/adventure/adventure-map-mobile.webp?${getCacheBust()}">
+      <img src="assets/images/adventure/adventure-map-desktop.webp?${getCacheBust()}" alt="" decoding="async" fetchpriority="high">
+    </picture>
+    <svg class="adventure-route adventure-route--desktop" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">${desktopRoute}</svg>
+    <svg class="adventure-route adventure-route--mobile" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" focusable="false">${mobileRoute}</svg>
+    <ol class="adventure-path" aria-label="Percurso da aventura">
     ${progress.map((world, index) => {
       const status = STATUS_LABELS[world.status] || world.status;
       const winner = world.winnerId ? `<span class="adventure-world-winner">Venceu: ${escapeHtml(names[world.winnerId] || world.winnerId)}</span>` : '';
+      const image = getOfficialWorldImage(world.worldId);
       return `<li class="adventure-world adventure-world--${escapeHtml(world.status)}" aria-label="${escapeHtml(cleanWorldName(world.name))}: ${escapeHtml(status)}">
         <span class="adventure-world-order">${world.order}</span>
-        <span class="adventure-world-icon" aria-hidden="true">${escapeHtml(world.icon)}</span>
-        <strong>${escapeHtml(cleanWorldName(world.name))}</strong>
-        <span class="adventure-world-status">${world.status === 'completed' ? '✅' : world.status === 'current' ? '📍' : '🔒'} ${escapeHtml(status)}</span>
+        <span class="adventure-world-art" aria-hidden="true">
+          <span class="adventure-world-icon">${escapeHtml(world.icon)}</span>
+          ${image ? `<img src="${escapeHtml(image)}" alt="" decoding="async" onerror="this.style.display='none'">` : ''}
+        </span>
+        <strong class="adventure-world-name">${escapeHtml(cleanWorldName(world.name))}</strong>
+        <span class="adventure-world-status">${world.status === 'completed' ? '✅ Concluído' : world.status === 'current' ? '📍 Você está aqui' : '🔒 Bloqueado'}</span>
         ${winner}
-      </li>${index < progress.length - 1 ? '<li class="adventure-path-link" aria-hidden="true">➜</li>' : ''}`;
+      </li>`;
     }).join('')}
-  </ol>`;
+    </ol>
+  </div>`;
 }
 
 function renderScoreboard(data) {
@@ -160,8 +198,8 @@ export function createAdventureScreen({ root, onStartSetup, onStartNextWorld, on
       ${renderWorldPath(data.progress, [])}
       <section class="adventure-rules" aria-labelledby="adventure-rules-title">
         <h2 id="adventure-rules-title">Como marcar pontos</h2>
-        <ul><li>✅ Resposta correta: <strong>+10</strong></li><li>🎮 Minigame vencido: <strong>+20</strong></li><li>🏆 Vitória no mundo: <strong>+30</strong></li></ul>
-        <p>Complete os cinco mundos e termine com mais pontos para zerar o Lara World.</p>
+        <ul><li>✅ Resposta correta <strong>+10</strong> <small>(até 2)</small></li><li>🎮 Minigame vencido <strong>+20</strong></li><li>🏆 Vitória no mundo <strong>+30</strong></li></ul>
+        <p>São pontuadas até 2 respostas corretas por participante em cada mundo. Complete os cinco mundos e termine com mais pontos para zerar o Lara World.</p>
       </section>
       <div class="adventure-actions"><button id="adventure-start-btn" class="btn btn-primary">Começar aventura</button><button id="adventure-exit-btn" class="btn btn-secondary">Voltar ao menu</button></div>
     </div>`, 'intro');
@@ -185,7 +223,7 @@ export function createAdventureScreen({ root, onStartSetup, onStartNextWorld, on
     return `<article class="adventure-result-player">
       <header><span aria-hidden="true">${escapeHtml(participant.emoji)}</span><strong>${escapeHtml(participant.name)}</strong></header>
       <div class="adventure-result-points">+${result.scoresEarned[participant.id] || 0} neste mundo</div>
-      <ul><li>✅ Respostas: ${summary.challenges}</li><li>🎮 Minigames: ${summary.minigames}</li><li>🏆 Vitória: ${summary.worldWins}</li></ul>
+      <ul><li>✅ Respostas pontuadas: ${summary.challenges}/2</li><li>🎮 Minigames: ${summary.minigames}</li><li>🏆 Vitória: ${summary.worldWins}</li></ul>
       <strong>Total: ${totalScores[participant.id] || 0}</strong>
     </article>`;
   }
@@ -212,7 +250,7 @@ export function createAdventureScreen({ root, onStartSetup, onStartNextWorld, on
     open(`<div class="adventure-panel adventure-panel--final" aria-live="polite">
       <header class="adventure-heading"><span class="adventure-kicker">Campanha concluída</span><h1 id="adventure-title">🎉 Aventura completa!</h1><p>${escapeHtml(getFinalCampaignMessage(data, winner))}</p></header>
       ${renderWorldPath(data.progress, data.participants)}
-      <div class="adventure-final-grid">${summaries.map(item => `<article class="adventure-final-card ${winner?.id === item.id ? 'is-winner' : ''}"><span aria-hidden="true">${escapeHtml(item.emoji)}</span><h2>${escapeHtml(item.name)}</h2><strong>${item.score} pontos</strong><ul><li>Mundos vencidos: ${item.worldsWon}</li><li>Respostas pontuadas: ${item.challenges}</li><li>Minigames vencidos: ${item.minigames}</li></ul>${winner?.id === item.id ? '<span class="adventure-final-badge">🏆 Maior pontuação</span>' : ''}</article>`).join('')}</div>
+      <div class="adventure-final-grid">${summaries.map(item => `<article class="adventure-final-card ${winner?.id === item.id ? 'is-winner' : ''}"><span aria-hidden="true">${escapeHtml(item.emoji)}</span><h2>${escapeHtml(item.name)}</h2><strong>${item.score} pontos</strong><ul><li>Mundos vencidos: ${item.worldsWon}</li><li>Respostas pontuadas: ${item.challenges}/10</li><li>Minigames vencidos: ${item.minigames}</li></ul>${winner?.id === item.id ? '<span class="adventure-final-badge">🏆 Maior pontuação</span>' : ''}</article>`).join('')}</div>
       <div class="adventure-actions"><button id="adventure-restart-btn" class="btn btn-primary">Jogar aventura novamente</button><button id="adventure-exit-btn" class="btn btn-secondary">Voltar ao menu</button></div>
     </div>`, 'final');
     bindAction('adventure-restart-btn', onRestart);

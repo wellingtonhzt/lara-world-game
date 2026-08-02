@@ -176,12 +176,41 @@ test('game keeps quick and Arcade entry paths separate from adventure', () => {
   assert.match(source, /updateVictoryScreen\(player\);\s*showVictoryScreen\(\);/);
 });
 
-test('styles provide connected desktop path, vertical mobile path and reduced motion', () => {
+test('styles provide illustrated desktop map, vertical mobile path and reduced motion', () => {
   const css = fs.readFileSync(new URL('../src/style.css', import.meta.url), 'utf8');
-  assert.match(css, /\.adventure-path\s*\{[^}]*display:\s*grid/);
+  assert.match(css, /\.adventure-path\s*\{[^}]*position:\s*absolute/);
+  assert.match(css, /\.adventure-world:nth-child\(4\)\s*\{[^}]*--map-x:\s*68%/);
+  assert.match(css, /\.adventure-world:nth-child\(5\)\s*\{[^}]*--map-x:\s*31%/);
+  assert.match(css, /\.adventure-route-segment--completed/);
+  assert.match(css, /\.adventure-route-segment--locked[^}]*stroke-dasharray/);
   assert.match(css, /\.menu-btn-adventure\s*\{[^}]*background:\s*linear-gradient\([^}]*#ffd54f/);
-  assert.match(css, /@media \(max-width: 760px\)[\s\S]*?\.adventure-path\s*\{[^}]*grid-template-columns:\s*minmax\(0,1fr\)/);
+  assert.match(css, /@media \(max-width: 760px\)[\s\S]*?\.adventure-map-region\s*\{[^}]*aspect-ratio:\s*9\s*\/\s*16/);
   assert.match(css, /prefers-reduced-motion[\s\S]*?\.adventure-screen/);
+});
+
+test('map uses responsive clean landscapes with picture art direction', () => {
+  const source = fs.readFileSync(new URL('../src/adventure/adventure-screen.js', import.meta.url), 'utf8');
+  assert.match(source, /<picture class="adventure-map-art"/);
+  assert.match(source, /media="\(max-width: 760px\)"[^>]*adventure-map-mobile\.webp/);
+  assert.match(source, /adventure-map-desktop\.webp/);
+  assert.match(source, /alt=""[^>]*fetchpriority="high"/);
+  assert.match(source, /getCacheBust\(\)/);
+});
+
+test('adventure destinations reuse official quick-mode world artwork with safe fallback', () => {
+  const source = fs.readFileSync(new URL('../src/adventure/adventure-screen.js', import.meta.url), 'utf8');
+  assert.match(source, /\.world-card\[data-world=/);
+  assert.match(source, /\.world-card-img/);
+  assert.match(source, /decoding="async"/);
+  assert.match(source, /onerror="this\.style\.display='none'"/);
+  assert.match(source, /aria-hidden="true"[^>]*focusable="false"/);
+});
+
+test('scoring copy makes the two-correct-answers-per-world limit explicit', () => {
+  const source = fs.readFileSync(new URL('../src/adventure/adventure-screen.js', import.meta.url), 'utf8');
+  assert.match(source, /até 2 respostas corretas por participante em cada mundo/);
+  assert.match(source, /Respostas pontuadas: \$\{summary\.challenges\}\/2/);
+  assert.match(source, /Respostas pontuadas: \$\{item\.challenges\}\/10/);
 });
 
 console.log(`\nAdventure screen and flow: ${passed} tests passed.\n`);
