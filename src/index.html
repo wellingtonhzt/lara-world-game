@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lara World</title>
-  <link rel="stylesheet" href="style.css?v=v0.40.0-preview">
-  <link rel="stylesheet" href="ui/game-event-overlay.css?v=v0.40.0-preview">
+  <link rel="stylesheet" href="style.css?v=v0.41.0-preview">
+  <link rel="stylesheet" href="ui/game-event-overlay.css?v=v0.41.0-preview">
   <link rel="stylesheet" href="arcade/arcade.css">
   <link rel="stylesheet" href="about/about.css">
   <link rel="stylesheet" href="tutorial/tutorial.css">
@@ -54,10 +54,9 @@
             <span class="btn-main-text">🎮 Modo Arcade</span>
             <span class="btn-subtitle">Jogue qualquer minigame avulso</span>
           </button>
-          <button id="btn-carreira" class="menu-btn menu-btn-secondary" disabled>
-            <span class="btn-main-text">🏆 Modo Aventura</span>
-            <span class="btn-subtitle">Novos mundos aguardam você!</span>
-            <span class="badge-embreve">EM BREVE...</span>
+          <button id="btn-carreira" class="menu-btn menu-btn-adventure">
+            <span class="btn-main-text">🗺️ Modo Aventura</span>
+            <span class="btn-subtitle">Percorra todos os mundos e acumule pontos.</span>
           </button>
           <div class="menu-secondary-group">
             <button id="btn-tutorial" class="menu-btn menu-btn-secondary">
@@ -70,9 +69,13 @@
         </div>
       </div>
       <div class="menu-footer">
-        <span id="menu-version" class="menu-version">v0.40.0-preview</span>
+        <span id="menu-version" class="menu-version">v0.41.0-preview</span>
       </div>
     </div>
+
+    <section id="adventure-screen" class="adventure-screen hidden" aria-labelledby="adventure-title">
+      <div id="adventure-screen-content" class="adventure-screen-content" tabindex="-1"></div>
+    </section>
 
     <div id="world-selector" class="world-selector hidden">
       <div class="world-selector-bg-shapes"></div>
@@ -199,7 +202,10 @@
             </div>
           </div>
         </div>
-        <button id="start-game-btn" class="btn btn-primary setup-start-btn" disabled>🎮 Iniciar Jogo</button>
+        <div class="setup-actions">
+          <button id="start-game-btn" class="btn btn-primary setup-start-btn" disabled>🎮 Iniciar Jogo</button>
+          <button id="setup-back-btn" class="btn btn-secondary" type="button">← Voltar</button>
+        </div>
       </div>
     </div>
 
@@ -378,11 +384,9 @@
               </pattern>
               <pattern id="path-texture-floresta" patternUnits="userSpaceOnUse" width="16" height="16">
                 <rect width="16" height="16" fill="#6d8f5e" />
-                <image href="assets/worlds/floresta/path.webp" width="16" height="16" />
               </pattern>
               <pattern id="path-texture-dinossauros" patternUnits="userSpaceOnUse" width="16" height="16">
                 <rect width="16" height="16" fill="#c48a3a" />
-                <image href="assets/worlds/dinossauros/path.webp" width="16" height="16" />
               </pattern>
             </defs>
             <path id="trail-path" fill="none" stroke-linecap="round" stroke-linejoin="round" />
@@ -623,6 +627,6 @@
   <!-- Tutorial Screen Overlay -->
   <div id="tutorial-overlay" class="tutorial-overlay hidden"></div>
 
-  <script type="module" src="game.js?v=v0.40.0-preview"></script>
+  <script type="module" src="game.js?v=v0.41.0-preview"></script>
 </body>
 </html>

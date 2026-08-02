@@ -86,11 +86,11 @@ As quatro entradas restantes — `modalOpen`, `modalClose`, `treasure` e `gameOv
 
 ### 2.8 Cache Busting Automático
 
-O `AudioManager` importa `getCacheBust()` de `src/version.js` e acrescenta sua saída à URL imediatamente antes do `fetch`. Com `APP_VERSION = 'v0.40.0-preview'`, por exemplo:
+O `AudioManager` importa `getCacheBust()` de `src/version.js` e acrescenta sua saída à URL imediatamente antes do `fetch`. Com `APP_VERSION = 'v0.41.0-preview'`, por exemplo:
 
 ```text
 assets/audio/quiz/challenge.webm
-→ assets/audio/quiz/challenge.webm?v=v0.40.0-preview
+→ assets/audio/quiz/challenge.webm?v=v0.41.0-preview
 ```
 
 Se o caminho já tiver query string, a versão é anexada com `&`. O catálogo `sounds.js` continua armazenando somente caminhos limpos, sem conhecer a versão. Efeitos e músicas passam pelo mesmo `_decode()` e, portanto, recebem o mesmo cache busting.
@@ -310,6 +310,8 @@ audioManager.stopMusic();
 - **Conversão**: OGG/Vorbis original convertido para WebM/Opus, 48 kHz, estéreo, aproximadamente 99 kbps
 
 A música toca apenas nas partidas do tabuleiro, pausa nos minigames e para no menu e na vitória. Menu, Arcade e minigames não possuem trilhas próprias nesta etapa.
+
+No Modo Aventura, cada entrada em um mundo inicia a música após a ação do jogador. A faixa para nas telas de resultado e permanece parada no mapa; ao iniciar o próximo tabuleiro, começa novamente. O mute global continua sendo a única fonte de estado de silenciamento. A documentação completa da campanha está em [Modo Aventura](modo-aventura.md).
 
 ---
 

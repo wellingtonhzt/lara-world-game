@@ -15,6 +15,7 @@ lara-world/
 ├── docs/                # Documentação do projeto
 │   ├── arquitetura.md
 │   ├── arquitetura-motor-de-mundos.md
+│   ├── modo-aventura.md
 │   ├── regras-do-jogo.md
 │   ├── roadmap.md
 │   ├── visao-geral.md
@@ -28,6 +29,7 @@ lara-world/
 │   │   ├── game-event-overlay.js  # Fila e ciclo de vida da narração
 │   │   └── game-event-overlay.css # Tipos visuais e responsividade
 │   ├── data/            # Dados estruturados do jogo
+│   │   ├── campaigns.js       # Campanha oficial e ordem dos mundos
 │   │   ├── questions/       # Question Engine
 │   │   │   ├── index.js           # QuestionEngine (facade)
 │   │   │   ├── question-repository.js # Armazenamento com defensive copies
@@ -74,6 +76,12 @@ lara-world/
 │   │   ├── arcade-card.js       # Card individual: createMinigameCard, updateCardStats, escapeHtml
 │   │   ├── arcade-stats.js      # Persistência localStorage (schema v1), recordGame, safeResult
 │   │   └── arcade.css           # Tema escuro, overlay z-index 1400, grid responsivo, .arcade-cards-disabled
+│   ├── adventure/         # Estado, pontuação, runtime e telas do Modo Aventura
+│   │   ├── adventure-state.js
+│   │   ├── adventure-scoring.js
+│   │   ├── adventure-runtime.js
+│   │   ├── adventure-score-events.js
+│   │   └── adventure-screen.js
 │   ├── about/             # Tela "Sobre o Lara World"
 │   │   ├── index.js             # Barrel re-exports
 │   │   ├── about-screen.js      # Lógica: initAboutScreen, showAboutScreen, hideAboutScreen
@@ -208,7 +216,7 @@ Estrutura semântica dividida em:
   - Card central translúcido (`.menu-content`) com gradiente rosado/creme/azulado, `backdrop-filter: blur(24px)`, borda branca 3px e glow rosa
   - Logo oficial (`.menu-brand`) com `<img class="menu-brand-logo" src="assets/ui/logo-lara-world.webp">` + `<span class="menu-brand-fallback">` como fallback textual — substitui a antiga estrutura `.menu-logo` com emoji 🌍 + gradiente
   - Ilustração Lara removida do card central (antigo `.menu-lara-hero`) — composição simplificada
-  - Três botões: "⚡ Jogo Rápido" (ativo, glow pulsante), "🎮 Modo Arcade" (novo) e "🏆 Modo Aventura" (desabilitado, badge "EM BREVE...")
+  - Três entradas de jogo: "⚡ Jogo Rápido", "🗺️ Modo Aventura" e "🎮 Modo Arcade"
   - Footer com versão lida de `APP_VERSION` (src/version.js)
   - Escondido quando uma partida é iniciada; reexibido via "Voltar ao Menu"
 - **Setup Screen — “Preparar Jogo”** (`#setup-screen`):
@@ -415,7 +423,7 @@ Sorteio de Perguntas (via Question Engine)
 Main Menu
   ├── showMainMenu() → exibe menu inicial, esconde tabuleiro/painel/victory, chama leaveArcadeMode(), hideFloatingRollBtn()
   ├── hideMainMenu() → esconde menu, prepara tabuleiro
-  └── setupMenuEvents() → registra clique em "⚡ Jogo Rápido", "🎮 Modo Arcade" e "🏆 Modo Carreira"
+  └── setupMenuEvents() → registra clique em "⚡ Jogo Rápido", "🗺️ Modo Aventura" e "🎮 Modo Arcade"
 
 Botão Flutuante Mobile
   ├── rollBtnFloat → cache do elemento #roll-btn-float em elements
@@ -544,7 +552,7 @@ Início (DOMContentLoaded)
 Menu Inicial (showMainMenu)
   ├── "⚡ Jogo Rápido" → setupModalEvents() configura modoJogo = "rapido", esconde menu
   ├── "🎮 Modo Arcade" → modoJogo = "arcade", enterArcadeMode(), exibe galeria
-  └── "🏆 Modo Carreira" → desabilitado (Em Breve)
+  └── "🗺️ Modo Aventura" → abre o mapa inicial e usa o runtime próprio da campanha
   ↓
 Seletor de Mundos (showWorldSelector) — apenas Jogo Rápido
   ├── 🌳 Floresta Encantada → selectedWorldId = "floresta-encantada"

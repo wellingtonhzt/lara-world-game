@@ -76,7 +76,7 @@ Em mobile, o HUD principal deve estar na **metade inferior da tela** — onde os
 - Título centralizado com ilustração
 - Botões em coluna (nunca lado a lado em mobile)
 - "⚡ Jogo Rápido" como botão principal, grande e colorido
-- "🏆 Modo Carreira" secundário
+- "🗺️ Modo Aventura" como ação de campanha, abaixo do Jogo Rápido
 
 ### Seletor de Mundos
 
