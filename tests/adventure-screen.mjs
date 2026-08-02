@@ -6,6 +6,7 @@ import {
   buildAdventureMapModel,
   buildCampaignSummary,
   getFinalCampaignMessage,
+  getParticipantSprite,
   summarizeBreakdown,
 } from '../src/adventure/adventure-screen.js';
 import { MAIN_CAMPAIGN_ID, getCampaign } from '../src/data/campaigns.js';
@@ -100,6 +101,14 @@ test('breakdown summary is derived from accepted snapshot events', () => {
   assert.deepEqual(summarizeBreakdown(entries, 'p1'), { challenges: 1, minigames: 1, worldWins: 1, points: 60 });
 });
 
+test('result sprites use selected tokens, official Byte bot and safe fallback', () => {
+  assert.match(getParticipantSprite(people()[0]), /assets\/tokens\/lara\.webp/);
+  assert.match(getParticipantSprite({ ...people()[0], tokenId: 'dino' }), /assets\/tokens\/dino\.webp/);
+  assert.match(getParticipantSprite(people({ bot: true })[1]), /assets\/tokens\/byte\.webp/);
+  assert.match(getParticipantSprite({ ...people()[0], tokenId: '../invalid' }), /assets\/tokens\/lara\.webp/);
+  assert.match(getParticipantSprite({ ...people()[0], tokenId: 'unknown-token' }), /assets\/tokens\/lara\.webp/);
+});
+
 test('map scoreboard identifies leader and explicit tie without color alone', () => {
   const { runtime } = setup();
   let data = runtime.getMapData();
@@ -166,6 +175,7 @@ test('HTML enables one adventure button and reuses existing setup', () => {
   assert.match(html.match(/<button id="btn-carreira"[^>]*>/)?.[0] || '', /menu-btn-adventure/);
   assert.equal((html.match(/id="setup-screen"/g) || []).length, 1);
   assert.match(html, /Percorra todos os mundos e acumule pontos/);
+  assert.ok(html.indexOf('id="start-game-btn"') < html.indexOf('id="setup-back-btn"'));
 });
 
 test('game keeps quick and Arcade entry paths separate from adventure', () => {
@@ -209,8 +219,76 @@ test('adventure destinations reuse official quick-mode world artwork with safe f
 test('scoring copy makes the two-correct-answers-per-world limit explicit', () => {
   const source = fs.readFileSync(new URL('../src/adventure/adventure-screen.js', import.meta.url), 'utf8');
   assert.match(source, /até 2 respostas corretas por participante em cada mundo/);
-  assert.match(source, /Respostas pontuadas: \$\{summary\.challenges\}\/2/);
-  assert.match(source, /Respostas pontuadas: \$\{item\.challenges\}\/10/);
+  assert.match(source, /Respostas pontuadas<\/span><strong>\$\{summary\.challenges\}\/2/);
+  assert.match(source, /Respostas pontuadas<\/span><strong>\$\{item\.challenges\}\/10/);
+});
+
+test('setup actions stack primary before a lighter secondary action', () => {
+  const css = fs.readFileSync(new URL('../src/style.css', import.meta.url), 'utf8');
+  assert.match(css, /\.setup-actions\s*\{[^}]*flex-direction:\s*column[^}]*align-items:\s*center/);
+  assert.match(css, /\.setup-actions #setup-back-btn[^\{]*\{[^}]*width:\s*min\(100%,280px\)[^}]*background:\s*rgba\(255,255,255/);
+});
+
+test('world result presents official art, winner, score hierarchy and primary-first actions', () => {
+  const source = fs.readFileSync(new URL('../src/adventure/adventure-screen.js', import.meta.url), 'utf8');
+  assert.match(source, /adventure-result-world-art/);
+  assert.match(source, /worldImage = getOfficialWorldImage\(result\.worldId\)/);
+  assert.match(source, /Vencedor do mundo/);
+  assert.match(source, /Pontos neste mundo/);
+  assert.match(source, /Total acumulado/);
+  assert.match(source, /adventure-result-breakdown/);
+  assert.ok(source.indexOf('id="adventure-result-continue"') < source.lastIndexOf('id="adventure-exit-btn"'));
+  assert.match(source, /adventure-next-note--final/);
+});
+
+test('map scoreboard reuses sprites and presents accumulated leadership and ties', () => {
+  const source = fs.readFileSync(new URL('../src/adventure/adventure-screen.js', import.meta.url), 'utf8');
+  assert.match(source, /adventure-score-avatar[\s\S]*?getParticipantSprite\(participant\)/);
+  assert.match(source, /score === 1 \? 'ponto' : 'pontos'/);
+  assert.match(source, /pointsLabel = `\$\{score\}/);
+  assert.match(source, /'Empatados'/);
+  assert.match(source, /adventure-score-neutral">Na disputa/);
+  assert.match(source, /adventure-world-winner[\s\S]*?renderParticipantMini\(winnerParticipant\)/);
+  assert.match(source, /adventure-world-starter[\s\S]*?Começa:/);
+});
+
+test('map actions keep next world before the lighter menu exit', () => {
+  const source = fs.readFileSync(new URL('../src/adventure/adventure-screen.js', import.meta.url), 'utf8');
+  const mapActions = source.match(/adventure-actions adventure-actions--map[^\n]+/)?.[0] || '';
+  assert.ok(mapActions.indexOf('id="adventure-next-btn"') < mapActions.indexOf('id="adventure-exit-btn"'));
+  const css = fs.readFileSync(new URL('../src/style.css', import.meta.url), 'utf8');
+  assert.match(css, /\.adventure-actions--map\s*\{[^}]*flex-direction:\s*column[^}]*align-items:\s*center/);
+  assert.match(css, /\.adventure-actions--map #adventure-exit-btn[^\{]*\{[^}]*background:\s*rgba\(255,255,255/);
+});
+
+test('final screen resets overlay scroll before focus and keeps the title reachable', () => {
+  const source = fs.readFileSync(new URL('../src/adventure/adventure-screen.js', import.meta.url), 'utf8');
+  assert.match(source, /root\.scrollTop\s*=\s*0[\s\S]*?focus\(\{ preventScroll: true \}\)/);
+  const css = fs.readFileSync(new URL('../src/style.css', import.meta.url), 'utf8');
+  assert.match(css, /\.adventure-screen\s*\{[^}]*overflow:\s*auto/);
+  assert.doesNotMatch(css, /\.adventure-panel--final\s*\{[^}]*margin-top:\s*-/);
+});
+
+test('final cards reuse sprites and separate score, statistics, winner and tie labels', () => {
+  const source = fs.readFileSync(new URL('../src/adventure/adventure-screen.js', import.meta.url), 'utf8');
+  assert.match(source, /adventure-final-avatar[\s\S]*?getParticipantSprite\(item\)/);
+  assert.match(source, /Pontuação final/);
+  assert.match(source, /adventure-final-stats/);
+  assert.match(source, /Mundos vencidos/);
+  assert.match(source, /Respostas pontuadas/);
+  assert.match(source, /Minigames vencidos/);
+  assert.match(source, /Vencedor da aventura/);
+  assert.match(source, /🤝 Empatados/);
+  assert.match(source, /item\.score === 1 \? 'ponto' : 'pontos'/);
+});
+
+test('final actions keep restart before the lighter menu return', () => {
+  const source = fs.readFileSync(new URL('../src/adventure/adventure-screen.js', import.meta.url), 'utf8');
+  const finalActions = source.match(/adventure-actions adventure-actions--final[^\n]+/)?.[0] || '';
+  assert.ok(finalActions.indexOf('id="adventure-restart-btn"') < finalActions.indexOf('id="adventure-exit-btn"'));
+  const css = fs.readFileSync(new URL('../src/style.css', import.meta.url), 'utf8');
+  assert.match(css, /\.adventure-actions--final\s*\{[^}]*flex-direction:\s*column[^}]*align-items:\s*center/);
+  assert.match(css, /\.adventure-actions--final #adventure-exit-btn[^\{]*\{[^}]*background:\s*rgba\(255,255,255/);
 });
 
 console.log(`\nAdventure screen and flow: ${passed} tests passed.\n`);

@@ -5,6 +5,7 @@ const STATUS_LABELS = Object.freeze({
   current: 'Mundo atual',
   locked: 'Bloqueado',
 });
+const OFFICIAL_TOKEN_IDS = new Set(['lara', 'leo', 'dino', 'byte']);
 
 function escapeHtml(value) {
   return String(value ?? '')
@@ -23,6 +24,12 @@ function getOfficialWorldImage(worldId) {
   return globalThis.document
     ?.querySelector(`.world-card[data-world="${worldId}"] .world-card-img`)
     ?.getAttribute('src') || '';
+}
+
+export function getParticipantSprite(participant) {
+  const requestedToken = participant?.isBot ? 'byte' : participant?.tokenId;
+  const safeToken = OFFICIAL_TOKEN_IDS.has(requestedToken) ? requestedToken : (participant?.isBot ? 'byte' : 'lara');
+  return `assets/tokens/${safeToken}.webp?${getCacheBust()}`;
 }
 
 export function summarizeBreakdown(entries, participantId) {
@@ -68,12 +75,18 @@ export function buildAdventureMapModel(data) {
 export function getFinalCampaignMessage(data, winner) {
   if (data.finalResult.isTie) return 'Vocês completaram toda a aventura e terminaram empatados!';
   if (!winner.isBot && winner.slot === 0) return 'Você completou todos os mundos e zerou o Lara World!';
-  if (winner.isBot) return 'Aventura concluída! Que tal tentar superar a Máquina na próxima?';
+  if (winner.isBot) return 'Aventura concluída! Desta vez, a Máquina fez mais pontos.';
   return 'Aventura concluída! Desta vez, seu amigo fez mais pontos.';
 }
 
-function renderWorldPath(progress, participants) {
-  const names = Object.fromEntries((participants || []).map(item => [item.id, item.name]));
+function renderParticipantMini(participant) {
+  if (!participant) return '';
+  return `<span class="adventure-mini-avatar" aria-hidden="true"><span>${escapeHtml(participant.emoji)}</span><img src="${escapeHtml(getParticipantSprite(participant))}" alt="" decoding="async" onerror="this.style.display='none'"></span>`;
+}
+
+function renderWorldPath(progress, participants, nextStarterId = null) {
+  const participantById = Object.fromEntries((participants || []).map(item => [item.id, item]));
+  const starter = participantById[nextStarterId];
   const routeSegments = progress.slice(1).map((world, index) => {
     const previous = progress[index];
     const state = world.status === 'completed'
@@ -102,7 +115,11 @@ function renderWorldPath(progress, participants) {
     <ol class="adventure-path" aria-label="Percurso da aventura">
     ${progress.map((world, index) => {
       const status = STATUS_LABELS[world.status] || world.status;
-      const winner = world.winnerId ? `<span class="adventure-world-winner">Venceu: ${escapeHtml(names[world.winnerId] || world.winnerId)}</span>` : '';
+      const winnerParticipant = participantById[world.winnerId];
+      const winner = world.winnerId ? `<span class="adventure-world-winner">${renderParticipantMini(winnerParticipant)}<span>Venceu: ${escapeHtml(winnerParticipant?.name || world.winnerId)}</span></span>` : '';
+      const startsHere = world.status === 'current' && starter
+        ? `<span class="adventure-world-starter">${renderParticipantMini(starter)}<span>Começa: ${escapeHtml(starter.name)}</span></span>`
+        : '';
       const image = getOfficialWorldImage(world.worldId);
       return `<li class="adventure-world adventure-world--${escapeHtml(world.status)}" aria-label="${escapeHtml(cleanWorldName(world.name))}: ${escapeHtml(status)}">
         <span class="adventure-world-order">${world.order}</span>
@@ -113,6 +130,7 @@ function renderWorldPath(progress, participants) {
         <strong class="adventure-world-name">${escapeHtml(cleanWorldName(world.name))}</strong>
         <span class="adventure-world-status">${world.status === 'completed' ? '✅ Concluído' : world.status === 'current' ? '📍 Você está aqui' : '🔒 Bloqueado'}</span>
         ${winner}
+        ${startsHere}
       </li>`;
     }).join('')}
     </ol>
@@ -129,12 +147,12 @@ function renderScoreboard(data) {
     <div class="adventure-score-list">
       ${data.participants.map(participant => {
         const score = data.totalScores[participant.id] || 0;
-        const lead = tied ? 'Empate' : score === top ? 'Na frente' : '';
-        return `<article class="adventure-score-card ${lead === 'Na frente' ? 'is-leading' : ''}">
-          <span class="adventure-score-avatar" aria-hidden="true">${escapeHtml(participant.emoji)}</span>
-          <strong>${escapeHtml(participant.name)}</strong>
-          <span class="adventure-score-points">${score} pontos</span>
-          ${lead ? `<span class="adventure-score-lead">${lead}</span>` : ''}
+        const lead = tied ? 'Empatados' : score === top ? 'Na frente' : '';
+        const pointsLabel = `${score} ${score === 1 ? 'ponto' : 'pontos'} acumulados`;
+        return `<article class="adventure-score-card ${lead === 'Na frente' ? 'is-leading' : ''} ${tied ? 'is-tied' : ''}">
+          <span class="adventure-score-avatar" aria-hidden="true"><span>${escapeHtml(participant.emoji)}</span><img src="${escapeHtml(getParticipantSprite(participant))}" alt="" decoding="async" onerror="this.style.display='none'"></span>
+          <span class="adventure-score-copy"><strong>${escapeHtml(participant.name)}</strong><span class="adventure-score-points">${pointsLabel}</span></span>
+          ${lead ? `<span class="adventure-score-lead">${lead === 'Na frente' ? '🏆 ' : '🤝 '}${lead}</span>` : '<span class="adventure-score-neutral">Na disputa</span>'}
         </article>`;
       }).join('')}
     </div>
@@ -178,7 +196,8 @@ export function createAdventureScreen({ root, onStartSetup, onStartNextWorld, on
     actionLocked = false;
     content.innerHTML = html;
     root.classList.remove('hidden');
-    requestAnimationFrame(() => content.focus());
+    root.scrollTop = 0;
+    requestAnimationFrame(() => content.focus({ preventScroll: true }));
   }
 
   function hide() {
@@ -211,8 +230,8 @@ export function createAdventureScreen({ root, onStartSetup, onStartNextWorld, on
     const next = data.progress.find(item => item.worldId === data.nextWorldId);
     open(`<div class="adventure-panel adventure-panel--map">
       <header class="adventure-heading"><span class="adventure-kicker">A jornada continua</span><h1 id="adventure-title">Mapa da Aventura</h1><p>Escolha continuar quando todos estiverem prontos.</p></header>
-      ${renderScoreboard(data)}${renderWorldPath(data.progress, data.participants)}
-      <div class="adventure-actions"><button id="adventure-next-btn" class="btn btn-primary">Ir para ${escapeHtml(cleanWorldName(next?.name))}</button><button id="adventure-exit-btn" class="btn btn-secondary">Sair para o menu</button></div>
+      ${renderScoreboard(data)}${renderWorldPath(data.progress, data.participants, data.nextStarterId)}
+      <div class="adventure-actions adventure-actions--map"><button id="adventure-next-btn" class="btn btn-primary">Ir para ${escapeHtml(cleanWorldName(next?.name))}</button><button id="adventure-exit-btn" class="btn btn-secondary">Sair para o menu</button></div>
     </div>`, 'map');
     bindAction('adventure-next-btn', onStartNextWorld);
     bindAction('adventure-exit-btn', () => showExitConfirmation(data));
@@ -220,11 +239,21 @@ export function createAdventureScreen({ root, onStartSetup, onStartNextWorld, on
 
   function participantResult(result, participant, totalScores) {
     const summary = summarizeBreakdown(result.eventBreakdown, participant.id);
-    return `<article class="adventure-result-player">
-      <header><span aria-hidden="true">${escapeHtml(participant.emoji)}</span><strong>${escapeHtml(participant.name)}</strong></header>
-      <div class="adventure-result-points">+${result.scoresEarned[participant.id] || 0} neste mundo</div>
-      <ul><li>✅ Respostas pontuadas: ${summary.challenges}/2</li><li>🎮 Minigames: ${summary.minigames}</li><li>🏆 Vitória: ${summary.worldWins}</li></ul>
-      <strong>Total: ${totalScores[participant.id] || 0}</strong>
+    const ownEvents = (result.eventBreakdown || []).filter(entry => entry.participantId === participant.id);
+    const pointsFor = type => ownEvents.filter(entry => entry.type === type).reduce((total, entry) => total + entry.points, 0);
+    const isWinner = result.winnerId === participant.id;
+    return `<article class="adventure-result-player ${isWinner ? 'is-winner' : ''}">
+      <header class="adventure-result-player-header">
+        <span class="adventure-result-avatar" aria-hidden="true"><span>${escapeHtml(participant.emoji)}</span><img src="${escapeHtml(getParticipantSprite(participant))}" alt="" decoding="async" onerror="this.style.display='none'"></span>
+        <span class="adventure-result-identity"><strong>${escapeHtml(participant.name)}</strong>${isWinner ? '<span class="adventure-result-winner-badge">🏆 Vencedor do mundo</span>' : ''}</span>
+      </header>
+      <div class="adventure-result-points"><small>Pontos neste mundo</small><strong>+${result.scoresEarned[participant.id] || 0}</strong></div>
+      <div class="adventure-result-breakdown" aria-label="Detalhamento dos pontos de ${escapeHtml(participant.name)}">
+        <div><span>✅ Respostas pontuadas</span><strong>${summary.challenges}/2 <small>+${pointsFor('challenge-correct')}</small></strong></div>
+        <div><span>🎮 Minigames vencidos</span><strong>${summary.minigames} <small>+${pointsFor('minigame-win')}</small></strong></div>
+        <div><span>🏆 Vitória do mundo</span><strong>${summary.worldWins} <small>+${pointsFor('world-win')}</small></strong></div>
+      </div>
+      <div class="adventure-result-total"><span>Total acumulado</span><strong>${totalScores[participant.id] || 0}</strong></div>
     </article>`;
   }
 
@@ -234,10 +263,15 @@ export function createAdventureScreen({ root, onStartSetup, onStartNextWorld, on
     const final = data.completed;
     const next = data.progress.find(item => item.worldId === data.nextWorldId);
     const starter = data.participants.find(item => item.id === data.nextStarterId);
+    const worldImage = getOfficialWorldImage(result.worldId);
+    const nextImage = final ? '' : getOfficialWorldImage(next?.worldId);
     open(`<div class="adventure-panel adventure-panel--result" aria-live="polite">
-      <header class="adventure-heading"><span class="adventure-kicker">Mundo concluído</span><h1 id="adventure-title">${escapeHtml(world?.icon)} ${escapeHtml(cleanWorldName(world?.name))}</h1><p>🏆 ${escapeHtml(winner?.name)} venceu este mundo!</p></header>
+      <header class="adventure-result-hero">
+        <span class="adventure-result-world-art" aria-hidden="true"><span>${escapeHtml(world?.icon)}</span>${worldImage ? `<img src="${escapeHtml(worldImage)}" alt="" decoding="async" onerror="this.style.display='none'">` : ''}</span>
+        <span class="adventure-result-hero-copy"><span class="adventure-kicker">Mundo concluído</span><h1 id="adventure-title">${escapeHtml(cleanWorldName(world?.name))}</h1><p>🏆 ${escapeHtml(winner?.name)} venceu este mundo!</p></span>
+      </header>
       <div class="adventure-result-grid">${data.participants.map(item => participantResult(result, item, data.totalScores)).join('')}</div>
-      ${final ? '<p class="adventure-next-note">Os cinco mundos foram concluídos!</p>' : `<p class="adventure-next-note">Próximo: <strong>${escapeHtml(cleanWorldName(next?.name))}</strong>. ${escapeHtml(starter?.name)} começará.</p>`}
+      ${final ? '<div class="adventure-next-note adventure-next-note--final"><span aria-hidden="true">🏁</span><strong>Os cinco mundos foram concluídos!</strong></div>' : `<div class="adventure-next-note"><span class="adventure-next-art" aria-hidden="true"><span>${escapeHtml(next?.icon)}</span>${nextImage ? `<img src="${escapeHtml(nextImage)}" alt="" decoding="async" onerror="this.style.display='none'">` : ''}</span><span><small>Próximo mundo</small><strong>${escapeHtml(cleanWorldName(next?.name))}</strong><em>→ ${escapeHtml(starter?.name)} começará</em></span></div>`}
       <div class="adventure-actions"><button id="adventure-result-continue" class="btn btn-primary">${final ? 'Ver resultado final' : 'Ver mapa'}</button><button id="adventure-exit-btn" class="btn btn-secondary">Sair para o menu</button></div>
     </div>`, 'world-result');
     bindAction('adventure-result-continue', () => final ? showFinal(data) : showMap(data));
@@ -247,11 +281,26 @@ export function createAdventureScreen({ root, onStartSetup, onStartNextWorld, on
   function showFinal(data) {
     const summaries = buildCampaignSummary(data);
     const winner = summaries.find(item => item.id === data.finalResult.finalWinnerId);
+    const isTie = data.finalResult.isTie;
     open(`<div class="adventure-panel adventure-panel--final" aria-live="polite">
       <header class="adventure-heading"><span class="adventure-kicker">Campanha concluída</span><h1 id="adventure-title">🎉 Aventura completa!</h1><p>${escapeHtml(getFinalCampaignMessage(data, winner))}</p></header>
       ${renderWorldPath(data.progress, data.participants)}
-      <div class="adventure-final-grid">${summaries.map(item => `<article class="adventure-final-card ${winner?.id === item.id ? 'is-winner' : ''}"><span aria-hidden="true">${escapeHtml(item.emoji)}</span><h2>${escapeHtml(item.name)}</h2><strong>${item.score} pontos</strong><ul><li>Mundos vencidos: ${item.worldsWon}</li><li>Respostas pontuadas: ${item.challenges}/10</li><li>Minigames vencidos: ${item.minigames}</li></ul>${winner?.id === item.id ? '<span class="adventure-final-badge">🏆 Maior pontuação</span>' : ''}</article>`).join('')}</div>
-      <div class="adventure-actions"><button id="adventure-restart-btn" class="btn btn-primary">Jogar aventura novamente</button><button id="adventure-exit-btn" class="btn btn-secondary">Voltar ao menu</button></div>
+      <div class="adventure-final-grid">${summaries.map(item => {
+        const isWinner = winner?.id === item.id;
+        const pointsLabel = `${item.score} ${item.score === 1 ? 'ponto' : 'pontos'}`;
+        return `<article class="adventure-final-card ${isWinner ? 'is-winner' : ''} ${isTie ? 'is-tied' : ''}">
+          <span class="adventure-final-avatar" aria-hidden="true"><span>${escapeHtml(item.emoji)}</span><img src="${escapeHtml(getParticipantSprite(item))}" alt="" decoding="async" onerror="this.style.display='none'"></span>
+          <h2>${escapeHtml(item.name)}</h2>
+          <div class="adventure-final-score"><small>Pontuação final</small><strong>${pointsLabel}</strong></div>
+          <div class="adventure-final-stats" aria-label="Estatísticas finais de ${escapeHtml(item.name)}">
+            <div><span>🏆 Mundos vencidos</span><strong>${item.worldsWon}</strong></div>
+            <div><span>✅ Respostas pontuadas</span><strong>${item.challenges}/10</strong></div>
+            <div><span>🎮 Minigames vencidos</span><strong>${item.minigames}</strong></div>
+          </div>
+          ${isWinner ? '<span class="adventure-final-badge">🏆 Vencedor da aventura</span>' : isTie ? '<span class="adventure-final-badge">🤝 Empatados</span>' : '<span class="adventure-final-neutral">Aventura concluída</span>'}
+        </article>`;
+      }).join('')}</div>
+      <div class="adventure-actions adventure-actions--final"><button id="adventure-restart-btn" class="btn btn-primary">Jogar aventura novamente</button><button id="adventure-exit-btn" class="btn btn-secondary">Voltar ao menu</button></div>
     </div>`, 'final');
     bindAction('adventure-restart-btn', onRestart);
     bindAction('adventure-exit-btn', () => onExit({ needsConfirmation: false }));
