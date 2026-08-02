@@ -9,6 +9,8 @@ export class AudioManager {
     this._initialized = false;
     this._unlocked = false;
     this._sounds = {};
+    this._bufferCache = new Map();
+    this._pendingBufferLoads = new Map();
     this._activeEffects = {};
     this._musicSource = null;
     this._musicBuffer = null;
@@ -179,10 +181,31 @@ export class AudioManager {
   async _decode(path) {
     const separator = path.includes('?') ? '&' : '?';
     const versionedPath = `${path}${separator}${getCacheBust()}`;
-    const response = await fetch(versionedPath);
-    if (!response.ok) throw new Error(`Audio not found: ${path}`);
-    const arrayBuffer = await response.arrayBuffer();
-    return this._ctx.decodeAudioData(arrayBuffer);
+
+    if (this._bufferCache.has(versionedPath)) {
+      return this._bufferCache.get(versionedPath);
+    }
+
+    if (this._pendingBufferLoads.has(versionedPath)) {
+      return this._pendingBufferLoads.get(versionedPath);
+    }
+
+    const loadPromise = (async () => {
+      const response = await fetch(versionedPath);
+      if (!response.ok) throw new Error(`Audio not found: ${path}`);
+      const arrayBuffer = await response.arrayBuffer();
+      const buffer = await this._ctx.decodeAudioData(arrayBuffer);
+      this._bufferCache.set(versionedPath, buffer);
+      return buffer;
+    })();
+
+    this._pendingBufferLoads.set(versionedPath, loadPromise);
+
+    try {
+      return await loadPromise;
+    } finally {
+      this._pendingBufferLoads.delete(versionedPath);
+    }
   }
 
   /* ── Settings persistence ── */

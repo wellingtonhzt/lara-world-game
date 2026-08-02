@@ -177,11 +177,24 @@ O download de qualquer efeito ou música segue uma dependência controlada e cen
 AudioManager
 → getCacheBust()
 → URL versionada
-→ fetch
-→ decodeAudioData
+→ cache de AudioBuffer
+→ Promise pendente compartilhada
+→ fetch e decode únicos quando necessário
+→ novo AudioBufferSourceNode por reprodução
 ```
 
-`APP_VERSION`, em `src/version.js`, é a fonte única da versão. O catálogo `sounds.js` não conhece query strings nem é mutado durante o carregamento; o `AudioManager` cria uma URL local por chamada, usando `?` ou `&` conforme o caminho original. Esse cache busting invalida respostas HTTP antigas, mas não implementa cache de `AudioBuffer`, preload ou pooling.
+`APP_VERSION`, em `src/version.js`, é a fonte única da versão. O catálogo `sounds.js` não conhece query strings nem é mutado durante o carregamento; o `AudioManager` cria uma URL local por chamada, usando `?` ou `&` conforme o caminho original. A URL final indexa tanto o cache de buffers decodificados quanto as Promises de carregamento em andamento. Falhas não permanecem no cache e podem ser tentadas novamente. O sistema não implementa preload ou pooling.
+
+A entrada em minigames pelas casas do tabuleiro também é centralizada:
+
+```text
+narrateMinigame()
+→ reproduz portal
+→ narração visual
+→ abertura do minigame
+```
+
+O Modo Arcade inicia minigames diretamente e não passa por esse helper. O antigo fluxo de portal/submundo genérico continua independente e preservado.
 
 ## Arquitetura do Frontend
 

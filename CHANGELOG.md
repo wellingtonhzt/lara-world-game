@@ -14,6 +14,21 @@
 - Nenhuma regra do jogo, lógica de turno, comportamento da Máquina, mecânica de dados, animações existentes, minigames ou layout desktop foram alterados
 - Botão reutiliza o clique original `#roll-btn.click()` — sem lógica duplicada
 
+## [0.38.0-preview] - 2026-08-01
+
+### Adicionado
+- **Cinco efeitos sonoros**: movimento comum (`playerMove`), avanço especial (`specialAdvance`), retrocesso especial (`specialBack`), entrada por portal (`portal`) e vitória (`victory`)
+- **Cache de `AudioBuffer`**: buffers decodificados são reutilizados entre reproduções de efeitos e música
+- **Deduplicação concorrente**: solicitações simultâneas do mesmo asset compartilham uma única Promise de carregamento e decode
+
+### Alterado
+- **Entrada em minigames pelo tabuleiro**: `narrateMinigame()` reproduz `portal` uma vez antes da narração visual; o portal/submundo genérico permanece preservado
+- **Cache busting**: `APP_VERSION` e URLs públicas atualizados para `v0.38.0-preview`
+
+### Notas
+- Testes manuais aprovados para movimento, avanço, retrocesso, entrada em minigame e vitória
+- Nenhuma regra, frequência de movimento, intervalo, mundo, minigame ou outra mecânica de gameplay foi alterada
+
 ## [0.37.0-preview] - 2026-08-01
 
 ### Adicionado

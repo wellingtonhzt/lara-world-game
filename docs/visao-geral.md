@@ -30,12 +30,20 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 - **Desktop inalterado**: botão sempre oculto acima de 840px; layout e painel original intocados
 - **Sem alteração de gameplay**: nenhuma regra, turno, probabilidade, animação, minigame ou modo de jogo foi modificado
 
-### v0.37.0-preview (Atual) — Cache Busting dos Assets de Áudio ✅
+### v0.38.0-preview (Atual) — Sons de Tabuleiro e Cache de Buffers ✅
+
+- **Cinco novos efeitos**: movimento comum, avanço especial, retrocesso especial, entrada em minigame e vitória
+- **11 de 16 assets ativos**: permanecem ausentes somente os sons de modal, tesouro, game over e música de fundo
+- **Cache de buffers**: o `AudioManager` reutiliza `AudioBuffer` decodificado e compartilha Promises entre carregamentos simultâneos
+- **Portal centralizado**: casas de minigame reproduzem o efeito em `narrateMinigame()`; Arcade e portal/submundo genérico permanecem independentes
+- **Cache busting**: URLs públicas atualizadas para `?v=v0.38.0-preview`
+
+### v0.37.0-preview — Cache Busting dos Assets de Áudio ✅
 
 - **Carregamento versionado**: o `AudioManager` acrescenta a versão central de `APP_VERSION` às URLs antes do `fetch`
-- **Catálogo desacoplado**: `sounds.js` mantém caminhos limpos; efeitos e músicas usam automaticamente `?v=v0.37.0-preview`
+- **Catálogo desacoplado**: `sounds.js` mantém caminhos limpos; efeitos e músicas usam automaticamente a versão ativa
 - **Deploy consistente**: a nova URL evita respostas antigas ou `404` armazenados após adicionar ou substituir assets sonoros
-- **Escopo preservado**: seis efeitos ativos, 10 pendentes e nenhuma alteração de gameplay
+- **Escopo preservado**: seis efeitos estavam ativos, 10 pendentes e nenhuma alteração de gameplay
 
 ### v0.36.0-preview — Preparação da Partida Premium ✅
 
@@ -182,7 +190,7 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 - **21 pontos de integração**: cliques, dados, movimento, casas especiais, desafios e vitória com chamadas a `audioManager.play()`
 - **Volumes independentes** (mestre, música, efeitos) com persistência automática em `localStorage`
 - **Mute com persistência**: estado salvo entre sessões
-- **Assets de áudio**: seis efeitos ativos e testados (`buttonClick`, `diceRoll`, `diceResult`, `challengeOpen`, `correctAnswer`, `wrongAnswer`); as outras 10 entradas do catálogo permanecem sem arquivo físico
+- **Assets de áudio**: 11 efeitos ativos e testados; permanecem sem arquivo físico `modalOpen`, `modalClose`, `treasure`, `gameOver` e `backgroundMusic`
 - **Degradação graciosa**: qualquer falha de áudio é silenciosamente ignorada
 
 ### v0.12.0-preview — Board Layout 2.0 + Hero Screen ✅

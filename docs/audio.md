@@ -34,7 +34,7 @@ O sistema de áudio do Lara World foi projetado para ser centralizado, resilient
 ### 2.2 Fluxo de Reprodução
 
 1. **Registro**: `init()` percorre o catálogo `sounds.js` e registra cada entrada em `this._sounds`
-2. **Play**: `play(key)` busca a entrada → verifica `muted` → verifica `category === 'effects'` → cria `AudioContext` (lazy) → adiciona a versão à URL → faz fetch do arquivo → decodifica → conecta ao `effectsGain` → inicia
+2. **Play**: `play(key)` busca a entrada → verifica `muted` → verifica `category === 'effects'` → cria `AudioContext` (lazy) → adiciona a versão à URL → consulta o cache ou o carregamento pendente → faz fetch e decode quando necessário → cria um novo source → conecta ao `effectsGain` → inicia
 3. **Music**: `playMusic(key)` usa o mesmo carregamento versionado, mas conecta ao `musicGain`, faz `loop = true`, e para a música anterior automaticamente
 4. **Erro**: qualquer falha (arquivo não encontrado, decode error, AudioContext suspenso) é silenciosamente ignorada — o jogo nunca quebra por áudio
 
@@ -59,7 +59,7 @@ Se o arquivo de áudio não existir no servidor, `fetch()` retorna 404 → `_dec
 
 ### 2.6 Assets Ativos
 
-A primeira e a segunda entregas somam seis dos 16 assets WebM do catálogo, todos ativos, integrados e testados no jogo:
+As três entregas somam 11 dos 16 assets WebM do catálogo, todos ativos, integrados e testados no jogo:
 
 | Entrega | Chave | Caminho |
 |---------|-------|---------|
@@ -69,23 +69,34 @@ A primeira e a segunda entregas somam seis dos 16 assets WebM do catálogo, todo
 | Segunda | `challengeOpen` | `assets/audio/quiz/challenge.webm` |
 | Segunda | `correctAnswer` | `assets/audio/quiz/correct.webm` |
 | Segunda | `wrongAnswer` | `assets/audio/quiz/wrong.webm` |
+| Terceira | `playerMove` | `assets/audio/board/move.webm` |
+| Terceira | `specialAdvance` | `assets/audio/board/advance.webm` |
+| Terceira | `specialBack` | `assets/audio/board/back.webm` |
+| Terceira | `portal` | `assets/audio/board/portal.webm` |
+| Terceira | `victory` | `assets/audio/rewards/victory.webm` |
 
-As outras 10 entradas do catálogo continuam sem arquivo físico correspondente e permanecem cobertas pela degradação graciosa descrita acima.
+As cinco entradas restantes — `modalOpen`, `modalClose`, `treasure`, `gameOver` e `backgroundMusic` — continuam sem arquivo físico correspondente e permanecem cobertas pela degradação graciosa descrita acima.
 
 ### 2.7 Cache Busting Automático
 
-O `AudioManager` importa `getCacheBust()` de `src/version.js` e acrescenta sua saída à URL imediatamente antes do `fetch`. Com `APP_VERSION = 'v0.37.0-preview'`, por exemplo:
+O `AudioManager` importa `getCacheBust()` de `src/version.js` e acrescenta sua saída à URL imediatamente antes do `fetch`. Com `APP_VERSION = 'v0.38.0-preview'`, por exemplo:
 
 ```text
 assets/audio/quiz/challenge.webm
-→ assets/audio/quiz/challenge.webm?v=v0.37.0-preview
+→ assets/audio/quiz/challenge.webm?v=v0.38.0-preview
 ```
 
 Se o caminho já tiver query string, a versão é anexada com `&`. O catálogo `sounds.js` continua armazenando somente caminhos limpos, sem conhecer a versão. Efeitos e músicas passam pelo mesmo `_decode()` e, portanto, recebem o mesmo cache busting.
 
-Esse mecanismo evita reutilizar respostas antigas — inclusive `404` armazenados — após um deploy. Ele não é cache de `AudioBuffer`: cada reprodução continua seguindo a estratégia de download e decode descrita nas limitações atuais.
+Esse mecanismo evita reutilizar respostas antigas — inclusive `404` armazenados — após um deploy e também define a chave do cache interno de buffers.
 
 > Toda entrega que adicionar, remover ou substituir assets públicos de áudio deve atualizar `APP_VERSION`.
+
+### 2.8 Cache de AudioBuffer
+
+O singleton mantém um `Map` de buffers decodificados e outro de Promises pendentes, ambos indexados pela URL final versionada. Uma reprodução consulta primeiro o buffer pronto e depois um carregamento concorrente; somente quando ambos estão ausentes executa `fetch()` e `decodeAudioData()`. Falhas não são armazenadas, a Promise pendente é removida em `finally` e uma tentativa posterior pode carregar o asset novamente.
+
+Cada reprodução continua criando um novo `AudioBufferSourceNode`: buffers são reutilizáveis, sources não. Efeitos e músicas passam pelo mesmo `_decode()` e aproveitam o cache.
 
 ---
 
@@ -202,6 +213,7 @@ As chamadas de áudio estão inseridas em `src/game.js`. Toda integração usa `
 | Casa especial "avançar" | `specialAdvance` | `processSpecialCell()` |
 | Casa especial "voltar" | `specialBack` | `processSpecialCell()` |
 | Casa especial "portal" | `portal` | `processSpecialCell()` |
+| Entrada em minigame pelo tabuleiro | `portal` | `narrateMinigame()` |
 | Abertura de desafio (quiz) | `challengeOpen` | `processSpecialCell()` |
 | Resposta correta | `correctAnswer` | `processSpecialCell()` / `resolveChallenge()` |
 | Resposta errada | `wrongAnswer` | `processSpecialCell()` / `resolveChallenge()` |
@@ -303,35 +315,31 @@ Cada `play()` cria um novo `AudioBufferSourceNode`. Para sons muito frequentes (
 ### 9.3 Sem Fade In/Out
 Não há transições suaves (crossfade) ao trocar de música. A troca é abrupta.
 
-### 9.4 Sem Cache de AudioBuffer
-O buffer decodificado não é armazenado em cache entre chamadas. Cada `play()` faz fetch e decode novamente.
-
-### 9.5 Sem Fallback de Formato
+### 9.4 Sem Fallback de Formato
 Se o formato `.webm` não for suportado pelo navegador, o som não toca. Não há fallback para `.mp3` ou `.ogg`.
 
-### 9.6 Sem Fila de Reprodução
+### 9.5 Sem Fila de Reprodução
 Não é possível encadear sons (`play A → when done → play B`). Cada chamada é independente.
 
-### 9.7 Sem Web Workers
+### 9.6 Sem Web Workers
 O decode de áudio é feito na thread principal. Para arquivos grandes, pode causar pequenos engasgos.
 
-### 9.8 Sem Testes Automatizados
+### 9.7 Sem Testes Automatizados
 Não há testes unitários ou de integração para o módulo de áudio.
 
 ---
 
 ## 10. Roadmap (Ideias Futuras)
 
-1. **Cache de buffers** — evitar fetch/decode repetidos para o mesmo som
-2. **Pool de sources** — reutilizar nós para sons frequentes
-3. **Crossfade entre músicas** — fade out da anterior + fade in da nova
-4. **Suporte a múltiplos formatos** — fallback automático `.webm` → `.mp3` → `.ogg`
-5. **Fila de efeitos** — encadear sons sequencialmente
-6. **Sons posicionais (3D)** — PannerNode para áudio espacial no tabuleiro
-7. **Sistema de ambiência** — camadas de som ambiente sobrepostas com fade
-8. **Web Workers para decode** — processar áudio em background thread
-9. **Testes automatizados** — mock do AudioContext para testes unitários
-10. **Interface de áudio no jogo** — slider de volume e botão mute na UI
+1. **Pool de sources** — reutilizar nós para sons frequentes
+2. **Crossfade entre músicas** — fade out da anterior + fade in da nova
+3. **Suporte a múltiplos formatos** — fallback automático `.webm` → `.mp3` → `.ogg`
+4. **Fila de efeitos** — encadear sons sequencialmente
+5. **Sons posicionais (3D)** — PannerNode para áudio espacial no tabuleiro
+6. **Sistema de ambiência** — camadas de som ambiente sobrepostas com fade
+7. **Web Workers para decode** — processar áudio em background thread
+8. **Testes automatizados** — mock do AudioContext para testes unitários
+9. **Interface de áudio no jogo** — slider de volume e botão mute na UI
 
 ---
 

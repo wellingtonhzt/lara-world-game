@@ -1,5 +1,14 @@
 # Roadmap Lara World
 
+### v0.38.0-preview — Sons de Tabuleiro e Cache de Buffers ✅
+
+- [x] Cache de `AudioBuffer` com deduplicação de carregamentos concorrentes
+- [x] Som de movimento comum, uma reprodução por passo
+- [x] Sons de avanço e retrocesso especiais
+- [x] Som de entrada em minigame centralizado em `narrateMinigame()`
+- [x] Som de vitória
+- [x] 11 dos 16 assets do catálogo ativos; cinco ainda pendentes
+
 ### v0.37.0-preview — Cache Busting dos Assets de Áudio ✅
 
 - [x] `AudioManager` integrado ao `getCacheBust()` central
@@ -462,7 +471,7 @@
 
 ### 🎯 Próximas Prioridades
 
-- **Assets de áudio .webm** — seis sons ativos após as entregas de interface/dados e quiz; os outros 10 sons do catálogo permanecem pendentes
+- **Assets de áudio .webm** — 11 sons ativos após as três entregas; permanecem pendentes `modalOpen`, `modalClose`, `treasure`, `gameOver` e `backgroundMusic`
 - **Integração de música ambiente** — chamar `audioManager.playMusic('backgroundMusic')` em `game.js`
 - **Integração de sons de modal** — conectar `modalOpen`/`modalClose` nas aberturas/fechamentos
 - **Integração de treasure e gameOver** — conectar sons pendentes do catálogo
@@ -485,6 +494,9 @@
 ### 🔊 Melhorias Futuras de Áudio
 
 - **Músicas por mundo** — trilhas sonoras temáticas diferentes para cada mundo (Floresta, Dinossauros, futuros)
+- **Música ambiente** — integrar a faixa de fundo ao fluxo do jogo
+- **Controles de áudio** — expor botão mute e sliders de volume na interface
+- **Sons internos dos minigames** — efeitos próprios durante as partidas
 - **Preload de áudio** — carregar buffers na inicialização para evitar delay no primeiro play
 - **Crossfade entre músicas** — transição suave ao trocar faixas
 - **Tela de configuração de áudio** — sliders de volume e botão mute na UI do jogo

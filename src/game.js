@@ -268,6 +268,8 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
   }
 
   function narrateMinigame(id, icon) {
+    audioManager.play('portal');
+
     let title = 'Minigame!';
     try { title = getMinigame(id).presentation?.title || title; } catch { /* fallback visual */ }
     return narrate({ icon, title: `${title}!`, type: 'minigame', duration: GAME_EVENT_DURATIONS.minigame });

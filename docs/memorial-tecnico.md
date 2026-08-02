@@ -1,5 +1,32 @@
 # Memorial Técnico
 
+## Sprint — Sons de Tabuleiro e Cache de Buffers (v0.38.0-preview)
+
+### Problema e decisão técnica
+
+O efeito `playerMove` é disparado uma vez por casa durante `animatePlayerMovement()`. Sem cache interno, cada passo voltava a executar fetch, leitura do corpo e `decodeAudioData()`, mesmo quando o navegador já possuía a resposta HTTP. A solução foi cachear o `AudioBuffer` decodificado — nunca o `AudioBufferSourceNode`, que continua novo a cada reprodução — usando a URL final com `APP_VERSION` como chave.
+
+Um segundo `Map` registra Promises pendentes. Chamadas simultâneas para o mesmo asset compartilham uma única operação; o registro pendente é removido após sucesso ou falha, erros não são armazenados e tentativas posteriores continuam possíveis. O mesmo `_decode()` atende efeitos e futura música.
+
+```text
+path → URL versionada → buffer pronto? → Promise pendente? → fetch → decode único → cache
+```
+
+### Integração e assets
+
+Foram adicionados e ativados cinco efeitos WebM/Opus: `playerMove`, `specialAdvance`, `specialBack`, `portal` e `victory`. O som de entrada nos cinco minigames do tabuleiro foi centralizado em `narrateMinigame()`, antes da narração visual. O portal/submundo genérico mantém sua chamada própria e o Modo Arcade continua iniciando minigames diretamente, sem esse efeito de transporte do tabuleiro.
+
+### Validação e resultado
+
+- Movimento comum, avanço, retrocesso, entrada em minigame e vitória aprovados em teste manual
+- Cinco arquivos confirmados como WebM/Matroska, Opus mono a 48 kHz e decode integral sem erro
+- Frequência e intervalo de movimento (`180 ms`) preservados
+- Nenhuma regra de gameplay, mundo, minigame ou Question Engine alterada
+- 11 dos 16 assets do catálogo presentes; cinco permanecem futuros
+- Lançamento: `v0.38.0-preview`, com cache busting atualizado
+
+---
+
 ## Sprint — Cache Busting dos Assets de Áudio (v0.37.0-preview)
 
 ### Problema Observado
