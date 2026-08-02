@@ -20,6 +20,7 @@ import {
   isQuickGame,
   toAdventureParticipants,
 } from './adventure/adventure-runtime.js';
+import { createAdventureScoreEvents } from './adventure/adventure-score-events.js';
 
 (function () {
   const TOTAL_CASAS = 20;
@@ -53,6 +54,7 @@ import {
   const victoryMetrics = { gameStartedAt: null, totalRolls: 0 };
   let focusBeforeVictory = null;
   const adventureRuntime = createAdventureRuntime({ resolveWorld: get });
+  const adventureScoreEvents = createAdventureScoreEvents(adventureRuntime);
 
   function isQuickGameSession() {
     return isQuickGame(modoJogo);
@@ -80,6 +82,10 @@ import {
 
   function createSubworldEntryState() {
     return Object.fromEntries(players.map(player => [player.id, null]));
+  }
+
+  function getAdventureParticipantId(player) {
+    return player.slot === 0 ? 'p1' : 'p2';
   }
 
   /* ── Subworld config map ── */
@@ -792,10 +798,16 @@ import {
       case "desafio": {
         const desafio = sortearQuestao();
         if (!desafio) return false;
+        const scoreAttempt = adventureScoreEvents.beginChallenge({
+          participantId: getAdventureParticipantId(player),
+          questionId: desafio.id,
+          cell: posicao,
+        });
         audioManager.play('challengeOpen');
         addHistory(`\u2753 ${player.name} caiu em um desafio!`, "especial");
         await narrate({ icon: '❓', title: 'Desafio!', message: 'Mostre o que você sabe', type: 'challenge' });
         const acertou = await resolveChallenge(desafio);
+        adventureScoreEvents.resolveChallenge(scoreAttempt, acertou);
         if (acertou) {
           audioManager.play('correctAnswer');
           const destino = Math.min(posicao + 1, getTotalCasas());
@@ -1160,8 +1172,12 @@ import {
     addHistory(`🎉🎉 PARABÉNS, ${player.name} venceu! 🎉🎉`, "vitoria");
 
     if (isAdventureGameSession()) {
-      const completion = adventureRuntime.completeWorld({ winnerId: player.slot === 0 ? 'p1' : 'p2' });
-      return completion;
+      const scoreAttempt = adventureScoreEvents.beginWorldWin({
+        participantId: getAdventureParticipantId(player),
+        position: player.posicao,
+        turnCount: victoryMetrics.totalRolls,
+      });
+      return adventureScoreEvents.completeWorldVictory(scoreAttempt).completion;
     }
 
     updateVictoryScreen(player);
@@ -3070,6 +3086,12 @@ import {
 
   async function launchBoardMinigame(minigameId, options = {}) {
     const worldRunId = getWorldOperationToken();
+    const player = getCurrentPlayer();
+    const scoreAttempt = adventureScoreEvents.beginMinigame({
+      participantId: getAdventureParticipantId(player),
+      minigameId,
+      cell: player.posicao,
+    });
     audioManager.pauseMusic();
     try {
       const result = await launchMinigameHost(minigameId, {
@@ -3077,6 +3099,7 @@ import {
         playerName: getCurrentPlayer().name
       });
       assertWorldOperationCurrent(worldRunId);
+      adventureScoreEvents.resolveMinigame(scoreAttempt, result);
       return result;
     } finally {
       if (isWorldOperationCurrent(worldRunId) && gameState.jogoAtivo && !gameState.jogoFinalizado && isBoardGameSession()) {

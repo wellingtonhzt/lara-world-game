@@ -172,14 +172,16 @@ test('runtime module is DOM-free', () => {
 test('game integration keeps quick victory overlay and career entry disabled', () => {
   const gameSource = fs.readFileSync(new URL('../src/game.js', import.meta.url), 'utf8');
   const htmlSource = fs.readFileSync(new URL('../src/index.html', import.meta.url), 'utf8');
-  assert.match(gameSource, /if \(isAdventureGameSession\(\)\)[\s\S]*?return completion;[\s\S]*?updateVictoryScreen\(player\);[\s\S]*?showVictoryScreen\(\);/);
+  assert.match(gameSource, /if \(isAdventureGameSession\(\)\)[\s\S]*?completeWorldVictory\(scoreAttempt\)\.completion;[\s\S]*?updateVictoryScreen\(player\);[\s\S]*?showVictoryScreen\(\);/);
   assert.match(htmlSource, /<button id="btn-carreira"[^>]*disabled/);
   assert.doesNotMatch(gameSource, /getElementById\(["']btn-carreira["']\)/);
 });
 
-test('questions and minigames do not yet register adventure score events', () => {
+test('questions and minigames use the centralized score event adapter', () => {
   const source = fs.readFileSync(new URL('../src/game.js', import.meta.url), 'utf8');
-  assert.doesNotMatch(source, /\.recordScoreEvent\(/);
+  assert.match(source, /adventureScoreEvents\.resolveChallenge\(/);
+  assert.match(source, /adventureScoreEvents\.resolveMinigame\(/);
+  assert.doesNotMatch(source, /adventureRuntime\.recordScoreEvent\(/);
 });
 
 console.log(`\nAdventure runtime: ${passed} tests passed.\n`);

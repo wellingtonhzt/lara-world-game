@@ -70,6 +70,10 @@ export function creditScore(state, event) {
   state.processedScoreEvents.add(event.eventId);
   if (rule.category) counters[rule.category] += 1;
 
+  if (rule.points === 0) {
+    return { accepted: true, pointsAwarded: 0, reason: 'no-points' };
+  }
+
   const breakdownEntry = {
     eventId: event.eventId,
     worldRunId: event.worldRunId,
@@ -86,7 +90,7 @@ export function creditScore(state, event) {
   return {
     accepted: true,
     pointsAwarded: rule.points,
-    reason: rule.points > 0 ? 'awarded' : 'no-points',
+    reason: 'awarded',
   };
 }
 

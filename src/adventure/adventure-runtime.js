@@ -200,6 +200,11 @@ export function createAdventureRuntime({
       campaign,
       progress: getAdventureMapProgress(state, campaign),
       totalScores: { ...state.totalScores },
+      currentWorldScore: { ...state.currentWorldScore },
+      currentWorldBreakdown: state.currentWorldBreakdown.map(entry => ({
+        ...entry,
+        source: { ...entry.source },
+      })),
       currentWorldId: current?.worldId ?? null,
       nextWorldId,
       starterId: current?.starterId ?? null,
