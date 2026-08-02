@@ -1,5 +1,21 @@
 # Roadmap Lara World
 
+### Modo Aventura — concluído na branch `feat/modo-aventura`, publicação pendente
+
+- [x] Fundação da campanha e sequência oficial dos cinco mundos
+- [x] Ciclo completo entre setup, sorteio, mundos, mapas e resultado final
+- [x] Pontuação acumulada, limites por evento, snapshots e idempotência
+- [x] Mapa ilustrado desktop e vertical mobile com trilha SVG
+- [x] Telas de conclusão, mapa intermediário e aventura completa
+- [x] Humano/humano e humano/Máquina com sprites oficiais
+- [x] Responsividade, teclado, foco, rolagem e movimento reduzido
+- [x] Testes de fundação, runtime, pontuação, telas e regressão
+- [ ] Merge em `main`
+- [ ] Atualização de versão, tag e deploy
+- [ ] Persistência e retomada após recarregar
+- [ ] Histórico de campanhas e ranking
+- [ ] Temas musicais por mundo e refinamentos orientados por métricas
+
 ### v0.40.0-preview — Música de Fundo Global ✅
 
 - [x] Uma música global em loop durante as partidas no tabuleiro
@@ -500,7 +516,7 @@
 - **Ilustrações das áreas dos mundos** — backgrounds e caminhos para submundos (Floresta Misteriosa)
 - **Assets da Galáxia** — criar `background.webp` e `path.webp` em `src/assets/worlds/galaxia/` (infraestrutura CSS pronta)
 - **Sistema de conquistas** — medalhas e progressão do jogador
-- **Modo Aventura** — campanha com progressão entre mundos
+- ~~**Modo Aventura** — campanha com progressão entre mundos~~ — ✅ Concluído na branch; publicação pendente
 - **Animações da interface** — transições e micro-interações
 - **Minigame exclusivo do Castelo dos Dragões** — evento especial para a casa 15 (Ataque dos Dragões — ✅ Concluído)
 

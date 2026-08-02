@@ -311,6 +311,8 @@ audioManager.stopMusic();
 
 A música toca apenas nas partidas do tabuleiro, pausa nos minigames e para no menu e na vitória. Menu, Arcade e minigames não possuem trilhas próprias nesta etapa.
 
+No Modo Aventura, cada entrada em um mundo inicia a música após a ação do jogador. A faixa para nas telas de resultado e permanece parada no mapa; ao iniciar o próximo tabuleiro, começa novamente. O mute global continua sendo a única fonte de estado de silenciamento. A documentação completa da campanha está em [Modo Aventura](modo-aventura.md).
+
 ---
 
 ## 8. Boas Práticas
