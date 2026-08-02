@@ -480,19 +480,23 @@ No Jogo Rápido, a seleção define o mundo; “Preparar Jogo” configura modo,
 
 ### 🏠 Hero Screen
 
-![Hero Screen do Lara World](assets/screenshot-menu.png)
+![Tela inicial do Lara World](assets/lara-world-home.png)
 
-### 🌍 Mundo Principal
+### 🌍 Seleção de Mundos
 
-![Mundo Principal](assets/screenshot-mundo-principal.png)
+![Seleção de mundos do Lara World](assets/world-selection.png)
 
-### 🌿 Mundo da Floresta
+### 🌿 Partida na Floresta Encantada
 
-![Mundo da Floresta](assets/screenshot-floresta.png)
+![Partida no tabuleiro da Floresta Encantada](assets/board-gameplay.png)
 
-### 📚 Desafios Educativos
+### 🧩 Minigame
 
-![Desafios Educativos](assets/screenshot-desafios.png)
+![Jogo da Memória da Floresta em andamento](assets/minigame-gameplay.png)
+
+### 🎮 Modo Arcade
+
+![Tela principal do Modo Arcade](assets/arcade-menu.png)
 
 ---
 
