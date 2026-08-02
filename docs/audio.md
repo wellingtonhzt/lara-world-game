@@ -49,15 +49,21 @@ O sistema de áudio do Lara World foi projetado para ser centralizado, resilient
 
 Salvo automaticamente a cada `setMasterVolume()`, `setMusicVolume()`, `setEffectsVolume()`, `mute()` e `unmute()`. Restaurado no construtor via `_loadSettings()`.
 
-### 2.4 Limitação: Autoplay
+### 2.4 Controle Global na Interface
+
+O cabeçalho compartilhado contém um único botão `#audio-toggle-btn`, disponível no menu, na partida, no Arcade e nos minigames. O controle consulta `audioManager.isMuted()` como fonte única, alterna o estado por `toggleMute()` e reutiliza a preferência `laraAudioConfig.muted`; não existe uma segunda chave no `localStorage`.
+
+O botão mostra `🔊` quando o áudio está ativo e `🔇` quando está mutado. `aria-label`, `title` e `aria-pressed` acompanham o estado, com suporte nativo a mouse, toque e teclado e foco visível. A mesma interface poderá controlar a futura música de fundo quando ela for implementada, mas nesta versão somente os efeitos já existentes estão ativos.
+
+### 2.5 Limitação: Autoplay
 
 Navegadores bloqueiam `AudioContext` até a primeira interação do usuário. O `AudioManager` lida com isso criando o contexto sob demanda e tentando `resume()` automaticamente. Se `play()` for chamado antes da interação, o áudio é simplesmente ignorado. Não há listener global de clique para desbloquear — o desbloqueio é passivo.
 
-### 2.5 Sounds Ausentes (Degradação Graciosa)
+### 2.6 Sounds Ausentes (Degradação Graciosa)
 
 Se o arquivo de áudio não existir no servidor, `fetch()` retorna 404 → `_decode()` lança erro → o catch silencia. O jogo continua funcionando normalmente. Isso permite cadastrar sons no catálogo antes mesmo dos assets estarem prontos.
 
-### 2.6 Assets Ativos
+### 2.7 Assets Ativos
 
 As três entregas somam 11 dos 16 assets WebM do catálogo, todos ativos, integrados e testados no jogo:
 
@@ -77,13 +83,13 @@ As três entregas somam 11 dos 16 assets WebM do catálogo, todos ativos, integr
 
 As cinco entradas restantes — `modalOpen`, `modalClose`, `treasure`, `gameOver` e `backgroundMusic` — continuam sem arquivo físico correspondente e permanecem cobertas pela degradação graciosa descrita acima.
 
-### 2.7 Cache Busting Automático
+### 2.8 Cache Busting Automático
 
-O `AudioManager` importa `getCacheBust()` de `src/version.js` e acrescenta sua saída à URL imediatamente antes do `fetch`. Com `APP_VERSION = 'v0.38.0-preview'`, por exemplo:
+O `AudioManager` importa `getCacheBust()` de `src/version.js` e acrescenta sua saída à URL imediatamente antes do `fetch`. Com `APP_VERSION = 'v0.39.0-preview'`, por exemplo:
 
 ```text
 assets/audio/quiz/challenge.webm
-→ assets/audio/quiz/challenge.webm?v=v0.38.0-preview
+→ assets/audio/quiz/challenge.webm?v=v0.39.0-preview
 ```
 
 Se o caminho já tiver query string, a versão é anexada com `&`. O catálogo `sounds.js` continua armazenando somente caminhos limpos, sem conhecer a versão. Efeitos e músicas passam pelo mesmo `_decode()` e, portanto, recebem o mesmo cache busting.
@@ -339,7 +345,7 @@ Não há testes unitários ou de integração para o módulo de áudio.
 6. **Sistema de ambiência** — camadas de som ambiente sobrepostas com fade
 7. **Web Workers para decode** — processar áudio em background thread
 8. **Testes automatizados** — mock do AudioContext para testes unitários
-9. **Interface de áudio no jogo** — slider de volume e botão mute na UI
+9. **Expandir a interface de áudio** — adicionar sliders e controles separados para música e efeitos
 
 ---
 

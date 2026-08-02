@@ -18,7 +18,8 @@
 
 | Versão | Data | Status |
 |--------|------|--------|
-| **v0.38.0-preview** | Ago/2026 | ✅ **Ativo** — Sons de tabuleiro e cache de buffers |
+| **v0.39.0-preview** | Ago/2026 | ✅ **Ativo** — Controle global de som |
+| v0.38.0-preview | Ago/2026 | ✅ Sons de tabuleiro e cache de buffers |
 | v0.37.0-preview | Ago/2026 | ✅ Cache busting dos assets de áudio |
 | v0.36.0-preview | Jul/2026 | ✅ Preparação da Partida Premium |
 | v0.35.0-preview | Jul/2026 | ✅ Question Engine |
@@ -64,17 +65,24 @@ As ações da partida são narradas por um overlay temporário sobre o tabuleiro
 
 ---
 
-## ✨ Funcionalidades Atuais (v0.38.0-preview)
+## ✨ Funcionalidades Atuais (v0.39.0-preview)
+
+### Controle global de som ✅
+
+- **Botão único**: o cabeçalho compartilhado oferece o mesmo controle no menu, na partida, no Arcade e nos minigames
+- **Persistência**: a preferência de mute é restaurada pelo `AudioManager` após recarregar a página
+- **Acessibilidade**: ícones `🔊`/`🔇`, rótulos dinâmicos, `aria-pressed`, foco visível e suporte a mouse, toque e teclado
+- **Próxima etapa**: a interface está preparada para música de fundo, ainda não implementada
 
 ### Sons de tabuleiro e cache de buffers ✅
 
 - **Cinco novos efeitos**: movimento, avanço especial, retrocesso especial, entrada em minigame e vitória
 - **Reprodução eficiente**: buffers decodificados são reutilizados e carregamentos simultâneos do mesmo asset compartilham uma única operação
-- **Cache busting atualizado**: os assets usam URLs com `?v=v0.38.0-preview`
+- **Cache busting atualizado**: os assets usam URLs com `?v=v0.39.0-preview`
 
 ### Cache busting dos assets de áudio ✅
 
-- **Carregamento versionado**: o `AudioManager` acrescenta automaticamente `?v=v0.38.0-preview` às URLs de efeitos e músicas antes do download
+- **Carregamento versionado**: o `AudioManager` acrescenta automaticamente `?v=v0.39.0-preview` às URLs de efeitos e músicas antes do download
 - **Fonte única**: a versão vem de `APP_VERSION`; o catálogo mantém caminhos limpos e independentes da versão
 - **Cache antigo evitado**: novas versões deixam de reutilizar respostas antigas ou `404` armazenados após o deploy
 
@@ -569,7 +577,7 @@ No Jogo Rápido, a seleção define o mundo; “Preparar Jogo” configura modo,
 
 ## 📜 História do Projeto
 
-O Lara World começou como um MVP de tabuleiro simples para 1 jogador e evoluiu para multiplayer local, mundos configuráveis, minigames, Question Engine, Modo Arcade e uma identidade visual própria. A versão atual, **v0.38.0-preview**, adiciona efeitos de tabuleiro e vitória com cache de buffers decodificados, preservando a experiência consolidada de Hero Screen, Seleção de Mundo, Preparar Jogo, Quem começa? e Partida. Consulte o [Changelog](CHANGELOG.md) para o histórico completo e o [Guia de Estilo](docs/ui-style-guide.md) para as diretrizes visuais oficiais.
+O Lara World começou como um MVP de tabuleiro simples para 1 jogador e evoluiu para multiplayer local, mundos configuráveis, minigames, Question Engine, Modo Arcade e uma identidade visual própria. A versão atual, **v0.39.0-preview**, adiciona um controle global e persistente de som ao shell compartilhado, preservando a experiência consolidada de Hero Screen, Seleção de Mundo, Preparar Jogo, Quem começa? e Partida. Consulte o [Changelog](CHANGELOG.md) para o histórico completo e o [Guia de Estilo](docs/ui-style-guide.md) para as diretrizes visuais oficiais.
 
 ---
 
@@ -629,7 +637,8 @@ docker compose down
 ## 🗺️ Roadmap
 
 - **Botão Flutuante Mobile** — ✅ **Concluído** — Botão "Jogar Dado" flutuante sincronizado para mobile
-- **v0.38.0-preview** — ✅ **Ativo** — Sons de tabuleiro e cache de buffers
+- **v0.39.0-preview** — ✅ **Ativo** — Controle global de som
+- **v0.38.0-preview** — ✅ Sons de tabuleiro e cache de buffers
 - **v0.37.0-preview** — ✅ Cache busting dos assets de áudio
 - **v0.36.0-preview** — ✅ Preparação da Partida Premium
 - **v0.35.0-preview** — ✅ Question Engine

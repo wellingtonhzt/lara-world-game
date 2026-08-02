@@ -18,6 +18,14 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 
 ## Principais Funcionalidades
 
+### v0.39.0-preview (Atual) — Controle Global de Som ✅
+
+- **Controle persistente**: um único botão no cabeçalho compartilhado ativa ou desativa todo o áudio pelo `AudioManager`
+- **Preferência restaurada**: o estado mutado permanece salvo em `laraAudioConfig` após recarregar a página
+- **Navegação consistente**: o mesmo controle acompanha menu, partida, Arcade e minigames, sem estados duplicados
+- **Acessibilidade**: ícones `🔊`/`🔇`, rótulos e título dinâmicos, `aria-pressed`, foco visível e área de toque responsiva
+- **Evolução prevista**: a interface está preparada para a futura música de fundo, que ainda não foi implementada
+
 ### Botão Flutuante "Jogar Dado" no Mobile ✅
 
 - **Problema resolvido**: no mobile, o botão "Jogar Dado" ficava abaixo do tabuleiro, obrigando o jogador a rolar para baixo para tocar e para cima para assistir à ação
@@ -30,7 +38,7 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 - **Desktop inalterado**: botão sempre oculto acima de 840px; layout e painel original intocados
 - **Sem alteração de gameplay**: nenhuma regra, turno, probabilidade, animação, minigame ou modo de jogo foi modificado
 
-### v0.38.0-preview (Atual) — Sons de Tabuleiro e Cache de Buffers ✅
+### v0.38.0-preview — Sons de Tabuleiro e Cache de Buffers ✅
 
 - **Cinco novos efeitos**: movimento comum, avanço especial, retrocesso especial, entrada em minigame e vitória
 - **11 de 16 assets ativos**: permanecem ausentes somente os sons de modal, tesouro, game over e música de fundo

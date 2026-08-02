@@ -1,5 +1,14 @@
 # Roadmap Lara World
 
+### v0.39.0-preview — Controle Global de Som ✅
+
+- [x] Botão único `#audio-toggle-btn` disponível no shell compartilhado da aplicação
+- [x] Estado centralizado no `AudioManager`, sem nova preferência paralela
+- [x] Mute persistido em `laraAudioConfig` e restaurado após recarregar
+- [x] Ícones `🔊`/`🔇`, ARIA, foco visível e área de toque responsiva
+- [x] Controle acima do menu e overlays sem alterar a arquitetura visual
+- [ ] Música de fundo permanece pendente para uma entrega futura
+
 ### v0.38.0-preview — Sons de Tabuleiro e Cache de Buffers ✅
 
 - [x] Cache de `AudioBuffer` com deduplicação de carregamentos concorrentes

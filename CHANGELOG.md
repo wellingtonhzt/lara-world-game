@@ -14,6 +14,20 @@
 - Nenhuma regra do jogo, lógica de turno, comportamento da Máquina, mecânica de dados, animações existentes, minigames ou layout desktop foram alterados
 - Botão reutiliza o clique original `#roll-btn.click()` — sem lógica duplicada
 
+## [0.39.0-preview] - 2026-08-01
+
+### Adicionado
+- **Controle global de som**: botão único no cabeçalho compartilhado permite ativar e desativar todo o áudio pelo `AudioManager`
+- **Acessibilidade do controle**: ícones `🔊`/`🔇`, `aria-label`, `title`, `aria-pressed`, foco visível e área de toque responsiva
+
+### Alterado
+- **Preferência persistente**: o estado visual inicial reflete `laraAudioConfig.muted` e permanece sincronizado após recarregar ou navegar entre menu, partida, Arcade e minigames
+- **Cache busting**: `APP_VERSION` e URLs públicas atualizados para `v0.39.0-preview`
+
+### Notas
+- A interface fica preparada para controlar futuramente efeitos e música pela mesma fonte de estado
+- Música de fundo permanece pendente; nenhum arquivo de áudio foi adicionado e continuam ativos 11 dos 16 assets do catálogo
+
 ## [0.38.0-preview] - 2026-08-01
 
 ### Adicionado

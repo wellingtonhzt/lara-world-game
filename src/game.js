@@ -3005,6 +3005,32 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
 
   /* ── Init ── */
 
+  function initAudioToggle() {
+    const button = document.getElementById('audio-toggle-btn');
+    if (!button) return;
+
+    const syncAudioToggle = () => {
+      const muted = audioManager.isMuted();
+      const actionLabel = muted ? 'Ativar som' : 'Desativar som';
+      button.textContent = muted ? '🔇' : '🔊';
+      button.setAttribute('aria-label', actionLabel);
+      button.setAttribute('aria-pressed', String(muted));
+      button.title = actionLabel;
+    };
+
+    syncAudioToggle();
+    button.addEventListener('click', () => {
+      if (audioManager.isMuted()) {
+        audioManager.toggleMute();
+        audioManager.play('buttonClick');
+      } else {
+        audioManager.play('buttonClick');
+        audioManager.toggleMute();
+      }
+      syncAudioToggle();
+    });
+  }
+
   function init() {
     console.log('[INIT] início');
     const verEl = document.getElementById('menu-version');
@@ -3015,6 +3041,7 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
     enableWorldCard('reino-oceanos');
     enableWorldCard('castelo-dragoes');
     audioManager.init();
+    initAudioToggle();
     initGameEventOverlay(elements.trackContainer, { onShow: updateLastEvent });
 
     document.addEventListener('click', function firstInteraction() {
