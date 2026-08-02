@@ -1104,6 +1104,7 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
     if (botTurnTimer) clearTimeout(botTurnTimer);
     botTurnTimer = null;
     botTurnScheduled = false;
+    audioManager.stopMusic();
     audioManager.play('victory');
     const player = getCurrentPlayer();
     const el = getPlayerElement(player);
@@ -1361,6 +1362,7 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
 
   function showMainMenu() {
     clearGameEvents();
+    audioManager.stopMusic();
     if (botTurnTimer) clearTimeout(botTurnTimer);
     botTurnTimer = null;
     botTurnScheduled = false;
@@ -1436,6 +1438,7 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
 
     document.getElementById("btn-rapido").addEventListener("click", () => {
       audioManager.play('buttonClick');
+      audioManager.preloadMusic('backgroundMusic');
       modoJogo = "rapido";
       hideMainMenu();
       showWorldSelector();
@@ -1921,6 +1924,7 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
     updateUI();
     players.forEach(p => positionPlayerAt(p.posicao, p));
     addHistory("🎮 Bem-vindos ao Lara World!", "info");
+    audioManager.playMusic('backgroundMusic');
 
     if (getCurrentPlayer().isBot && gameState.jogoAtivo && !gameState.jogoFinalizado) {
       scheduleBotTurnIfNeeded();
@@ -2956,11 +2960,22 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
 
   /* ── Minigame host wrapper ── */
 
+  async function launchBoardMinigame(minigameId, options = {}) {
+    audioManager.pauseMusic();
+    try {
+      return await launchMinigameHost(minigameId, {
+        isBot: options.isBot || false,
+        playerName: getCurrentPlayer().name
+      });
+    } finally {
+      if (gameState.jogoAtivo && !gameState.jogoFinalizado && modoJogo === 'rapido') {
+        audioManager.resumeMusic();
+      }
+    }
+  }
+
   async function launchMeteoroGame(options = {}) {
-    return launchMinigameHost('meteor-game', {
-      isBot: options.isBot || false,
-      playerName: getCurrentPlayer().name
-    });
+    return launchBoardMinigame('meteor-game', options);
   }
 
   let _debugOceanTimeConfig = null; // null = default (45), number = specific, Infinity = no limit
@@ -2975,32 +2990,20 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
   }
 
   async function launchDinoRunner(options = {}) {
-    return launchMinigameHost('dino-runner', {
-      isBot: options.isBot || false,
-      playerName: getCurrentPlayer().name
-    });
+    return launchBoardMinigame('dino-runner', options);
   }
 
   async function launchMemoryForest(options = {}) {
-    return launchMinigameHost('memory-forest', {
-      isBot: options.isBot || false,
-      playerName: getCurrentPlayer().name
-    });
+    return launchBoardMinigame('memory-forest', options);
   }
 
   async function launchOceanMatch3(options = {}) {
     OceanMatch3.debugTimeLimit = _debugOceanTimeConfig;
-    return launchMinigameHost('ocean-match3', {
-      isBot: options.isBot || false,
-      playerName: getCurrentPlayer().name
-    });
+    return launchBoardMinigame('ocean-match3', options);
   }
 
   async function launchAtaqueDragoes(options = {}) {
-    return launchMinigameHost('ataque-dragoes', {
-      isBot: options.isBot || false,
-      playerName: getCurrentPlayer().name
-    });
+    return launchBoardMinigame('ataque-dragoes', options);
   }
 
   /* ── Init ── */
@@ -3023,6 +3026,11 @@ import { initGameEventOverlay, queueGameEvent, clearGameEvents, GAME_EVENT_DURAT
       if (audioManager.isMuted()) {
         audioManager.toggleMute();
         audioManager.play('buttonClick');
+        const minigameHidden = document.getElementById('minigame-overlay')?.classList.contains('hidden');
+        const boardVisible = document.getElementById('app')?.classList.contains('game-active');
+        if (modoJogo === 'rapido' && boardVisible && gameState.jogoAtivo && !gameState.jogoFinalizado && minigameHidden) {
+          audioManager.playMusic('backgroundMusic');
+        }
       } else {
         audioManager.play('buttonClick');
         audioManager.toggleMute();

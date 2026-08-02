@@ -18,7 +18,8 @@
 
 | Versão | Data | Status |
 |--------|------|--------|
-| **v0.39.0-preview** | Ago/2026 | ✅ **Ativo** — Controle global de som |
+| **v0.40.0-preview** | Ago/2026 | ✅ **Ativo** — Música de fundo global no tabuleiro |
+| v0.39.0-preview | Ago/2026 | ✅ Controle global de som |
 | v0.38.0-preview | Ago/2026 | ✅ Sons de tabuleiro e cache de buffers |
 | v0.37.0-preview | Ago/2026 | ✅ Cache busting dos assets de áudio |
 | v0.36.0-preview | Jul/2026 | ✅ Preparação da Partida Premium |
@@ -65,24 +66,32 @@ As ações da partida são narradas por um overlay temporário sobre o tabuleiro
 
 ---
 
-## ✨ Funcionalidades Atuais (v0.39.0-preview)
+## ✨ Funcionalidades Atuais (v0.40.0-preview)
+
+### Música de fundo global ✅
+
+- **Partidas no tabuleiro**: “Gunma-chan Gambol”, de Yubatake, inicia após a entrada efetiva na partida e toca em loop
+- **Transporte seguro**: pré-carregamento após ação do jogador, reprodução idempotente, pausa e retomada nos minigames e descarte de fontes antigas
+- **Contextos preservados**: a música para no menu e na vitória e não toca no Modo Arcade
+- **Áudio equilibrado**: canal musical separado e atenuado, integrado ao mute global sem perder a posição
+- **Formato e licença**: WebM/Opus estéreo a 48 kHz, disponibilizado sob CC BY 4.0 pelo autor Yubatake no OpenGameArt
 
 ### Controle global de som ✅
 
 - **Botão único**: o cabeçalho compartilhado oferece o mesmo controle no menu, na partida, no Arcade e nos minigames
 - **Persistência**: a preferência de mute é restaurada pelo `AudioManager` após recarregar a página
 - **Acessibilidade**: ícones `🔊`/`🔇`, rótulos dinâmicos, `aria-pressed`, foco visível e suporte a mouse, toque e teclado
-- **Próxima etapa**: a interface está preparada para música de fundo, ainda não implementada
+- **Integração musical**: o mesmo botão também silencia e restaura a música do tabuleiro
 
 ### Sons de tabuleiro e cache de buffers ✅
 
 - **Cinco novos efeitos**: movimento, avanço especial, retrocesso especial, entrada em minigame e vitória
 - **Reprodução eficiente**: buffers decodificados são reutilizados e carregamentos simultâneos do mesmo asset compartilham uma única operação
-- **Cache busting atualizado**: os assets usam URLs com `?v=v0.39.0-preview`
+- **Cache busting atualizado**: os assets usam URLs com `?v=v0.40.0-preview`
 
 ### Cache busting dos assets de áudio ✅
 
-- **Carregamento versionado**: o `AudioManager` acrescenta automaticamente `?v=v0.39.0-preview` às URLs de efeitos e músicas antes do download
+- **Carregamento versionado**: o `AudioManager` acrescenta automaticamente `?v=v0.40.0-preview` às URLs de efeitos e músicas antes do download
 - **Fonte única**: a versão vem de `APP_VERSION`; o catálogo mantém caminhos limpos e independentes da versão
 - **Cache antigo evitado**: novas versões deixam de reutilizar respostas antigas ou `404` armazenados após o deploy
 
@@ -220,7 +229,7 @@ Documentação detalhada em [docs/audio.md](docs/audio.md).
 - **Mute com persistência** — `mute()`/`unmute()`/`toggleMute()` com estado salvo entre sessões
 - **Degradação graciosa** — qualquer falha de áudio (arquivo ausente, decode error, autoplay bloqueado) é silenciosamente ignorada; o jogo nunca quebra por áudio
 - **API segura** — `audioManager.play('chave')` nunca lança exceções
-- **5 sons registrados mas não integrados**: `modalOpen`, `modalClose`, `treasure`, `gameOver`, `backgroundMusic` — existem no catálogo mas ainda não são chamados no jogo
+- **4 sons registrados mas não integrados**: `modalOpen`, `modalClose`, `treasure` e `gameOver`; `backgroundMusic` já está ativo nas partidas do tabuleiro
 
 ### Hero Screen — Redesign da Tela Inicial
 
@@ -577,7 +586,7 @@ No Jogo Rápido, a seleção define o mundo; “Preparar Jogo” configura modo,
 
 ## 📜 História do Projeto
 
-O Lara World começou como um MVP de tabuleiro simples para 1 jogador e evoluiu para multiplayer local, mundos configuráveis, minigames, Question Engine, Modo Arcade e uma identidade visual própria. A versão atual, **v0.39.0-preview**, adiciona um controle global e persistente de som ao shell compartilhado, preservando a experiência consolidada de Hero Screen, Seleção de Mundo, Preparar Jogo, Quem começa? e Partida. Consulte o [Changelog](CHANGELOG.md) para o histórico completo e o [Guia de Estilo](docs/ui-style-guide.md) para as diretrizes visuais oficiais.
+O Lara World começou como um MVP de tabuleiro simples para 1 jogador e evoluiu para multiplayer local, mundos configuráveis, minigames, Question Engine, Modo Arcade e uma identidade visual própria. A versão atual, **v0.40.0-preview**, adiciona uma música de fundo global às partidas no tabuleiro, com transporte seguro, pausa nos minigames e integração ao mute. Consulte o [Changelog](CHANGELOG.md) para o histórico completo e o [Guia de Estilo](docs/ui-style-guide.md) para as diretrizes visuais oficiais.
 
 ---
 
@@ -637,7 +646,8 @@ docker compose down
 ## 🗺️ Roadmap
 
 - **Botão Flutuante Mobile** — ✅ **Concluído** — Botão "Jogar Dado" flutuante sincronizado para mobile
-- **v0.39.0-preview** — ✅ **Ativo** — Controle global de som
+- **v0.40.0-preview** — ✅ **Ativo** — Música de fundo global no tabuleiro
+- **v0.39.0-preview** — ✅ Controle global de som
 - **v0.38.0-preview** — ✅ Sons de tabuleiro e cache de buffers
 - **v0.37.0-preview** — ✅ Cache busting dos assets de áudio
 - **v0.36.0-preview** — ✅ Preparação da Partida Premium
@@ -671,3 +681,7 @@ Este projeto segue o processo definido em [docs/AI_WORKFLOW.md](docs/AI_WORKFLOW
 ## 📄 Licença
 
 Este projeto é open source e está sob a licença MIT.
+
+### Música de terceiros
+
+- **“Gunma-chan Gambol”**, de **Yubatake** — [página de origem no OpenGameArt](https://opengameart.org/content/gunma-chan-gambol) — licenciada sob [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Obtida em agosto de 2026 e convertida do OGG original para o arquivo interno `src/assets/audio/music/bg-loop.webm` em WebM/Opus.

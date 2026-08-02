@@ -14,6 +14,22 @@
 - Nenhuma regra do jogo, lógica de turno, comportamento da Máquina, mecânica de dados, animações existentes, minigames ou layout desktop foram alterados
 - Botão reutiliza o clique original `#roll-btn.click()` — sem lógica duplicada
 
+## [0.40.0-preview] - 2026-08-01
+
+### Adicionado
+- **Primeira música global do tabuleiro**: “Gunma-chan Gambol”, de Yubatake, em loop durante as partidas, sem música no menu ou no Arcade
+- **Asset WebM/Opus**: `bg-loop.webm` convertido do OGG original para Opus estéreo a 48 kHz e aproximadamente 99 kbps
+- **Pré-carregamento musical**: download e decode começam após o clique em “Jogo Rápido”, reduzindo a espera ao entrar no tabuleiro
+
+### Alterado
+- **Transporte musical**: reprodução idempotente, pausa e retomada por offset, cancelamento de carregamentos obsoletos e descarte seguro de sources
+- **Fluxo dos minigames**: música pausada nos minigames do tabuleiro e retomada ao retorno; módulos internos e Modo Arcade permanecem sem lógica musical
+- **Mute global**: silencia o ganho mestre sem destruir a posição da música; volume musical permanece separado e atenuado
+- **Cache busting**: `APP_VERSION` e URLs públicas atualizados para `v0.40.0-preview`
+
+### Licença
+- “Gunma-chan Gambol” — Yubatake — [OpenGameArt](https://opengameart.org/content/gunma-chan-gambol) — CC BY 4.0; obtida em agosto de 2026 e convertida para `bg-loop.webm`
+
 ## [0.39.0-preview] - 2026-08-01
 
 ### Adicionado

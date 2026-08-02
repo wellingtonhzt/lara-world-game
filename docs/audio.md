@@ -35,7 +35,7 @@ O sistema de áudio do Lara World foi projetado para ser centralizado, resilient
 
 1. **Registro**: `init()` percorre o catálogo `sounds.js` e registra cada entrada em `this._sounds`
 2. **Play**: `play(key)` busca a entrada → verifica `muted` → verifica `category === 'effects'` → cria `AudioContext` (lazy) → adiciona a versão à URL → consulta o cache ou o carregamento pendente → faz fetch e decode quando necessário → cria um novo source → conecta ao `effectsGain` → inicia
-3. **Music**: `playMusic(key)` usa o mesmo carregamento versionado, mas conecta ao `musicGain`, faz `loop = true`, e para a música anterior automaticamente
+3. **Music**: `preloadMusic(key)` antecipa download/decode; `playMusic(key)` inicia uma única fonte em loop; `pauseMusic()` preserva o offset e `resumeMusic()` continua do ponto salvo
 4. **Erro**: qualquer falha (arquivo não encontrado, decode error, AudioContext suspenso) é silenciosamente ignorada — o jogo nunca quebra por áudio
 
 ### 2.3 Persistência
@@ -43,7 +43,7 @@ O sistema de áudio do Lara World foi projetado para ser centralizado, resilient
 | Campo | Chave localStorage | Default |
 |-------|-------------------|---------|
 | Volume mestre | `laraAudioConfig.masterVolume` | 1.0 |
-| Volume música | `laraAudioConfig.musicVolume` | 0.5 |
+| Volume música | `laraAudioConfig.musicVolume` | 0.3 |
 | Volume efeitos | `laraAudioConfig.effectsVolume` | 0.8 |
 | Muted | `laraAudioConfig.muted` | false |
 
@@ -53,7 +53,7 @@ Salvo automaticamente a cada `setMasterVolume()`, `setMusicVolume()`, `setEffect
 
 O cabeçalho compartilhado contém um único botão `#audio-toggle-btn`, disponível no menu, na partida, no Arcade e nos minigames. O controle consulta `audioManager.isMuted()` como fonte única, alterna o estado por `toggleMute()` e reutiliza a preferência `laraAudioConfig.muted`; não existe uma segunda chave no `localStorage`.
 
-O botão mostra `🔊` quando o áudio está ativo e `🔇` quando está mutado. `aria-label`, `title` e `aria-pressed` acompanham o estado, com suporte nativo a mouse, toque e teclado e foco visível. A mesma interface poderá controlar a futura música de fundo quando ela for implementada, mas nesta versão somente os efeitos já existentes estão ativos.
+O botão mostra `🔊` quando o áudio está ativo e `🔇` quando está mutado. `aria-label`, `title` e `aria-pressed` acompanham o estado, com suporte nativo a mouse, toque e teclado e foco visível. O mute zera o ganho mestre sem destruir o offset da música e o desmute restaura o ganho configurado.
 
 ### 2.5 Limitação: Autoplay
 
@@ -65,7 +65,7 @@ Se o arquivo de áudio não existir no servidor, `fetch()` retorna 404 → `_dec
 
 ### 2.7 Assets Ativos
 
-As três entregas somam 11 dos 16 assets WebM do catálogo, todos ativos, integrados e testados no jogo:
+As entregas somam 12 dos 16 assets WebM do catálogo, todos ativos, integrados e testados no jogo:
 
 | Entrega | Chave | Caminho |
 |---------|-------|---------|
@@ -80,16 +80,17 @@ As três entregas somam 11 dos 16 assets WebM do catálogo, todos ativos, integr
 | Terceira | `specialBack` | `assets/audio/board/back.webm` |
 | Terceira | `portal` | `assets/audio/board/portal.webm` |
 | Terceira | `victory` | `assets/audio/rewards/victory.webm` |
+| Quarta | `backgroundMusic` | `assets/audio/music/bg-loop.webm` |
 
-As cinco entradas restantes — `modalOpen`, `modalClose`, `treasure`, `gameOver` e `backgroundMusic` — continuam sem arquivo físico correspondente e permanecem cobertas pela degradação graciosa descrita acima.
+As quatro entradas restantes — `modalOpen`, `modalClose`, `treasure` e `gameOver` — continuam sem arquivo físico correspondente e permanecem cobertas pela degradação graciosa descrita acima.
 
 ### 2.8 Cache Busting Automático
 
-O `AudioManager` importa `getCacheBust()` de `src/version.js` e acrescenta sua saída à URL imediatamente antes do `fetch`. Com `APP_VERSION = 'v0.39.0-preview'`, por exemplo:
+O `AudioManager` importa `getCacheBust()` de `src/version.js` e acrescenta sua saída à URL imediatamente antes do `fetch`. Com `APP_VERSION = 'v0.40.0-preview'`, por exemplo:
 
 ```text
 assets/audio/quiz/challenge.webm
-→ assets/audio/quiz/challenge.webm?v=v0.39.0-preview
+→ assets/audio/quiz/challenge.webm?v=v0.40.0-preview
 ```
 
 Se o caminho já tiver query string, a versão é anexada com `&`. O catálogo `sounds.js` continua armazenando somente caminhos limpos, sem conhecer a versão. Efeitos e músicas passam pelo mesmo `_decode()` e, portanto, recebem o mesmo cache busting.
@@ -98,7 +99,7 @@ Esse mecanismo evita reutilizar respostas antigas — inclusive `404` armazenado
 
 > Toda entrega que adicionar, remover ou substituir assets públicos de áudio deve atualizar `APP_VERSION`.
 
-### 2.8 Cache de AudioBuffer
+### 2.9 Cache de AudioBuffer
 
 O singleton mantém um `Map` de buffers decodificados e outro de Promises pendentes, ambos indexados pela URL final versionada. Uma reprodução consulta primeiro o buffer pronto e depois um carregamento concorrente; somente quando ambos estão ausentes executa `fetch()` e `decodeAudioData()`. Falhas não são armazenadas, a Promise pendente é removida em `finally` e uma tentativa posterior pode carregar o asset novamente.
 
@@ -166,7 +167,10 @@ audioManager.init();       // Registra sons do catálogo
 | Método | Descrição |
 |--------|-----------|
 | `playMusic(key)` | Toca música em loop. Para a música anterior automaticamente. Ignora se chave inválida, `muted`, asset inexistente ou categoria não for `'music'` |
-| `stopMusic()` | Para a música atual e limpa referências |
+| `preloadMusic(key)` | Antecipa download e decode sem iniciar reprodução |
+| `pauseMusic()` | Pausa a música e preserva o offset atual |
+| `resumeMusic()` | Retoma a música do offset preservado |
+| `stopMusic()` | Para definitivamente, desconecta o source e limpa chave, buffer e offset |
 
 ### 4.4 Volume
 
@@ -235,7 +239,7 @@ Estes sons estão no catálogo (`sounds.js`) mas **não são chamados em nenhum 
 | `modalClose` | effects | Fechar modal |
 | `treasure` | effects | Casa especial "tesouro" — ainda não implementada |
 | `gameOver` | effects | Tela de game over — ainda não implementada |
-| `backgroundMusic` | music | Música ambiente — chamada `playMusic()` ainda não integrada |
+| `backgroundMusic` | music | Música global ativa nas partidas do tabuleiro |
 
 > **Nota:** É seguro chamar qualquer uma dessas chaves mesmo sem integração — o `AudioManager` simplesmente ignora se o arquivo não existir.
 
@@ -280,8 +284,9 @@ audioManager.play('myNewSound');
 // Iniciar música (em loop)
 audioManager.playMusic('backgroundMusic');
 
-// Trocar música — para a anterior automaticamente
-audioManager.playMusic('levelMusic');
+// Pausar e retomar sem perder a posição
+audioManager.pauseMusic();
+audioManager.resumeMusic();
 
 // Parar música
 audioManager.stopMusic();
@@ -291,8 +296,20 @@ audioManager.stopMusic();
 
 - A categoria no catálogo **deve** ser `'music'`
 - A música toca em loop automaticamente (`source.loop = true`)
-- `playMusic()` sempre para a música anterior antes de iniciar a nova
+- `playMusic()` é idempotente para a mesma música e impede fontes duplicadas
 - O volume da música é independente dos efeitos (`setMusicVolume()`)
+
+### 7.1 Música global atual
+
+- **Faixa**: “Gunma-chan Gambol”
+- **Autor**: Yubatake
+- **Origem**: [OpenGameArt](https://opengameart.org/content/gunma-chan-gambol)
+- **Licença**: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
+- **Obtenção**: agosto de 2026
+- **Arquivo interno**: `src/assets/audio/music/bg-loop.webm`
+- **Conversão**: OGG/Vorbis original convertido para WebM/Opus, 48 kHz, estéreo, aproximadamente 99 kbps
+
+A música toca apenas nas partidas do tabuleiro, pausa nos minigames e para no menu e na vitória. Menu, Arcade e minigames não possuem trilhas próprias nesta etapa.
 
 ---
 

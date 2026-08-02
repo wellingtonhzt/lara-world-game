@@ -1,5 +1,15 @@
 # Roadmap Lara World
 
+### v0.40.0-preview — Música de Fundo Global ✅
+
+- [x] Uma música global em loop durante as partidas no tabuleiro
+- [x] Pré-carregamento após ação válida e início somente na entrada da partida
+- [x] Canal musical separado, atenuado e integrado ao mute global
+- [x] Reprodução idempotente, pausa e retomada nos minigames do tabuleiro
+- [x] Parada definitiva no menu e na vitória; Arcade permanece sem música
+- [x] `bg-loop.webm` em WebM/Opus, 48 kHz, estéreo, sob CC BY 4.0
+- [ ] Temas musicais específicos por mundo permanecem para evolução futura
+
 ### v0.39.0-preview — Controle Global de Som ✅
 
 - [x] Botão único `#audio-toggle-btn` disponível no shell compartilhado da aplicação
@@ -7,7 +17,7 @@
 - [x] Mute persistido em `laraAudioConfig` e restaurado após recarregar
 - [x] Ícones `🔊`/`🔇`, ARIA, foco visível e área de toque responsiva
 - [x] Controle acima do menu e overlays sem alterar a arquitetura visual
-- [ ] Música de fundo permanece pendente para uma entrega futura
+- [x] Música de fundo entregue na versão seguinte (`v0.40.0-preview`)
 
 ### v0.38.0-preview — Sons de Tabuleiro e Cache de Buffers ✅
 
@@ -480,8 +490,8 @@
 
 ### 🎯 Próximas Prioridades
 
-- **Assets de áudio .webm** — 11 sons ativos após as três entregas; permanecem pendentes `modalOpen`, `modalClose`, `treasure`, `gameOver` e `backgroundMusic`
-- **Integração de música ambiente** — chamar `audioManager.playMusic('backgroundMusic')` em `game.js`
+- **Assets de áudio .webm** — 12 assets ativos; permanecem pendentes `modalOpen`, `modalClose`, `treasure` e `gameOver`
+- ~~**Integração de música ambiente**~~ — ✅ **Concluído** — `backgroundMusic` integrada às partidas do tabuleiro
 - **Integração de sons de modal** — conectar `modalOpen`/`modalClose` nas aberturas/fechamentos
 - **Integração de treasure e gameOver** — conectar sons pendentes do catálogo
 - ~~**Hero Screen v2** — reorganização completa da composição visual da tela inicial~~ ✅ **Concluído** — redesign entregue com logo oficial e identidade consolidada

@@ -18,13 +18,22 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 
 ## Principais Funcionalidades
 
-### v0.39.0-preview (Atual) — Controle Global de Som ✅
+### v0.40.0-preview (Atual) — Música de Fundo Global ✅
+
+- **Trilha do tabuleiro**: “Gunma-chan Gambol”, de Yubatake, inicia após ação válida e toca em loop durante a partida
+- **Transporte resiliente**: pré-carregamento, proteção contra duplicação, cancelamento de loads obsoletos e descarte seguro de sources
+- **Minigames**: pausa ao entrar e retomada do offset salvo ao voltar ao tabuleiro
+- **Limites de contexto**: parada no menu e na vitória; nenhuma música no Arcade, menu ou minigames nesta etapa
+- **Mute e volume**: ganho musical separado e atenuado, controlado pelo mute global sem perder a posição
+- **Formato e licença**: `bg-loop.webm` em WebM/Opus estéreo, 48 kHz, CC BY 4.0; temas por mundo continuam futuros
+
+### v0.39.0-preview — Controle Global de Som ✅
 
 - **Controle persistente**: um único botão no cabeçalho compartilhado ativa ou desativa todo o áudio pelo `AudioManager`
 - **Preferência restaurada**: o estado mutado permanece salvo em `laraAudioConfig` após recarregar a página
 - **Navegação consistente**: o mesmo controle acompanha menu, partida, Arcade e minigames, sem estados duplicados
 - **Acessibilidade**: ícones `🔊`/`🔇`, rótulos e título dinâmicos, `aria-pressed`, foco visível e área de toque responsiva
-- **Evolução prevista**: a interface está preparada para a futura música de fundo, que ainda não foi implementada
+- **Evolução realizada**: a interface passou a controlar também a música global na versão seguinte
 
 ### Botão Flutuante "Jogar Dado" no Mobile ✅
 
@@ -198,7 +207,7 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 - **21 pontos de integração**: cliques, dados, movimento, casas especiais, desafios e vitória com chamadas a `audioManager.play()`
 - **Volumes independentes** (mestre, música, efeitos) com persistência automática em `localStorage`
 - **Mute com persistência**: estado salvo entre sessões
-- **Assets de áudio**: 11 efeitos ativos e testados; permanecem sem arquivo físico `modalOpen`, `modalClose`, `treasure`, `gameOver` e `backgroundMusic`
+- **Assets de áudio**: 11 efeitos e uma música ativos; permanecem sem arquivo físico `modalOpen`, `modalClose`, `treasure` e `gameOver`
 - **Degradação graciosa**: qualquer falha de áudio é silenciosamente ignorada
 
 ### v0.12.0-preview — Board Layout 2.0 + Hero Screen ✅

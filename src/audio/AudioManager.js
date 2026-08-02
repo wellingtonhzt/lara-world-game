@@ -2,6 +2,7 @@ import { SOUNDS } from './sounds.js';
 import { getCacheBust } from '../version.js';
 
 const STORAGE_KEY = 'laraAudioConfig';
+const MUSIC_OUTPUT_SCALE = 0.4;
 
 export class AudioManager {
   constructor() {
@@ -15,6 +16,10 @@ export class AudioManager {
     this._musicSource = null;
     this._musicBuffer = null;
     this._musicKey = null;
+    this._musicOffset = 0;
+    this._musicStartedAt = 0;
+    this._musicPaused = false;
+    this._musicRequestId = 0;
     this._musicGain = null;
     this._masterGain = null;
     this._effectsGain = null;
@@ -63,34 +68,80 @@ export class AudioManager {
     const entry = this._sounds[soundKey];
     if (!entry || !entry.path) return;
     if (entry.category !== 'music') return;
+
+    if (this._musicKey === soundKey && this._musicSource) return;
+    if (this._musicKey === soundKey && this._musicPaused) {
+      return this.resumeMusic();
+    }
+
     this.stopMusic();
     this._musicKey = soundKey;
+    this._musicOffset = 0;
+    this._musicPaused = false;
+    return this._loadAndStartMusic(soundKey, entry.path, 0);
+  }
+
+  async preloadMusic(soundKey) {
+    if (!this._initialized) return;
+    const entry = this._sounds[soundKey];
+    if (!entry || !entry.path || entry.category !== 'music') return;
     try {
       await this._ensureCtx();
-      const buffer = await this._decode(entry.path);
+      await this._decode(entry.path);
+    } catch {
+      /* ignore silently — playback will retry when the board starts */
+    }
+  }
+
+  pauseMusic() {
+    if (!this._musicKey) return;
+    this._musicRequestId++;
+    if (this._musicSource && this._musicBuffer?.duration) {
+      const elapsed = Math.max(0, this._ctx.currentTime - this._musicStartedAt);
+      this._musicOffset = elapsed % this._musicBuffer.duration;
+      this._disposeMusicSource();
+    }
+    this._musicPaused = true;
+  }
+
+  async resumeMusic() {
+    if (this.muted || !this._musicKey || this._musicSource) return;
+    const entry = this._sounds[this._musicKey];
+    if (!entry || !entry.path || entry.category !== 'music') return;
+    this._musicPaused = false;
+    return this._loadAndStartMusic(this._musicKey, entry.path, this._musicOffset);
+  }
+
+  async _loadAndStartMusic(soundKey, path, offset) {
+    const requestId = ++this._musicRequestId;
+    try {
+      await this._ensureCtx();
+      const buffer = await this._decode(path);
+      if (requestId !== this._musicRequestId || this._musicKey !== soundKey) return;
       this._musicBuffer = buffer;
-      this._musicSource = this._ctx.createBufferSource();
-      this._musicSource.buffer = buffer;
-      this._musicSource.loop = true;
-      this._musicSource.connect(this._musicGain);
-      this._musicSource.start(0);
+      if (this.muted || this._musicPaused) {
+        this._musicPaused = true;
+        return;
+      }
+      this._startMusicSource(offset);
     } catch {
       /* ignore silently */
     }
   }
 
   stopMusic() {
-    if (this._musicSource) {
-      try { this._musicSource.stop(); } catch { /* already stopped */ }
-      this._musicSource = null;
-    }
+    this._musicRequestId++;
+    this._disposeMusicSource();
     this._musicBuffer = null;
     this._musicKey = null;
+    this._musicOffset = 0;
+    this._musicStartedAt = 0;
+    this._musicPaused = false;
   }
 
   setMasterVolume(value) {
     this.masterVolume = Math.max(0, Math.min(1, value));
-    if (this._masterGain) this._masterGain.gain.value = this.masterVolume;
+    if (this._masterGain) this._masterGain.gain.value = this.muted ? 0 : this.masterVolume;
     this._save();
   }
 
@@ -102,7 +153,7 @@ export class AudioManager {
 
   setMusicVolume(value) {
     this.musicVolume = Math.max(0, Math.min(1, value));
-    if (this._musicGain) this._musicGain.gain.value = this.musicVolume;
+    if (this._musicGain) this._musicGain.gain.value = this.musicVolume * MUSIC_OUTPUT_SCALE;
     this._save();
   }
 
@@ -126,12 +177,13 @@ export class AudioManager {
 
   mute() {
     this.muted = true;
-    this.stopMusic();
+    if (this._masterGain) this._masterGain.gain.value = 0;
     this._save();
   }
 
   unmute() {
     this.muted = false;
+    if (this._masterGain) this._masterGain.gain.value = this.masterVolume;
     this._save();
   }
 
@@ -150,6 +202,28 @@ export class AudioManager {
 
   /* ────────────── Internal ────────────── */
 
+  _startMusicSource(offset = 0) {
+    if (!this._ctx || !this._musicBuffer || this._musicSource) return;
+    const duration = this._musicBuffer.duration;
+    const safeOffset = duration > 0 ? Math.max(0, offset) % duration : 0;
+    const source = this._ctx.createBufferSource();
+    source.buffer = this._musicBuffer;
+    source.loop = true;
+    source.connect(this._musicGain);
+    source.start(0, safeOffset);
+    this._musicSource = source;
+    this._musicOffset = safeOffset;
+    this._musicStartedAt = this._ctx.currentTime - safeOffset;
+    this._musicPaused = false;
+  }
+
+  _disposeMusicSource() {
+    if (!this._musicSource) return;
+    try { this._musicSource.stop(); } catch { /* already stopped */ }
+    try { this._musicSource.disconnect(); } catch { /* already disconnected */ }
+    this._musicSource = null;
+  }
+
   _registerSounds() {
     for (const [key, cfg] of Object.entries(SOUNDS)) {
       this._sounds[key] = { path: cfg.path || '', category: cfg.category || 'effects' };
@@ -163,11 +237,11 @@ export class AudioManager {
     }
     this._ctx = new (window.AudioContext || window.webkitAudioContext)();
     this._masterGain = this._ctx.createGain();
-    this._masterGain.gain.value = this._masterVol;
+    this._masterGain.gain.value = this.muted ? 0 : this._masterVol;
     this._masterGain.connect(this._ctx.destination);
 
     this._musicGain = this._ctx.createGain();
-    this._musicGain.gain.value = this._musicVol;
+    this._musicGain.gain.value = this._musicVol * MUSIC_OUTPUT_SCALE;
     this._musicGain.connect(this._masterGain);
 
     this._effectsGain = this._ctx.createGain();
@@ -212,7 +286,7 @@ export class AudioManager {
 
   _loadSettings() {
     this._masterVol = 1.0;
-    this._musicVol = 0.5;
+    this._musicVol = 0.3;
     this._effectsVol = 0.8;
     this.muted = false;
     try {
