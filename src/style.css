@@ -292,6 +292,91 @@ body {
   .game-hud *, .game-hud *::before, .game-hud *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
 }
 
+/* ── Modo Aventura ── */
+.adventure-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  overflow: auto;
+  padding: 72px 20px 28px;
+  background:
+    radial-gradient(circle at 12% 18%, rgba(255,255,255,.75) 0 3px, transparent 4px),
+    radial-gradient(circle at 88% 30%, rgba(255,255,255,.65) 0 4px, transparent 5px),
+    linear-gradient(145deg, #e9f9ff, #fff4cd 48%, #f3e9ff);
+}
+
+.adventure-screen.hidden { display: none; }
+.adventure-screen-content { width: min(1120px, 100%); margin: 0 auto; outline: none; }
+.adventure-panel { border: 3px solid rgba(91,67,145,.14); border-radius: 30px; padding: clamp(20px, 4vw, 42px); background: rgba(255,255,255,.94); box-shadow: 0 22px 60px rgba(73,52,116,.18); }
+.adventure-heading { max-width: 760px; margin: 0 auto 24px; text-align: center; }
+.adventure-heading h1 { margin: 5px 0 8px; color: #51377d; font-size: clamp(2rem, 5vw, 3.4rem); line-height: 1.05; }
+.adventure-heading p { margin: 0; color: #514960; font-size: clamp(1rem, 2vw, 1.18rem); }
+.adventure-kicker { color: #8b3fa4; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; font-size: .78rem; }
+
+.adventure-path { display: grid; grid-template-columns: repeat(4, minmax(0,1fr) auto) minmax(0,1fr); align-items: center; gap: 10px; margin: 28px 0; padding: 0; list-style: none; }
+.adventure-world { position: relative; min-height: 180px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px; padding: 18px 10px; text-align: center; border: 3px solid #d9d0e8; border-radius: 24px; background: #fff; box-shadow: 0 8px 18px rgba(69,48,112,.1); }
+.adventure-world-order { position: absolute; top: 8px; left: 10px; width: 26px; height: 26px; display: grid; place-items: center; border-radius: 50%; background: #eee9f7; color: #554270; font-weight: 900; }
+.adventure-world-icon { font-size: 2.8rem; line-height: 1; }
+.adventure-world-status, .adventure-world-winner { font-size: .78rem; font-weight: 800; }
+.adventure-world-winner { color: #416744; }
+.adventure-world--completed { border-color: #70b77a; background: #f0fff1; }
+.adventure-world--current { border-color: #ffad2f; background: #fff9df; transform: translateY(-5px); box-shadow: 0 12px 25px rgba(240,151,25,.24); }
+.adventure-world--locked { opacity: .68; background: #f4f1f6; }
+.adventure-path-link { color: #8b63b5; font-size: 1.45rem; font-weight: 900; }
+
+.adventure-rules { max-width: 780px; margin: 24px auto; padding: 20px; border-radius: 22px; background: #f7f3ff; text-align: center; }
+.adventure-rules h2, .adventure-scoreboard h2 { margin: 0 0 12px; color: #51377d; }
+.adventure-rules ul { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; padding: 0; list-style: none; }
+.adventure-rules li { padding: 10px 14px; border-radius: 999px; background: #fff; box-shadow: 0 3px 8px rgba(75,50,110,.1); }
+.adventure-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+.adventure-actions .btn { min-height: 48px; min-width: 190px; }
+
+.adventure-scoreboard { margin: 20px 0; text-align: center; }
+.adventure-score-list, .adventure-result-grid, .adventure-final-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px; }
+.adventure-score-card { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 8px 12px; padding: 14px 18px; border: 2px solid #ddd2ec; border-radius: 20px; background: #fff; text-align: left; }
+.adventure-score-card.is-leading { border-color: #efac30; box-shadow: 0 0 0 3px rgba(239,172,48,.15); }
+.adventure-score-avatar { grid-row: span 2; font-size: 2rem; }
+.adventure-score-points { font-weight: 900; color: #51377d; }
+.adventure-score-lead { justify-self: end; padding: 3px 8px; border-radius: 999px; background: #fff0b5; font-size: .75rem; font-weight: 900; }
+
+.adventure-result-player, .adventure-final-card { padding: 22px; border: 2px solid #ddd2ec; border-radius: 22px; background: #fff; }
+.adventure-result-player header { display: flex; align-items: center; gap: 9px; font-size: 1.25rem; }
+.adventure-result-player header span, .adventure-final-card > span:first-child { font-size: 2.2rem; }
+.adventure-result-player ul, .adventure-final-card ul { padding-left: 20px; line-height: 1.8; }
+.adventure-result-points { margin: 10px 0; color: #6a3d96; font-size: 1.2rem; font-weight: 900; }
+.adventure-next-note { margin: 22px auto 0; padding: 14px; max-width: 680px; border-radius: 16px; background: #fff4c9; text-align: center; }
+.adventure-final-card { text-align: center; }
+.adventure-final-card.is-winner { border-color: #efac30; background: #fffaf0; }
+.adventure-final-card h2 { margin: 6px 0; }
+.adventure-final-card ul { display: inline-block; text-align: left; }
+.adventure-final-badge { display: inline-block; padding: 7px 12px; border-radius: 999px; background: #ffe28a; font-weight: 900; }
+.adventure-panel--confirm { max-width: 540px; margin: 12vh auto 0; text-align: center; }
+.adventure-confirm-icon { font-size: 4rem; }
+.adventure-panel--confirm h1 { color: #51377d; }
+.setup-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; }
+
+@media (max-width: 760px) {
+  .adventure-screen { padding: 62px 10px 18px; }
+  .adventure-panel { padding: 18px 12px; border-radius: 22px; }
+  .adventure-path { grid-template-columns: minmax(0,1fr); gap: 7px; max-width: 440px; margin-inline: auto; }
+  .adventure-world { width: 100%; min-height: 132px; }
+  .adventure-world--current { transform: none; }
+  .adventure-path-link { transform: rotate(90deg); justify-self: center; }
+  .adventure-score-list, .adventure-result-grid, .adventure-final-grid { grid-template-columns: 1fr; }
+  .adventure-rules ul { flex-direction: column; }
+  .adventure-rules li { border-radius: 14px; }
+}
+
+@media (max-height: 520px) and (orientation: landscape) {
+  .adventure-screen { padding-top: 52px; }
+  .adventure-world { min-height: 140px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .adventure-world--current { transform: none; }
+  .adventure-screen *, .adventure-screen *::before, .adventure-screen *::after { animation: none !important; transition: none !important; }
+}
+
 /* ═══════════════════════════════════════
    TRACK CONTAINER — Scene Background
    ═══════════════════════════════════════ */
@@ -2796,6 +2881,38 @@ body:has(.main-menu:not(.hidden)) {
   opacity: 0.85;
 }
 
+.menu-btn-adventure {
+  max-width: 420px;
+  padding: 14px 28px 11px;
+  font-size: 1.08rem;
+  color: #5d3a00;
+  background: linear-gradient(135deg, #fff176, #ffd54f 55%, #ffb300);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  box-shadow:
+    0 4px 0 #d58b00,
+    0 8px 24px rgba(255, 179, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+.menu-btn-adventure:hover:not(:disabled) {
+  box-shadow:
+    0 6px 0 #d58b00,
+    0 12px 30px rgba(255, 179, 0, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.82);
+}
+
+.menu-btn-adventure:active:not(:disabled) {
+  box-shadow:
+    0 2px 0 #d58b00,
+    0 5px 14px rgba(255, 179, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+.menu-btn-adventure .btn-subtitle {
+  color: #684600;
+  opacity: 0.9;
+}
+
 .menu-btn-secondary {
   background: linear-gradient(135deg, #f8eee6, #f1e7dc);
   color: #bcaaa4;
@@ -4232,6 +4349,7 @@ body[data-world="castelo-dragoes"] .path-line {
   .menu-btn { max-width: 100%; }
   .menu-btn-primary { max-width: 100%; padding: 20px 28px 16px; font-size: 1.2rem; }
   .menu-btn-arcade { max-width: 100%; padding: 14px 24px 12px; font-size: 1.1rem; }
+  .menu-btn-adventure { max-width: 100%; padding: 12px 22px 10px; font-size: 1rem; }
   .menu-btn-secondary { max-width: 100%; padding: 9px 22px 8px; }
   .menu-secondary-group { flex-direction: column; gap: 8px; }
   .menu-secondary-group .menu-btn-secondary { max-width: 100%; }
@@ -4301,6 +4419,7 @@ body[data-world="castelo-dragoes"] .path-line {
   .menu-brand-fallback { padding: 28px 10px; font-size: 2rem; }
   .menu-btn-primary { padding: 16px 20px 14px; font-size: 1rem; }
   .menu-btn-arcade { padding: 12px 18px 10px; font-size: 0.95rem; }
+  .menu-btn-adventure { padding: 10px 18px 8px; font-size: 0.92rem; }
   .menu-btn-secondary { padding: 7px 18px 6px; }
   .challenge-btn { font-size: 0.9rem; padding: 10px 14px; }
 }

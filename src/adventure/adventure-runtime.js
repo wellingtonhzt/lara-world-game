@@ -5,6 +5,7 @@ import {
   createAdventure,
   endAdventure,
   getAdventureMapProgress,
+  getStarterForWorld,
   openCurrentWorld,
   registerScoreEvent,
   resetCurrentWorld,
@@ -73,6 +74,38 @@ export function createAdventureRuntime({
   let campaign = null;
   let boardParticipants = [];
   let botTimer = null;
+  const previewCampaign = getCampaign(MAIN_CAMPAIGN_ID);
+
+  function enrichProgress(progress) {
+    return progress.map(item => {
+      const world = resolveWorld(item.worldId);
+      return {
+        ...item,
+        name: world?.name || item.worldId,
+        icon: world?.icon || '🌍',
+      };
+    });
+  }
+
+  function getCampaignPreview() {
+    return {
+      campaign: previewCampaign,
+      progress: enrichProgress(previewCampaign.worldOrder.map((worldId, index) => ({
+        worldId,
+        order: index + 1,
+        status: index === 0 ? 'current' : 'locked',
+        winnerId: null,
+      }))),
+      totalScores: { p1: 0, p2: 0 },
+      participants: [],
+      currentWorldId: null,
+      nextWorldId: previewCampaign.worldOrder[0],
+      starterId: null,
+      completed: false,
+      finalResult: null,
+      worldResults: [],
+    };
+  }
 
   function requireAdventure() {
     if (!activeAdventure || !isAdventureGame(mode)) {
@@ -198,7 +231,7 @@ export function createAdventureRuntime({
     const nextWorldId = state.completed ? null : state.worldOrder[state.currentWorldIndex] || null;
     return {
       campaign,
-      progress: getAdventureMapProgress(state, campaign),
+      progress: enrichProgress(getAdventureMapProgress(state, campaign)),
       totalScores: { ...state.totalScores },
       currentWorldScore: { ...state.currentWorldScore },
       currentWorldBreakdown: state.currentWorldBreakdown.map(entry => ({
@@ -208,6 +241,13 @@ export function createAdventureRuntime({
       currentWorldId: current?.worldId ?? null,
       nextWorldId,
       starterId: current?.starterId ?? null,
+      nextStarterId: state.completed ? null : getStarterForWorld(
+        state.initialStarterId,
+        state.currentWorldIndex,
+        state.participants,
+      ),
+      participants: state.participants.map(item => ({ ...item })),
+      worldResults: [...state.worldResults],
       completed: state.completed,
       finalResult: state.completed ? getFinalResult(state) : null,
     };
@@ -218,6 +258,7 @@ export function createAdventureRuntime({
     isQuickGame: () => isQuickGame(mode),
     isAdventureGame: () => isAdventureGame(mode),
     hasActiveAdventure: () => activeAdventure !== null,
+    getCampaignPreview,
     startAdventure,
     abandonAdventure,
     getCurrentWorld,

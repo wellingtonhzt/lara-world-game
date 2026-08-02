@@ -169,12 +169,12 @@ test('runtime module is DOM-free', () => {
   assert.equal(/\b(document|window|localStorage)\b/.test(source), false);
 });
 
-test('game integration keeps quick victory overlay and career entry disabled', () => {
+test('game integration keeps quick victory overlay while adventure owns its entry', () => {
   const gameSource = fs.readFileSync(new URL('../src/game.js', import.meta.url), 'utf8');
   const htmlSource = fs.readFileSync(new URL('../src/index.html', import.meta.url), 'utf8');
   assert.match(gameSource, /if \(isAdventureGameSession\(\)\)[\s\S]*?completeWorldVictory\(scoreAttempt\)\.completion;[\s\S]*?updateVictoryScreen\(player\);[\s\S]*?showVictoryScreen\(\);/);
-  assert.match(htmlSource, /<button id="btn-carreira"[^>]*disabled/);
-  assert.doesNotMatch(gameSource, /getElementById\(["']btn-carreira["']\)/);
+  assert.doesNotMatch(htmlSource.match(/<button id="btn-carreira"[^>]*>/)?.[0] || '', /disabled/);
+  assert.match(gameSource, /getElementById\(["']btn-carreira["']\)/);
 });
 
 test('questions and minigames use the centralized score event adapter', () => {

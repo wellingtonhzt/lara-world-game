@@ -54,10 +54,9 @@
             <span class="btn-main-text">🎮 Modo Arcade</span>
             <span class="btn-subtitle">Jogue qualquer minigame avulso</span>
           </button>
-          <button id="btn-carreira" class="menu-btn menu-btn-secondary" disabled>
-            <span class="btn-main-text">🏆 Modo Aventura</span>
-            <span class="btn-subtitle">Novos mundos aguardam você!</span>
-            <span class="badge-embreve">EM BREVE...</span>
+          <button id="btn-carreira" class="menu-btn menu-btn-adventure">
+            <span class="btn-main-text">🗺️ Modo Aventura</span>
+            <span class="btn-subtitle">Percorra todos os mundos e acumule pontos.</span>
           </button>
           <div class="menu-secondary-group">
             <button id="btn-tutorial" class="menu-btn menu-btn-secondary">
@@ -73,6 +72,10 @@
         <span id="menu-version" class="menu-version">v0.40.0-preview</span>
       </div>
     </div>
+
+    <section id="adventure-screen" class="adventure-screen hidden" aria-labelledby="adventure-title">
+      <div id="adventure-screen-content" class="adventure-screen-content" tabindex="-1"></div>
+    </section>
 
     <div id="world-selector" class="world-selector hidden">
       <div class="world-selector-bg-shapes"></div>
@@ -199,7 +202,10 @@
             </div>
           </div>
         </div>
-        <button id="start-game-btn" class="btn btn-primary setup-start-btn" disabled>🎮 Iniciar Jogo</button>
+        <div class="setup-actions">
+          <button id="setup-back-btn" class="btn btn-secondary" type="button">← Voltar</button>
+          <button id="start-game-btn" class="btn btn-primary setup-start-btn" disabled>🎮 Iniciar Jogo</button>
+        </div>
       </div>
     </div>
 

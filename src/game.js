@@ -21,6 +21,7 @@ import {
   toAdventureParticipants,
 } from './adventure/adventure-runtime.js';
 import { createAdventureScoreEvents } from './adventure/adventure-score-events.js';
+import { createAdventureScreen } from './adventure/adventure-screen.js';
 
 (function () {
   const TOTAL_CASAS = 20;
@@ -55,6 +56,13 @@ import { createAdventureScoreEvents } from './adventure/adventure-score-events.j
   let focusBeforeVictory = null;
   const adventureRuntime = createAdventureRuntime({ resolveWorld: get });
   const adventureScoreEvents = createAdventureScoreEvents(adventureRuntime);
+  const adventureScreen = createAdventureScreen({
+    root: document.getElementById('adventure-screen'),
+    onStartSetup: openAdventureSetup,
+    onStartNextWorld: startNextAdventureWorld,
+    onExit: exitAdventureToMenu,
+    onRestart: restartAdventureFlow,
+  });
 
   function isQuickGameSession() {
     return isQuickGame(modoJogo);
@@ -1177,7 +1185,10 @@ import { createAdventureScoreEvents } from './adventure/adventure-score-events.j
         position: player.posicao,
         turnCount: victoryMetrics.totalRolls,
       });
-      return adventureScoreEvents.completeWorldVictory(scoreAttempt).completion;
+      const completion = adventureScoreEvents.completeWorldVictory(scoreAttempt).completion;
+      hideFloatingRollBtn();
+      adventureScreen.showWorldResult({ result: completion.result, data: adventureRuntime.getMapData() });
+      return completion;
     }
 
     updateVictoryScreen(player);
@@ -1379,6 +1390,16 @@ import { createAdventureScoreEvents } from './adventure/adventure-score-events.j
   }
 
   function reiniciarJogo() {
+    if (isAdventureGameSession() && adventureRuntime.hasActiveAdventure()) {
+      cancelBotTurn();
+      hideFloatingRollBtn();
+      adventureScreen.showExitConfirmation(adventureRuntime.getMapData(), () => {
+        adventureScreen.hide();
+        showFloatingRollBtn();
+        scheduleBotTurnIfNeeded();
+      });
+      return;
+    }
     resetGameState();
     showMainMenu();
   }
@@ -1440,6 +1461,7 @@ import { createAdventureScoreEvents } from './adventure/adventure-score-events.j
     audioManager.stopMusic();
     cancelBotTurn();
     if (adventureRuntime.hasActiveAdventure()) adventureRuntime.abandonAdventure();
+    adventureScreen.hide();
     document.getElementById("main-menu").classList.remove("hidden");
     document.getElementById("setup-screen").classList.add("hidden");
     document.getElementById("world-selector").classList.add("hidden");
@@ -1525,6 +1547,13 @@ import { createAdventureScoreEvents } from './adventure/adventure-score-events.j
       enterArcadeMode();
     });
 
+    document.getElementById("btn-carreira").addEventListener("click", () => {
+      audioManager.play('buttonClick');
+      modoJogo = GAME_MODES.ADVENTURE;
+      hideMainMenu();
+      adventureScreen.showIntro(adventureRuntime.getCampaignPreview());
+    });
+
     document.getElementById("btn-tutorial").addEventListener("click", () => {
       console.log('[TUTORIAL] clique recebido');
       audioManager.play('buttonClick');
@@ -1605,7 +1634,15 @@ import { createAdventureScoreEvents } from './adventure/adventure-score-events.j
   /* ── Modal Setup ── */
 
   function showSetupScreen() {
-    document.getElementById("setup-screen").classList.remove("hidden");
+    const setup = document.getElementById("setup-screen");
+    setup.classList.toggle('setup-screen--adventure', isAdventureGameSession());
+    const title = setup.querySelector('.setup-content > h2');
+    const subtitle = setup.querySelector('.setup-subtitle');
+    if (title) title.textContent = isAdventureGameSession() ? '🗺️ Preparar Aventura' : '🚀 Preparar Jogo';
+    if (subtitle) subtitle.textContent = isAdventureGameSession()
+      ? 'Escolha quem vai percorrer os cinco mundos!'
+      : 'Escolha os jogadores e seus personagens para começar!';
+    setup.classList.remove("hidden");
     renderLayoutSelector();
   }
 
@@ -1774,6 +1811,15 @@ import { createAdventureScoreEvents } from './adventure/adventure-score-events.j
       if (p2Def) { p2Def.classList.add("selected"); p2Emoji = "🧑"; updateAvatarPreview(1, "🧑", "Amigo", "leo"); }
 
       startBtn.addEventListener("click", () => { audioManager.play('buttonClick'); prepareAndDraw(); });
+      document.getElementById('setup-back-btn').addEventListener('click', () => {
+        audioManager.play('buttonClick');
+        hideSetupScreen();
+        if (isAdventureGameSession()) {
+          adventureScreen.showIntro(adventureRuntime.getCampaignPreview());
+        } else {
+          showWorldSelector();
+        }
+      });
       updateModeUI();
     }
 
@@ -1995,6 +2041,7 @@ import { createAdventureScoreEvents } from './adventure/adventure-score-events.j
     victoryMetrics.gameStartedAt = Date.now();
     victoryMetrics.totalRolls = 0;
     hideDrawScreen();
+    adventureScreen.hide();
     showFloatingRollBtn();
     gameState.usedQuestionIds.clear();
     renderizarTrilha();
@@ -2045,6 +2092,54 @@ import { createAdventureScoreEvents } from './adventure/adventure-score-events.j
 
   function advanceAdventureWorld() {
     return applyAdventureWorld(adventureRuntime.advanceWorld());
+  }
+
+  function openAdventureSetup() {
+    if (adventureRuntime.hasActiveAdventure()) return;
+    adventureScreen.hide();
+    showSetupScreen();
+    focusVisibleScreen('#setup-screen input, #setup-screen button:not([disabled])');
+  }
+
+  function enterAdventureWorld(descriptor) {
+    adventureScreen.hide();
+    hideSetupScreen();
+    hideDrawScreen();
+    showFloatingRollBtn();
+    victoryMetrics.gameStartedAt = Date.now();
+    victoryMetrics.totalRolls = 0;
+    renderBoardToken(0);
+    renderBoardToken(1);
+    renderizarTrilha();
+    renderSvgPath();
+    updateUI();
+    players.forEach(player => positionPlayerAt(player.posicao, player));
+    addHistory(`🗺️ ${currentWorldConfig.name}: a aventura continua!`, 'info');
+    audioManager.playMusic('backgroundMusic');
+    scheduleBotTurnIfNeeded();
+    return descriptor;
+  }
+
+  function startNextAdventureWorld() {
+    if (!isAdventureGameSession() || !adventureRuntime.hasActiveAdventure()) return;
+    return enterAdventureWorld(advanceAdventureWorld());
+  }
+
+  function exitAdventureToMenu() {
+    showMainMenu();
+    focusVisibleScreen('#main-menu button:not([disabled])');
+  }
+
+  function restartAdventureFlow() {
+    if (adventureRuntime.hasActiveAdventure()) adventureRuntime.abandonAdventure();
+    resetCurrentWorldState();
+    selectedWorldId = null;
+    currentWorldConfig = null;
+    selectedLayoutId = null;
+    clearWorldTheme();
+    hideFloatingRollBtn();
+    modoJogo = GAME_MODES.ADVENTURE;
+    openAdventureSetup();
   }
 
   /* ── Challenge Modal ── */
