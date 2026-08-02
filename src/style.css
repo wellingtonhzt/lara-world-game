@@ -3683,12 +3683,6 @@ body[data-world="floresta-encantada"] #trail-path {
   filter: none;
 }
 
-/* ── Path.webp ── Floresta ── */
-
-body[data-world="floresta-encantada"] .path-line {
-  background-image: url("assets/worlds/floresta/path.webp");
-}
-
 /* ── Dinosaur World Theme ── */
 
 body[data-world="dinossauros"] {
@@ -3755,12 +3749,6 @@ body[data-world="dinossauros"] .casa-vitoria {
     0 8px 16px rgba(0, 0, 0, 0.06),
     0 16px 32px rgba(0, 0, 0, 0.04),
     inset 0 1px 0 rgba(255, 255, 255, 0.55);
-}
-
-/* ── Path.webp ── Dinossauros ── */
-
-body[data-world="dinossauros"] .path-line {
-  background-image: url("assets/worlds/dinossauros/path.webp");
 }
 
 #track-container.mundo-caverna-fosseis .path-line {
@@ -3845,12 +3833,6 @@ body[data-world="galaxia-estelar"] .casa-vitoria {
     inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
-/* ── Path.webp ── Galaxia ── */
-
-body[data-world="galaxia-estelar"] .path-line {
-  background-image: url("assets/worlds/galaxia/path.webp");
-}
-
 /* ── Theme: Reino dos Oceanos ── */
 
 body[data-world="reino-oceanos"] {
@@ -3920,10 +3902,6 @@ body[data-world="reino-oceanos"] .casa-vitoria {
     0 8px 16px rgba(0, 0, 0, 0.06),
     0 16px 32px rgba(0, 0, 0, 0.04),
     inset 0 1px 0 rgba(255, 255, 255, 0.15);
-}
-
-body[data-world="reino-oceanos"] .path-line {
-  background-image: url("assets/worlds/oceanos/path.webp");
 }
 
 /* ═══════════════════════════════════════
@@ -3998,10 +3976,6 @@ body[data-world="castelo-dragoes"] .casa-vitoria {
     0 16px 32px rgba(0, 0, 0, 0.04),
     inset 0 1px 0 rgba(255, 255, 255, 0.55),
     0 0 20px rgba(255, 215, 0, 0.2);
-}
-
-body[data-world="castelo-dragoes"] .path-line {
-  background-image: url("assets/worlds/castelo/path.webp");
 }
 
 /* ═══════════════════════════════════════
