@@ -1,5 +1,16 @@
 # Roadmap Lara World
 
+### v0.43.0-preview — Arquitetura de Profiles para minigames ✅
+
+- [x] `profiles: { board, arcade }` nos 5 minigames, sem alterar valores de comportamento
+- [x] `src/minigames/engine/minigame-profiles.js` com `getProfile`, `getEffectiveConfig`, `hasProfile` e fallback seguro
+- [x] `launchMinigameHost` consumindo configuração efetiva por contexto
+- [x] Compatibilidade com minigames legados (sem `profiles`) via config de topo
+- [x] `scripts/test-minigame-profiles.mjs` (10 testes) aprovado
+- [ ] Arcade: preencher `profiles.arcade` com valores próprios e consultar perfis no Arcade
+- [ ] Novos perfis futuros (tutorial, prática, desafio diário) via `context → profile`
+- [ ] Deploy da demo e validação
+
 ### v0.42.0-preview — Question Engine +100 perguntas ✅
 
 - [x] 100 novas perguntas nas 9 categorias (banco de 128 → 228)

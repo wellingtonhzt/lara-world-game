@@ -1,5 +1,30 @@
 # Memorial Técnico
 
+## Sprint ARCADE-PROFILES — Arquitetura de Profiles para Minigames (v0.43.0-preview)
+
+### Problema e decisão técnica
+
+O Modo Arcade reutiliza o mesmo `launchMinigameHost()` do tabuleiro e todos os minigames compartilham uma única configuração, misturando comportamento de tabuleiro (recompensas, bot) com o futuro uso avulso. Para transformar o Arcade em base para minigames independentes (tutorial, prática, desafio diário), foi criada a arquitetura de perfis de execução sem alterar nenhum valor de comportamento.
+
+A decisão foi introduzir `profiles: { board, arcade }` no config de cada minigame e um novo módulo `src/minigames/engine/minigame-profiles.js` com:
+
+- `getProfile(id, context)` — perfil explícito do contexto; fallback para `profiles.board`; `null` para minigames legados
+- `getEffectiveConfig(id, context)` — configuração efetiva que unifica campos legados de topo, `profiles.board` e o perfil do contexto, com defaults (`DEFAULT_BOT_RATE = 0.5`, `DEFAULT_AUTO_RETURN_SECONDS = 5`) e sem lançar para contexto desconhecido
+- `hasProfile(id, context)` — existência de perfil explícito
+
+Os campos de comportamento dos 5 minigames (`botSuccessRate`, `autoReturnSeconds`, `rewards`, `botPresentation`) foram migrados para `profiles.board`; `presentation` e `create` permanecem no topo. `profiles.arcade` ficou vazio e herda do `board`, preservando valores idênticos — o Arcade ainda não consulta perfis nesta sprint, apenas a arquitetura `context → profile`.
+
+### Validação e resultado
+
+- `scripts/test-minigame-profiles.mjs` — 10 testes aprovados (perfis dos 5 minigames, fallback para `board`, compatibilidade legada, defaults, `MinigameNotFoundError`)
+- `node --check` aprovado em todos os arquivos alterados
+- `scripts/check-version.mjs` aprovado em `v0.43.0-preview`
+- Nenhum valor de duração, dificuldade, pontuação, bot ou apresentação foi alterado
+- **O comportamento do jogo de tabuleiro permanece idêntico ao da versão anterior**
+- Lançamento: `v0.43.0-preview`, com cache busting atualizado
+
+---
+
 ## Sprint QE-S3 — 100 Novas Perguntas ao Question Engine (v0.42.0-preview)
 
 ### Problema e decisão técnica

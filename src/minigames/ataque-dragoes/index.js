@@ -1,4 +1,4 @@
-import { registerMinigame } from '../engine/index.js';
+import { registerMinigame, createDefaultLegacyProfile } from '../engine/index.js';
 import { AtaqueDragoesGame } from './AtaqueDragoesGame.js';
 
 let _cssLoaded = false;
@@ -12,7 +12,7 @@ function loadCSS() {
   _cssLoaded = true;
 }
 
-const ATAQUE_DRAGOES_CONFIG = Object.freeze({
+const ATAQUE_DRAGOES_BASE = {
   id: 'ataque-dragoes',
   name: 'Ataque dos Drag\u00F5es',
   description: 'Proteja o castelo dos drag\u00F5es travessos!',
@@ -55,6 +55,14 @@ const ATAQUE_DRAGOES_CONFIG = Object.freeze({
       }
     },
   },
+};
+
+const ATAQUE_DRAGOES_CONFIG = Object.freeze({
+  ...ATAQUE_DRAGOES_BASE,
+  profiles: {
+    board: createDefaultLegacyProfile(ATAQUE_DRAGOES_BASE),
+    arcade: {}
+  }
 });
 
 registerMinigame(ATAQUE_DRAGOES_CONFIG);

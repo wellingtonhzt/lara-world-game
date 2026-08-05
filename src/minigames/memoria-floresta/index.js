@@ -1,4 +1,4 @@
-import { registerMinigame } from '../engine/index.js';
+import { registerMinigame, createDefaultLegacyProfile } from '../engine/index.js';
 import { MemoryGame } from './MemoryGame.js';
 
 let _cssLoaded = false;
@@ -12,7 +12,7 @@ function loadCSS() {
   _cssLoaded = true;
 }
 
-const MEMORY_FOREST_CONFIG = Object.freeze({
+const MEMORY_FOREST_BASE = {
   id: 'memory-forest',
   name: 'Jogo da Mem\u00F3ria da Floresta',
   description: 'Encontre os pares de cartas da floresta!',
@@ -54,6 +54,14 @@ const MEMORY_FOREST_CONFIG = Object.freeze({
         instance.stopBotPreview();
       }
     }
+  }
+};
+
+const MEMORY_FOREST_CONFIG = Object.freeze({
+  ...MEMORY_FOREST_BASE,
+  profiles: {
+    board: createDefaultLegacyProfile(MEMORY_FOREST_BASE),
+    arcade: {}
   }
 });
 

@@ -18,7 +18,8 @@
 
 | Versão | Data | Status |
 |--------|------|--------|
-| **v0.42.0-preview** | Ago/2026 | ✅ **Ativo** — Question Engine +100 perguntas |
+| **v0.43.0-preview** | Ago/2026 | ✅ **Ativo** — Arquitetura de Profiles para minigames |
+| v0.42.0-preview | Ago/2026 | ✅ Question Engine +100 perguntas |
 | v0.41.0-preview | Ago/2026 | ✅ Modo Aventura |
 | v0.40.0-preview | Ago/2026 | ✅ Música de fundo global no tabuleiro |
 | v0.39.0-preview | Ago/2026 | ✅ Controle global de som |
@@ -68,7 +69,15 @@ As ações da partida são narradas por um overlay temporário sobre o tabuleiro
 
 ---
 
-## ✨ Funcionalidades Atuais (v0.42.0-preview)
+## ✨ Funcionalidades Atuais (v0.43.0-preview)
+
+### Arquitetura de Profiles para minigames ✅
+
+- **Perfis de execução**: cada minigame registrado agora expõe `profiles: { board, arcade }`, isolando o comportamento do tabuleiro (`profiles.board`) do futuro modo avulso (`profiles.arcade`)
+- **Resolução por contexto**: `getEffectiveConfig(id, context)` unifica campos legados, perfil `board` e perfil do contexto em uma configuração efetiva — sem consultar profiles no tabuleiro
+- **Fallback seguro**: minigames sem `profiles` continuam funcionando com a config de topo; contextos desconhecidos caem para `profiles.board`
+- **Comportamento idêntico**: os valores de duração, dificuldade, recompensas, bot e apresentação permanecem exatamente os mesmos desta release
+- **Validação automatizada**: `scripts/test-minigame-profiles.mjs` (10 testes) cobre perfis, fallback, compatibilidade legada, defaults e resolução por contexto
 
 ### Question Engine — 100 novas perguntas ✅
 
@@ -111,11 +120,11 @@ No **Jogo Rápido**, cada partida usa um mundo escolhido e termina com sua vitó
 
 - **Cinco novos efeitos**: movimento, avanço especial, retrocesso especial, entrada em minigame e vitória
 - **Reprodução eficiente**: buffers decodificados são reutilizados e carregamentos simultâneos do mesmo asset compartilham uma única operação
-- **Cache busting atualizado**: os assets usam URLs com `?v=v0.42.0-preview`
+- **Cache busting atualizado**: os assets usam URLs com `?v=v0.43.0-preview`
 
 ### Cache busting dos assets de áudio ✅
 
-- **Carregamento versionado**: o `AudioManager` acrescenta automaticamente `?v=v0.42.0-preview` às URLs de efeitos e músicas antes do download
+- **Carregamento versionado**: o `AudioManager` acrescenta automaticamente `?v=v0.43.0-preview` às URLs de efeitos e músicas antes do download
 - **Fonte única**: a versão vem de `APP_VERSION`; o catálogo mantém caminhos limpos e independentes da versão
 - **Cache antigo evitado**: novas versões deixam de reutilizar respostas antigas ou `404` armazenados após o deploy
 
@@ -616,7 +625,7 @@ No Modo Aventura, o fluxo parte do mapa inicial, passa por um único sorteio e p
 
 ## 📜 História do Projeto
 
-O Lara World começou como um MVP de tabuleiro simples para 1 jogador e evoluiu para multiplayer local, mundos configuráveis, minigames, Question Engine, Modo Arcade e uma identidade visual própria. A versão atual, **v0.42.0-preview**, amplia o Question Engine com 100 novas perguntas pedagógicas (total de 228), além de conectar os cinco mundos no Modo Aventura, com pontuação acumulada, mapas responsivos e resultados por etapa. Consulte o [Changelog](CHANGELOG.md) para o histórico completo e o [Guia de Estilo](docs/ui-style-guide.md) para as diretrizes visuais oficiais.
+O Lara World começou como um MVP de tabuleiro simples para 1 jogador e evoluiu para multiplayer local, mundos configuráveis, minigames, Question Engine, Modo Arcade e uma identidade visual própria. A versão atual, **v0.43.0-preview**, introduz a arquitetura de perfis de execução (`profiles`) para os minigames, preparando o Arcade para minigames independentes sem alterar o comportamento do jogo — além de manter as 228 perguntas pedagógicas do Question Engine e o Modo Aventura com pontuação acumulada, mapas responsivos e resultados por etapa. Consulte o [Changelog](CHANGELOG.md) para o histórico completo e o [Guia de Estilo](docs/ui-style-guide.md) para as diretrizes visuais oficiais.
 
 ---
 
@@ -675,7 +684,8 @@ docker compose down
 
 ## 🗺️ Roadmap
 
-- **v0.42.0-preview** — ✅ **Ativo** — Question Engine +100 perguntas (228 no total)
+- **v0.43.0-preview** — ✅ **Ativo** — Arquitetura de Profiles para minigames
+- **v0.42.0-preview** — ✅ Question Engine +100 perguntas (228 no total)
 - **v0.41.0-preview** — ✅ Modo Aventura; deploy pendente
 - **Botão Flutuante Mobile** — ✅ **Concluído** — Botão "Jogar Dado" flutuante sincronizado para mobile
 - **v0.40.0-preview** — ✅ Música de fundo global no tabuleiro

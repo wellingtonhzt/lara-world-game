@@ -1,7 +1,7 @@
 import { getMinigame } from './minigame-registry.js';
 import { normalizeMinigameResult } from './minigame-result.js';
+import { getEffectiveConfig } from './minigame-profiles.js';
 
-const DEFAULT_AUTO_RETURN = 5;
 const DEFAULT_BOT_DELAY = 6000;
 
 export function launchMinigameHost(id, options = {}) {
@@ -21,10 +21,11 @@ export function launchMinigameHost(id, options = {}) {
   }
 
   const config = getMinigame(id);
-  const pres = config.presentation || {};
-  const rewards = config.rewards || {};
-  const autoReturn = config.autoReturnSeconds ?? DEFAULT_AUTO_RETURN;
-  const botRate = config.botSuccessRate ?? 0.5;
+  const effective = getEffectiveConfig(id, context);
+  const pres = effective.presentation || {};
+  const rewards = effective.rewards || {};
+  const autoReturn = effective.autoReturnSeconds;
+  const botRate = effective.botSuccessRate;
   const successDelta = rewards.successBoardDelta ?? 3;
   const failureDelta = rewards.failureBoardDelta ?? 0;
 
@@ -85,7 +86,7 @@ export function launchMinigameHost(id, options = {}) {
     let countdownInterval = null;
 
     function stopBotPresentation() {
-      const bp = config.botPresentation;
+      const bp = effective.botPresentation;
       if (bp && typeof bp.stop === 'function') {
         bp.stop(gameInstance);
       }
@@ -197,7 +198,7 @@ export function launchMinigameHost(id, options = {}) {
       botOverlayEl = buildBotOverlay();
       container.appendChild(botOverlayEl);
 
-      const bp = config.botPresentation;
+      const bp = effective.botPresentation;
       if (bp && typeof bp.start === 'function') {
         bp.start(gameInstance);
       }

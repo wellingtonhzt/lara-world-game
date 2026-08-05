@@ -349,10 +349,16 @@ Cada minigame registrado pode conter:
 | `id` | `string` | Sim | Identificador kebab-case |
 | `name` | `string` | Sim | Nome legível |
 | `create` | `function` | Sim | Fábrica que retorna instância do jogo |
-| `botSuccessRate` | `number` | Não (default 0.5) | Taxa de sucesso do bot (0.0 a 1.0) |
-| `autoReturnSeconds` | `number` | Não (default 5) | Segundos do countdown automático |
 | `presentation` | `object` | Não | Textos e ícones exibidos pelo host |
-| `rewards` | `object` | Não | `boardDelta` para sucesso e falha |
+| `profiles` | `object` | Não | Perfis de execução `{ board, arcade, ... }` (v0.43.0-preview) |
+
+Os campos de comportamento dos minigames oficiais (`botSuccessRate`, `autoReturnSeconds`, `rewards`, `botPresentation`) vivem em `profiles.board`. Para minigames legados que ainda não possuem `profiles`, o host continua lendo os campos de topo como fallback. A resolução é feita por `getEffectiveConfig(id, context)`:
+
+| Contexto | Perfil usado |
+|----------|--------------|
+| `'board'` | `profiles.board` (ou campos de topo legados) |
+| `'arcade'` | `profiles.arcade` (herda do `board` nesta release) |
+| desconhecido | `profiles.board` (fallback; nunca lança) |
 
 ### `presentation`
 
@@ -399,9 +405,23 @@ O `meteor-game` foi o primeiro minigame migrado para o host genérico:
   rewards: {
     successBoardDelta: 3,
     failureBoardDelta: 0
+  },
+  profiles: {
+    board: {
+      botSuccessRate: 0.40,
+      autoReturnSeconds: 5,
+      rewards: {
+        successBoardDelta: 3,
+        failureBoardDelta: 0
+      },
+      botPresentation: { start(instance) {}, stop(instance) {} }
+    },
+    arcade: {}
   }
 }
 ```
+
+O perfil `board` é derivado dos campos de topo por `createDefaultLegacyProfile(config)` no momento do registro, preservando `rewards`, `presentation` e `botPresentation` por referência — sem duplicar valores manualmente.
 
 ### Fluxo humano
 

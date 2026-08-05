@@ -1,7 +1,7 @@
-import { registerMinigame } from '../engine/index.js';
+import { registerMinigame, createDefaultLegacyProfile } from '../engine/index.js';
 import { OceanMatch3 } from './OceanMatch3.js';
 
-const OCEAN_MATCH3_CONFIG = Object.freeze({
+const OCEAN_MATCH3_BASE = {
   id: 'ocean-match3',
   name: 'Tesouro das Marés',
   description: 'Combine peças marinhas para encontrar o tesouro!',
@@ -47,6 +47,14 @@ const OCEAN_MATCH3_CONFIG = Object.freeze({
         instance.stopBotPreview();
       }
     }
+  }
+};
+
+const OCEAN_MATCH3_CONFIG = Object.freeze({
+  ...OCEAN_MATCH3_BASE,
+  profiles: {
+    board: createDefaultLegacyProfile(OCEAN_MATCH3_BASE),
+    arcade: {}
   }
 });
 

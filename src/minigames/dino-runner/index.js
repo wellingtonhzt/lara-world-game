@@ -1,7 +1,7 @@
-import { registerMinigame } from '../engine/index.js';
+import { registerMinigame, createDefaultLegacyProfile } from '../engine/index.js';
 import { DinoRunnerGame } from './DinoRunnerGame.js';
 
-const DINO_RUNNER_CONFIG = Object.freeze({
+const DINO_RUNNER_BASE = {
   id: 'dino-runner',
   name: 'Dino Runner',
   description: 'Corra com o dinossauro! Desvie dos obst\u00E1culos e sobreviva por 30 segundos.',
@@ -36,6 +36,14 @@ const DINO_RUNNER_CONFIG = Object.freeze({
   botPresentation: {
     start() {},
     stop() {}
+  }
+};
+
+const DINO_RUNNER_CONFIG = Object.freeze({
+  ...DINO_RUNNER_BASE,
+  profiles: {
+    board: createDefaultLegacyProfile(DINO_RUNNER_BASE),
+    arcade: {}
   }
 });
 

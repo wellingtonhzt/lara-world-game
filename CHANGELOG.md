@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.43.0-preview] - 2026-08-04
+
+### Adicionado
+- **Arquitetura de perfis de execução para minigames**: cada minigame registrado agora expõe `profiles: { board, arcade }`, preparando o Arcade como base para minigames independentes (tutorial, prática, desafio diário) sem alterar o comportamento atual
+- **`src/minigames/engine/minigame-profiles.js`**: novo módulo com `getProfile(id, context)`, `getEffectiveConfig(id, context)`, `hasProfile(id, context)` e `normalizeContext`; a configuração efetiva unifica campos legados, perfil `board` e perfil do contexto, com defaults (`DEFAULT_BOT_RATE = 0.5`, `DEFAULT_AUTO_RETURN_SECONDS = 5`) e nunca lança para contexto desconhecido
+- **`scripts/test-minigame-profiles.mjs`**: suíte com 10 testes cobrindo perfis dos 5 minigames, fallback para `profiles.board`, compatibilidade com minigames legados sem `profiles`, defaults e `MinigameNotFoundError`
+
+### Alterado
+- **5 minigames (`meteoro`, `ocean-match3`, `dino-runner`, `memoria-floresta`, `ataque-dragoes`)**: `botSuccessRate`, `autoReturnSeconds`, `rewards` e `botPresentation` migrados para `profiles.board`; adicionado `profiles.arcade` vazio (herda do `board`) — os valores de comportamento permanecem exatamente os mesmos
+- **`src/minigames/engine/minigame-host.js`**: agora consome `getEffectiveConfig(id, context)` em vez de ler os campos de topo; resolução de perfil ocorre apenas no host, `game.js` e `arcade-controller.js` inalterados
+- **`src/minigames/engine/index.js`**: barrel exporta `getProfile`, `getEffectiveConfig`, `hasProfile`, `normalizeContext`, `DEFAULT_BOT_RATE` e `DEFAULT_AUTO_RETURN_SECONDS`
+- **`src/version.js`**: `APP_VERSION` atualizado para `v0.43.0-preview`
+- **`src/index.html`**: cache-busting de CSS/JS e versão do rodapé atualizados para `v0.43.0-preview`
+- **README.md, docs**: documentação da arquitetura de profiles e referências de versão sincronizadas
+
+### Notas
+- **O comportamento do jogo de tabuleiro permanece idêntico ao da versão anterior**: duração, dificuldade, pontuação, bot, apresentação e fluxo do Arcade não foram alterados
+- Minigames sem `profiles` (configs legados) continuam funcionando via fallback para os campos de topo
+- O Arcade não consulta perfis nesta release; a sprint apenas estabelece a arquitetura (`context → profile`) para minigames independentes futuros
+
 ## [0.42.0-preview] - 2026-08-04
 
 ### Adicionado

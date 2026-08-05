@@ -1,7 +1,7 @@
-import { registerMinigame } from '../engine/index.js';
+import { registerMinigame, createDefaultLegacyProfile } from '../engine/index.js';
 import { MeteoroGame } from './MeteoroGame.js';
 
-const METEORO_CONFIG = Object.freeze({
+const METEORO_BASE = {
   id: 'meteor-game',
   name: 'Chuva de Meteoros',
   description: 'Desvie dos meteoros coletando estrelas até acumular 3 acertos.',
@@ -44,6 +44,14 @@ const METEORO_CONFIG = Object.freeze({
         instance.stopBotPreview();
       }
     }
+  }
+};
+
+const METEORO_CONFIG = Object.freeze({
+  ...METEORO_BASE,
+  profiles: {
+    board: createDefaultLegacyProfile(METEORO_BASE),
+    arcade: {}
   }
 });
 
