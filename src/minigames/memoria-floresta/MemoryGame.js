@@ -6,13 +6,18 @@ const VICTORY_THRESHOLD = 4;
 const FLIP_DELAY = 700;
 
 export class MemoryGame {
-  constructor(container, onComplete) {
+  constructor(container, onComplete, options = {}) {
     this._container = container;
     this._onComplete = onComplete;
     this._flipped = [];
     this._matchedPairs = 0;
     this._locked = false;
-    this._timeLeft = TIME_LIMIT;
+    this.mode = options.mode === 'arcade' ? 'arcade' : 'board';
+    this.params = this.mode === 'arcade' ? (options.params || null) : null;
+    this._timeLimit = this.mode === 'arcade' && Number(this.params?.timeLimit) > 0
+      ? Number(this.params.timeLimit)
+      : TIME_LIMIT;
+    this._timeLeft = this._timeLimit;
     this._completed = false;
     this._started = false;
     this._destroyed = false;
@@ -166,7 +171,7 @@ export class MemoryGame {
 
     this._timerEl = document.createElement('div');
     this._timerEl.className = 'mem-timer';
-    this._timerEl.textContent = `\u23F1 ${TIME_LIMIT}s`;
+    this._timerEl.textContent = `\u23F1 ${this._timeLimit}s`;
     this._timerEl.setAttribute('role', 'timer');
     this._timerEl.setAttribute('aria-label', 'Tempo restante');
 
@@ -261,7 +266,10 @@ export class MemoryGame {
         this._flipped = [];
         this._locked = false;
 
-        if (this._matchedPairs >= PAIRS_TOTAL) {
+        const victoryPairs = this.mode === 'arcade'
+          ? (Number(this.params?.difficulty?.victoryPairs) || PAIRS_TOTAL)
+          : PAIRS_TOTAL;
+        if (this._matchedPairs >= victoryPairs) {
           this._endGame();
         }
       } else {
@@ -303,7 +311,27 @@ export class MemoryGame {
 
     const paresEncontrados = this._matchedPairs;
     const percentual = Math.round((paresEncontrados / PAIRS_TOTAL) * 100);
-    const venceu = paresEncontrados >= VICTORY_THRESHOLD;
+    const objetivo = this.mode === 'arcade'
+      ? (Number(this.params?.difficulty?.victoryPairs) || PAIRS_TOTAL)
+      : PAIRS_TOTAL;
+    const venceu = paresEncontrados >= (this.mode === 'arcade' ? objetivo : VICTORY_THRESHOLD);
+
+    if (this.mode === 'arcade') {
+      const perPair = Number(this.params?.score?.perPair) || 0;
+      const timeBonus = venceu ? (Number(this.params?.score?.timeBonusPerSecond) || 0) * this._timeLeft : 0;
+      this._onComplete?.({
+        venceu,
+        boardDelta: 0,
+        progresso: { atual: paresEncontrados, objetivo },
+        motivo: venceu ? 'todos-os-pares' : 'tempo-esgotado',
+        stats: {
+          pontuacao: paresEncontrados * perPair + timeBonus,
+          paresEncontrados,
+          tempo: this._timeLeft
+        }
+      });
+      return;
+    }
 
     if (this._onComplete) {
       this._onComplete({

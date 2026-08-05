@@ -18,7 +18,11 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 
 ## Principais Funcionalidades
 
-### v0.44.0-preview (Atual) — Dino Runner com perfil Arcade ✅
+### v0.45.0-preview (Atual) — Perfis Arcade dos minigames ✅
+
+Meteoro, Match-3, Memória e Dragões passam a ter `profiles.arcade` próprios, completando os cinco minigames do Arcade. Meteoro oferece sobrevivência infinita e dificuldade progressiva; Match-3 usa três metas cumulativas e multiplicador de cascata; Memória exige os seis pares em 45 segundos; Dragões continua até a queda dos três escudos. Todos reportam pontuação e estatísticas para recordes. Os quatro perfis `board` mantêm duração, objetivos e recompensas anteriores.
+
+### v0.44.0-preview — Dino Runner com perfil Arcade ✅
 
 O Dino Runner se torna o primeiro minigame com experiência Arcade própria. No Modo Arcade o jogo vira um modo sobrevivência sem limite de 30 segundos: a corrida termina apenas na colisão. A pontuação cresce +10 por segundo sobrevivido e +5 por obstáculo desviado, com dificuldade progressiva por estágios (Inicial, Rápido, Acelerado, Intenso e Insano) que aumentam velocidade e frequência de obstáculos. Todos os parâmetros novos vivem em `profiles.arcade` do Dino Runner (`hasTimeLimit`, `score`, `difficulty.stages`, `presentation` e `resultStats`). A tela final do Arcade exibe tempo sobrevivido, pontuação, obstáculos desviados, recorde anterior e "Novo recorde!" quando o jogador supera seu melhor. Os recordes são persistidos por minigame em `arcade-stats.js` (maior tempo, melhor pontuação e recorde de obstáculos). O modo tabuleiro permanece idêntico: 30s, objetivo de sobreviver, bônus de 20s e fluxo de retorno inalterados.
 

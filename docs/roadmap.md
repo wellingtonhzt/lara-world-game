@@ -1,5 +1,14 @@
 # Roadmap Lara World
 
+### v0.45.0-preview — Sprint 5: Perfis Arcade dos minigames ✅
+
+- [x] Meteoro Arcade com sobrevivência infinita, score, dificuldade progressiva e recordes
+- [x] Match-3 Arcade com três estágios, score por combinações/cascatas e recordes
+- [x] Memória Arcade com meta dos seis pares, limite próprio, score e recordes
+- [x] Dragões Arcade com sobrevivência por escudos, dificuldade progressiva, score e recordes
+- [x] Comportamento dos quatro minigames no tabuleiro preservado
+- [x] Testes de profiles e contratos Arcade atualizados
+
 ### v0.44.0-preview — Dino Runner com perfil Arcade ✅
 
 - [x] `profiles.arcade` do Dino Runner com `hasTimeLimit`, `score`, `difficulty.stages`, `presentation` e `resultStats`
@@ -21,7 +30,7 @@
 - [x] `launchMinigameHost` consumindo configuração efetiva por contexto
 - [x] Compatibilidade com minigames legados (sem `profiles`) via config de topo
 - [x] `scripts/test-minigame-profiles.mjs` (10 testes) aprovado
-- [ ] Arcade: preencher `profiles.arcade` com valores próprios e consultar perfis no Arcade
+- [x] Arcade: preencher `profiles.arcade` com valores próprios e consultar perfis no Arcade
 - [ ] Novos perfis futuros (tutorial, prática, desafio diário) via `context → profile`
 - [ ] Deploy da demo e validação
 

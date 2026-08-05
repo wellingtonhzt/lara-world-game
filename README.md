@@ -18,7 +18,8 @@
 
 | Versão | Data | Status |
 |--------|------|--------|
-| **v0.44.0-preview** | Ago/2026 | ✅ **Ativo** — Dino Runner com perfil Arcade |
+| **v0.45.0-preview** | Ago/2026 | ✅ **Ativo** — Perfis Arcade dos minigames |
+| v0.44.0-preview | Ago/2026 | ✅ Dino Runner com perfil Arcade |
 | v0.43.0-preview | Ago/2026 | ✅ Arquitetura de Profiles para minigames |
 | v0.42.0-preview | Ago/2026 | ✅ Question Engine +100 perguntas |
 | v0.41.0-preview | Ago/2026 | ✅ Modo Aventura |
@@ -70,7 +71,7 @@ As ações da partida são narradas por um overlay temporário sobre o tabuleiro
 
 ---
 
-## ✨ Funcionalidades Atuais (v0.44.0-preview)
+## ✨ Funcionalidades Atuais (v0.45.0-preview)
 
 ### Dino Runner Arcade — Modo Sobrevivência ✅
 
@@ -79,6 +80,14 @@ As ações da partida são narradas por um overlay temporário sobre o tabuleiro
 - **Dificuldade por estágios**: velocidade e frequência de obstáculos crescem gradualmente (Inicial, Rápido, Acelerado, Intenso, Insano), com todos os parâmetros centralizados em `profiles.arcade`
 - **Tela final com estatísticas**: tempo sobrevivido, pontuação, obstáculos desviados, recorde anterior e aviso "Novo recorde!"
 - **Recordes persistidos**: `arcade-stats.js` registra maior tempo, melhor pontuação e recorde de obstáculos por minigame, exibidos também na galeria do Arcade
+
+### Perfis Arcade dos minigames ✅
+
+- **Meteoro**: sobrevivência infinita com dificuldade progressiva e pontuação por tempo e meteoros desviados
+- **Match-3**: três estágios cumulativos, pontuação por combinações e multiplicador de cascata
+- **Memória**: encontre os seis pares em 45 segundos e receba bônus pelo tempo restante
+- **Dragões**: proteja os três escudos pelo maior tempo possível em quatro estágios de dificuldade
+- Os modos do tabuleiro continuam com as regras e recompensas anteriores
 - **Tabuleiro intocado**: o modo tabuleiro continua com 30s, objetivo de sobreviver, bônus de 20s e fluxo de retorno idênticos à versão anterior
 
 ### Arquitetura de Profiles para minigames ✅
@@ -130,11 +139,11 @@ No **Jogo Rápido**, cada partida usa um mundo escolhido e termina com sua vitó
 
 - **Cinco novos efeitos**: movimento, avanço especial, retrocesso especial, entrada em minigame e vitória
 - **Reprodução eficiente**: buffers decodificados são reutilizados e carregamentos simultâneos do mesmo asset compartilham uma única operação
-- **Cache busting atualizado**: os assets usam URLs com `?v=v0.44.0-preview`
+- **Cache busting atualizado**: os assets usam URLs com `?v=v0.45.0-preview`
 
 ### Cache busting dos assets de áudio ✅
 
-- **Carregamento versionado**: o `AudioManager` acrescenta automaticamente `?v=v0.44.0-preview` às URLs de efeitos e músicas antes do download
+- **Carregamento versionado**: o `AudioManager` acrescenta automaticamente `?v=v0.45.0-preview` às URLs de efeitos e músicas antes do download
 - **Fonte única**: a versão vem de `APP_VERSION`; o catálogo mantém caminhos limpos e independentes da versão
 - **Cache antigo evitado**: novas versões deixam de reutilizar respostas antigas ou `404` armazenados após o deploy
 
@@ -635,7 +644,7 @@ No Modo Aventura, o fluxo parte do mapa inicial, passa por um único sorteio e p
 
 ## 📜 História do Projeto
 
-O Lara World começou como um MVP de tabuleiro simples para 1 jogador e evoluiu para multiplayer local, mundos configuráveis, minigames, Question Engine, Modo Arcade e uma identidade visual própria. A versão atual, **v0.44.0-preview**, transforma o Dino Runner no primeiro minigame com perfil Arcade próprio (sobrevivência sem limite de tempo, pontuação, dificuldade progressiva, recordes e tela final com estatísticas) — além de manter as 228 perguntas pedagógicas do Question Engine e o Modo Aventura com pontuação acumulada, mapas responsivos e resultados por etapa. Consulte o [Changelog](CHANGELOG.md) para o histórico completo e o [Guia de Estilo](docs/ui-style-guide.md) para as diretrizes visuais oficiais.
+O Lara World começou como um MVP de tabuleiro simples para 1 jogador e evoluiu para multiplayer local, mundos configuráveis, minigames, Question Engine, Modo Arcade e uma identidade visual própria. A versão atual, **v0.45.0-preview**, completa os perfis Arcade próprios dos cinco minigames, com pontuação, dificuldade contextual e recordes, preservando as regras do tabuleiro. Mantém também as 228 perguntas pedagógicas do Question Engine e o Modo Aventura com pontuação acumulada, mapas responsivos e resultados por etapa. Consulte o [Changelog](CHANGELOG.md) para o histórico completo e o [Guia de Estilo](docs/ui-style-guide.md) para as diretrizes visuais oficiais.
 
 ---
 
@@ -694,7 +703,8 @@ docker compose down
 
 ## 🗺️ Roadmap
 
-- **v0.44.0-preview** — ✅ **Ativo** — Dino Runner com perfil Arcade
+- **v0.45.0-preview** — ✅ **Ativo** — Perfis Arcade dos minigames
+- **v0.44.0-preview** — ✅ Dino Runner com perfil Arcade
 - **v0.43.0-preview** — ✅ Arquitetura de Profiles para minigames
 - **v0.42.0-preview** — ✅ Question Engine +100 perguntas (228 no total)
 - **v0.41.0-preview** — ✅ Modo Aventura; deploy pendente

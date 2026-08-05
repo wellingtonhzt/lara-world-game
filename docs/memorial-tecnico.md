@@ -1,5 +1,24 @@
 # Memorial Técnico
 
+## Sprint 5 — Perfis Arcade dos minigames (v0.45.0-preview)
+
+### Objetivo e impacto
+
+Completar a arquitetura iniciada pelo Dino Runner com perfis Arcade próprios para Meteoro, Match-3, Memória e Dragões. Cada registro resolve `context: 'arcade'`, injeta os parâmetros do perfil e produz `stats` compatíveis com os recordes genéricos. Os caminhos `board` continuam usando as constantes, objetivos, durações e recompensas anteriores.
+
+### Comportamento Arcade
+
+- Meteoro: sobrevivência infinita, cinco estágios, pontos por segundo e meteoro desviado
+- Match-3: três metas cumulativas, pontos por combinação e multiplicador de cascata
+- Memória: seis pares em 45 segundos, pontos por par e bônus de tempo
+- Dragões: sobrevivência até perder três escudos, quatro estágios e pontos por tempo/acerto
+
+### Arquivos e validação
+
+Foram alterados os pares `index.js`/classe dos quatro minigames, `scripts/test-minigame-profiles.mjs` e a nova cobertura `tests/minigames-arcade.mjs`, além dos arquivos obrigatórios de versão e documentação. A validação inclui `check-version`, `diff --check`, testes do engine/profiles/Arcade e Question Engine. Nenhum arquivo de gameplay do Dino Runner ou fluxo do tabuleiro foi alterado nesta sprint.
+
+---
+
 ## Sprint ARCADE-DINO — Dino Runner com perfil Arcade (v0.44.0-preview)
 
 ### Problema e decisão técnica

@@ -18,9 +18,11 @@ const TIERS = [
 ];
 
 export class AtaqueDragoesGame {
-  constructor(container, onComplete) {
+  constructor(container, onComplete, options = {}) {
     this.container = container;
     this.onComplete = onComplete;
+    this.mode = options.mode === 'arcade' ? 'arcade' : 'board';
+    this.params = this.mode === 'arcade' ? (options.params || null) : null;
 
     this.canvas = null;
     this.ctx = null;
@@ -40,6 +42,8 @@ export class AtaqueDragoesGame {
     this.nextDragonId = 1;
 
     this.hits = 0;
+    this.score = 0;
+    this._scoreAccumulator = 0;
     this.lost = 0;
     this.defense = DEFENSE_MAX;
 
@@ -78,6 +82,8 @@ export class AtaqueDragoesGame {
     this.dragons = [];
     this.nextDragonId = 1;
     this.hits = 0;
+    this.score = 0;
+    this._scoreAccumulator = 0;
     this.lost = 0;
     this.defense = DEFENSE_MAX;
     this.effects = [];
@@ -151,6 +157,12 @@ export class AtaqueDragoesGame {
   }
 
   _getTier() {
+    if (this.mode === 'arcade') {
+      const stages = this.params?.difficulty?.stages;
+      if (Array.isArray(stages) && stages.length > 0) {
+        return stages.find(stage => stage.until == null || this.elapsed < stage.until) || stages[stages.length - 1];
+      }
+    }
     for (let i = TIERS.length - 1; i >= 0; i--) {
       if (this.elapsed >= TIERS[i].after) return TIERS[i];
     }
@@ -244,6 +256,9 @@ export class AtaqueDragoesGame {
       if (dx * dx + dy * dy <= hitR * hitR) {
         d.active = false;
         this.hits++;
+        if (this.mode === 'arcade') {
+          this.score += Number(this.params?.score?.perHit) || 0;
+        }
 
         this.effects.push({
           x: d.x, y: d.y,
@@ -279,10 +294,20 @@ export class AtaqueDragoesGame {
     if (this.state !== 'PLAYING') return;
     if (this.interactionLocked) return;
 
-    this.timeLeft -= dt;
     this.elapsed += dt;
 
-    if (this.timeLeft <= 0) {
+    if (this.mode === 'arcade') {
+      this._scoreAccumulator += (Number(this.params?.score?.perSecond) || 0) * dt;
+      const whole = Math.floor(this._scoreAccumulator);
+      if (whole > 0) {
+        this.score += whole;
+        this._scoreAccumulator -= whole;
+      }
+    } else {
+      this.timeLeft -= dt;
+    }
+
+    if (this.mode !== 'arcade' && this.timeLeft <= 0) {
       this.timeLeft = 0;
       const venceu = this.hits >= META;
       this._complete({
@@ -336,6 +361,20 @@ export class AtaqueDragoesGame {
           text: '-1',
           color: '#ff4444',
         });
+        if (this.mode === 'arcade' && this.defense <= 0) {
+          this._complete({
+            venceu: false,
+            boardDelta: 0,
+            progresso: { atual: 0, objetivo: 1 },
+            motivo: 'defesa-destruida',
+            stats: {
+              pontuacao: this.score,
+              tempo: Math.round(this.elapsed),
+              acertos: this.hits
+            }
+          });
+          return;
+        }
       }
 
       if (d.x < -100 || d.x > this.width + 100 || d.y < -100 || d.y > this.height + 100) {
@@ -544,13 +583,17 @@ export class AtaqueDragoesGame {
     ctx.fillStyle = '#ffd700';
     ctx.font = `bold ${hudSize}px sans-serif`;
     ctx.textAlign = 'left';
-    ctx.fillText(`\uD83D\uDC09 ${this.hits}/${META}`, pad, hudSize + pad);
+    ctx.fillText(this.mode === 'arcade' ? `\u2B50 ${this.score}` : `\uD83D\uDC09 ${this.hits}/${META}`, pad, hudSize + pad);
 
     ctx.textAlign = 'right';
-    const timeColor = this.timeLeft < 5 ? '#ff4444' : '#ffffff';
-    ctx.fillStyle = timeColor;
+    ctx.fillStyle = this.mode === 'arcade' ? '#ffffff' : (this.timeLeft < 5 ? '#ff4444' : '#ffffff');
     ctx.font = `bold ${Math.round(hudSize * 1.2)}px monospace`;
-    ctx.fillText(Math.ceil(this.timeLeft) + 's', this.width - pad, hudSize + pad);
+    if (this.mode === 'arcade') {
+      const tier = this._getTier();
+      ctx.fillText(`${tier.name || 'Inicial'} \u00B7 ${Math.ceil(this.elapsed)}s`, this.width - pad, hudSize + pad);
+    } else {
+      ctx.fillText(Math.ceil(this.timeLeft) + 's', this.width - pad, hudSize + pad);
+    }
 
     ctx.textAlign = 'left';
     ctx.font = `${hudSize}px sans-serif`;

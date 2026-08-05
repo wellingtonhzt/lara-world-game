@@ -96,16 +96,16 @@ test('getEffectiveConfig(board) === comportamento legado exato', () => {
   }
 });
 
-test('getEffectiveConfig(arcade) e (board) sao identicos para os demais minigames', () => {
-  const UNCHANGED = MODERN_IDS.filter(id => id !== 'dino-runner');
-  for (const id of UNCHANGED) {
+test('getEffectiveConfig(arcade) preserva campos compartilhados e aplica perfis proprios', () => {
+  for (const id of MODERN_IDS) {
     const board = getEffectiveConfig(id, 'board');
     const arcade = getEffectiveConfig(id, 'arcade');
     assert.equal(arcade.botSuccessRate, board.botSuccessRate, `${id} arcade botSuccessRate`);
     assert.equal(arcade.autoReturnSeconds, board.autoReturnSeconds, `${id} arcade autoReturnSeconds`);
     assert.deepEqual(arcade.rewards, board.rewards, `${id} arcade rewards`);
-    assert.equal(arcade.presentation.title, board.presentation.title, `${id} arcade presentation`);
-    assert.deepEqual(arcade.resultStats, [], `${id} sem resultStats`);
+    assert.notEqual(arcade.presentation.title, board.presentation.title, `${id} arcade presentation propria`);
+    assert.ok(Array.isArray(arcade.resultStats) && arcade.resultStats.length > 0, `${id} com resultStats`);
+    assert.ok(arcade.resultStats.some(stat => stat.key === 'pontuacao'), `${id} reporta pontuacao`);
   }
 });
 

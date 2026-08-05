@@ -20,6 +20,11 @@ export class OceanMatch3 {
   constructor(container, onComplete, options = {}) {
     this.container = container;
     this.onComplete = onComplete;
+    this.mode = options.mode === 'arcade' ? 'arcade' : 'board';
+    this.params = options.mode === 'arcade' ? (options.params || null) : null;
+    this.score = 0;
+    this._stageIndex = 0;
+    this.elapsed = 0;
     this._completed = false;
     this._started = false;
     this.grid = null;
@@ -32,11 +37,15 @@ export class OceanMatch3 {
     this.isResolving = false;
     this.combinations = 0;
     this.targetCombinations = 5;
-    this._noTimerLimit = options.noTimerLimit === true;
+    this._noTimerLimit = this.mode === 'arcade' || options.noTimerLimit === true;
     this.timeLimit = (options.timeLimit && Number.isInteger(options.timeLimit) && options.timeLimit > 0)
       ? options.timeLimit
       : OceanMatch3.DEFAULT_TIME_LIMIT;
     this.timeRemaining = this.timeLimit;
+    const arcadeStages = this.mode === 'arcade' ? this._getArcadeStages() : null;
+    if (arcadeStages && arcadeStages.length > 0) {
+      this.targetCombinations = arcadeStages[0].target;
+    }
     this.cascadeCycles = 0;
     this._totalCascadeCycles = 0;
     this._timerInterval = null;
@@ -64,6 +73,14 @@ export class OceanMatch3 {
     this.cascadeCycles = 0;
     this._totalCascadeCycles = 0;
     this.lastMatches = { groups: [], cells: [], hasMatches: false };
+    this.score = 0;
+    this._stageIndex = 0;
+    this.elapsed = 0;
+    this.targetCombinations = 5;
+    const arcadeStages = this.mode === 'arcade' ? this._getArcadeStages() : null;
+    if (arcadeStages && arcadeStages.length > 0) {
+      this.targetCombinations = arcadeStages[0].target;
+    }
 
     this._loadCSS();
     this.container.style.aspectRatio = 'auto';
@@ -162,13 +179,16 @@ export class OceanMatch3 {
       return;
     }
     const isDebug = typeof window !== 'undefined' && window.location.search.includes('debug=1');
-    const timerLabel = this._noTimerLimit ? '\u221E' : `${this.timeLimit}s`;
+    const timerLabel = this.mode === 'arcade' ? '0s' : (this._noTimerLimit ? '\u221E' : `${this.timeLimit}s`);
+    const initialCombosText = this.mode === 'arcade'
+      ? `\u2B50 0 \u00B7 ${this._getStageInfoText()} \u00B7 Combina\u00E7\u00F5es: 0 / ${this.targetCombinations}`
+      : `Combina\u00E7\u00F5es: 0 / ${this.targetCombinations}`;
 
     this.rootElement = document.createElement('div');
     this.rootElement.className = 'ocean-match3';
     this.rootElement.innerHTML = `
       <div class="ocean-match3-hud">
-        <span class="ocean-match3-hud-combos">Combina\u00E7\u00F5es: 0 / ${this.targetCombinations}</span>
+        <span class="ocean-match3-hud-combos">${initialCombosText}</span>
         <span class="ocean-match3-hud-timer">Tempo: ${timerLabel}</span>
       </div>
       <div class="ocean-match3-progress">${this._generateProgressHTML()}</div>
@@ -238,7 +258,11 @@ export class OceanMatch3 {
     const comboEl = (this.rootElement || this.container).querySelector('.ocean-match3-hud-combos');
     if (comboEl) {
       const prefix = this._targetReached ? '\u2714 ' : '';
-      comboEl.textContent = `${prefix}Combina\u00E7\u00F5es: ${this.combinations} / ${this.targetCombinations}`;
+      if (this.mode === 'arcade') {
+        comboEl.textContent = `${prefix}\u2B50 ${this.score} \u00B7 ${this._getStageInfoText()} \u00B7 Combina\u00E7\u00F5es: ${this.combinations} / ${this.targetCombinations}`;
+      } else {
+        comboEl.textContent = `${prefix}Combina\u00E7\u00F5es: ${this.combinations} / ${this.targetCombinations}`;
+      }
     }
     const progEl = (this.rootElement || this.container).querySelector('.ocean-match3-progress');
     if (progEl) {
@@ -247,7 +271,10 @@ export class OceanMatch3 {
     }
     const timerEl = (this.rootElement || this.container).querySelector('.ocean-match3-hud-timer');
     if (timerEl) {
-      if (this._noTimerLimit) {
+      if (this.mode === 'arcade') {
+        timerEl.textContent = `Tempo: ${this.elapsed}s`;
+        timerEl.classList.remove('ocean-match3-timer-urgent');
+      } else if (this._noTimerLimit) {
         timerEl.textContent = 'Tempo: \u221E';
         timerEl.classList.remove('ocean-match3-timer-urgent');
       } else {
@@ -266,12 +293,77 @@ export class OceanMatch3 {
     );
   }
 
+  /* ── Arcade helpers ── */
+
+  _getArcadeStages() {
+    if (this.mode !== 'arcade' || !this.params || !this.params.difficulty || !Array.isArray(this.params.difficulty.stages)) {
+      return null;
+    }
+    return this.params.difficulty.stages;
+  }
+
+  _getArcadeStage() {
+    const stages = this._getArcadeStages();
+    if (!stages || stages.length === 0) return null;
+    return stages[this._stageIndex] || null;
+  }
+
+  _getStageInfoText() {
+    const stages = this._getArcadeStages();
+    if (!stages || stages.length === 0) return '';
+    return `Est\u00E1gio ${this._stageIndex + 1}/${stages.length}`;
+  }
+
+  _advanceArcadeStage() {
+    const stages = this._getArcadeStages();
+    if (!stages || stages.length === 0) return true;
+    if (this._stageIndex < stages.length - 1) {
+      this._stageIndex++;
+      this.targetCombinations = stages[this._stageIndex].target;
+      this._targetReached = false;
+      return false;
+    }
+    return true;
+  }
+
+  _buildResult(venceu, motivo) {
+    if (this.mode === 'arcade') {
+      return {
+        venceu,
+        boardDelta: 0,
+        progresso: { atual: this.combinations, objetivo: this.targetCombinations },
+        motivo,
+        stats: {
+          pontuacao: this.score,
+          combinacoes: this.combinations,
+          cascatas: this._totalCascadeCycles,
+          tempo: Math.round(this.elapsed)
+        }
+      };
+    }
+    return {
+      venceu,
+      boardDelta: venceu ? 3 : 0,
+      progresso: { atual: this.combinations, objetivo: this.targetCombinations },
+      motivo: venceu ? 'objetivo-concluido' : 'tempo-encerrado',
+      stats: { combinacoes: this.combinations, cascatas: this._totalCascadeCycles }
+    };
+  }
+
   /* ── Timer ── */
 
   _startTimer() {
     this._stopTimer();
     if (this._noTimerLimit) {
       this._updateHUD();
+      if (this.mode === 'arcade') {
+        this.elapsed = 0;
+        this._timerInterval = setInterval(() => {
+          if (this._completed) return;
+          this.elapsed++;
+          this._updateHUD();
+        }, 1000);
+      }
       return;
     }
     this.timeRemaining = this.timeLimit;
@@ -289,18 +381,11 @@ export class OceanMatch3 {
   _timerTick() {
     this._stopTimer();
     if (this._completed || !this._started) return;
-    const combinacoes = this.combinations;
     const venceu = this._hasReachedTarget();
     if (venceu) {
       this._targetReached = true;
     }
-    this._complete({
-      venceu,
-      boardDelta: venceu ? 3 : 0,
-      progresso: { atual: combinacoes, objetivo: this.targetCombinations },
-      motivo: venceu ? 'objetivo-concluido' : 'tempo-encerrado',
-      stats: { combinacoes, cascatas: this._totalCascadeCycles },
-    });
+    this._complete(this._buildResult(venceu, venceu ? 'objetivo-concluido' : 'tempo-encerrado'));
   }
 
   _stopTimer() {
@@ -428,6 +513,11 @@ export class OceanMatch3 {
       this.grid[cell.row][cell.col] = OceanMatch3.EMPTY_CELL;
     }
     this.combinations += matchResult.groups.length;
+    if (this.mode === 'arcade') {
+      const perCombo = this.params && this.params.score ? (Number(this.params.score.perCombo) || 0) : 0;
+      const multiplier = Math.min(this.cascadeCycles + 1, 4);
+      this.score += matchResult.groups.length * perCombo * multiplier;
+    }
   }
 
   _applyGravity() {
@@ -487,7 +577,15 @@ export class OceanMatch3 {
       this._totalCascadeCycles++;
       this._updateHUD();
 
-      if (!this._targetReached && this.combinations >= this.targetCombinations) {
+      if (this.mode === 'arcade') {
+        if (this._hasReachedTarget()) {
+          if (this._advanceArcadeStage()) {
+            this._complete(this._buildResult(true, 'arcade-completo'));
+            return;
+          }
+          this._updateHUD();
+        }
+      } else if (!this._targetReached && this.combinations >= this.targetCombinations) {
         this._targetReached = true;
         this._updateHUD();
       }
@@ -672,6 +770,14 @@ export class OceanMatch3 {
     this.cascadeCycles = 0;
     this._totalCascadeCycles = 0;
     this.lastMatches = { groups: [], cells: [], hasMatches: false };
+    this.score = 0;
+    this._stageIndex = 0;
+    this.elapsed = 0;
+    this.targetCombinations = 5;
+    const arcadeStages = this.mode === 'arcade' ? this._getArcadeStages() : null;
+    if (arcadeStages && arcadeStages.length > 0) {
+      this.targetCombinations = arcadeStages[0].target;
+    }
     this._renderGrid();
     this._syncSelectionDOM();
     this._hideInvalidFeedback();
@@ -741,6 +847,16 @@ export class OceanMatch3 {
 
   _handleAction(action) {
     if (this.interactionLocked) return;
+    if (action === 'vitoria') {
+      this.combinations = Math.max(this.combinations, this.targetCombinations);
+      this._targetReached = true;
+      this._complete(this._buildResult(true, 'objetivo-concluido'));
+      return;
+    }
+    if (action === 'tempo') {
+      this._complete(this._buildResult(this._hasReachedTarget(), 'tempo-encerrado'));
+      return;
+    }
     if (action === 'atingir-meta') {
       if (!this._targetReached) {
         this.combinations = Math.max(this.combinations, this.targetCombinations);
@@ -752,13 +868,7 @@ export class OceanMatch3 {
       if (venceu) {
         this._targetReached = true;
       }
-      this._complete({
-        venceu,
-        boardDelta: venceu ? 3 : 0,
-        progresso: { atual: this.combinations, objetivo: this.targetCombinations },
-        motivo: venceu ? 'objetivo-concluido' : 'tempo-encerrado',
-        stats: { combinacoes: this.combinations, cascatas: this._totalCascadeCycles }
-      });
+      this._complete(this._buildResult(venceu, venceu ? 'objetivo-concluido' : 'tempo-encerrado'));
     }
   }
 
@@ -821,6 +931,9 @@ export class OceanMatch3 {
     this.combinations = 0;
     this.cascadeCycles = 0;
     this._totalCascadeCycles = 0;
+    this.score = 0;
+    this._stageIndex = 0;
+    this.elapsed = 0;
     this.lastMatches = { groups: [], cells: [], hasMatches: false };
     this.isResolving = false;
     if (this._boundGridClick) {

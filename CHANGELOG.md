@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.45.0-preview] - 2026-08-05
+
+### Adicionado
+- **Perfis Arcade dos quatro minigames restantes**: Meteoro, Match-3, Memória e Dragões agora possuem regras, apresentação, pontuação e estatísticas próprias no `profiles.arcade`
+- **Meteoro Arcade**: sobrevivência sem limite de tempo, cinco estágios de dificuldade e pontos por segundo e meteoro desviado
+- **Match-3 Arcade**: três metas cumulativas, pontos por combinação com multiplicador de cascata e cronômetro crescente
+- **Memória Arcade**: desafio de encontrar os seis pares em 45 segundos, com pontos por par e bônus pelo tempo restante
+- **Dragões Arcade**: defesa infinita até a queda dos três escudos, quatro estágios progressivos e pontos por tempo e acerto
+- **Testes**: cobertura dos contratos Arcade dos quatro minigames em `tests/minigames-arcade.mjs`; testes de profiles atualizados para os cinco perfis próprios
+
+### Alterado
+- **Versionamento**: `APP_VERSION`, cache-busting de CSS/JS, rodapé e documentação sincronizados em `v0.45.0-preview`
+
+### Notas
+- Os perfis `board`, recompensas de casas e comportamento dos minigames no tabuleiro permanecem inalterados
+
 ## [0.44.0-preview] - 2026-08-05
 
 ### Adicionado

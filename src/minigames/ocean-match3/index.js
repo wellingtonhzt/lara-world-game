@@ -1,4 +1,4 @@
-import { registerMinigame, createDefaultLegacyProfile } from '../engine/index.js';
+import { registerMinigame, createDefaultLegacyProfile, getProfile } from '../engine/index.js';
 import { OceanMatch3 } from './OceanMatch3.js';
 
 const OCEAN_MATCH3_BASE = {
@@ -26,10 +26,13 @@ const OCEAN_MATCH3_BASE = {
     failureBoardDelta: 0
   },
   create(options) {
-    const { container, onComplete } = options;
+    const { container, onComplete, context = 'board' } = options;
+    const isArcade = context === 'arcade';
     const debugTime = OceanMatch3.debugTimeLimit;
-    const noTimerLimit = debugTime === Infinity;
+    const noTimerLimit = debugTime === Infinity || isArcade;
     const game = new OceanMatch3(container, onComplete, {
+      mode: isArcade ? 'arcade' : 'board',
+      params: isArcade ? getProfile('ocean-match3', 'arcade') : undefined,
       timeLimit: noTimerLimit ? undefined : (debugTime || undefined),
       noTimerLimit
     });
@@ -50,11 +53,38 @@ const OCEAN_MATCH3_BASE = {
   }
 };
 
+const OCEAN_MATCH3_ARCADE_PROFILE = {
+  hasTimeLimit: false,
+  score: {
+    perCombo: 10
+  },
+  difficulty: {
+    stages: [
+      { name: 'Est\u00E1gio 1', target: 5 },
+      { name: 'Est\u00E1gio 2', target: 8 },
+      { name: 'Est\u00E1gio 3', target: 12 }
+    ]
+  },
+  presentation: {
+    title: 'Tesouro das Mar\u00E9s Arcade',
+    instruction: 'Complete os 3 est\u00E1gios de combina\u00E7\u00F5es. Cada est\u00E1gio pede mais combina\u00E7\u00F5es e cada cascata multiplica seus pontos!',
+    failureIcon: '\uD83C\uDF0A',
+    failureTitle: 'O oceano venceu',
+    failureMessage: 'Tente novamente para bater seu recorde!'
+  },
+  resultStats: [
+    { key: 'pontuacao', label: 'Pontua\u00E7\u00E3o', format: 'number', recordLabel: 'Melhor pontua\u00E7\u00E3o' },
+    { key: 'combinacoes', label: 'Combina\u00E7\u00F5es', format: 'number', recordLabel: 'Recorde de combina\u00E7\u00F5es' },
+    { key: 'cascatas', label: 'Cascatas', format: 'number', recordLabel: 'Recorde de cascatas' },
+    { key: 'tempo', label: 'Tempo', format: 'seconds', recordLabel: 'Recorde de tempo' }
+  ]
+};
+
 const OCEAN_MATCH3_CONFIG = Object.freeze({
   ...OCEAN_MATCH3_BASE,
   profiles: {
     board: createDefaultLegacyProfile(OCEAN_MATCH3_BASE),
-    arcade: {}
+    arcade: OCEAN_MATCH3_ARCADE_PROFILE
   }
 });
 

@@ -1,7 +1,9 @@
 export class MeteoroGame {
-  constructor(container, onComplete) {
+  constructor(container, onComplete, options = {}) {
     this.container = container;
     this.onComplete = onComplete;
+    this.mode = options.mode === 'arcade' ? 'arcade' : 'board';
+    this.params = options.mode === 'arcade' ? (options.params || null) : null;
     this.canvas = null;
     this.ctx = null;
     this.rafId = null;
@@ -15,6 +17,10 @@ export class MeteoroGame {
     this.timeLeft = 20;
     this.lastSpawn = 0;
     this.score = 0;
+    this.elapsed = 0;
+    this.meteorosDesviados = 0;
+    this._scoreAccumulator = 0;
+    this._currentStage = null;
     this.width = 0;
     this.height = 0;
     this.keys = { left: false, right: false, up: false, down: false };
@@ -56,6 +62,11 @@ export class MeteoroGame {
     this.flashTimer = 0;
     this.lifeLostText = '';
     this.lifeLostTextTimer = 0;
+    this.elapsed = 0;
+    this.score = 0;
+    this.meteorosDesviados = 0;
+    this._scoreAccumulator = 0;
+    this._currentStage = null;
     this.canvas = document.createElement('canvas');
     this.canvas.className = 'meteoro-canvas';
     this.canvas.setAttribute('tabindex', '0');
@@ -150,6 +161,10 @@ export class MeteoroGame {
       this.rafId = null;
     }
     this._cleanup();
+    if (this.mode === 'arcade') {
+      this.onComplete(this._buildArcadeResult('interrompido'));
+      return;
+    }
     this.onComplete({ status: 'fail', bonus: 0, lives: this.lives, timeLeft: Math.ceil(this.timeLeft) });
   }
 
@@ -203,10 +218,36 @@ export class MeteoroGame {
     }
   }
 
+  _getArcadeStage() {
+    if (!this.params || !this.params.difficulty || !Array.isArray(this.params.difficulty.stages)) {
+      return null;
+    }
+    const stages = this.params.difficulty.stages;
+    for (const stage of stages) {
+      if (stage.until === null || stage.until === undefined || this.elapsed < stage.until) {
+        return stage;
+      }
+    }
+    return stages[stages.length - 1];
+  }
+
+  _accumulateScore(dt) {
+    const perSecond = this.params && this.params.score ? (Number(this.params.score.perSecond) || 0) : 0;
+    this._scoreAccumulator += perSecond * dt;
+    const whole = Math.floor(this._scoreAccumulator);
+    if (whole > 0) {
+      this.score += whole;
+      this._scoreAccumulator -= whole;
+    }
+  }
+
   _spawnMeteoro() {
-    const baseSize = Math.max(8, this.width * 0.025);
+    const stage = this.mode === 'arcade' ? this._getArcadeStage() : null;
+    const speedMul = stage && stage.speed ? stage.speed : 1;
+    const sizeMul = stage && stage.meteoroSize ? stage.meteoroSize : 1;
+    const baseSize = Math.max(8, this.width * 0.025) * sizeMul;
     const size = Math.random() * baseSize * 1.5 + baseSize;
-    const baseSpeed = (Math.random() * 1.8 + 1.2) * (this.isMobile ? 0.82 : 1.0);
+    const baseSpeed = (Math.random() * 1.8 + 1.2) * speedMul * (this.isMobile ? 0.82 : 1.0);
     const speed = baseSpeed * (400 / Math.max(this.height, 300));
     this.meteoros.push({
       x: Math.random() * (this.width - size * 2) + size,
@@ -339,6 +380,11 @@ export class MeteoroGame {
     if (this.state !== 'PLAYING') return;
     if (this.interactionLocked) return;
 
+    this.elapsed += dt;
+    if (this.mode === 'arcade') {
+      this._accumulateScore(dt);
+    }
+
     if (this.hitPauseTimer > 0) {
       this.hitPauseTimer -= dt * 1000;
       if (this.hitPauseTimer < 0) this.hitPauseTimer = 0;
@@ -365,15 +411,31 @@ export class MeteoroGame {
     this.ship.x = Math.max(pad, Math.min(this.width - this.ship.width - pad, this.ship.x));
     this.ship.y = Math.max(pad, Math.min(this.height - this.ship.height - pad, this.ship.y));
 
-    this.timeLeft -= dt;
-    if (this.timeLeft <= 0) {
-      this.timeLeft = 0;
-      this._end(true);
-      return;
+    if (this.mode === 'arcade') {
+      if (this.timeLeft <= 0) this.timeLeft = 0;
+    } else {
+      this.timeLeft -= dt;
+      if (this.timeLeft <= 0) {
+        this.timeLeft = 0;
+        this._end(true);
+        return;
+      }
     }
 
     const now = performance.now();
-    if (now - this.lastSpawn > 700) {
+    if (this.mode === 'arcade') {
+      const stage = this._getArcadeStage();
+      this._currentStage = stage;
+      const interval = stage && stage.spawnInterval ? stage.spawnInterval : 0.7;
+      const extraChance = stage && typeof stage.spawnExtraChance === 'number' ? stage.spawnExtraChance : 0.3;
+      if (now - this.lastSpawn > interval * 1000) {
+        this._spawnMeteoro();
+        this.lastSpawn = now;
+        if (Math.random() < extraChance) {
+          this._spawnMeteoro();
+        }
+      }
+    } else if (now - this.lastSpawn > 700) {
       this._spawnMeteoro();
       this.lastSpawn = now;
       if (Math.random() < 0.3) {
@@ -387,6 +449,11 @@ export class MeteoroGame {
       m.rotation += m.rotSpeed;
       if (m.y > this.height + m.size) {
         this.meteoros.splice(i, 1);
+        if (this.mode === 'arcade') {
+          this.meteorosDesviados++;
+          const perMeteoro = this.params && this.params.score ? (Number(this.params.score.perMeteoro) || 0) : 0;
+          this.score += perMeteoro;
+        }
       }
     }
 
@@ -442,12 +509,30 @@ export class MeteoroGame {
     }
   }
 
+  _buildArcadeResult(motivo) {
+    return {
+      venceu: false,
+      boardDelta: 0,
+      progresso: { atual: 0, objetivo: 1 },
+      motivo,
+      stats: {
+        tempo: Math.round(this.elapsed),
+        pontuacao: this.score,
+        meteorosDesviados: this.meteorosDesviados
+      }
+    };
+  }
+
   _end(success) {
     this.state = success ? 'SUCCESS' : 'FAIL';
     this.flashTimer = 0;
     this.lifeLostText = '';
     this.lifeLostTextTimer = 0;
     this._draw();
+    if (this.mode === 'arcade') {
+      this.onComplete(this._buildArcadeResult('sem-vidas'));
+      return;
+    }
     setTimeout(() => {
       this.onComplete({ status: success ? 'success' : 'fail', bonus: success ? 3 : 0, lives: this.lives, timeLeft: Math.ceil(this.timeLeft) });
     }, 1000);
@@ -543,13 +628,23 @@ export class MeteoroGame {
     ctx.fillStyle = '#ffffff';
     ctx.font = `bold ${hudSize}px sans-serif`;
     ctx.textAlign = 'left';
-    ctx.fillText('\u2764\uFE0F '.repeat(Math.max(0, this.lives)), Math.max(8, this.width * 0.025), hudY);
+    if (this.mode === 'arcade') {
+      ctx.fillText(`\u2B50 ${this.score}`, Math.max(8, this.width * 0.025), hudY);
+    } else {
+      ctx.fillText('\u2764\uFE0F '.repeat(Math.max(0, this.lives)), Math.max(8, this.width * 0.025), hudY);
+    }
 
     ctx.textAlign = 'right';
-    const timeColor = this.timeLeft < 5 ? '#ff4444' : '#ffffff';
-    ctx.fillStyle = timeColor;
-    ctx.font = `bold ${Math.round(hudSize * 1.2)}px monospace`;
-    ctx.fillText(Math.ceil(this.timeLeft) + 's', this.width - Math.max(8, this.width * 0.025), hudY);
+    if (this.mode === 'arcade') {
+      const stage = this._currentStage;
+      const seconds = Math.ceil(this.elapsed);
+      ctx.fillText(`${stage ? stage.name : 'Inicial'}\u00B7 ${seconds}s`, this.width - Math.max(8, this.width * 0.025), hudY);
+    } else {
+      const timeColor = this.timeLeft < 5 ? '#ff4444' : '#ffffff';
+      ctx.fillStyle = timeColor;
+      ctx.font = `bold ${Math.round(hudSize * 1.2)}px monospace`;
+      ctx.fillText(Math.ceil(this.timeLeft) + 's', this.width - Math.max(8, this.width * 0.025), hudY);
+    }
 
     if (!isTerminal && this.lifeLostTextTimer > 0) {
       this.lifeLostTextTimer -= 16;

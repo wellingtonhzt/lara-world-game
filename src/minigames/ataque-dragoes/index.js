@@ -1,4 +1,4 @@
-import { registerMinigame, createDefaultLegacyProfile } from '../engine/index.js';
+import { registerMinigame, createDefaultLegacyProfile, getProfile } from '../engine/index.js';
 import { AtaqueDragoesGame } from './AtaqueDragoesGame.js';
 
 let _cssLoaded = false;
@@ -38,8 +38,11 @@ const ATAQUE_DRAGOES_BASE = {
   },
   create(options) {
     loadCSS();
-    const { container, onComplete } = options;
-    const game = new AtaqueDragoesGame(container, onComplete);
+    const { container, onComplete, context = 'board' } = options;
+    const isArcade = context === 'arcade';
+    const game = new AtaqueDragoesGame(container, onComplete, isArcade ? {
+      mode: 'arcade', params: getProfile('ataque-dragoes', 'arcade')
+    } : { mode: 'board' });
     game.start();
     return game;
   },
@@ -57,11 +60,35 @@ const ATAQUE_DRAGOES_BASE = {
   },
 };
 
+const ATAQUE_DRAGOES_ARCADE_PROFILE = {
+  hasTimeLimit: false,
+  score: { perHit: 10, perSecond: 5 },
+  difficulty: {
+    stages: [
+      { name: 'Inicial', until: 20, maxSimultaneous: 2, spawnInterval: 1.5, speed: 80 },
+      { name: 'Rápido', until: 40, maxSimultaneous: 3, spawnInterval: 1.15, speed: 105 },
+      { name: 'Intenso', until: 70, maxSimultaneous: 4, spawnInterval: 0.85, speed: 130 },
+      { name: 'Cerco', until: null, maxSimultaneous: 5, spawnInterval: 0.65, speed: 155 }
+    ]
+  },
+  presentation: {
+    title: 'Ataque dos Dragões Arcade',
+    instruction: 'Proteja o castelo pelo maior tempo possível. A partida termina quando os 3 escudos caem!',
+    failureTitle: 'O cerco terminou',
+    failureMessage: 'Tente novamente para superar sua pontuação!'
+  },
+  resultStats: [
+    { key: 'pontuacao', label: 'Pontuação', format: 'number', recordLabel: 'Melhor pontuação' },
+    { key: 'tempo', label: 'Tempo defendido', format: 'seconds', recordLabel: 'Recorde de tempo' },
+    { key: 'acertos', label: 'Dragões afastados', format: 'number', recordLabel: 'Recorde de dragões' }
+  ]
+};
+
 const ATAQUE_DRAGOES_CONFIG = Object.freeze({
   ...ATAQUE_DRAGOES_BASE,
   profiles: {
     board: createDefaultLegacyProfile(ATAQUE_DRAGOES_BASE),
-    arcade: {}
+    arcade: ATAQUE_DRAGOES_ARCADE_PROFILE
   }
 });
 

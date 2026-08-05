@@ -1,4 +1,4 @@
-import { registerMinigame, createDefaultLegacyProfile } from '../engine/index.js';
+import { registerMinigame, createDefaultLegacyProfile, getProfile } from '../engine/index.js';
 import { MemoryGame } from './MemoryGame.js';
 
 let _cssLoaded = false;
@@ -38,8 +38,12 @@ const MEMORY_FOREST_BASE = {
   },
   create(options) {
     loadCSS();
-    const { container, onComplete } = options;
-    const game = new MemoryGame(container, onComplete);
+    const { container, onComplete, context = 'board' } = options;
+    const isArcade = context === 'arcade';
+    const game = new MemoryGame(container, onComplete, isArcade ? {
+      mode: 'arcade',
+      params: getProfile('memory-forest', 'arcade')
+    } : { mode: 'board' });
     game.start();
     return game;
   },
@@ -57,11 +61,31 @@ const MEMORY_FOREST_BASE = {
   }
 };
 
+const MEMORY_FOREST_ARCADE_PROFILE = {
+  hasTimeLimit: true,
+  timeLimit: 45,
+  score: { perPair: 100, timeBonusPerSecond: 10 },
+  difficulty: { victoryPairs: 6 },
+  presentation: {
+    title: 'Memória da Floresta Arcade',
+    instruction: 'Encontre todos os 6 pares antes do tempo acabar e ganhe pontos pelo tempo restante!',
+    successTitle: 'Floresta memorizada!',
+    successMessage: 'Você encontrou todos os pares!',
+    failureTitle: 'Tempo esgotado',
+    failureMessage: 'Tente novamente para encontrar todos os pares.'
+  },
+  resultStats: [
+    { key: 'pontuacao', label: 'Pontuação', format: 'number', recordLabel: 'Melhor pontuação' },
+    { key: 'paresEncontrados', label: 'Pares encontrados', format: 'number', recordLabel: 'Recorde de pares' },
+    { key: 'tempo', label: 'Tempo restante', format: 'seconds', recordLabel: 'Melhor tempo restante' }
+  ]
+};
+
 const MEMORY_FOREST_CONFIG = Object.freeze({
   ...MEMORY_FOREST_BASE,
   profiles: {
     board: createDefaultLegacyProfile(MEMORY_FOREST_BASE),
-    arcade: {}
+    arcade: MEMORY_FOREST_ARCADE_PROFILE
   }
 });
 
