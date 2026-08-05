@@ -18,7 +18,11 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 
 ## Principais Funcionalidades
 
-### v0.43.0-preview (Atual) — Arquitetura de Profiles para minigames ✅
+### v0.44.0-preview (Atual) — Dino Runner com perfil Arcade ✅
+
+O Dino Runner se torna o primeiro minigame com experiência Arcade própria. No Modo Arcade o jogo vira um modo sobrevivência sem limite de 30 segundos: a corrida termina apenas na colisão. A pontuação cresce +10 por segundo sobrevivido e +5 por obstáculo desviado, com dificuldade progressiva por estágios (Inicial, Rápido, Acelerado, Intenso e Insano) que aumentam velocidade e frequência de obstáculos. Todos os parâmetros novos vivem em `profiles.arcade` do Dino Runner (`hasTimeLimit`, `score`, `difficulty.stages`, `presentation` e `resultStats`). A tela final do Arcade exibe tempo sobrevivido, pontuação, obstáculos desviados, recorde anterior e "Novo recorde!" quando o jogador supera seu melhor. Os recordes são persistidos por minigame em `arcade-stats.js` (maior tempo, melhor pontuação e recorde de obstáculos). O modo tabuleiro permanece idêntico: 30s, objetivo de sobreviver, bônus de 20s e fluxo de retorno inalterados.
+
+### v0.43.0-preview — Arquitetura de Profiles para minigames ✅
 
 Cada minigame registrado (meteor-game, ocean-match3, dino-runner, memory-forest, ataque-dragoes) agora expõe `profiles: { board, arcade }`, isolando o comportamento do tabuleiro do futuro modo avulso. O novo módulo `src/minigames/engine/minigame-profiles.js` resolve o contexto para uma configuração efetiva (`getEffectiveConfig`), com fallback para `profiles.board` e compatibilidade com minigames legados que ainda não possuem `profiles`. O host (`launchMinigameHost`) passa a consumir essa configuração efetiva, mas nenhum valor de comportamento muda: duração, dificuldade, recompensas, bot e apresentação permanecem idênticos à release anterior. O Arcade e o tabuleiro não foram alterados nesta sprint.
 

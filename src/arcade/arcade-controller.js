@@ -1,5 +1,5 @@
 import { launchMinigameHost } from '../minigames/engine/index.js';
-import { recordGame } from './arcade-stats.js';
+import { recordGame, getMinigameStats } from './arcade-stats.js';
 import { showArcadeScreen, hideArcadeScreen, setCardsEnabled, showError, hideError, refreshArcadeCards } from './arcade-screen.js';
 
 let _isRunning = false;
@@ -47,6 +47,7 @@ export async function launchArcadeMinigame(minigameId) {
       isBot: false,
       playerName: 'Jogador',
       context: 'arcade',
+      getStats: () => getMinigameStats(minigameId),
     });
     const durationMs = performance.now() - startTime;
     try {

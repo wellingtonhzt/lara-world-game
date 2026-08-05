@@ -1,5 +1,34 @@
 # Changelog
 
+## [0.44.0-preview] - 2026-08-05
+
+### Adicionado
+- **Dino Runner Arcade (perfil `profiles.arcade` próprio)**: o Dino Runner se torna o primeiro minigame com experiência Arcade completa — sobrevivência sem limite de tempo, pontuação, dificuldade progressiva, recordes e tela final com estatísticas
+- **Sobrevivência infinita**: no Modo Arcade o jogo não tem limite de 30s; sobreviva o máximo que conseguir e a corrida termina apenas na colisão
+- **Pontuação**: +10 pontos por segundo sobrevivido (`score.perSecond`) e +5 por obstáculo desviado (`score.perObstacle`), com HUD mostrando score, tempo e fase atual
+- **Dificuldade por estágios**: 5 estágios progressivos (Inicial 0–20s, Rápido 20–40s, Acelerado 40–60s, Intenso 60–90s, Insano 90s+) controlando velocidade e frequência de obstáculos, centralizados em `profiles.arcade.difficulty.stages`
+- **Tela final com estatísticas**: o card de resultado do Arcade exibe tempo sobrevivido, pontuação, obstáculos desviados, recorde anterior e o aviso "Novo recorde!" quando o jogador supera seu melhor
+- **Recordes por minigame**: `src/arcade/arcade-stats.js` passa a registrar `records` (maior valor por campo numérico do `result.stats`), cobrindo maior tempo, melhor pontuação e recorde de obstáculos; dados antigos sem `records` são normalizados no `loadStats`
+- **Galeria Arcade**: o card do minigame exibe "🏅 {melhor pontuação} pts" quando o jogo reporta `pontuacao`
+- **`src/minigames/engine/minigame-profiles.js`**: `getEffectiveConfig` agora propaga `resultStats` (descritores de estatísticas da tela final) do perfil do contexto
+- **Testes**: `tests/arcade-stats.mjs` (9 testes, records/agregados com mock de `localStorage`) e `tests/dino-runner-arcade.mjs` (12 testes, modo arcade vs board do Dino Runner)
+
+### Alterado
+- **`src/minigames/dino-runner/index.js`**: `profiles.arcade` preenchido (`hasTimeLimit`, `score`, `difficulty.stages`, `presentation`, `resultStats`); `create` recebe `context` e instancia o jogo com modo/parâmetros do perfil
+- **`src/minigames/dino-runner/DinoRunnerGame.js`**: suporte ao modo arcade (sem limite de tempo, score, estágios de dificuldade, contagem de obstáculos desviados, stats `{ tempo, pontuacao, obstaculosDesviados }`); o modo board permanece byte a byte idêntico
+- **`src/minigames/engine/minigame-host.js`**: repassa `context` a `config.create`, aceita `getStats` e renderiza as estatísticas do resultado quando `context === 'arcade'` e há `resultStats`
+- **`src/arcade/arcade-controller.js`**: passa `getStats` ao host para cálculo de recordes na tela final
+- **`src/index.html` / `src/style.css`**: novo bloco `#minigame-card-stats` no card de resultado (linhas de estatísticas e destaque "Novo recorde!") — oculto no tabuleiro
+- **`scripts/test-minigame-profiles.mjs`**: atualizado de 10 para 12 testes (perfil arcade do Dino Runner + demais minigames idênticos)
+- **`src/version.js`**: `APP_VERSION` atualizado para `v0.44.0-preview`
+- **`src/index.html`**: cache-busting de CSS/JS e versão do rodapé atualizados para `v0.44.0-preview`
+- **README.md, docs**: documentação do Dino Runner Arcade e referências de versão sincronizadas
+
+### Notas
+- **O Dino Runner do tabuleiro permanece idêntico à versão anterior**: duração de 30s, objetivo de sobreviver, bônus de 20s, apresentação e fluxo de retorno não foram alterados
+- Os outros 4 minigames continuam sem perfil arcade próprio, herdando o comportamento do `board`
+- Nenhuma regra do jogo, lógica de turno, comportamento da Máquina ou layout foram alterados
+
 ## [0.43.0-preview] - 2026-08-04
 
 ### Adicionado

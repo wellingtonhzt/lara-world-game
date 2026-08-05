@@ -5,7 +5,7 @@ import { getEffectiveConfig } from './minigame-profiles.js';
 const DEFAULT_BOT_DELAY = 6000;
 
 export function launchMinigameHost(id, options = {}) {
-  const { isBot = false, playerName = 'Jogador', context = 'board' } = options;
+  const { isBot = false, playerName = 'Jogador', context = 'board', getStats = null } = options;
 
   function getReturnPresentation(ctx) {
     if (ctx === 'arcade') {
@@ -24,6 +24,7 @@ export function launchMinigameHost(id, options = {}) {
   const effective = getEffectiveConfig(id, context);
   const pres = effective.presentation || {};
   const rewards = effective.rewards || {};
+  const resultStats = effective.resultStats || [];
   const autoReturn = effective.autoReturnSeconds;
   const botRate = effective.botSuccessRate;
   const successDelta = rewards.successBoardDelta ?? 3;
@@ -46,6 +47,7 @@ export function launchMinigameHost(id, options = {}) {
   const bonusValue = document.getElementById('minigame-card-bonus-value');
   const cardBtn = document.getElementById('minigame-card-btn');
   const countdownEl = document.getElementById('minigame-card-countdown');
+  const cardStats = document.getElementById('minigame-card-stats');
 
   if (!card) {
     throw new Error('[MinigameHost] #minigame-result-card n\u00E3o encontrado no DOM. Um minigame pode t\u00EA-lo destru\u00EDdo.');
@@ -119,7 +121,56 @@ export function launchMinigameHost(id, options = {}) {
       resolve(result);
     }
 
+    function formatArcadeStat(value, format) {
+      if (format === 'seconds') {
+        const seconds = Math.round(value);
+        if (seconds < 60) return `${seconds}s`;
+        const min = Math.floor(seconds / 60);
+        const sec = seconds % 60;
+        return `${min}m ${sec < 10 ? '0' : ''}${sec}s`;
+      }
+      return String(value);
+    }
+
+    function getArcadeRecords() {
+      if (typeof getStats !== 'function') return {};
+      try {
+        const mg = getStats();
+        return (mg && typeof mg === 'object' && mg.records && typeof mg.records === 'object') ? mg.records : {};
+      } catch {
+        return {};
+      }
+    }
+
+    function renderArcadeStats(result) {
+      if (!cardStats) return;
+      const matchStats = result.stats || {};
+      const records = getArcadeRecords();
+      const rows = [];
+      for (const item of resultStats) {
+        const value = matchStats[item.key];
+        if (typeof value !== 'number' || !Number.isFinite(value)) continue;
+        const record = typeof records[item.key] === 'number' ? records[item.key] : 0;
+        const isNew = value > record;
+        rows.push(`
+          <div class="minigame-card-stat-row${isNew ? ' is-record' : ''}">
+            <span class="minigame-card-stat-label">${item.label}</span>
+            <span class="minigame-card-stat-value">${formatArcadeStat(value, item.format)}</span>
+            ${isNew ? '<span class="minigame-card-stat-new">\u2605 Novo recorde!</span>' : ''}
+            ${record > 0 ? `<span class="minigame-card-stat-record">${item.recordLabel || 'Recorde'}: ${formatArcadeStat(record, item.format)}</span>` : ''}
+          </div>`);
+      }
+      cardStats.innerHTML = rows.join('');
+      cardStats.classList.toggle('hidden', rows.length === 0);
+    }
+
     function showResult(result) {
+      if (context === 'arcade') {
+        renderArcadeStats(result);
+      } else if (cardStats) {
+        cardStats.innerHTML = '';
+        cardStats.classList.add('hidden');
+      }
       if (result.venceu) {
         cardIcon.textContent = pres.successIcon || '\uD83D\uDE80';
         cardTitle.textContent = pres.successTitle || 'Miss\u00E3o conclu\u00EDda!';
@@ -190,7 +241,8 @@ export function launchMinigameHost(id, options = {}) {
 
     gameInstance = config.create({
       container,
-      onComplete: onGameComplete
+      onComplete: onGameComplete,
+      context
     });
 
     if (isBot) {

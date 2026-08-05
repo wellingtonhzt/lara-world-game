@@ -89,6 +89,11 @@ export function getEffectiveConfig(id, context = 'board') {
     ),
     rewards: mergeSections(legacy.rewards, boardProfile.rewards, contextProfile.rewards),
     presentation: mergeSections(legacy.presentation, boardProfile.presentation, contextProfile.presentation),
-    botPresentation: mergeSections(legacy.botPresentation, boardProfile.botPresentation, contextProfile.botPresentation)
+    botPresentation: mergeSections(legacy.botPresentation, boardProfile.botPresentation, contextProfile.botPresentation),
+    resultStats: firstDefined(
+      contextProfile.resultStats,
+      boardProfile.resultStats,
+      []
+    )
   };
 }

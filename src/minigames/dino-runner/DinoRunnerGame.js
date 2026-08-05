@@ -10,9 +10,11 @@ const ROCK_WIDTH = 28;
 const ROCK_HEIGHT = 32;
 
 export class DinoRunnerGame {
-  constructor(container, onComplete) {
+  constructor(container, onComplete, options = {}) {
     this.container = container;
     this.onComplete = onComplete;
+    this.mode = options.mode === 'arcade' ? 'arcade' : 'board';
+    this.params = options.mode === 'arcade' ? (options.params || null) : null;
     this.canvas = null;
     this.ctx = null;
     this.rafId = null;
@@ -36,6 +38,11 @@ export class DinoRunnerGame {
     this.spawnTimer = 0;
     this.spawnInterval = 1.4;
     this.elapsed = 0;
+
+    this.score = 0;
+    this.dodgedObstacles = 0;
+    this._scoreAccumulator = 0;
+    this._currentStage = null;
 
     this.runningSpeed = BASE_RUNNING_SPEED;
 
@@ -63,6 +70,10 @@ export class DinoRunnerGame {
     this.spawnTimer = 0;
     this.spawnInterval = 1.4;
     this._bonusAwarded = false;
+    this.score = 0;
+    this.dodgedObstacles = 0;
+    this._scoreAccumulator = 0;
+    this._currentStage = null;
     this._runFramesLoaded = [];
     this._jumpSpriteLoaded = false;
     this._lastTime = null;
@@ -120,7 +131,7 @@ export class DinoRunnerGame {
       this.rafId = null;
     }
     this._cleanup();
-    this._complete({ venceu: false, boardDelta: this._bonusAwarded ? 3 : 0, progresso: { atual: 0, objetivo: 1 }, motivo: 'interrompido', stats: { tempo: Math.round(30 - this.timeLeft) } });
+    this._complete(this._buildFailureResult('interrompido'));
   }
 
   destroy() {
@@ -261,24 +272,37 @@ export class DinoRunnerGame {
     if (this.state !== 'PLAYING') return;
 
     this.elapsed += dt;
-    this.timeLeft -= dt;
+    if (this.mode === 'arcade') {
+      this._accumulateScore(dt);
+    } else {
+      this.timeLeft -= dt;
+    }
 
     // Bonus rule: player earns +3 boardDelta upon reaching the hard phase (BONUS_THRESHOLD = 20s).
-    // Once awarded, it is never revoked, even on later collision.
-    if (!this._bonusAwarded && this.elapsed >= BONUS_THRESHOLD) {
+    // Once awarded, it is never revoked, even on later collision. Board mode only.
+    if (this.mode !== 'arcade' && !this._bonusAwarded && this.elapsed >= BONUS_THRESHOLD) {
       this._bonusAwarded = true;
     }
 
-    if (this.timeLeft <= 0) {
+    if (this.mode !== 'arcade' && this.timeLeft <= 0) {
       this.timeLeft = 0;
       this.state = 'SUCCESS';
       this._complete({ venceu: true, boardDelta: 3, progresso: { atual: 1, objetivo: 1 }, motivo: 'completo', stats: { tempo: 30 } });
       return;
     }
 
-    this.spawnInterval = this._getSpawnInterval();
-    const speedMul = this._getSpeedMultiplier();
-    const speed = this.runningSpeed * speedMul;
+    let speed;
+    if (this.mode === 'arcade') {
+      const stage = this._getArcadeStage();
+      this._currentStage = stage;
+      const min = stage ? stage.spawnMin : 1.4;
+      const max = stage ? stage.spawnMax : 1.4;
+      this.spawnInterval = min + Math.random() * Math.max(0, max - min);
+      speed = this.runningSpeed * (stage ? stage.speed : 1);
+    } else {
+      this.spawnInterval = this._getSpawnInterval();
+      speed = this.runningSpeed * this._getSpeedMultiplier();
+    }
 
     this.spawnTimer += dt;
     if (this.spawnTimer >= this.spawnInterval) {
@@ -289,6 +313,10 @@ export class DinoRunnerGame {
     for (let i = this.obstacles.length - 1; i >= 0; i--) {
       const o = this.obstacles[i];
       o.x -= speed * dt;
+      if (!o.dodged && o.x + o.w < this.dino.x) {
+        o.dodged = true;
+        this._onObstacleDodged();
+      }
       if (o.x + o.w < 0) {
         this.obstacles.splice(i, 1);
       }
@@ -327,10 +355,63 @@ export class DinoRunnerGame {
         dinoBox.y + dinoBox.h > oBox.y
       ) {
         this.state = 'FAIL';
-        this._complete({ venceu: false, boardDelta: this._bonusAwarded ? 3 : 0, progresso: { atual: 0, objetivo: 1 }, motivo: 'colisao', stats: { tempo: Math.round(30 - this.timeLeft) } });
+        this._complete(this._buildFailureResult('colisao'));
         return;
       }
     }
+  }
+
+  _accumulateScore(dt) {
+    const perSecond = this.params && this.params.score ? (Number(this.params.score.perSecond) || 0) : 0;
+    this._scoreAccumulator += perSecond * dt;
+    const whole = Math.floor(this._scoreAccumulator);
+    if (whole > 0) {
+      this.score += whole;
+      this._scoreAccumulator -= whole;
+    }
+  }
+
+  _getArcadeStage() {
+    if (!this.params || !this.params.difficulty || !Array.isArray(this.params.difficulty.stages)) {
+      return null;
+    }
+    const stages = this.params.difficulty.stages;
+    for (const stage of stages) {
+      if (stage.until === null || stage.until === undefined || this.elapsed < stage.until) {
+        return stage;
+      }
+    }
+    return stages[stages.length - 1];
+  }
+
+  _onObstacleDodged() {
+    if (this.mode !== 'arcade') return;
+    this.dodgedObstacles++;
+    const perObstacle = this.params && this.params.score ? (Number(this.params.score.perObstacle) || 0) : 0;
+    this.score += perObstacle;
+  }
+
+  _buildFailureResult(motivo) {
+    if (this.mode === 'arcade') {
+      return {
+        venceu: false,
+        boardDelta: 0,
+        progresso: { atual: 0, objetivo: 1 },
+        motivo,
+        stats: {
+          tempo: Math.round(this.elapsed),
+          pontuacao: this.score,
+          obstaculosDesviados: this.dodgedObstacles
+        }
+      };
+    }
+    return {
+      venceu: false,
+      boardDelta: this._bonusAwarded ? 3 : 0,
+      progresso: { atual: 0, objetivo: 1 },
+      motivo,
+      stats: { tempo: Math.round(30 - this.timeLeft) }
+    };
   }
 
   _drawGround(ctx) {
@@ -611,14 +692,26 @@ export class DinoRunnerGame {
     ctx.fillStyle = '#fff';
     ctx.font = `bold ${hudSize}px sans-serif`;
     ctx.textAlign = 'left';
-    ctx.fillText(`\u23F1 ${Math.ceil(this.timeLeft)}s`, 10, hudSize + 4);
+    if (this.mode === 'arcade') {
+      ctx.fillText(`\u2B50 ${this.score}`, 10, hudSize + 4);
+    } else {
+      ctx.fillText(`\u23F1 ${Math.ceil(this.timeLeft)}s`, 10, hudSize + 4);
+    }
 
     ctx.textAlign = 'right';
-    const phase = this.elapsed < 10 ? 'F\u00E1cil' : this.elapsed < 20 ? 'M\u00E9dio' : 'Intenso';
+    let phase;
+    if (this.mode === 'arcade') {
+      const stage = this._currentStage;
+      const seconds = Math.ceil(this.elapsed);
+      phase = stage ? `${stage.name} \u00B7 ${seconds}s` : `${seconds}s`;
+    } else {
+      phase = this.elapsed < 10 ? 'F\u00E1cil' : this.elapsed < 20 ? 'M\u00E9dio' : 'Intenso';
+    }
     ctx.fillText(phase, this.width - 10, hudSize + 4);
   }
 
   _drawPhaseIndicator(ctx) {
+    if (this.mode === 'arcade') return;
     if (this._bonusAwarded && this.state === 'PLAYING') {
       const size = Math.max(10, Math.round(this.width * 0.022));
       ctx.fillStyle = '#FFD600';

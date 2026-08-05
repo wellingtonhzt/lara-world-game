@@ -96,15 +96,42 @@ test('getEffectiveConfig(board) === comportamento legado exato', () => {
   }
 });
 
-test('getEffectiveConfig(arcade) e (board) sao identicos nesta sprint', () => {
-  for (const id of MODERN_IDS) {
+test('getEffectiveConfig(arcade) e (board) sao identicos para os demais minigames', () => {
+  const UNCHANGED = MODERN_IDS.filter(id => id !== 'dino-runner');
+  for (const id of UNCHANGED) {
     const board = getEffectiveConfig(id, 'board');
     const arcade = getEffectiveConfig(id, 'arcade');
     assert.equal(arcade.botSuccessRate, board.botSuccessRate, `${id} arcade botSuccessRate`);
     assert.equal(arcade.autoReturnSeconds, board.autoReturnSeconds, `${id} arcade autoReturnSeconds`);
     assert.deepEqual(arcade.rewards, board.rewards, `${id} arcade rewards`);
     assert.equal(arcade.presentation.title, board.presentation.title, `${id} arcade presentation`);
+    assert.deepEqual(arcade.resultStats, [], `${id} sem resultStats`);
   }
+});
+
+test('dino-runner arcade: perfil proprio com dificuldade, score, sem limite de tempo', () => {
+  const profile = getProfile('dino-runner', 'arcade');
+  assert.equal(profile.hasTimeLimit, false, 'hasTimeLimit false');
+  assert.ok(profile.score, 'score presente');
+  assert.equal(profile.score.perSecond, 10, 'score.perSecond');
+  assert.equal(profile.score.perObstacle, 5, 'score.perObstacle');
+  assert.ok(profile.difficulty && Array.isArray(profile.difficulty.stages), 'stages presente');
+  assert.ok(profile.difficulty.stages.length >= 3, 'ao menos 3 estagios');
+  assert.equal(profile.difficulty.stages[0].until, 20, 'primeiro estagio ate 20s');
+  assert.equal(profile.difficulty.stages[profile.difficulty.stages.length - 1].until, null, 'ultimo estagio sem limite');
+  assert.ok(Array.isArray(profile.resultStats), 'resultStats presente');
+  const keys = profile.resultStats.map(s => s.key);
+  assert.ok(keys.includes('tempo'), 'resultStats inclui tempo');
+  assert.ok(keys.includes('pontuacao'), 'resultStats inclui pontuacao');
+  assert.ok(keys.includes('obstaculosDesviados'), 'resultStats inclui obstaculosDesviados');
+  assert.equal(profile.presentation.title, 'Dino Runner Arcade', 'apresentacao arcade propria');
+
+  const effective = getEffectiveConfig('dino-runner', 'arcade');
+  assert.equal(effective.botSuccessRate, 0.40, 'arcade herda botSuccessRate do board');
+  assert.equal(effective.autoReturnSeconds, 5, 'arcade herda autoReturnSeconds do board');
+  assert.deepEqual(effective.rewards, { successBoardDelta: 3, failureBoardDelta: 0 }, 'arcade herda rewards do board');
+  assert.equal(effective.resultStats, profile.resultStats, 'arcade resultStats do perfil');
+  assert.equal(effective.presentation.title, 'Dino Runner Arcade', 'arcade presentation propria');
 });
 
 test('top-level botSuccessRate/autoReturnSeconds/rewards continuam no config', () => {

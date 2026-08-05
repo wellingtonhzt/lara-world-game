@@ -670,17 +670,23 @@ O `launchMinigameHost()` aceita campo opcional `context`:
 
 Chamadas atuais do tabuleiro em `game.js` não informam `context`, usando o padrão `'board'`. Apenas o Arcade passa `context: 'arcade'` explicitamente.
 
-### Perfis de Execução (v0.43.0-preview)
+### Perfis de Execução (v0.44.0-preview)
 
-Cada minigame registrado expõe `profiles: { board, arcade }`, isolando o comportamento do tabuleiro (`board`) do futuro modo avulso (`arcade`). A resolução é feita em `src/minigames/engine/minigame-profiles.js`:
+Cada minigame registrado expõe `profiles: { board, arcade }`, isolando o comportamento do tabuleiro (`board`) do modo avulso (`arcade`). A resolução é feita em `src/minigames/engine/minigame-profiles.js`:
 
 - `getProfile(id, context)` — retorna o perfil explícito do contexto; se inexistente, cai para `profiles.board`; para minigames legados (sem `profiles`), retorna `null`
 - `getEffectiveConfig(id, context)` — unifica campos legados de topo, `profiles.board` e o perfil do contexto em uma configuração efetiva com defaults (`DEFAULT_BOT_RATE = 0.5`, `DEFAULT_AUTO_RETURN_SECONDS = 5`); nunca lança para contexto desconhecido
 - `hasProfile(id, context)` — indica se existe um perfil explícito para o contexto
 
-O `launchMinigameHost()` consome `getEffectiveConfig(id, context)` em vez de ler os campos de topo. O Arcade ainda não consulta perfis nesta release: `profiles.arcade` está vazio e herda do `board`, preservando valores idênticos de duração, dificuldade, recompensas, bot e apresentação. A arquitetura prepara futuros perfis (tutorial, prática, desafio diário) via `context → profile`, sem alterar o tabuleiro.
+O `launchMinigameHost()` consome `getEffectiveConfig(id, context)` em vez de ler os campos de topo, repassa `context` a `config.create` e aceita `getStats` para calcular recordes na tela final. Na v0.44.0-preview o **Dino Runner** é o primeiro minigame com perfil arcade próprio (`dino-runner` → `profiles.arcade`), trazendo:
 
-Campos de comportamento dos minigames migrados para `profiles.board`: `botSuccessRate`, `autoReturnSeconds`, `rewards` e `botPresentation`. `presentation` e `create` permanecem no nível de topo do config.
+- `hasTimeLimit: false` — sobrevivência sem limite de tempo
+- `score.perSecond` (10) e `score.perObstacle` (5) — pontuação por segundo e por obstáculo desviado
+- `difficulty.stages` — 5 estágios progressivos de velocidade/frequência de obstáculos
+- `presentation` e `resultStats` — textos do card de resultado e descritores das estatísticas exibidas
+- `getEffectiveConfig` propaga `resultStats` do perfil do contexto; o host renderiza as estatísticas do resultado apenas quando `context === 'arcade'`
+
+Campos de comportamento dos minigames migrados para `profiles.board`: `botSuccessRate`, `autoReturnSeconds`, `rewards` e `botPresentation`. `presentation` e `create` permanecem no nível de topo do config. Os demais 4 minigames seguem com `profiles.arcade` vazio (herda do `board`).
 
 ## Motor de Mundos (v0.12.0-preview)
 

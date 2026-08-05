@@ -1,5 +1,19 @@
 # Roadmap Lara World
 
+### v0.44.0-preview — Dino Runner com perfil Arcade ✅
+
+- [x] `profiles.arcade` do Dino Runner com `hasTimeLimit`, `score`, `difficulty.stages`, `presentation` e `resultStats`
+- [x] Sobrevivência sem limite de tempo no Arcade (a corrida termina na colisão)
+- [x] Pontuação (+10/s, +5 por obstáculo desviado) com HUD de score, tempo e fase
+- [x] Dificuldade progressiva em 5 estágios (Inicial → Insano)
+- [x] Tela final com estatísticas, recorde anterior e "Novo recorde!"
+- [x] `arcade-stats.js` registrando records por minigame (maior tempo, melhor pontuação, recorde de obstáculos)
+- [x] Galeria do Arcade exibindo melhor pontuação quando disponível
+- [x] Testes: `tests/arcade-stats.mjs` (9) e `tests/dino-runner-arcade.mjs` (12)
+- [x] **O Dino Runner do tabuleiro permanece idêntico à versão anterior**
+- [ ] Novos perfis futuros (tutorial, prática, desafio diário) via `context → profile`
+- [ ] Deploy da demo e validação
+
 ### v0.43.0-preview — Arquitetura de Profiles para minigames ✅
 
 - [x] `profiles: { board, arcade }` nos 5 minigames, sem alterar valores de comportamento

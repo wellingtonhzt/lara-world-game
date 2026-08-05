@@ -4213,6 +4213,56 @@ body[data-world="castelo-dragoes"] .casa-vitoria {
   text-shadow: 0 0 16px rgba(255, 215, 0, 0.3);
 }
 
+.minigame-card-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+  text-align: left;
+}
+.minigame-card-stats.hidden {
+  display: none;
+}
+
+.minigame-card-stat-row {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(179, 136, 255, 0.18);
+  border-radius: 10px;
+  padding: 8px 12px;
+}
+
+.minigame-card-stat-row.is-record {
+  border-color: rgba(255, 215, 0, 0.45);
+  box-shadow: 0 0 14px rgba(255, 215, 0, 0.12);
+}
+
+.minigame-card-stat-label {
+  display: block;
+  font-size: 0.72rem;
+  color: #b388ff;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.minigame-card-stat-value {
+  display: block;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.2;
+}
+
+.minigame-card-stat-record {
+  font-size: 0.78rem;
+  color: #9e9eb8;
+}
+
+.minigame-card-stat-new {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #ffd700;
+}
+
 .minigame-card-countdown {
   font-size: 0.95rem;
   color: #ffcc00;

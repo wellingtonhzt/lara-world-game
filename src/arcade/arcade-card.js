@@ -8,12 +8,14 @@ function escapeHtml(str) {
 function renderStatsHtml(mg) {
   const winRate = getWinRate(mg._id);
   const avgTime = mg.partidas > 0 ? Math.round(mg.tempoTotalJogado / mg.partidas) : 0;
+  const bestScore = mg.records && typeof mg.records.pontuacao === 'number' ? mg.records.pontuacao : null;
   return `
     <span class="arcade-stat">🎯 ${mg.partidas} jogos</span>
     <span class="arcade-stat">🏆 ${mg.vitorias} vitórias</span>
     <span class="arcade-stat">📈 ${winRate !== null ? winRate + '%' : '--'}</span>
     <span class="arcade-stat">🔥 ${mg.sequenciaMaxima} melhor sequência</span>
     <span class="arcade-stat">⏱ ${formatDurationMs(avgTime)}</span>
+    ${bestScore !== null ? `<span class="arcade-stat">🏅 ${bestScore} pts</span>` : ''}
   `;
 }
 

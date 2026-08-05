@@ -1,5 +1,53 @@
 # Memorial Técnico
 
+## Sprint ARCADE-DINO — Dino Runner com perfil Arcade (v0.44.0-preview)
+
+### Problema e decisão técnica
+
+O Arcade reutilizava o mesmo minigame do tabuleiro: o Dino Runner rodava com limite de 30s, sem pontuação própria e sem qualquer estatística de partida. Para entregar uma experiência Arcade rica (score, recorde, dificuldade progressiva e tela final com estatísticas), o Dino Runner se tornou o primeiro minigame com `profiles.arcade` plenamente preenchido, consumindo a arquitetura de perfis da sprint anterior.
+
+A decisão foi centralizar **todos os parâmetros novos no perfil** (`hasTimeLimit`, `score`, `difficulty.stages`, `presentation`, `resultStats`) e fazer o jogo ler esses parâmetros, sem `if` de contexto espalhado pela aplicação:
+
+- `src/minigames/dino-runner/index.js` — `create(options)` lê `options.context`; para `'arcade'`, instancia o jogo com `mode: 'arcade'` e `params` vindos de `getProfile('dino-runner', 'arcade')`; para `'board'`, mantém o modo original sem parâmetros
+- `src/minigames/dino-runner/DinoRunnerGame.js` — modo arcade: sem decremento de tempo, score contínuo (+`perSecond`/s) e por obstáculo desviado (+`perObstacle`), dificuldade resolvida por estágios (`_getArcadeStage`), resultado com `stats: { tempo, pontuacao, obstaculosDesviados }`; o modo board preserva exatamente os mesmos ramos, constantes e recompensas
+- `src/minigames/engine/minigame-host.js` — repassa `context` a `config.create`, aceita `getStats` (função opcional) e renderiza as estatísticas do resultado no card quando `context === 'arcade'` e há `resultStats`; o tabuleiro não exibe o bloco
+- `src/arcade/arcade-stats.js` — cada jogo passa a acumular `records` (maior valor por campo numérico de `result.stats`), normalizando dados antigos sem `records` no `loadStats`
+- `src/arcade/arcade-controller.js` — fornece `getStats` ao host para cálculo do "Novo recorde!" durante a tela final
+
+### Arquivos alterados
+
+- `src/minigames/dino-runner/index.js`
+- `src/minigames/dino-runner/DinoRunnerGame.js`
+- `src/minigames/engine/minigame-profiles.js`
+- `src/minigames/engine/minigame-host.js`
+- `src/arcade/arcade-stats.js`
+- `src/arcade/arcade-controller.js`
+- `src/arcade/arcade-card.js`
+- `src/index.html`, `src/style.css`
+- `src/version.js`
+- `scripts/test-minigame-profiles.mjs`
+- `tests/arcade-stats.mjs` (novo), `tests/dino-runner-arcade.mjs` (novo)
+
+### Impacto técnico
+
+- `getEffectiveConfig` ganhou `resultStats` (descritores da tela final), propagados do perfil do contexto
+- O host agora passa `context` a `config.create` — os demais minigames ignoram o campo extra sem regressão
+- Recordes genéricos por campo numérico de `result.stats` evitam sistema paralelo e servem a qualquer minigame futuro
+- A tela final usa um bloco novo `#minigame-card-stats` no card de resultado, oculto no tabuleiro
+
+### Validação e resultado
+
+- `scripts/test-minigame-profiles.mjs` — 12 testes aprovados (inclui perfil arcade do Dino Runner)
+- `tests/dino-runner-arcade.mjs` — 12 testes aprovados (modo arcade vs board, score, estágios, dodges, colisão, `create` por contexto)
+- `tests/arcade-stats.mjs` — 9 testes aprovados (records, agregados, isolamento por minigame, dados antigos, `formatDurationMs`)
+- `tests/minigame-engine.mjs` — 303/3 (mesmo resultado pré-existente, sem regressões)
+- `scripts/test-question-engine.mjs` (157), `scripts/compare-migration.mjs` (16) e `node --check` aprovados
+- `scripts/check-version.mjs` aprovado em `v0.44.0-preview`
+- **O Dino Runner do tabuleiro permanece idêntico à versão anterior**
+- Lançamento: `v0.44.0-preview`, com cache busting atualizado
+
+---
+
 ## Sprint ARCADE-PROFILES — Arquitetura de Profiles para Minigames (v0.43.0-preview)
 
 ### Problema e decisão técnica

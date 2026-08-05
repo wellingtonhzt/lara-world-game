@@ -18,7 +18,8 @@
 
 | Versão | Data | Status |
 |--------|------|--------|
-| **v0.43.0-preview** | Ago/2026 | ✅ **Ativo** — Arquitetura de Profiles para minigames |
+| **v0.44.0-preview** | Ago/2026 | ✅ **Ativo** — Dino Runner com perfil Arcade |
+| v0.43.0-preview | Ago/2026 | ✅ Arquitetura de Profiles para minigames |
 | v0.42.0-preview | Ago/2026 | ✅ Question Engine +100 perguntas |
 | v0.41.0-preview | Ago/2026 | ✅ Modo Aventura |
 | v0.40.0-preview | Ago/2026 | ✅ Música de fundo global no tabuleiro |
@@ -69,7 +70,16 @@ As ações da partida são narradas por um overlay temporário sobre o tabuleiro
 
 ---
 
-## ✨ Funcionalidades Atuais (v0.43.0-preview)
+## ✨ Funcionalidades Atuais (v0.44.0-preview)
+
+### Dino Runner Arcade — Modo Sobrevivência ✅
+
+- **Sobrevivência infinita**: no Modo Arcade o Dino Runner não tem limite de 30 segundos — sobreviva o máximo que conseguir
+- **Pontuação progressiva**: +10 pontos por segundo sobrevivido e +5 por obstáculo desviado, com HUD mostrando score, tempo e fase atual
+- **Dificuldade por estágios**: velocidade e frequência de obstáculos crescem gradualmente (Inicial, Rápido, Acelerado, Intenso, Insano), com todos os parâmetros centralizados em `profiles.arcade`
+- **Tela final com estatísticas**: tempo sobrevivido, pontuação, obstáculos desviados, recorde anterior e aviso "Novo recorde!"
+- **Recordes persistidos**: `arcade-stats.js` registra maior tempo, melhor pontuação e recorde de obstáculos por minigame, exibidos também na galeria do Arcade
+- **Tabuleiro intocado**: o modo tabuleiro continua com 30s, objetivo de sobreviver, bônus de 20s e fluxo de retorno idênticos à versão anterior
 
 ### Arquitetura de Profiles para minigames ✅
 
@@ -77,7 +87,7 @@ As ações da partida são narradas por um overlay temporário sobre o tabuleiro
 - **Resolução por contexto**: `getEffectiveConfig(id, context)` unifica campos legados, perfil `board` e perfil do contexto em uma configuração efetiva — sem consultar profiles no tabuleiro
 - **Fallback seguro**: minigames sem `profiles` continuam funcionando com a config de topo; contextos desconhecidos caem para `profiles.board`
 - **Comportamento idêntico**: os valores de duração, dificuldade, recompensas, bot e apresentação permanecem exatamente os mesmos desta release
-- **Validação automatizada**: `scripts/test-minigame-profiles.mjs` (10 testes) cobre perfis, fallback, compatibilidade legada, defaults e resolução por contexto
+- **Validação automatizada**: `scripts/test-minigame-profiles.mjs` (12 testes) cobre perfis, fallback, compatibilidade legada, defaults e resolução por contexto
 
 ### Question Engine — 100 novas perguntas ✅
 
@@ -120,11 +130,11 @@ No **Jogo Rápido**, cada partida usa um mundo escolhido e termina com sua vitó
 
 - **Cinco novos efeitos**: movimento, avanço especial, retrocesso especial, entrada em minigame e vitória
 - **Reprodução eficiente**: buffers decodificados são reutilizados e carregamentos simultâneos do mesmo asset compartilham uma única operação
-- **Cache busting atualizado**: os assets usam URLs com `?v=v0.43.0-preview`
+- **Cache busting atualizado**: os assets usam URLs com `?v=v0.44.0-preview`
 
 ### Cache busting dos assets de áudio ✅
 
-- **Carregamento versionado**: o `AudioManager` acrescenta automaticamente `?v=v0.43.0-preview` às URLs de efeitos e músicas antes do download
+- **Carregamento versionado**: o `AudioManager` acrescenta automaticamente `?v=v0.44.0-preview` às URLs de efeitos e músicas antes do download
 - **Fonte única**: a versão vem de `APP_VERSION`; o catálogo mantém caminhos limpos e independentes da versão
 - **Cache antigo evitado**: novas versões deixam de reutilizar respostas antigas ou `404` armazenados após o deploy
 
@@ -625,7 +635,7 @@ No Modo Aventura, o fluxo parte do mapa inicial, passa por um único sorteio e p
 
 ## 📜 História do Projeto
 
-O Lara World começou como um MVP de tabuleiro simples para 1 jogador e evoluiu para multiplayer local, mundos configuráveis, minigames, Question Engine, Modo Arcade e uma identidade visual própria. A versão atual, **v0.43.0-preview**, introduz a arquitetura de perfis de execução (`profiles`) para os minigames, preparando o Arcade para minigames independentes sem alterar o comportamento do jogo — além de manter as 228 perguntas pedagógicas do Question Engine e o Modo Aventura com pontuação acumulada, mapas responsivos e resultados por etapa. Consulte o [Changelog](CHANGELOG.md) para o histórico completo e o [Guia de Estilo](docs/ui-style-guide.md) para as diretrizes visuais oficiais.
+O Lara World começou como um MVP de tabuleiro simples para 1 jogador e evoluiu para multiplayer local, mundos configuráveis, minigames, Question Engine, Modo Arcade e uma identidade visual própria. A versão atual, **v0.44.0-preview**, transforma o Dino Runner no primeiro minigame com perfil Arcade próprio (sobrevivência sem limite de tempo, pontuação, dificuldade progressiva, recordes e tela final com estatísticas) — além de manter as 228 perguntas pedagógicas do Question Engine e o Modo Aventura com pontuação acumulada, mapas responsivos e resultados por etapa. Consulte o [Changelog](CHANGELOG.md) para o histórico completo e o [Guia de Estilo](docs/ui-style-guide.md) para as diretrizes visuais oficiais.
 
 ---
 
@@ -684,7 +694,8 @@ docker compose down
 
 ## 🗺️ Roadmap
 
-- **v0.43.0-preview** — ✅ **Ativo** — Arquitetura de Profiles para minigames
+- **v0.44.0-preview** — ✅ **Ativo** — Dino Runner com perfil Arcade
+- **v0.43.0-preview** — ✅ Arquitetura de Profiles para minigames
 - **v0.42.0-preview** — ✅ Question Engine +100 perguntas (228 no total)
 - **v0.41.0-preview** — ✅ Modo Aventura; deploy pendente
 - **Botão Flutuante Mobile** — ✅ **Concluído** — Botão "Jogar Dado" flutuante sincronizado para mobile

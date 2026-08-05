@@ -15,6 +15,7 @@ function createEmptyGameStats() {
     tempoTotalJogado: 0,
     ultimaJogada: null,
     ultimoResultado: null,
+    records: {},
   };
 }
 
@@ -37,6 +38,13 @@ export function loadStats() {
     if (parsed.version !== SCHEMA_VERSION) return createEmptyStats();
     if (!parsed.games || typeof parsed.games !== 'object') {
       parsed.games = {};
+    }
+    for (const gameId of Object.keys(parsed.games)) {
+      const mg = parsed.games[gameId];
+      if (!mg || typeof mg !== 'object') continue;
+      if (!mg.records || typeof mg.records !== 'object') {
+        mg.records = {};
+      }
     }
     return parsed;
   } catch {
@@ -79,6 +87,16 @@ export function recordGame(minigameId, result, durationMs) {
     }
     mg.ultimaJogada = Date.now();
     mg.ultimoResultado = safeResult(result);
+
+    if (mg.ultimoResultado && mg.ultimoResultado.stats) {
+      for (const [key, value] of Object.entries(mg.ultimoResultado.stats)) {
+        if (typeof value !== 'number' || !Number.isFinite(value)) continue;
+        const prev = typeof mg.records[key] === 'number' ? mg.records[key] : 0;
+        if (value > prev) {
+          mg.records[key] = value;
+        }
+      }
+    }
 
     saveStats(stats);
     return stats;
