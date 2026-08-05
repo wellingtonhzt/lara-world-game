@@ -1,3 +1,5 @@
+import { hasCategory } from '../data/questions/category-catalog.js';
+
 // ── Error Classes ──
 
 export class WorldNotFoundError extends Error {
@@ -253,6 +255,9 @@ function validateWorldConfig(config) {
     }
     let hasPositiveWeight = false;
     for (const [cat, weight] of Object.entries(qp.categoryWeights)) {
+      if (!hasCategory(cat)) {
+        throw new InvalidWorldConfigError(`questionPolicy.categoryWeights["${cat}"] is not a registered category`);
+      }
       if (typeof weight !== 'number' || !Number.isFinite(weight)) {
         throw new InvalidWorldConfigError(`questionPolicy.categoryWeights["${cat}"] must be a finite number`);
       }
@@ -270,13 +275,13 @@ function validateWorldConfig(config) {
         throw new InvalidWorldConfigError('questionPolicy.levelRange must be a non-null object');
       }
       if (lr.min !== undefined) {
-        if (!Number.isInteger(lr.min) || lr.min < 1 || lr.min > 5) {
-          throw new InvalidWorldConfigError('questionPolicy.levelRange.min must be an integer between 1 and 5');
+        if (!Number.isInteger(lr.min) || lr.min < 1 || lr.min > 3) {
+          throw new InvalidWorldConfigError('questionPolicy.levelRange.min must be an integer between 1 and 3');
         }
       }
       if (lr.max !== undefined) {
-        if (!Number.isInteger(lr.max) || lr.max < 1 || lr.max > 5) {
-          throw new InvalidWorldConfigError('questionPolicy.levelRange.max must be an integer between 1 and 5');
+        if (!Number.isInteger(lr.max) || lr.max < 1 || lr.max > 3) {
+          throw new InvalidWorldConfigError('questionPolicy.levelRange.max must be an integer between 1 and 3');
         }
       }
       if (lr.min !== undefined && lr.max !== undefined && lr.min > lr.max) {

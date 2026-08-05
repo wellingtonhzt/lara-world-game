@@ -1,7 +1,7 @@
 /**
  * @typedef {Object} QuestionPolicy
  * @property {Object.<string, number>} categoryWeights - Pesos percentuais por categoria
- * @property {{ min?: number, max?: number }} [levelRange] - Faixa de nível (1-5)
+ * @property {{ min?: number, max?: number }} [levelRange] - Faixa de nível (1-3)
  */
 
 /**

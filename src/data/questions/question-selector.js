@@ -14,7 +14,7 @@
 
 const DEFAULT_CONTEXT = {
   categoryWeights: {},
-  levelRange: { min: 1, max: 5 },
+  levelRange: { min: 1, max: 3 },
   excludeIds: [],
   tags: [],
   subcategories: [],

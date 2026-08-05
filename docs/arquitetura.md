@@ -420,6 +420,13 @@ Sorteio de Perguntas (via Question Engine)
   ├── Bot (60% acerto) e humano usam o mesmo sortearQuestao()
   └── questionPolicy definida em cada WorldConfig
 
+Validação e critérios do banco
+  ├── QuestionValidator valida IDs únicos, categorias, subcategorias, textos, options, correctOption, level 1-3, tags e active
+  ├── Comparações usam normalização básica (caixa, acentos, pontuação e espaços) sem alterar o texto exibido
+  ├── Explicações vazias permanecem como warning para permitir migração gradual do banco legado
+  ├── WorldRegistry rejeita categorias de questionPolicy ausentes no CategoryCatalog
+  └── Critérios editoriais e pedagógicos: docs/criterios-pedagogicos-perguntas.md
+
 Main Menu
   ├── showMainMenu() → exibe menu inicial, esconde tabuleiro/painel/victory, chama leaveArcadeMode(), hideFloatingRollBtn()
   ├── hideMainMenu() → esconde menu, prepara tabuleiro

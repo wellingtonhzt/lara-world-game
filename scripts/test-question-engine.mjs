@@ -1,4 +1,12 @@
 import { QuestionEngine } from '../src/data/questions/index.js';
+import { select as selectFromPool } from '../src/data/questions/question-selector.js';
+import { normalizeQuestionText, validateBank, validateQuestion } from '../src/data/questions/question-validator.js';
+import { florestaEncantada } from '../src/worlds/floresta/config.js';
+import { valeDosDinossauros } from '../src/worlds/dinossauros/config.js';
+import { galaxiaEstelar } from '../src/worlds/galaxia/config.js';
+import { reinoOceanos } from '../src/worlds/oceanos/config.js';
+import { casteloDosDragoes } from '../src/worlds/castelo/config.js';
+import { register as registerWorld, InvalidWorldConfigError } from '../src/engine/world-registry.js';
 
 let passed = 0;
 let failed = 0;
@@ -125,21 +133,21 @@ assert(typeof QuestionEngine.validate === 'function', 'validate is a function');
 assert(typeof QuestionEngine.getStatistics === 'function', 'getStatistics is a function');
 
 console.log('\n--- Edge cases: weight handling ---');
-// Weight 0 should exclude category
+// Invalid or non-positive-only weights fall back to the unweighted active pool.
 const weightZero = QuestionEngine.select({ categoryWeights: { matematica: 0 } });
-assert(weightZero === null || weightZero.category !== 'matematica', 'Weight 0 excludes category');
+assert(weightZero !== null, 'Weight 0 falls back to active pool');
 
 // Negative weight treated as 0
 const negWeight = QuestionEngine.select({ categoryWeights: { matematica: -5 } });
-assert(negWeight === null || negWeight.category !== 'matematica', 'Negative weight excluded');
+assert(negWeight !== null, 'Negative-only weight falls back to active pool');
 
 // NaN weight treated as 0
 const nanWeight = QuestionEngine.select({ categoryWeights: { matematica: NaN } });
-assert(nanWeight === null || nanWeight.category !== 'matematica', 'NaN weight excluded');
+assert(nanWeight !== null, 'NaN-only weight falls back to active pool');
 
 // String weight treated as 0
 const strWeight = QuestionEngine.select({ categoryWeights: { matematica: 'invalid' } });
-assert(strWeight === null || strWeight.category !== 'matematica', 'String weight excluded');
+assert(strWeight !== null, 'String-only weight falls back to active pool');
 
 // Infinity weight — filtered out, falls back to unweighted pool
 const infWeight = QuestionEngine.select({ categoryWeights: { matematica: Infinity } });
@@ -204,6 +212,31 @@ const emptyValidation = QuestionEngine.validate();
 assert(emptyValidation.stats.total === 128, 'Validator reports correct total');
 assert(emptyValidation.stats.withErrors === 0, 'No questions with errors');
 
+const validFixture = {
+  id: 'mat-adicao-999', category: 'matematica', subcategory: 'adicao',
+  question: 'Quanto é 1 + 2?', options: ['2', '3', '4'], correctOption: 1,
+  explanation: 'Um mais dois é igual a três.', level: 1, tags: ['adicao'], active: true,
+};
+assert(validateQuestion(validFixture).errors.length === 0, 'Validator accepts valid level 1-3 question');
+assert(validateQuestion({ ...validFixture, level: 4 }).errors.some(e => e.includes('1-3')), 'Validator rejects level outside 1-3');
+assert(validateQuestion({ ...validFixture, active: 'yes' }).errors.some(e => e.includes('active')), 'Validator rejects non-boolean active');
+assert(validateQuestion({ ...validFixture, category: 'inexistente' }).errors.some(e => e.includes('category')), 'Validator rejects invalid category');
+assert(validateQuestion({ ...validFixture, subcategory: 'inexistente' }).errors.some(e => e.includes('subcategory')), 'Validator rejects invalid subcategory');
+assert(validateQuestion({ ...validFixture, options: ['Ação', 'acao', 'Outra'] }).errors.some(e => e.includes('duplicada')), 'Validator rejects normalized duplicate options');
+assert(validateQuestion({ ...validFixture, correctOption: 8 }).errors.some(e => e.includes('correctOption')), 'Validator rejects out-of-range correctOption');
+assert(validateQuestion({ ...validFixture, question: '   ' }).errors.some(e => e.includes('question')), 'Validator rejects empty question text');
+assert(normalizeQuestionText('  AÇÃO?!  simples ') === 'acao simples', 'Text normalization removes accents, punctuation and extra spaces');
+const duplicateBank = validateBank([validFixture, { ...validFixture }]);
+assert(duplicateBank.errors.some(e => e.includes('id duplicado')), 'Validator rejects duplicate IDs');
+assert(validateBank(null).valid === false, 'Validator safely rejects non-array bank');
+
+console.log('\n--- Inactive questions ---');
+const inactiveFixture = { ...validFixture, id: 'mat-adicao-998', active: false };
+const inactivePick = selectFromPool([inactiveFixture], {});
+assert(inactivePick === null, 'Selector never returns inactive question');
+const activePick = selectFromPool([inactiveFixture, validFixture], {});
+assert(activePick?.id === validFixture.id, 'Selector returns active question when inactive item is present');
+
 console.log('\n--- Mutation safety ---');
 const q1 = QuestionEngine.findById('mat-adicao-001');
 if (q1) {
@@ -225,22 +258,19 @@ if (allQ.length > 0) {
   assert(check.question !== 'MUTATED', 'selectMany mutation does not corrupt bank');
 }
 
-console.log('\n--- Integration: World Policies ---');
-const worldPolicies = {
-  'floresta-encantada': { animais: 30, natureza: 25, cores_e_formas: 15, logica: 10, matematica: 10, portugues: 10 },
-  'dinossauros': { dinossauros: 35, natureza: 25, animais: 20, matematica: 10, portugues: 10 },
-  'galaxia-estelar': { espaco: 40, logica: 20, conhecimentos_gerais: 20, matematica: 10, natureza: 10 },
-  'reino-oceanos': { natureza: 30, animais: 25, conhecimentos_gerais: 15, matematica: 15, portugues: 15 },
-  'castelo-dragoes': { logica: 30, conhecimentos_gerais: 25, matematica: 20, portugues: 15, dinossauros: 10 },
-};
+console.log('\n--- Integration: Real World Policies ---');
+const realWorldConfigs = [florestaEncantada, valeDosDinossauros, galaxiaEstelar, reinoOceanos, casteloDosDragoes];
 
-for (const [worldId, weights] of Object.entries(worldPolicies)) {
+for (const worldConfig of realWorldConfigs) {
+  const worldId = worldConfig.id;
+  const { categoryWeights: weights, levelRange } = worldConfig.questionPolicy;
   const cats = Object.keys(weights);
   for (const cat of cats) {
     const exists = QuestionEngine.getCategories().includes(cat);
     assert(exists, `${worldId}: category "${cat}" exists`);
   }
-  const ctx = { categoryWeights: weights, levelRange: { min: 1, max: 3 } };
+  assert(levelRange.min >= 1 && levelRange.max <= 3, `${worldId}: levelRange stays within 1-3`);
+  const ctx = { categoryWeights: weights, levelRange };
   const q = QuestionEngine.select(ctx);
   assert(q !== null, `${worldId}: returns a question`);
   if (q) {
@@ -248,8 +278,19 @@ for (const [worldId, weights] of Object.entries(worldPolicies)) {
   }
 }
 
+const invalidPolicyConfig = structuredClone(florestaEncantada);
+invalidPolicyConfig.id = 'test-invalid-question-policy';
+invalidPolicyConfig.questionPolicy.categoryWeights = { categoria_inexistente: 100 };
+let invalidPolicyRejected = false;
+try {
+  registerWorld(invalidPolicyConfig);
+} catch (error) {
+  invalidPolicyRejected = error instanceof InvalidWorldConfigError;
+}
+assert(invalidPolicyRejected, 'WorldRegistry rejects unregistered question category');
+
 console.log('\n--- Integration: Anti-repetition ---');
-const antiRepCtx = { categoryWeights: { matematica: 100 }, levelRange: { min: 1, max: 5 } };
+const antiRepCtx = { categoryWeights: { matematica: 100 }, levelRange: { min: 1, max: 3 } };
 const seen = new Set();
 for (let i = 0; i < 10; i++) {
   const q = QuestionEngine.select({ ...antiRepCtx, excludeIds: [...seen] });
@@ -259,6 +300,15 @@ for (let i = 0; i < 10; i++) {
   }
 }
 assert(seen.size > 0, 'Anti-repetition: collected questions');
+
+console.log('\n--- Integration: Pool reset ---');
+const tinyPool = [validFixture, { ...validFixture, id: 'mat-adicao-997', question: 'Quanto é 2 + 2?', options: ['3', '4', '5'] }];
+const usedTinyIds = new Set(tinyPool.map(q => q.id));
+let resetPick = selectFromPool(tinyPool, { excludeIds: [...usedTinyIds] });
+assert(resetPick === null, 'Exhausted compatible pool returns null before reset');
+usedTinyIds.clear();
+resetPick = selectFromPool(tinyPool, { excludeIds: [...usedTinyIds] });
+assert(resetPick !== null, 'Clearing used IDs restores the compatible pool');
 
 console.log('\n--- Integration: Fallback ---');
 const fallbackQ = QuestionEngine.select({ categoryWeights: {}, excludeIds: ['all-ids-excluded-12345'] });
