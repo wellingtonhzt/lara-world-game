@@ -142,7 +142,7 @@ A escolha do modo determina quais campos são exibidos no modal e como o Jogador
 | Casa | Efeito | Descrição |
 |------|--------|-----------|
 | 3 | ⭐ Avance 2 casas | O personagem anda 2 casas adicionais. Se cair em outra casa especial, o efeito cascateia. |
-| 4 | ❓ Desafio educativo | Abre um modal com pergunta sorteada do Banco de Questões (9 categorias, 128 perguntas). A pergunta é temática por mundo e não se repete na mesma partida. Acertar: avança 1 casa. Errar: volta 1 casa. O movimento não cascateia. |
+| 4 | ❓ Desafio educativo | Abre um modal com pergunta sorteada do Banco de Questões (9 categorias, 228 perguntas). A pergunta é temática por mundo e não se repete na mesma partida. Acertar: avança 1 casa. Errar: volta 1 casa. O movimento não cascateia. |
 | 5 | 🐢 Volte 1 casa | O personagem volta 1 casa. Se estiver na casa 1, vai para a posição 0 (fora do tabuleiro). |
 | 7 | ❓ Desafio educativo | Mesmo efeito da casa 4. |
 | 8 | 🎯 Jogue novamente | O jogador ganha uma jogada extra imediatamente. O turno não alterna. |
@@ -261,7 +261,7 @@ Regra oficial para apresentação visual das casas em todos os mundos:
 - **Exceção — saída da floresta não cascateia**: o bônus de +2 (atalho) ou +3 (saída) ao retornar do Mundo da Floresta não ativa casas especiais.
 - **Limite do submundo**: ao atingir a última casa de um submundo por avanço automático ou acerto de desafio, o jogador não vence o jogo — ele retorna ao mundo principal com +2 casas de bônus. A vitória só é declarada se o bônux levar à casa 20 do mundo principal.
 - **Mundo Aleatório**: ao selecionar "🎲 Mundo Aleatório", um mundo principal é sorteado igualmente entre os 5 disponíveis (Floresta, Dinossauros, Galáxia, Oceanos, Castelo).
-- **Sorteio de perguntas**: a cada desafio, uma pergunta é sorteada pelo Question Engine (128 perguntas, 9 categorias). Cada mundo possui `questionPolicy` com pesos por categoria e faixa de nível:
+- **Sorteio de perguntas**: a cada desafio, uma pergunta é sorteada pelo Question Engine (228 perguntas, 9 categorias). Cada mundo possui `questionPolicy` com pesos por categoria e faixa de nível:
   - 🌳 **Floresta Encantada**: Animais 30, Natureza 25, Cores e Formas 15, Lógica 10, Matemática 10, Português 10
   - 🦕 **Dinossauros**: Dinossauros 35, Natureza 25, Animais 20, Matemática 10, Português 10
   - 🌌 **Galáxia Estelar**: Espaço 40, Lógica 20, Conhecimentos Gerais 20, Matemática 10, Natureza 10

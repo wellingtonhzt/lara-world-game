@@ -1,5 +1,14 @@
 # Roadmap Lara World
 
+### v0.42.0-preview — Question Engine +100 perguntas ✅
+
+- [x] 100 novas perguntas nas 9 categorias (banco de 128 → 228)
+- [x] Distribuição por categoria: Matemática 27, Português 28, Animais 28, Espaço 26, Natureza 27, Dinossauros 22, Lógica 26, Cores e Formas 22, Conhecimentos Gerais 22
+- [x] Equilíbrio de dificuldade: L1 13, L2 45, L3 42 — cada categoria com nível 2 e nível 3
+- [x] Explicações pedagógicas e tags em todas as novas perguntas
+- [x] Validação automatizada: 157 testes e contagens por categoria aprovados
+- [ ] Deploy no CT e validação da demo
+
 ### v0.41.0-preview — Modo Aventura ✅
 
 - [x] Fundação da campanha e sequência oficial dos cinco mundos

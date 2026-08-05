@@ -1,5 +1,24 @@
 # Memorial Técnico
 
+## Sprint QE-S3 — 100 Novas Perguntas ao Question Engine (v0.42.0-preview)
+
+### Problema e decisão técnica
+
+O banco de perguntas tinha 128 itens, concentrados majoritariamente nos níveis L1 e L2, com pouca variedade pedagógica para partidas longas ou repetidas. A Sprint QE-S3 expandiu o banco para 228 perguntas com 100 novas, distribuídas nas 9 categorias: Matemática 27, Português 28, Animais 28, Espaço 26, Natureza 27, Dinossauros 22, Lógica 26, Cores e Formas 22, Conhecimentos Gerais 22.
+
+As novas perguntas seguem o esquema do `QuestionValidator` (3 alternativas, `correctOption` 0-based, `active: true`, explicações pedagógicas e tags), respeitam a normalização que detecta duplicatas e equilibram a dificuldade: L1 13, L2 45 e L3 42, com cada categoria recebendo pelo menos um item L2 e um L3. Durante a criação, blocos inteiros foram reescritos para corrigir a distribuição de níveis (Lógica, Animais, Espaço, Dinossauros, Conhecimentos Gerais, Cores e Formas) e um caso de duplicata normalizada em `mat-multiplicacao-003` (4 × 3) foi resolvido reformulando o enunciado para "Quanto é 4 vezes 3?".
+
+### Validação e resultado
+
+- Banco válido: `QuestionEngine.validate()` — 0 erros; warnings apenas de "explanation vazia" pré-existentes no banco legado
+- `scripts/test-question-engine.mjs` atualizado para 228 (157 testes aprovados) com novo bloco de distribuição de níveis
+- `scripts/compare-migration.mjs` atualizado para 228 com contagens por categoria (16/16 aprovados)
+- `node --check` aprovado nos 9 arquivos do banco
+- Nenhuma regra de gameplay, mundo, minigame, Arcade, tabuleiro ou bot alterada
+- Lançamento: `v0.42.0-preview`, com cache busting atualizado
+
+---
+
 ## Sprint — Sons de Tabuleiro e Cache de Buffers (v0.38.0-preview)
 
 ### Problema e decisão técnica

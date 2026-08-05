@@ -17,19 +17,19 @@ console.log('=== New Bank Validation (post-migration) ===\n');
 
 console.log('--- Count ---');
 const stats = QuestionEngine.getStatistics();
-assert(stats.totalQuestions === 128, `Total: ${stats.totalQuestions} (expected 128)`);
+assert(stats.totalQuestions === 228, `Total: ${stats.totalQuestions} (expected 228)`);
 
 console.log('\n--- Per-category count ---');
 const expectedCounts = {
-  matematica: 15,
-  portugues: 17,
-  animais: 17,
-  espaco: 16,
-  natureza: 15,
-  dinossauros: 12,
-  logica: 12,
-  cores_e_formas: 12,
-  conhecimentos_gerais: 12,
+  matematica: 27,
+  portugues: 28,
+  animais: 28,
+  espaco: 26,
+  natureza: 27,
+  dinossauros: 22,
+  logica: 26,
+  cores_e_formas: 22,
+  conhecimentos_gerais: 22,
 };
 
 for (const [cat, expected] of Object.entries(expectedCounts)) {
@@ -38,8 +38,8 @@ for (const [cat, expected] of Object.entries(expectedCounts)) {
 }
 
 console.log('\n--- All questions accessible ---');
-const allQ = QuestionEngine.selectMany({}, 200);
-assert(allQ.length === 128, `All questions returned: ${allQ.length}`);
+const allQ = QuestionEngine.selectMany({}, 228);
+assert(allQ.length === 228, `All questions returned: ${allQ.length}`);
 
 console.log('\n--- ID uniqueness ---');
 const ids = allQ.map(q => q.id);

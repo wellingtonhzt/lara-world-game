@@ -18,7 +18,8 @@
 
 | Versão | Data | Status |
 |--------|------|--------|
-| **v0.41.0-preview** | Ago/2026 | ✅ **Ativo** — Modo Aventura |
+| **v0.42.0-preview** | Ago/2026 | ✅ **Ativo** — Question Engine +100 perguntas |
+| v0.41.0-preview | Ago/2026 | ✅ Modo Aventura |
 | v0.40.0-preview | Ago/2026 | ✅ Música de fundo global no tabuleiro |
 | v0.39.0-preview | Ago/2026 | ✅ Controle global de som |
 | v0.38.0-preview | Ago/2026 | ✅ Sons de tabuleiro e cache de buffers |
@@ -67,7 +68,15 @@ As ações da partida são narradas por um overlay temporário sobre o tabuleiro
 
 ---
 
-## ✨ Funcionalidades Atuais (v0.41.0-preview)
+## ✨ Funcionalidades Atuais (v0.42.0-preview)
+
+### Question Engine — 100 novas perguntas ✅
+
+- **Banco ampliado**: de 128 para 228 perguntas válidas e ativas, distribuídas nas 9 categorias
+- **Distribuição**: Matemática 27, Português 28, Animais 28, Espaço 26, Natureza 27, Dinossauros 22, Lógica 26, Cores e Formas 22, Conhecimentos Gerais 22
+- **Níveis pedagógicos**: 13 fáceis, 45 médias e 42 desafiadoras, com equilíbrio de dificuldade por categoria
+- **Explanações e tags**: todas as novas perguntas trazem explicação pedagógica e tags de busca
+- **Validação automatizada**: `scripts/test-question-engine.mjs` (157 testes) e `scripts/compare-migration.mjs` aprovados
 
 ### 🗺️ Modo Aventura
 
@@ -102,11 +111,11 @@ No **Jogo Rápido**, cada partida usa um mundo escolhido e termina com sua vitó
 
 - **Cinco novos efeitos**: movimento, avanço especial, retrocesso especial, entrada em minigame e vitória
 - **Reprodução eficiente**: buffers decodificados são reutilizados e carregamentos simultâneos do mesmo asset compartilham uma única operação
-- **Cache busting atualizado**: os assets usam URLs com `?v=v0.41.0-preview`
+- **Cache busting atualizado**: os assets usam URLs com `?v=v0.42.0-preview`
 
 ### Cache busting dos assets de áudio ✅
 
-- **Carregamento versionado**: o `AudioManager` acrescenta automaticamente `?v=v0.41.0-preview` às URLs de efeitos e músicas antes do download
+- **Carregamento versionado**: o `AudioManager` acrescenta automaticamente `?v=v0.42.0-preview` às URLs de efeitos e músicas antes do download
 - **Fonte única**: a versão vem de `APP_VERSION`; o catálogo mantém caminhos limpos e independentes da versão
 - **Cache antigo evitado**: novas versões deixam de reutilizar respostas antigas ou `404` armazenados após o deploy
 
@@ -607,7 +616,7 @@ No Modo Aventura, o fluxo parte do mapa inicial, passa por um único sorteio e p
 
 ## 📜 História do Projeto
 
-O Lara World começou como um MVP de tabuleiro simples para 1 jogador e evoluiu para multiplayer local, mundos configuráveis, minigames, Question Engine, Modo Arcade e uma identidade visual própria. A versão atual, **v0.41.0-preview**, conecta os cinco mundos no Modo Aventura, com pontuação acumulada, mapas responsivos e resultados por etapa. Consulte o [Changelog](CHANGELOG.md) para o histórico completo e o [Guia de Estilo](docs/ui-style-guide.md) para as diretrizes visuais oficiais.
+O Lara World começou como um MVP de tabuleiro simples para 1 jogador e evoluiu para multiplayer local, mundos configuráveis, minigames, Question Engine, Modo Arcade e uma identidade visual própria. A versão atual, **v0.42.0-preview**, amplia o Question Engine com 100 novas perguntas pedagógicas (total de 228), além de conectar os cinco mundos no Modo Aventura, com pontuação acumulada, mapas responsivos e resultados por etapa. Consulte o [Changelog](CHANGELOG.md) para o histórico completo e o [Guia de Estilo](docs/ui-style-guide.md) para as diretrizes visuais oficiais.
 
 ---
 
@@ -666,7 +675,8 @@ docker compose down
 
 ## 🗺️ Roadmap
 
-- **v0.41.0-preview** — ✅ **Ativo** — Modo Aventura; deploy pendente
+- **v0.42.0-preview** — ✅ **Ativo** — Question Engine +100 perguntas (228 no total)
+- **v0.41.0-preview** — ✅ Modo Aventura; deploy pendente
 - **Botão Flutuante Mobile** — ✅ **Concluído** — Botão "Jogar Dado" flutuante sincronizado para mobile
 - **v0.40.0-preview** — ✅ Música de fundo global no tabuleiro
 - **v0.39.0-preview** — ✅ Controle global de som

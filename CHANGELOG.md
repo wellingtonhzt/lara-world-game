@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.42.0-preview] - 2026-08-04
+
+### Adicionado
+- **100 novas perguntas pedagógicas ao Question Engine**: banco ampliado de 128 para 228 perguntas válidas e ativas
+- **Distribuição por categoria**: Matemática 27, Português 28, Animais 28, Espaço 26, Natureza 27, Dinossauros 22, Lógica 26, Cores e Formas 22, Conhecimentos Gerais 22
+- **Equilíbrio de dificuldade**: as novas perguntas cobrem os três níveis pedagógicos, com cada categoria recebendo pelo menos uma pergunta de nível 2 e uma de nível 3
+- **Explanações pedagógicas e tags**: todas as novas perguntas acompanham explicação da resposta correta e tags de busca
+
+### Alterado
+- **`scripts/test-question-engine.mjs`**: atualizado para 228 perguntas e novo bloco de validação da distribuição de níveis das 100 novas perguntas (157 testes passando)
+- **`scripts/compare-migration.mjs`**: contagem total e esperada por categoria atualizadas para 228
+- **`src/version.js`**: `APP_VERSION` atualizado para `v0.42.0-preview`
+- **`src/index.html`**: cache-busting de CSS/JS e versão do rodapé atualizados para `v0.42.0-preview`
+- **README.md, docs**: referências de versão, contagens do banco e documentação sincronizadas
+
+### Notas
+- As 100 novas perguntas respeitam o esquema do validator (3 alternativas, `correctOption` 0-based, `active: true`, IDs únicos)
+- Nenhuma regra do jogo, lógica de turno, comportamento da Máquina, mecânica de dados, minigames ou layout foram alterados
+
 ## [0.41.0-preview] - 2026-08-02
 
 ### Adicionado

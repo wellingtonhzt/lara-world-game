@@ -18,7 +18,11 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 
 ## Principais Funcionalidades
 
-### v0.41.0-preview (Atual) — Modo Aventura ✅
+### v0.42.0-preview (Atual) — Question Engine +100 perguntas ✅
+
+O Question Engine passa de 128 para 228 perguntas pedagógicas, distribuídas pelas 9 categorias (Matemática, Português, Animais, Espaço, Natureza, Dinossauros, Lógica, Cores e Formas, Conhecimentos Gerais). As 100 novas perguntas cobrem os três níveis de dificuldade, com cada categoria recebendo pelo menos uma pergunta de nível 2 e uma de nível 3, e todas acompanham explicação pedagógica e tags de busca. A validação automatizada cobre contagem, unicidade de IDs, esquema e distribuição de níveis.
+
+### v0.41.0-preview — Modo Aventura ✅
 
 O Modo Aventura conecta Floresta, Dinossauros, Galáxia, Oceanos e Castelo em uma campanha contínua. Ele oferece pontuação acumulada, alternância fixa de quem começa, mapa responsivo, resultados intermediários e resultado final para humano/humano ou humano/Máquina. A campanha não persiste após recarregar a página.
 

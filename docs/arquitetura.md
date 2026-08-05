@@ -36,7 +36,7 @@ lara-world/
 │   │   │   ├── question-selector.js   # Seleção com pesos, tags e fallback
 │   │   │   ├── question-validator.js  # Validação estrutural
 │   │   │   ├── category-catalog.js    # Catálogo de categorias
-│   │   │   └── bank/                 # 9 arquivos de categoria (128 perguntas)
+│   │   │   └── bank/                 # 9 arquivos de categoria (228 perguntas)
 │   │   └── world-manifest.js  # Manifesto de IDs de mundos
 │   ├── audio/           # Módulo de áudio
 │   │   ├── AudioManager.js    # Gerenciador central (Web Audio API)

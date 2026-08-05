@@ -21,13 +21,13 @@ function assert(condition, label) {
   }
 }
 
-console.log('=== Question Engine — Sprint 1 Validation ===\n');
+console.log('=== Question Engine — Sprint 2 Validation ===\n');
 
 // --- Bank ---
 console.log('--- Bank ---');
 const stats = QuestionEngine.getStatistics();
-assert(stats.totalQuestions === 128, `Total questions: ${stats.totalQuestions} (expected 128)`);
-assert(stats.activeQuestions === 128, `Active questions: ${stats.activeQuestions} (expected 128)`);
+assert(stats.totalQuestions === 228, `Total questions: ${stats.totalQuestions} (expected 228)`);
+assert(stats.activeQuestions === 228, `Active questions: ${stats.activeQuestions} (expected 228)`);
 
 console.log('\n--- Categories ---');
 const categories = QuestionEngine.getCategories();
@@ -49,7 +49,7 @@ console.log('\n--- Validation ---');
 const validation = QuestionEngine.validate();
 assert(validation.valid === true, `Bank is valid: ${validation.valid}`);
 assert(validation.errors.length === 0, `No errors (found ${validation.errors.length})`);
-assert(validation.stats.total === 128, `Validation total: ${validation.stats.total}`);
+assert(validation.stats.total === 228, `Validation total: ${validation.stats.total}`);
 assert(validation.stats.withErrors === 0, `No questions with errors: ${validation.stats.withErrors}`);
 
 if (validation.warnings.length > 0) {
@@ -119,9 +119,38 @@ assert(subPick?.subcategory === 'adicao', `Subcategory filter works: ${subPick?.
 
 console.log('\n--- Statistics ---');
 const statsCheck = QuestionEngine.getStatistics();
-assert(statsCheck.totalQuestions === 128, `getStatistics().totalQuestions`);
+assert(statsCheck.totalQuestions === 228, `getStatistics().totalQuestions`);
 assert(typeof statsCheck.byCategory === 'object', `getStatistics().byCategory is object`);
 assert(typeof statsCheck.byLevel === 'object', `getStatistics().byLevel is object`);
+
+console.log('\n--- Level distribution ---');
+const allNew = QuestionEngine.selectMany({}, 228);
+const ORIGINAL_IDS = new Set([
+  'mat-adicao-001','mat-subtracao-001','mat-adicao-002','mat-subtracao-002','mat-multiplicacao-001','mat-adicao-003','mat-adicao-004','mat-subtracao-003','mat-adicao-005','mat-subtracao-004','mat-adicao-006','mat-subtracao-005','mat-operacoes-001','mat-divisao-001','mat-multiplicacao-002',
+  'por-alfabeto-001','por-alfabeto-002','por-palavras-001','por-frases-001','por-alfabeto-003','por-palavras-002','por-alfabeto-004','por-alfabeto-005','por-silabas-001','por-palavras-003','por-alfabeto-006','por-palavras-004','por-palavras-005','por-alfabeto-007','por-palavras-006','por-palavras-007','por-alfabeto-008',
+  'ani-sons-001','ani-caracteristicas-001','ani-habitats-001','ani-caracteristicas-002','ani-sons-002','ani-caracteristicas-003','ani-habitats-002','ani-geral-001','ani-caracteristicas-004','ani-caracteristicas-005','ani-classificacao-001','ani-habitats-003','ani-caracteristicas-006','ani-geral-002','ani-sons-003','ani-habitats-004','ani-caracteristicas-007',
+  'esp-planetas-001','esp-estrelas-001','esp-planetas-002','esp-satelites-001','esp-planetas-003','esp-planetas-004','esp-estrelas-002','esp-exploracao-001','esp-planetas-005','esp-estrelas-003','esp-planetas-006','esp-galaxias-001','esp-galaxias-002','esp-planetas-007','esp-exploracao-002','esp-universo-001',
+  'nat-cores-001','nat-plantas-001','nat-estacoes-001','nat-habitats-001','nat-animais-001','nat-estados-001','nat-plantas-002','nat-clima-001','nat-plantas-003','nat-geografia-001','nat-animais-002','nat-clima-002','nat-geografia-002','nat-animais-003','nat-clima-003',
+  'din-tipos-001','din-tipos-002','din-tipos-003','din-historia-001','din-tipos-004','din-tipos-005','din-tipos-006','din-historia-002','din-tipos-007','din-historia-003','din-alimentacao-001','din-tipos-008',
+  'log-operacoes-001','log-sequencias-001','log-formas-001','log-raciocinio-001','log-comparacao-001','log-contagem-001','log-operacoes-002','log-raciocinio-002','log-opostos-001','log-contagem-002','log-sequencias-002','log-sequencias-003',
+  'cef-cores-001','cef-formas-001','cef-mistura-001','cef-cores-002','cef-formas-002','cef-cores-003','cef-formas-003','cef-cores-004','cef-formas-004','cef-mistura-002','cef-formas-005','cef-cores-005',
+  'cge-brasil-001','cge-brasil-002','cge-cultura-001','cge-tempo-001','cge-esportes-001','cge-objetos-001','cge-cultura-002','cge-tempo-002','cge-objetos-002','cge-objetos-003','cge-animais-001','cge-tempo-003',
+]);
+const newQuestions = allNew.filter(q => !ORIGINAL_IDS.has(q.id));
+assert(newQuestions.length === 100, `Exactly 100 new questions identified (${newQuestions.length})`);
+const newByLevel = { 1: 0, 2: 0, 3: 0 };
+for (const q of newQuestions) newByLevel[q.level]++;
+assert(newByLevel[1] >= 10 && newByLevel[1] <= 15, `New questions L1: ${newByLevel[1]} (target 10-15)`);
+assert(newByLevel[2] >= 40 && newByLevel[2] <= 45, `New questions L2: ${newByLevel[2]} (target 40-45)`);
+assert(newByLevel[3] >= 40 && newByLevel[3] <= 45, `New questions L3: ${newByLevel[3]} (target 40-45)`);
+const perCatLevel = {};
+for (const q of newQuestions) {
+  if (!perCatLevel[q.category]) perCatLevel[q.category] = { 1: 0, 2: 0, 3: 0 };
+  perCatLevel[q.category][q.level]++;
+}
+for (const [cat, counts] of Object.entries(perCatLevel)) {
+  assert(counts[2] >= 1 && counts[3] >= 1, `${cat}: has at least one L2 and one L3 (${JSON.stringify(counts)})`);
+}
 
 console.log('\n--- Isolation check ---');
 assert(typeof QuestionEngine.select === 'function', 'select is a function');
@@ -155,8 +184,11 @@ assert(infWeight !== null, 'Infinity weight falls back to unweighted pool');
 
 console.log('\n--- Edge cases: filters ---');
 // Exclude all IDs from a category
-const allAnimais = QuestionEngine.selectMany({ categoryWeights: { animais: 100 } }, 20);
+const statsCats = QuestionEngine.getStatistics();
+const animaisCount = statsCats.byCategory.animais;
+const allAnimais = QuestionEngine.selectMany({ categoryWeights: { animais: 100 } }, animaisCount);
 const allAnimaisIds = allAnimais.map(q => q.id);
+assert(allAnimaisIds.length === animaisCount, `Collected all ${animaisCount} animais questions (got ${allAnimaisIds.length})`);
 const excludedAll = QuestionEngine.select({ categoryWeights: { animais: 100 }, excludeIds: allAnimaisIds });
 assert(excludedAll === null, 'Excluding all questions returns null');
 
@@ -209,7 +241,7 @@ assert(emptyCtx !== null, 'empty context returns a question');
 
 console.log('\n--- Validator edge cases ---');
 const emptyValidation = QuestionEngine.validate();
-assert(emptyValidation.stats.total === 128, 'Validator reports correct total');
+assert(emptyValidation.stats.total === 228, 'Validator reports correct total');
 assert(emptyValidation.stats.withErrors === 0, 'No questions with errors');
 
 const validFixture = {

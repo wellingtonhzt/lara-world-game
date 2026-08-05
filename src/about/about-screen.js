@@ -82,7 +82,7 @@ function _renderContent() {
     'Modo Arcade',
     'Multiplayer local',
     'Single Player contra a máquina',
-    '128 desafios educativos em 9 categorias',
+    '228 desafios educativos em 9 categorias',
     '5 minigames temáticos',
     'Estatísticas do Modo Arcade'
   ];
