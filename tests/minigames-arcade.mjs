@@ -1,10 +1,12 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 
 import { getMinigame, getProfile } from '../src/minigames/engine/index.js';
 import { MeteoroGame } from '../src/minigames/meteoro/MeteoroGame.js';
 import { OceanMatch3 } from '../src/minigames/ocean-match3/OceanMatch3.js';
 import { MemoryGame } from '../src/minigames/memoria-floresta/MemoryGame.js';
 import { AtaqueDragoesGame } from '../src/minigames/ataque-dragoes/AtaqueDragoesGame.js';
+import { PAIR_KEYS, BOARD_PAIR_KEYS } from '../src/minigames/memoria-floresta/memoryAssets.js';
 import '../src/minigames/meteoro/index.js';
 import '../src/minigames/ocean-match3/index.js';
 import '../src/minigames/memoria-floresta/index.js';
@@ -59,17 +61,66 @@ test('Match-3 Arcade usa tres metas cumulativas e resultado sem mover o tabuleir
   assert.equal(result.stats.pontuacao, 200);
 });
 
-test('Memoria Arcade exige todos os pares e aplica bonus pelo tempo restante', () => {
+test('Match-3 exige 12 movimentos validos depois de completar as metas', () => {
+  let result = null;
+  const profile = getProfile('ocean-match3', 'arcade');
+  const game = new OceanMatch3(container, value => { result = value; }, { mode: 'arcade', params: profile });
+  game._stageIndex = profile.difficulty.stages.length - 1;
+  game.targetCombinations = profile.difficulty.stages.at(-1).target;
+  game.combinations = game.targetCombinations;
+  game._targetReached = true;
+  game.validSwapCount = 11;
+  assert.equal(game._completeArcadeIfReady(), false);
+  assert.equal(result, null, 'nao encerra antes do minimo');
+  game.validSwapCount = 12;
+  assert.equal(game._completeArcadeIfReady(), true);
+  assert.equal(result.venceu, true);
+  assert.equal(result.stats.movimentos, 12);
+});
+
+test('Match-3 Board nao recebe minimo de movimentos e cascata pontua integralmente', () => {
+  const board = new OceanMatch3(container, () => {}, { mode: 'board' });
+  assert.equal(board.params, null);
+  assert.equal(board._getMinMovesToWin(), 0);
+
+  const arcade = new OceanMatch3(container, () => {}, {
+    mode: 'arcade', params: getProfile('ocean-match3', 'arcade')
+  });
+  arcade.cascadeCycles = 3;
+  arcade.grid = [[{ type: 'fish' }, { type: 'fish' }, { type: 'fish' }]];
+  arcade._removeMatches({ groups: [{}, {}], cells: [] });
+  assert.equal(arcade.score, 80, '2 grupos x 10 pontos x multiplicador 4');
+  assert.equal(arcade.maxMultiplicador, 4);
+});
+
+test('Memoria Arcade usa 8 pares sorteados de catalogo maior e aplica bonus', () => {
   let result;
   const game = new MemoryGame(container, value => { result = value; }, {
     mode: 'arcade', params: getProfile('memory-forest', 'arcade')
   });
-  game._matchedPairs = 6;
+  const deck = game._createDeck();
+  assert.ok(PAIR_KEYS.length >= 14);
+  assert.equal(game._selectedPairKeys.length, 8);
+  assert.equal(new Set(game._selectedPairKeys).size, 8);
+  assert.equal(deck.length, 16);
+  for (const key of game._selectedPairKeys) {
+    assert.equal(deck.filter(item => item === key).length, 2, `${key} aparece duas vezes`);
+  }
+  game._matchedPairs = 8;
   game._timeLeft = 12;
   game._endGame();
   assert.equal(result.venceu, true);
   assert.equal(result.boardDelta, 0);
-  assert.equal(result.stats.pontuacao, 720);
+  assert.equal(result.stats.pontuacao, 920);
+  assert.equal(result.stats.totalPares, undefined, 'resultado Arcade mantem stats curtas');
+});
+
+test('Memoria Board preserva os 6 pares oficiais e 12 cartas', () => {
+  const board = new MemoryGame(container, () => {}, { mode: 'board' });
+  const deck = board._createDeck();
+  assert.equal(board._pairCount, 6);
+  assert.equal(deck.length, 12);
+  assert.deepEqual(new Set(board._selectedPairKeys), new Set(BOARD_PAIR_KEYS));
 });
 
 test('Dragoes Arcade progride por estagios e acumula score por tempo', () => {
@@ -93,6 +144,20 @@ test('create conecta o contexto Arcade sem alterar a configuracao de topo', () =
     assert.equal(config.rewards.successBoardDelta, 3);
     assert.notEqual(config.profiles.arcade.presentation.title, config.profiles.board.presentation.title);
   }
+});
+
+test('card final compartilhado preserva retorno, scroll e contexto Board', () => {
+  const html = fs.readFileSync(new URL('../src/index.html', import.meta.url), 'utf8');
+  const css = fs.readFileSync(new URL('../src/style.css', import.meta.url), 'utf8');
+  const host = fs.readFileSync(new URL('../src/minigames/engine/minigame-host.js', import.meta.url), 'utf8');
+  assert.match(html, /id="minigame-result-card"/);
+  assert.match(html, /id="minigame-card-btn"/);
+  assert.match(css, /\.minigame-result-card[\s\S]*?overflow-y:\s*auto/);
+  assert.match(css, /max-height:\s*calc\(100dvh/);
+  assert.match(css, /env\(safe-area-inset-bottom\)/);
+  assert.match(host, /card\.scrollTop\s*=\s*0/);
+  assert.match(host, /cardBtn\.scrollIntoView/);
+  assert.match(host, /buttonLabel:\s*'Voltar ao tabuleiro'/);
 });
 
 console.log(`\n${passed} testes passaram`);

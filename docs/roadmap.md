@@ -3,8 +3,8 @@
 ### v0.45.0-preview — Sprint 5: Perfis Arcade dos minigames ✅
 
 - [x] Meteoro Arcade com sobrevivência infinita, score, dificuldade progressiva e recordes
-- [x] Match-3 Arcade com três estágios, score por combinações/cascatas e recordes
-- [x] Memória Arcade com meta dos seis pares, limite próprio, score e recordes
+- [x] Match-3 Arcade com três estágios, score por combinações/cascatas, proteção de 12 jogadas válidas e recordes
+- [x] Memória Arcade com meta dos oito pares sorteados de catálogo maior, limite próprio, score e recordes
 - [x] Dragões Arcade com sobrevivência por escudos, dificuldade progressiva, score e recordes
 - [x] Comportamento dos quatro minigames no tabuleiro preservado
 - [x] Testes de profiles e contratos Arcade atualizados

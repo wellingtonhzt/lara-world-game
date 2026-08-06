@@ -1,22 +1,55 @@
-import { getMinigameStats, getWinRate, formatDurationMs } from './arcade-stats.js';
+import { getMinigameStats } from './arcade-stats.js';
 
 function escapeHtml(str) {
   if (typeof str !== 'string') return '';
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-function renderStatsHtml(mg) {
-  const winRate = getWinRate(mg._id);
-  const avgTime = mg.partidas > 0 ? Math.round(mg.tempoTotalJogado / mg.partidas) : 0;
-  const bestScore = mg.records && typeof mg.records.pontuacao === 'number' ? mg.records.pontuacao : null;
-  return `
-    <span class="arcade-stat">🎯 ${mg.partidas} jogos</span>
-    <span class="arcade-stat">🏆 ${mg.vitorias} vitórias</span>
-    <span class="arcade-stat">📈 ${winRate !== null ? winRate + '%' : '--'}</span>
-    <span class="arcade-stat">🔥 ${mg.sequenciaMaxima} melhor sequência</span>
-    <span class="arcade-stat">⏱ ${formatDurationMs(avgTime)}</span>
-    ${bestScore !== null ? `<span class="arcade-stat">🏅 ${bestScore} pts</span>` : ''}
-  `;
+const CARD_METRICS = Object.freeze({
+  'dino-runner': [
+    ['pontuacao', '🏅', value => `${value} pts`],
+    ['tempo', '⏱', value => formatSeconds(value)],
+    ['obstaculosDesviados', '🪨', value => `${value} desviados`]
+  ],
+  'meteor-game': [
+    ['pontuacao', '🏅', value => `${value} pts`],
+    ['tempo', '⏱', value => formatSeconds(value)],
+    ['meteorosDesviados', '☄️', value => `${value} desviados`]
+  ],
+  'ocean-match3': [
+    ['pontuacao', '🏅', value => `${value} pts`],
+    ['multiplicadorMax', '✨', value => `x${value} combo`],
+    ['metasConcluidas', '🎯', value => `${value} metas`]
+  ],
+  'memory-forest': [
+    ['pontuacao', '🏅', value => `${value} pts`],
+    ['tempo', '⏱', value => `${formatSeconds(value)} restante`],
+    ['paresEncontrados', '🧩', value => `${value} pares`]
+  ],
+  'ataque-dragoes': [
+    ['pontuacao', '🏅', value => `${value} pts`],
+    ['tempo', '⏱', value => formatSeconds(value)],
+    ['acertos', '🐉', value => `${value} afastados`]
+  ]
+});
+
+function formatSeconds(value) {
+  const seconds = Math.max(0, Math.round(value));
+  if (seconds < 60) return `${seconds}s`;
+  return `${Math.floor(seconds / 60)}m ${seconds % 60}s`;
+}
+
+export function renderStatsHtml(mg, minigameId) {
+  const partidas = Number.isFinite(mg?.partidas) ? Math.max(0, mg.partidas) : 0;
+  const records = mg?.records && typeof mg.records === 'object' ? mg.records : {};
+  const metrics = CARD_METRICS[minigameId] || [];
+  const rendered = metrics.flatMap(([key, icon, formatter]) => {
+    const value = records[key];
+    return typeof value === 'number' && Number.isFinite(value)
+      ? [`<span class="arcade-stat">${icon} ${formatter(value)}</span>`]
+      : [];
+  });
+  return [`<span class="arcade-stat">🎮 ${partidas} partidas</span>`, ...rendered].join('');
 }
 
 export function createMinigameCard(minigameId, config, onSelect) {
@@ -24,7 +57,6 @@ export function createMinigameCard(minigameId, config, onSelect) {
   const name = escapeHtml(config.name || minigameId);
   const description = escapeHtml(config.description || '');
   const mg = getMinigameStats(minigameId);
-  mg._id = minigameId;
 
   const card = document.createElement('button');
   card.className = 'arcade-card';
@@ -35,7 +67,7 @@ export function createMinigameCard(minigameId, config, onSelect) {
     <div class="arcade-card-icon">${icon}</div>
     <div class="arcade-card-name">${name}</div>
     <div class="arcade-card-description">${description}</div>
-    <div class="arcade-card-stats">${renderStatsHtml(mg)}</div>
+    <div class="arcade-card-stats">${renderStatsHtml(mg, minigameId)}</div>
   `;
 
   card.addEventListener('click', () => {
@@ -47,8 +79,7 @@ export function createMinigameCard(minigameId, config, onSelect) {
 
 export function updateCardStats(card, minigameId) {
   const mg = getMinigameStats(minigameId);
-  mg._id = minigameId;
   const statsEl = card.querySelector('.arcade-card-stats');
   if (!statsEl) return;
-  statsEl.innerHTML = renderStatsHtml(mg);
+  statsEl.innerHTML = renderStatsHtml(mg, minigameId);
 }

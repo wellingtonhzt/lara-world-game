@@ -84,8 +84,8 @@ As ações da partida são narradas por um overlay temporário sobre o tabuleiro
 ### Perfis Arcade dos minigames ✅
 
 - **Meteoro**: sobrevivência infinita com dificuldade progressiva e pontuação por tempo e meteoros desviados
-- **Match-3**: três estágios cumulativos, pontuação por combinações e multiplicador de cascata
-- **Memória**: encontre os seis pares em 45 segundos e receba bônus pelo tempo restante
+- **Match-3**: três estágios cumulativos, pontuação por combinações, multiplicador de cascata e proteção contra conclusão precoce (12 jogadas válidas)
+- **Memória**: encontre os oito pares sorteados de um catálogo de 15 pares em 45 segundos e receba bônus pelo tempo restante
 - **Dragões**: proteja os três escudos pelo maior tempo possível em quatro estágios de dificuldade
 - Os modos do tabuleiro continuam com as regras e recompensas anteriores
 - **Tabuleiro intocado**: o modo tabuleiro continua com 30s, objetivo de sobreviver, bônus de 20s e fluxo de retorno idênticos à versão anterior

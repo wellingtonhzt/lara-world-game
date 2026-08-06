@@ -55,6 +55,7 @@ const OCEAN_MATCH3_BASE = {
 
 const OCEAN_MATCH3_ARCADE_PROFILE = {
   hasTimeLimit: false,
+  minMovesToWin: 12,
   score: {
     perCombo: 10
   },
@@ -76,6 +77,8 @@ const OCEAN_MATCH3_ARCADE_PROFILE = {
     { key: 'pontuacao', label: 'Pontua\u00E7\u00E3o', format: 'number', recordLabel: 'Melhor pontua\u00E7\u00E3o' },
     { key: 'combinacoes', label: 'Combina\u00E7\u00F5es', format: 'number', recordLabel: 'Recorde de combina\u00E7\u00F5es' },
     { key: 'cascatas', label: 'Cascatas', format: 'number', recordLabel: 'Recorde de cascatas' },
+    { key: 'multiplicadorMax', label: 'Maior multiplicador', format: 'multiplier', recordLabel: 'Recorde de multiplicador' },
+    { key: 'metasConcluidas', label: 'Metas concluídas', format: 'number', recordLabel: 'Recorde de metas' },
     { key: 'tempo', label: 'Tempo', format: 'seconds', recordLabel: 'Recorde de tempo' }
   ]
 };

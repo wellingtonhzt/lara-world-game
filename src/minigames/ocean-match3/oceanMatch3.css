@@ -191,6 +191,17 @@
   display: none !important;
 }
 
+.ocean-match3-arcade-status {
+  margin: 4px auto 8px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: rgba(255, 215, 0, 0.14);
+  color: #fff3a0;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-align: center;
+}
+
 .ocean-match3-debug-btns {
   display: flex;
   flex-direction: column;

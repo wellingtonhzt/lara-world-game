@@ -19,6 +19,27 @@ function createEmptyGameStats() {
   };
 }
 
+function normalizeCounter(value) {
+  return typeof value === 'number' && Number.isFinite(value) && value >= 0 ? value : 0;
+}
+
+function normalizeGameStats(value) {
+  const source = value && typeof value === 'object' ? value : {};
+  return {
+    ...createEmptyGameStats(),
+    ...source,
+    partidas: normalizeCounter(source.partidas),
+    vitorias: normalizeCounter(source.vitorias),
+    derrotas: normalizeCounter(source.derrotas),
+    sequenciaAtual: normalizeCounter(source.sequenciaAtual),
+    sequenciaMaxima: normalizeCounter(source.sequenciaMaxima),
+    tempoTotalJogado: normalizeCounter(source.tempoTotalJogado),
+    records: source.records && typeof source.records === 'object' && !Array.isArray(source.records)
+      ? { ...source.records }
+      : {},
+  };
+}
+
 function safeResult(result) {
   if (!result || typeof result !== 'object') return null;
   return {
@@ -40,11 +61,7 @@ export function loadStats() {
       parsed.games = {};
     }
     for (const gameId of Object.keys(parsed.games)) {
-      const mg = parsed.games[gameId];
-      if (!mg || typeof mg !== 'object') continue;
-      if (!mg.records || typeof mg.records !== 'object') {
-        mg.records = {};
-      }
+      parsed.games[gameId] = normalizeGameStats(parsed.games[gameId]);
     }
     return parsed;
   } catch {

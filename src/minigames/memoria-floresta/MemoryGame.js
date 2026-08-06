@@ -1,4 +1,4 @@
-import { PAIR_ASSETS, PAIR_KEYS, CARD_BACK_URL, CARD_BACK_EMOJI } from './memoryAssets.js';
+import { PAIR_ASSETS, PAIR_KEYS, BOARD_PAIR_KEYS, CARD_BACK_URL, CARD_BACK_EMOJI } from './memoryAssets.js';
 
 const TIME_LIMIT = 30;
 const PAIRS_TOTAL = 6;
@@ -18,6 +18,10 @@ export class MemoryGame {
       ? Number(this.params.timeLimit)
       : TIME_LIMIT;
     this._timeLeft = this._timeLimit;
+    this._pairCount = this.mode === 'arcade'
+      ? Math.min(PAIR_KEYS.length, Math.max(1, Number(this.params?.pairCount) || PAIRS_TOTAL))
+      : PAIRS_TOTAL;
+    this._selectedPairKeys = [];
     this._completed = false;
     this._started = false;
     this._destroyed = false;
@@ -91,6 +95,10 @@ export class MemoryGame {
 
   _preloadAssets() {
     for (const key of PAIR_KEYS) {
+      if (!PAIR_ASSETS[key].url) {
+        this._assetReady[key] = false;
+        continue;
+      }
       const img = new Image();
       img.onload = () => {
         const valid = img.complete && img.naturalWidth > 0 && img.naturalHeight > 0;
@@ -115,6 +123,7 @@ export class MemoryGame {
     if (!this._boardEl) return;
     const targets = this._boardEl.querySelectorAll(`.mem-card[data-pair="${pairKey}"] .mem-card-back`);
     targets.forEach(el => {
+      if (!PAIR_ASSETS[pairKey].url) return;
       el.style.backgroundImage = `url(${PAIR_ASSETS[pairKey].url})`;
       el.style.backgroundSize = 'contain';
       el.style.backgroundRepeat = 'no-repeat';
@@ -158,10 +167,20 @@ export class MemoryGame {
     return arr;
   }
 
+  _selectPairKeys() {
+    const pairPool = this.mode === 'arcade' ? [...PAIR_KEYS] : [...BOARD_PAIR_KEYS];
+    return this._shuffle(pairPool).slice(0, this._pairCount);
+  }
+
+  _createDeck() {
+    this._selectedPairKeys = this._selectPairKeys();
+    return this._shuffle([...this._selectedPairKeys, ...this._selectedPairKeys]);
+  }
+
   _buildBoard() {
     this._removeGameRoot();
 
-    const deck = this._shuffle([...PAIR_KEYS, ...PAIR_KEYS]);
+    const deck = this._createDeck();
 
     this._rootEl = document.createElement('div');
     this._rootEl.className = 'memory-game-root';
@@ -177,7 +196,7 @@ export class MemoryGame {
 
     this._pairsEl = document.createElement('div');
     this._pairsEl.className = 'mem-pairs';
-    this._pairsEl.textContent = `Pares: 0/${PAIRS_TOTAL}`;
+    this._pairsEl.textContent = `Pares: 0/${this._pairCount}`;
     this._pairsEl.setAttribute('aria-label', 'Pares encontrados');
 
     this._hudEl.appendChild(this._timerEl);
@@ -211,7 +230,7 @@ export class MemoryGame {
       back.className = 'mem-card-back';
       back.textContent = asset.emoji;
 
-      if (this._assetReady[pairKey]) {
+      if (this._assetReady[pairKey] && asset.url) {
         back.style.backgroundImage = `url(${asset.url})`;
         back.style.backgroundSize = 'contain';
         back.style.backgroundRepeat = 'no-repeat';
@@ -261,13 +280,13 @@ export class MemoryGame {
         b.classList.add('matched');
         this._matchedPairs++;
         if (this._pairsEl) {
-          this._pairsEl.textContent = `Pares: ${this._matchedPairs}/${PAIRS_TOTAL}`;
+          this._pairsEl.textContent = `Pares: ${this._matchedPairs}/${this._pairCount}`;
         }
         this._flipped = [];
         this._locked = false;
 
         const victoryPairs = this.mode === 'arcade'
-          ? (Number(this.params?.difficulty?.victoryPairs) || PAIRS_TOTAL)
+          ? (Number(this.params?.difficulty?.victoryPairs) || this._pairCount)
           : PAIRS_TOTAL;
         if (this._matchedPairs >= victoryPairs) {
           this._endGame();
@@ -310,9 +329,9 @@ export class MemoryGame {
     this._locked = false;
 
     const paresEncontrados = this._matchedPairs;
-    const percentual = Math.round((paresEncontrados / PAIRS_TOTAL) * 100);
+    const percentual = Math.round((paresEncontrados / this._pairCount) * 100);
     const objetivo = this.mode === 'arcade'
-      ? (Number(this.params?.difficulty?.victoryPairs) || PAIRS_TOTAL)
+      ? (Number(this.params?.difficulty?.victoryPairs) || this._pairCount)
       : PAIRS_TOTAL;
     const venceu = paresEncontrados >= (this.mode === 'arcade' ? objetivo : VICTORY_THRESHOLD);
 
@@ -341,7 +360,7 @@ export class MemoryGame {
         motivo: venceu ? 'pares-suficientes' : 'tempo-esgotado',
         stats: {
           paresEncontrados,
-          totalPares: PAIRS_TOTAL,
+          totalPares: this._pairCount,
           percentual,
         },
       });

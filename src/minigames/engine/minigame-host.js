@@ -122,6 +122,7 @@ export function launchMinigameHost(id, options = {}) {
     }
 
     function formatArcadeStat(value, format) {
+      if (format === 'multiplier') return `x${value}`;
       if (format === 'seconds') {
         const seconds = Math.round(value);
         if (seconds < 60) return `${seconds}s`;
@@ -185,6 +186,9 @@ export function launchMinigameHost(id, options = {}) {
         cardDesc.textContent = pres.failureMessage || '';
       }
       card.classList.remove('hidden');
+      card.scrollTop = 0;
+      const cardContent = card.querySelector('.minigame-card-content');
+      if (cardContent) cardContent.scrollTop = 0;
     }
 
     function startReturnCountdown(result) {
@@ -193,6 +197,10 @@ export function launchMinigameHost(id, options = {}) {
       countdownEl.textContent = ret.countdownLabel(count);
       countdownEl.classList.remove('hidden');
       cardBtn.textContent = ret.buttonLabel;
+      requestAnimationFrame(() => {
+        cardBtn.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+        cardBtn.focus({ preventScroll: true });
+      });
       cardBtn.onclick = () => {
         if (countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
         countdownEl.classList.add('hidden');

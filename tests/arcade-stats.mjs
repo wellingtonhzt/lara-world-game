@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { renderStatsHtml } from '../src/arcade/arcade-card.js';
 
 const STORE = {};
 globalThis.localStorage = {
@@ -112,9 +113,57 @@ test('dados antigos sem records sao normalizados no loadStats', () => {
   });
   const stats = loadStats();
   assert.deepEqual(stats.games['dino-runner'].records, {});
+  assert.equal(stats.games['dino-runner'].vitorias, 0);
+  assert.equal(stats.games['dino-runner'].tempoTotalJogado, 0);
   const mg = getMinigameStats('dino-runner');
   assert.equal(mg.partidas, 5);
   assert.deepEqual(mg.records, {});
+});
+
+test('registro novo sobre schema antigo nao produz NaN', () => {
+  clearStore();
+  STORE['lara-world-arcade-stats'] = JSON.stringify({
+    version: 1,
+    games: { 'memory-forest': { partidas: 2 } },
+  });
+  recordGame('memory-forest', { venceu: true, stats: { paresEncontrados: 8 } }, 12000);
+  const mg = getMinigameStats('memory-forest');
+  assert.equal(mg.partidas, 3);
+  assert.equal(mg.vitorias, 1);
+  assert.equal(mg.sequenciaAtual, 1);
+  assert.equal(mg.records.paresEncontrados, 8);
+  assert.ok(Number.isFinite(mg.tempoTotalJogado));
+});
+
+test('cards carregam recordes existentes sem undefined ou NaN', () => {
+  const html = renderStatsHtml({
+    partidas: 4,
+    records: { pontuacao: 900, tempo: 42, meteorosDesviados: 18 }
+  }, 'meteor-game');
+  assert.match(html, /4 partidas/);
+  assert.match(html, /900 pts/);
+  assert.match(html, /42s/);
+  assert.match(html, /18 desviados/);
+  assert.doesNotMatch(html, /undefined|NaN/);
+});
+
+test('card atualizado reflete imediatamente os records gravados', () => {
+  clearStore();
+  recordGame('ocean-match3', {
+    venceu: true,
+    stats: { pontuacao: 640, multiplicadorMax: 4, metasConcluidas: 3 }
+  }, 30000);
+  const html = renderStatsHtml(getMinigameStats('ocean-match3'), 'ocean-match3');
+  assert.match(html, /1 partidas/);
+  assert.match(html, /640 pts/);
+  assert.match(html, /x4 combo/);
+  assert.match(html, /3 metas/);
+});
+
+test('card com schema antigo e metricas ausentes usa defaults seguros', () => {
+  const html = renderStatsHtml({ partidas: 2, records: {} }, 'memory-forest');
+  assert.match(html, /2 partidas/);
+  assert.doesNotMatch(html, /undefined|NaN|null/);
 });
 
 test('formatDurationMs formata segundos e minutos', () => {

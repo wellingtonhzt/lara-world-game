@@ -64,11 +64,12 @@ const MEMORY_FOREST_BASE = {
 const MEMORY_FOREST_ARCADE_PROFILE = {
   hasTimeLimit: true,
   timeLimit: 45,
+  pairCount: 8,
   score: { perPair: 100, timeBonusPerSecond: 10 },
-  difficulty: { victoryPairs: 6 },
+  difficulty: { victoryPairs: 8 },
   presentation: {
     title: 'Memória da Floresta Arcade',
-    instruction: 'Encontre todos os 6 pares antes do tempo acabar e ganhe pontos pelo tempo restante!',
+    instruction: 'Encontre todos os 8 pares antes do tempo acabar e ganhe pontos pelo tempo restante!',
     successTitle: 'Floresta memorizada!',
     successMessage: 'Você encontrou todos os pares!',
     failureTitle: 'Tempo esgotado',

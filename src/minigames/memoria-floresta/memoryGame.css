@@ -53,6 +53,18 @@
   min-height: 0;
 }
 
+.memory-game-root:has(.mem-card:nth-child(13)) .mem-board {
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  width: min(440px, 92vw, calc(100dvh - 110px));
+  aspect-ratio: 1 / 1;
+  flex: 0 1 auto;
+}
+
+.memory-game-root:has(.mem-card:nth-child(13)) .mem-card {
+  aspect-ratio: auto;
+}
+
 /* ── Carta ── */
 
 .mem-card {
@@ -140,6 +152,8 @@
   .mem-card {
     aspect-ratio: 3 / 4;
   }
+
+  .memory-game-root:has(.mem-card:nth-child(13)) .mem-card { aspect-ratio: auto; }
 }
 
 /* ═══════════════════════════════════════
@@ -199,6 +213,12 @@
   .mem-board {
     width: min(100%, 92vw);
     gap: 6px;
+  }
+
+  .memory-game-root:has(.mem-card:nth-child(13)) .mem-board {
+    width: min(100%, 94vw, calc(100dvh - 110px));
+    max-height: calc(100dvh - 110px);
+    gap: 5px;
   }
 
   .mem-card-front,

@@ -23,6 +23,7 @@ export class OceanMatch3 {
     this.mode = options.mode === 'arcade' ? 'arcade' : 'board';
     this.params = options.mode === 'arcade' ? (options.params || null) : null;
     this.score = 0;
+    this.maxMultiplicador = 0;
     this._stageIndex = 0;
     this.elapsed = 0;
     this._completed = false;
@@ -74,6 +75,7 @@ export class OceanMatch3 {
     this._totalCascadeCycles = 0;
     this.lastMatches = { groups: [], cells: [], hasMatches: false };
     this.score = 0;
+    this.maxMultiplicador = 0;
     this._stageIndex = 0;
     this.elapsed = 0;
     this.targetCombinations = 5;
@@ -192,6 +194,7 @@ export class OceanMatch3 {
         <span class="ocean-match3-hud-timer">Tempo: ${timerLabel}</span>
       </div>
       <div class="ocean-match3-progress">${this._generateProgressHTML()}</div>
+      <div class="ocean-match3-arcade-status ocean-match3-hidden" role="status" aria-live="polite"></div>
       <div class="ocean-match3-grid"></div>
       <div class="ocean-match3-invalid-msg ocean-match3-hidden">Essa troca n\u00E3o forma combina\u00E7\u00E3o.</div>
       ${isDebug ? `
@@ -282,6 +285,15 @@ export class OceanMatch3 {
         timerEl.classList.toggle('ocean-match3-timer-urgent', this.timeRemaining <= 5);
       }
     }
+    const statusEl = (this.rootElement || this.container).querySelector('.ocean-match3-arcade-status');
+    if (statusEl) {
+      const minMoves = this._getMinMovesToWin();
+      const waitingForMoves = this.mode === 'arcade' && this._allArcadeGoalsComplete() && this.validSwapCount < minMoves;
+      statusEl.textContent = waitingForMoves
+        ? `Metas completas! Continue até ${minMoves} jogadas. (${this.validSwapCount}/${minMoves})`
+        : '';
+      statusEl.classList.toggle('ocean-match3-hidden', !waitingForMoves);
+    }
   }
 
   /* ── Target resolution ── */
@@ -326,6 +338,26 @@ export class OceanMatch3 {
     return true;
   }
 
+  _getMinMovesToWin() {
+    if (this.mode !== 'arcade') return 0;
+    return Math.max(0, Number(this.params?.minMovesToWin) || 0);
+  }
+
+  _allArcadeGoalsComplete() {
+    const stages = this._getArcadeStages();
+    return !!(stages && stages.length > 0 && this._stageIndex === stages.length - 1 && this._hasReachedTarget());
+  }
+
+  _canCompleteArcade() {
+    return this._allArcadeGoalsComplete() && this.validSwapCount >= this._getMinMovesToWin();
+  }
+
+  _completeArcadeIfReady() {
+    if (!this._canCompleteArcade()) return false;
+    this._complete(this._buildResult(true, 'arcade-completo'));
+    return true;
+  }
+
   _buildResult(venceu, motivo) {
     if (this.mode === 'arcade') {
       return {
@@ -337,6 +369,9 @@ export class OceanMatch3 {
           pontuacao: this.score,
           combinacoes: this.combinations,
           cascatas: this._totalCascadeCycles,
+          multiplicadorMax: this.maxMultiplicador,
+          metasConcluidas: this._allArcadeGoalsComplete() ? this._getArcadeStages().length : this._stageIndex,
+          movimentos: this.validSwapCount,
           tempo: Math.round(this.elapsed)
         }
       };
@@ -516,6 +551,7 @@ export class OceanMatch3 {
     if (this.mode === 'arcade') {
       const perCombo = this.params && this.params.score ? (Number(this.params.score.perCombo) || 0) : 0;
       const multiplier = Math.min(this.cascadeCycles + 1, 4);
+      this.maxMultiplicador = Math.max(this.maxMultiplicador, multiplier);
       this.score += matchResult.groups.length * perCombo * multiplier;
     }
   }
@@ -580,8 +616,8 @@ export class OceanMatch3 {
       if (this.mode === 'arcade') {
         if (this._hasReachedTarget()) {
           if (this._advanceArcadeStage()) {
-            this._complete(this._buildResult(true, 'arcade-completo'));
-            return;
+            this._targetReached = true;
+            if (this._completeArcadeIfReady()) return;
           }
           this._updateHUD();
         }
@@ -771,6 +807,7 @@ export class OceanMatch3 {
     this._totalCascadeCycles = 0;
     this.lastMatches = { groups: [], cells: [], hasMatches: false };
     this.score = 0;
+    this.maxMultiplicador = 0;
     this._stageIndex = 0;
     this.elapsed = 0;
     this.targetCombinations = 5;
@@ -932,6 +969,7 @@ export class OceanMatch3 {
     this.cascadeCycles = 0;
     this._totalCascadeCycles = 0;
     this.score = 0;
+    this.maxMultiplicador = 0;
     this._stageIndex = 0;
     this.elapsed = 0;
     this.lastMatches = { groups: [], cells: [], hasMatches: false };

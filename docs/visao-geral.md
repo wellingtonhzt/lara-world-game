@@ -20,7 +20,7 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 
 ### v0.45.0-preview (Atual) — Perfis Arcade dos minigames ✅
 
-Meteoro, Match-3, Memória e Dragões passam a ter `profiles.arcade` próprios, completando os cinco minigames do Arcade. Meteoro oferece sobrevivência infinita e dificuldade progressiva; Match-3 usa três metas cumulativas e multiplicador de cascata; Memória exige os seis pares em 45 segundos; Dragões continua até a queda dos três escudos. Todos reportam pontuação e estatísticas para recordes. Os quatro perfis `board` mantêm duração, objetivos e recompensas anteriores.
+Meteoro, Match-3, Memória e Dragões passam a ter `profiles.arcade` próprios, completando os cinco minigames do Arcade. Meteoro oferece sobrevivência infinita e dificuldade progressiva; Match-3 usa três metas cumulativas, multiplicador de cascata e proteção contra conclusão precoce (12 jogadas válidas); Memória exige os oito pares sorteados de um catálogo de 15 pares em 45 segundos; Dragões continua até a queda dos três escudos. Todos reportam pontuação e estatísticas para recordes, exibidos também nos cards da galeria. Os quatro perfis `board` mantêm duração, objetivos e recompensas anteriores.
 
 ### v0.44.0-preview — Dino Runner com perfil Arcade ✅
 

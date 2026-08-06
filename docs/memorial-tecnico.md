@@ -9,13 +9,19 @@ Completar a arquitetura iniciada pelo Dino Runner com perfis Arcade próprios pa
 ### Comportamento Arcade
 
 - Meteoro: sobrevivência infinita, cinco estágios, pontos por segundo e meteoro desviado
-- Match-3: três metas cumulativas, pontos por combinação e multiplicador de cascata
-- Memória: seis pares em 45 segundos, pontos por par e bônus de tempo
+- Match-3: três metas cumulativas, pontos por combinação e multiplicador de cascata, com proteção contra conclusão precoce (12 jogadas válidas após cumprir as metas)
+- Memória: oito pares sorteados de um catálogo de 15 em 45 segundos, pontos por par e bônus de tempo
 - Dragões: sobrevivência até perder três escudos, quatro estágios e pontos por tempo/acerto
+
+### Ajustes finais
+
+- Métricas nos cards da galeria: Match-3 expõe `multiplicadorMax`/`metasConcluidas` e Memória `paresEncontrados`/`tempo`, renderizadas por `arcade-card.js`; os cards são atualizados (`refreshArcadeCards`) ao entrar no Arcade, ao voltar de uma partida e após gravar novo recorde
+- Card final compartilhado (`minigame-host.js` + `style.css`): `scrollTop` zerado ao abrir, botão de retorno focado com `scrollIntoView` e ajustes responsivos (`overflow-y`, `100dvh`, `safe-area-inset-bottom`)
+- Normalização retrocompatível em `arcade-stats.js`: `normalizeCounter`/`normalizeGameStats` aplicados por jogo no `loadStats`, preservando dados antigos sem `records` e evitando `NaN`/`undefined`
 
 ### Arquivos e validação
 
-Foram alterados os pares `index.js`/classe dos quatro minigames, `scripts/test-minigame-profiles.mjs` e a nova cobertura `tests/minigames-arcade.mjs`, além dos arquivos obrigatórios de versão e documentação. A validação inclui `check-version`, `diff --check`, testes do engine/profiles/Arcade e Question Engine. Nenhum arquivo de gameplay do Dino Runner ou fluxo do tabuleiro foi alterado nesta sprint.
+Foram alterados os pares `index.js`/classe de Match-3 (`OceanMatch3.js`) e Memória (`MemoryGame.js` + `memoryAssets.js`), o host compartilhado `minigame-host.js`, os módulos do Arcade (`arcade-card.js`, `arcade-stats.js`), os estilos (`style.css`, `memoryGame.css`, `oceanMatch3.css`) e as coberturas `tests/arcade-stats.mjs` e `tests/minigames-arcade.mjs`, além dos arquivos obrigatórios de versão e documentação. A validação inclui `check-version`, `diff --check`, testes do engine/profiles/Arcade, Dino Runner e Question Engine. Nenhum arquivo de gameplay do Dino Runner ou fluxo do tabuleiro foi alterado nesta sprint.
 
 ---
 

@@ -54,8 +54,8 @@ O **Modo Arcade** permite jogar qualquer minigame registrado de forma avulsa, se
 Todos os minigames registrados no `MinigameRegistry` estão disponíveis:
 - 🚀 **Buraco de Minhoca** (MeteoroGame) — sobreviva sem limite, desviando de meteoros em cinco estágios
 - 🦕 **Dino Runner** — sobreviva sem limite, pulando obstáculos progressivamente mais rápidos
-- 🧩 **Jogo da Memória da Floresta** — encontre os seis pares em 45 segundos
-- 🌊 **Tesouro das Marés** (Ocean Match-3) — complete três metas cumulativas de combinações
+- 🧩 **Jogo da Memória da Floresta** — encontre os oito pares sorteados de um catálogo maior em 45 segundos
+- 🌊 **Tesouro das Marés** (Ocean Match-3) — complete três metas cumulativas de combinações e 12 jogadas válidas ao final
 - 🐉 **Ataque dos Dragões** — proteja os três escudos pelo maior tempo possível
 
 Essas regras são exclusivas do Arcade. Nos quatro minigames migrados nesta entrega, o modo Board mantém seus limites, metas e recompensas anteriores.

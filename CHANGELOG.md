@@ -5,10 +5,13 @@
 ### Adicionado
 - **Perfis Arcade dos quatro minigames restantes**: Meteoro, Match-3, Memória e Dragões agora possuem regras, apresentação, pontuação e estatísticas próprias no `profiles.arcade`
 - **Meteoro Arcade**: sobrevivência sem limite de tempo, cinco estágios de dificuldade e pontos por segundo e meteoro desviado
-- **Match-3 Arcade**: três metas cumulativas, pontos por combinação com multiplicador de cascata e cronômetro crescente
-- **Memória Arcade**: desafio de encontrar os seis pares em 45 segundos, com pontos por par e bônus pelo tempo restante
+- **Match-3 Arcade**: três metas cumulativas, pontos por combinação com multiplicador de cascata, cronômetro crescente e proteção contra conclusão precoce (exige 12 jogadas válidas após cumprir as metas)
+- **Memória Arcade**: desafio de encontrar os oito pares sorteados de um catálogo de 15 pares em 45 segundos, com pontos por par e bônus pelo tempo restante
 - **Dragões Arcade**: defesa infinita até a queda dos três escudos, quatro estágios progressivos e pontos por tempo e acerto
 - **Testes**: cobertura dos contratos Arcade dos quatro minigames em `tests/minigames-arcade.mjs`; testes de profiles atualizados para os cinco perfis próprios
+- **Métricas nos cards da galeria**: cada card exibe os recordes do seu jogo (multiplicador máximo e metas no Match-3; pares encontrados e tempo restante na Memória) e atualiza ao entrar no Arcade, voltar de uma partida e gravar novo recorde
+- **Card final compartilhado**: melhorias responsivas — `scrollTop` zerado ao abrir e botão de retorno focado com `scrollIntoView`
+- **Normalização retrocompatível**: `arcade-stats.js` normaliza contadores e `records` por jogo no `loadStats`, preservando dados antigos sem gerar `NaN`/`undefined`
 
 ### Alterado
 - **Versionamento**: `APP_VERSION`, cache-busting de CSS/JS, rodapé e documentação sincronizados em `v0.45.0-preview`
