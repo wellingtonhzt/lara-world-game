@@ -18,7 +18,11 @@ O tabuleiro é uma trilha serpentina com 20 casas posicionadas em snake pattern 
 
 ## Principais Funcionalidades
 
-### v0.45.0-preview (Atual) — Perfis Arcade dos minigames ✅
+### v0.46.0-preview (Atual) — Quiz Lara World (6º minigame do Arcade) ✅
+
+O **Quiz Lara World** se torna o sexto minigame do Arcade, um quiz pedagógico que sorteia as 228 perguntas ativas do Question Engine (níveis 1 a 3) — sem banco próprio e sem alterar o motor de perguntas. Oferece três modos com vitória por acertos mínimos: Rápido (5 perguntas, 4 acertos), Normal (10, 7 — padrão) e Desafio (15, 10), todos sem limite de tempo. O jogador escolhe entre "Misturar tudo" ou uma das 9 categorias temáticas; a sessão nunca repete pergunta na partida e, ao esgotar o pool, reinicia pela mesma categoria (nunca troca o tema). A pontuação soma +100 por acerto com bônus de sequência limitado a +100, e o resultado (`boardDelta: 0`) alimenta recordes de score, precisão e melhor sequência em `arcade-stats.js`, exibidos também no card da galeria. O quiz roda isolado, com navegação por teclado (1/2/3, Enter), `aria-live`, foco visível e identidade visual laranja própria.
+
+### v0.45.0-preview — Perfis Arcade dos minigames ✅
 
 Meteoro, Match-3, Memória e Dragões passam a ter `profiles.arcade` próprios, completando os cinco minigames do Arcade. Meteoro oferece sobrevivência infinita e dificuldade progressiva; Match-3 usa três metas cumulativas, multiplicador de cascata e proteção contra conclusão precoce (12 jogadas válidas); Memória exige os oito pares sorteados de um catálogo de 15 pares em 45 segundos; Dragões continua até a queda dos três escudos. Todos reportam pontuação e estatísticas para recordes, exibidos também nos cards da galeria. Os quatro perfis `board` mantêm duração, objetivos e recompensas anteriores.
 

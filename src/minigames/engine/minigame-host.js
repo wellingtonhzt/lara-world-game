@@ -123,6 +123,7 @@ export function launchMinigameHost(id, options = {}) {
 
     function formatArcadeStat(value, format) {
       if (format === 'multiplier') return `x${value}`;
+      if (format === 'percent') return `${value}%`;
       if (format === 'seconds') {
         const seconds = Math.round(value);
         if (seconds < 60) return `${seconds}s`;

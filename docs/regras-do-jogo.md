@@ -52,13 +52,14 @@ O **Modo Arcade** permite jogar qualquer minigame registrado de forma avulsa, se
 ### Minigames Disponíveis no Arcade
 
 Todos os minigames registrados no `MinigameRegistry` estão disponíveis:
+- 🧠 **Quiz Lara World** — responda as perguntas oficiais sem limite de tempo; escolha entre Rápido (5 perguntas, 4 acertos), Normal (10, 7) e Desafio (15, 10), em "Misturar tudo" ou em uma das 9 categorias
 - 🚀 **Buraco de Minhoca** (MeteoroGame) — sobreviva sem limite, desviando de meteoros em cinco estágios
 - 🦕 **Dino Runner** — sobreviva sem limite, pulando obstáculos progressivamente mais rápidos
 - 🧩 **Jogo da Memória da Floresta** — encontre os oito pares sorteados de um catálogo maior em 45 segundos
 - 🌊 **Tesouro das Marés** (Ocean Match-3) — complete três metas cumulativas de combinações e 12 jogadas válidas ao final
 - 🐉 **Ataque dos Dragões** — proteja os três escudos pelo maior tempo possível
 
-Essas regras são exclusivas do Arcade. Nos quatro minigames migrados nesta entrega, o modo Board mantém seus limites, metas e recompensas anteriores.
+Essas regras são exclusivas do Arcade. Nos minigames com perfil próprio, o modo Board mantém seus limites, metas e recompensas anteriores.
 
 ### Retorno
 

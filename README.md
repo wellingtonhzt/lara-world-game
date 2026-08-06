@@ -18,7 +18,8 @@
 
 | Versão | Data | Status |
 |--------|------|--------|
-| **v0.45.0-preview** | Ago/2026 | ✅ **Ativo** — Perfis Arcade dos minigames |
+| **v0.46.0-preview** | Ago/2026 | ✅ **Ativo** — Quiz Lara World (6º minigame do Arcade) |
+| v0.45.0-preview | Ago/2026 | ✅ Perfis Arcade dos minigames |
 | v0.44.0-preview | Ago/2026 | ✅ Dino Runner com perfil Arcade |
 | v0.43.0-preview | Ago/2026 | ✅ Arquitetura de Profiles para minigames |
 | v0.42.0-preview | Ago/2026 | ✅ Question Engine +100 perguntas |
@@ -71,7 +72,18 @@ As ações da partida são narradas por um overlay temporário sobre o tabuleiro
 
 ---
 
-## ✨ Funcionalidades Atuais (v0.45.0-preview)
+## ✨ Funcionalidades Atuais (v0.46.0-preview)
+
+### Quiz Lara World — 6º minigame do Arcade ✅
+
+- **Perguntas oficiais do Question Engine**: o quiz sorteia as 228 perguntas pedagógicas ativas (níveis 1 a 3), sem banco próprio e sem alterar o motor de perguntas
+- **3 modos com vitória por acertos mínimos**: Rápido (5 perguntas, 4 acertos), Normal (10, 7 — padrão) e Desafio (15, 10), sem limite de tempo
+- **10 categorias**: "Misturar tudo" (padrão) ou uma das 9 categorias temáticas (Matemática, Português, Animais, Espaço, Natureza, Dinossauros, Lógica, Cores e Formas, Conhecimentos Gerais)
+- **Pontuação e sequência**: +100 por acerto, bônus crescente por sequência de acertos (limitado a +100) e estatísticas de precisão na tela final
+- **Sem tabuleiro**: o quiz roda isolado no Arcade (`boardDelta: 0`) e registra recordes de score, precisão e melhor sequência em `arcade-stats.js`
+- **Antirrepetição e fallback**: nunca repete pergunta na partida e, ao esgotar o pool, reinicia pela mesma categoria sem trocar de tema
+- **Identidade própria**: `src/minigames/quiz-lara/` com tema laranja, teclado (1/2/3, Enter), `aria-live`, foco visível e suporte mobile
+- **Testes**: `tests/quiz-lara-arcade.mjs` (30 testes) cobrindo modos, categorias, seleção, sessão, vitória, recordes e isolamento
 
 ### Dino Runner Arcade — Modo Sobrevivência ✅
 
@@ -139,11 +151,11 @@ No **Jogo Rápido**, cada partida usa um mundo escolhido e termina com sua vitó
 
 - **Cinco novos efeitos**: movimento, avanço especial, retrocesso especial, entrada em minigame e vitória
 - **Reprodução eficiente**: buffers decodificados são reutilizados e carregamentos simultâneos do mesmo asset compartilham uma única operação
-- **Cache busting atualizado**: os assets usam URLs com `?v=v0.45.0-preview`
+- **Cache busting atualizado**: os assets usam URLs com `?v=v0.46.0-preview`
 
 ### Cache busting dos assets de áudio ✅
 
-- **Carregamento versionado**: o `AudioManager` acrescenta automaticamente `?v=v0.45.0-preview` às URLs de efeitos e músicas antes do download
+- **Carregamento versionado**: o `AudioManager` acrescenta automaticamente `?v=v0.46.0-preview` às URLs de efeitos e músicas antes do download
 - **Fonte única**: a versão vem de `APP_VERSION`; o catálogo mantém caminhos limpos e independentes da versão
 - **Cache antigo evitado**: novas versões deixam de reutilizar respostas antigas ou `404` armazenados após o deploy
 
@@ -644,7 +656,7 @@ No Modo Aventura, o fluxo parte do mapa inicial, passa por um único sorteio e p
 
 ## 📜 História do Projeto
 
-O Lara World começou como um MVP de tabuleiro simples para 1 jogador e evoluiu para multiplayer local, mundos configuráveis, minigames, Question Engine, Modo Arcade e uma identidade visual própria. A versão atual, **v0.45.0-preview**, completa os perfis Arcade próprios dos cinco minigames, com pontuação, dificuldade contextual e recordes, preservando as regras do tabuleiro. Mantém também as 228 perguntas pedagógicas do Question Engine e o Modo Aventura com pontuação acumulada, mapas responsivos e resultados por etapa. Consulte o [Changelog](CHANGELOG.md) para o histórico completo e o [Guia de Estilo](docs/ui-style-guide.md) para as diretrizes visuais oficiais.
+O Lara World começou como um MVP de tabuleiro simples para 1 jogador e evoluiu para multiplayer local, mundos configuráveis, minigames, Question Engine, Modo Arcade e uma identidade visual própria. A versão atual, **v0.46.0-preview**, adiciona o **Quiz Lara World** como sexto minigame do Arcade — quiz pedagógico com as 228 perguntas oficiais, três modos, vitória por acertos mínimos e recordes de score, precisão e sequência — preservando as regras do tabuleiro. Mantém também os perfis Arcade próprios dos minigames, as 228 perguntas pedagógicas do Question Engine e o Modo Aventura com pontuação acumulada, mapas responsivos e resultados por etapa. Consulte o [Changelog](CHANGELOG.md) para o histórico completo e o [Guia de Estilo](docs/ui-style-guide.md) para as diretrizes visuais oficiais.
 
 ---
 
@@ -703,7 +715,8 @@ docker compose down
 
 ## 🗺️ Roadmap
 
-- **v0.45.0-preview** — ✅ **Ativo** — Perfis Arcade dos minigames
+- **v0.46.0-preview** — ✅ **Ativo** — Quiz Lara World (6º minigame do Arcade)
+- **v0.45.0-preview** — ✅ Perfis Arcade dos minigames
 - **v0.44.0-preview** — ✅ Dino Runner com perfil Arcade
 - **v0.43.0-preview** — ✅ Arquitetura de Profiles para minigames
 - **v0.42.0-preview** — ✅ Question Engine +100 perguntas (228 no total)

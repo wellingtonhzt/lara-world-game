@@ -670,7 +670,7 @@ O `launchMinigameHost()` aceita campo opcional `context`:
 
 Chamadas atuais do tabuleiro em `game.js` não informam `context`, usando o padrão `'board'`. Apenas o Arcade passa `context: 'arcade'` explicitamente.
 
-### Perfis de Execução (v0.45.0-preview)
+### Perfis de Execução (v0.46.0-preview)
 
 Cada minigame registrado expõe `profiles: { board, arcade }`, isolando o comportamento do tabuleiro (`board`) do modo avulso (`arcade`). A resolução é feita em `src/minigames/engine/minigame-profiles.js`:
 
@@ -686,7 +686,17 @@ O `launchMinigameHost()` consome `getEffectiveConfig(id, context)` em vez de ler
 - `presentation` e `resultStats` — textos do card de resultado e descritores das estatísticas exibidas
 - `getEffectiveConfig` propaga `resultStats` do perfil do contexto; o host renderiza as estatísticas do resultado apenas quando `context === 'arcade'`
 
-Campos de comportamento dos minigames migrados para `profiles.board`: `botSuccessRate`, `autoReturnSeconds`, `rewards` e `botPresentation`. `presentation` e `create` permanecem no nível de topo do config. Na v0.45.0-preview, os cinco minigames possuem `profiles.arcade` próprios; a criação recebe `context` e passa `mode`/`params` somente ao modo Arcade, preservando os ramos `board`.
+Campos de comportamento dos minigames migrados para `profiles.board`: `botSuccessRate`, `autoReturnSeconds`, `rewards` e `botPresentation`. `presentation` e `create` permanecem no nível de topo do config. Na v0.46.0-preview, os seis minigames possuem `profiles.arcade` próprios; a criação recebe `context` e passa `mode`/`params` somente ao modo Arcade, preservando os ramos `board`.
+
+### Quiz Lara World (v0.46.0-preview)
+
+O **Quiz Lara World** (`src/minigames/quiz-lara/`) é o sexto minigame do Arcade e o primeiro puramente de conhecimento, sem componentes de tabuleiro:
+
+- `index.js` — `QUIZ_LARA_BASE` + `QUIZ_LARA_ARCADE_PROFILE` registrados via `registerMinigame`; o card aparece na galeria automaticamente via `listMinigames()` e o CSS próprio é injetado por `loadCSS()`
+- `quiz-config.js` — `QUIZ_MODES` (rapido 5/4, normal 10/7, desafio 15/10), `DEFAULT_MODE_ID`, `MIX_ALL_CATEGORY = '__todas__'`, `SCORE_PER_CORRECT`, `STREAK_BONUS_STEP`/`STREAK_BONUS_CAP` e `getMode()`/`streakBonus()`
+- `quiz-session.js` — `pickQuizQuestions({ mode, category, source })` delega ao `QuestionEngine.selectMany` (níveis 1–3, anti-repetição com fallback na mesma categoria via `excludeIds: []`); classe `QuizSession` resolve respostas, bloqueia resposta dupla, calcula `accuracy`/`bestStreak` e monta o resultado com `boardDelta: 0`
+- `QuizLaraGame.js` — estados INTRO (modo/categoria) e pergunta; sons `challengeOpen`/`correctAnswer`/`wrongAnswer`/`buttonClick` via `audioManager`; teclado 1/2/3 + Enter; `aria-live`; abandono reporta `motivo: 'abandonou-o-quiz'`
+- Perfil arcade: `hasTimeLimit: false`, `victory { rapido: 4, normal: 7, desafio: 10 }`, `resultStats` com `format: 'percent'` para `accuracy` (renderizado pelo host) e recordes via `arcade-stats.js`
 
 ## Motor de Mundos (v0.12.0-preview)
 

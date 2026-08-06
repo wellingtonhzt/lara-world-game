@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.46.0-preview] - 2026-08-05
+
+### Adicionado
+- **Quiz Lara World** (`quiz-lara`): sexto minigame do Arcade, quiz pedagógico que sorteia as 228 perguntas ativas do Question Engine (níveis 1 a 3), sem banco próprio e sem alterar o motor de perguntas
+- **Três modos com vitória por acertos mínimos**: Rápido (5 perguntas, 4 acertos), Normal (10, 7 — padrão) e Desafio (15, 10), sem limite de tempo (`hasTimeLimit: false`)
+- **10 categorias**: "Misturar tudo" (`__todas__`, padrão) ou uma das 9 categorias temáticas, com anti-repetição na partida e fallback que reinicia o pool **da mesma categoria** (nunca troca o tema; flag `fallbackUsado`)
+- **Pontuação e sequência**: +100 por acerto (`score.perCorrect`), bônus de sequência crescente limitado a +100 (`streakBonusStep`/`streakBonusCap`); erro não perde pontos, apenas zera a sequência
+- **Resultado no padrão Arcade**: `boardDelta: 0`, `progresso { atual, objetivo }` com `motivo: 'quiz-completo' | 'quiz-nao-concluido'` e `stats { score, correctAnswers, wrongAnswers, accuracy, bestStreak, totalQuestions, category, mode }`
+- **Recordes por minigame**: `arcade-stats.js` registra `score`, `accuracy` e `bestStreak`; card da galeria exibe 🏅 pts, 🎯 % de acerto e 🔥 melhor sequência via `CARD_METRICS['quiz-lara']`
+- **`formatArcadeStat` com formato `'percent'`** em `minigame-host.js` (renderiza `${value}%`)
+- **Sons e acessibilidade**: reutiliza `challengeOpen` (intro), `correctAnswer`/`wrongAnswer` (feedback) e `buttonClick`; navegação por teclado (1/2/3, Enter), `aria-live`, gestão de foco, bloqueio de resposta dupla, `prefers-reduced-motion` e responsivo mobile/safe-area
+- **Testes**: `tests/quiz-lara-arcade.mjs` (30 testes) cobrindo modos, categorias, seleção, sessão, vitória, stats/recordes, isolamento do tabuleiro e ausência de `GameManager`/`SessionManager`
+
+### Alterado
+- **`src/minigames/engine/loader.js`**: import do `quiz-lara` registrado — a galeria do Arcade passa a listar 6 minigames via `listMinigames()`
+- **`src/arcade/arcade-card.js`**: `CARD_METRICS['quiz-lara']` com métricas de score, precisão e melhor sequência
+- **`src/minigames/engine/minigame-host.js`**: `formatArcadeStat` suporta `'percent'`
+- **Versionamento**: `APP_VERSION`, cache-busting de CSS/JS, rodapé e documentação sincronizados em `v0.46.0-preview`
+
+### Notas
+- O Quiz roda isolado no Arcade: não usa tabuleiro, jogadores, `GameManager`, `SessionManager` nem `boardDelta`
+- Nenhum banco de perguntas, WorldConfig, minigame existente ou regra do tabuleiro foi alterado
+
 ## [0.45.0-preview] - 2026-08-05
 
 ### Adicionado

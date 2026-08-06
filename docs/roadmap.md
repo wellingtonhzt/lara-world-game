@@ -1,5 +1,20 @@
 # Roadmap Lara World
 
+### v0.46.0-preview — Sprint 6: Quiz Lara World ✅
+
+- [x] Quiz pedagógico como 6º minigame do Arcade usando as 228 perguntas ativas do Question Engine (sem banco próprio)
+- [x] Modos Rápido (5/4), Normal (10/7 — padrão) e Desafio (15/10) com vitória por acertos mínimos, sem limite de tempo
+- [x] Seleção de categoria: "Misturar tudo" ou uma das 9 categorias temáticas
+- [x] Anti-repetição na partida e fallback reiniciando o pool da mesma categoria (nunca troca o tema)
+- [x] Pontuação +100 por acerto com bônus de sequência limitado a +100
+- [x] Resultado `boardDelta: 0` no padrão Arcade e recordes de score, precisão e melhor sequência em `arcade-stats.js`
+- [x] Card da galeria com métricas (🏅 pts, 🎯 % de acerto, 🔥 melhor sequência) via `CARD_METRICS['quiz-lara']`
+- [x] `formatArcadeStat` com formato `'percent'` no host
+- [x] Sons reutilizados (`challengeOpen`, `correctAnswer`, `wrongAnswer`, `buttonClick`), teclado 1/2/3 + Enter, `aria-live` e responsividade
+- [x] Testes: `tests/quiz-lara-arcade.mjs` (30 testes) + suítes existentes sem regressões
+- [x] Tabuleiro, Question Engine e demais minigames inalterados
+- [ ] Deploy da demo e validação
+
 ### v0.45.0-preview — Sprint 5: Perfis Arcade dos minigames ✅
 
 - [x] Meteoro Arcade com sobrevivência infinita, score, dificuldade progressiva e recordes

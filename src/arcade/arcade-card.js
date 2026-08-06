@@ -30,6 +30,11 @@ const CARD_METRICS = Object.freeze({
     ['pontuacao', '🏅', value => `${value} pts`],
     ['tempo', '⏱', value => formatSeconds(value)],
     ['acertos', '🐉', value => `${value} afastados`]
+  ],
+  'quiz-lara': [
+    ['score', '🏅', value => `${value} pts`],
+    ['accuracy', '🎯', value => `${value}% de acerto`],
+    ['bestStreak', '🔥', value => `${value} de sequência`]
   ]
 });
 

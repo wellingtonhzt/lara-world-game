@@ -1,5 +1,35 @@
 # Memorial Técnico
 
+## Sprint 6 — Quiz Lara World (v0.46.0-preview)
+
+### Objetivo e decisão técnica
+
+Adicionar o **Quiz Lara World** como sexto minigame do Arcade: um quiz pedagógico de múltipla escolha que consome as 228 perguntas ativas do Question Engine, sem banco próprio, sem alterar o motor de perguntas e sem tocar nos minigames ou no tabuleiro existentes. O escopo foi ajustado em decisão do usuário: modos **5/10/15 perguntas** com vitória por **acertos mínimos 4/7/10** (80%/70%/~67%), substituindo o plano original de 20 perguntas e taxa fixa de 60% — motivos pedagógicos (sessão curta para público infantil; 15 ≈ 6–10 min).
+
+A arquitetura segue exatamente os padrões do Arcade:
+
+- **Registro**: `registerMinigame` em `src/minigames/quiz-lara/index.js` com id `quiz-lara`; a galeria passa a listar 6 minigames via `listMinigames()`, sem tocar em `arcade-screen.js`
+- **Perfil exclusivo `profiles.arcade`** (sem `profiles.board`): `hasTimeLimit: false`, `modes` (frozen), `score { perCorrect: 100, streakBonusStep: 10, streakBonusCap: 100 }`, `victory { rapido: 4, normal: 7, desafio: 10 }`, `presentation`, `rewards { 0, 0 }` e `resultStats` com `format: 'percent'`
+- **Seleção**: `pickQuizQuestions` delega a `QuestionEngine.selectMany` com `categoryWeights`, níveis 1–3 e anti-repetição; fallback reinicia o pool **da mesma categoria** (`excludeIds: []`), nunca troca o tema, e sinaliza `fallbackUsado` — decisão baseada nas contagens ativas (categoria mais fraca tem 22 perguntas, então o fallback só ocorre em borda)
+- **Resultado**: `buildResult` produz `venceu`, `boardDelta: 0`, `progresso { atual: min(acertos, minCorrect), objetivo: minCorrect }`, `motivo: 'quiz-completo' | 'quiz-nao-concluido'` e `stats { score, correctAnswers, wrongAnswers, accuracy, bestStreak, totalQuestions, category, mode }`
+- **Recordes**: `arcade-stats.js` existente acumula `score`/`accuracy`/`bestStreak`; card da galeria usa `CARD_METRICS['quiz-lara']` (🏅 pts, 🎯 % de acerto, 🔥 melhor sequência) e o host renderiza `accuracy` com o novo formato `'percent'`
+- **Isolamento**: o Quiz não referencia `GameManager`, tabuleiro, jogadores, `SessionManager` nem `boardDelta`; sons são reutilizados via `audioManager.play(...)` (`challengeOpen` na intro, `correctAnswer`/`wrongAnswer` no feedback, `buttonClick` na navegação)
+
+### Arquivos
+
+- Criados: `src/minigames/quiz-lara/index.js`, `quiz-config.js`, `quiz-session.js`, `QuizLaraGame.js`, `quiz-lara.css`, `tests/quiz-lara-arcade.mjs`
+- Alterados: `src/minigames/engine/loader.js` (import), `src/arcade/arcade-card.js` (`CARD_METRICS['quiz-lara']`), `src/minigames/engine/minigame-host.js` (formato `'percent'` em `formatArcadeStat`)
+- Obrigatórios de versão/documentação: `src/version.js`, `src/index.html`, `README.md`, `CHANGELOG.md`, `docs/visao-geral.md`, `docs/arquitetura.md`, `docs/regras-do-jogo.md`, `docs/roadmap.md`, este memorial
+
+### Validação e resultado
+
+- `tests/quiz-lara-arcade.mjs` — 30 testes aprovados (modos, categorias, seleção/fallback, sessão, vitória, stats/recordes, perfil, isolamento, a11y/CSS)
+- Suítes existentes sem regressões: `tests/minigame-engine.mjs` (306), `tests/arcade-stats.mjs` (13), `tests/dino-runner-arcade.mjs` (12), `tests/minigames-arcade.mjs` (10), `scripts/test-minigame-profiles.mjs` (12), `scripts/test-question-engine.mjs` (157), `scripts/compare-migration.mjs` (16)
+- `node --check` e `git diff --check` aprovados; `scripts/check-version.mjs` aprovado em `v0.46.0-preview`
+- **Tabuleiro, Question Engine, WorldConfigs e os demais 5 minigames permanecem inalterados**
+
+---
+
 ## Sprint 5 — Perfis Arcade dos minigames (v0.45.0-preview)
 
 ### Objetivo e impacto
