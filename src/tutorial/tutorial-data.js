@@ -1,68 +1,80 @@
 /* ============================================
    Lara World — Tutorial Data (src/tutorial/tutorial-data.js)
-   9 steps of onboarding content
+   11 steps of onboarding content
    ============================================ */
 
 export const TUTORIAL_STEPS = [
   {
-    icon: '\uD83C\uDFAE',
-    title: 'Escolha como jogar',
-    text: 'Jogo Rápido traz uma partida em um mundo. Modo Aventura conecta os cinco mundos e acumula pontos. No Arcade, você joga minigames avulsos.',
-    note: 'A campanha do Modo Aventura existe somente na sessão atual e termina se a página for recarregada.'
+    icon: '🌍',
+    title: 'Bem-vindo ao Lara World',
+    text: 'Lara World é um jogo de trilha para crianças. O objetivo é chegar na casa 20 antes do outro jogador e vencer o mundo!',
+    note: 'Jogue com o mouse ou com o dedo. No teclado, use as setas para navegar e Esc para voltar.'
   },
   {
-    icon: '\uD83C\uDF0D',
-    title: 'Prepare os participantes',
-    text: 'Escolha nomes e personagens para jogar com outra pessoa ou contra a Máquina. No Jogo Rápido, escolha também o mundo da partida.'
+    icon: '🧭',
+    title: 'Escolha o modo de jogo',
+    text: 'No menu inicial você encontra três modos: Jogo Rápido, Modo Aventura e Modo Arcade. Cada um traz uma diversão diferente.'
   },
   {
-    icon: '\uD83C\uDFB2',
-    title: 'Quem começa?',
+    icon: '⚡',
+    title: 'Jogo Rápido',
+    text: 'Uma partida em um mundo só. Escolha o mundo, prepare os jogadores e jogue até alguém chegar na chegada.'
+  },
+  {
+    icon: '🗺️',
+    title: 'Modo Aventura',
+    text: 'Percorra os cinco mundos em uma campanha e acumule pontos. No final, quem tiver mais pontos vence a aventura!',
+    note: 'A campanha existe somente na sessão atual e termina se a página for recarregada.'
+  },
+  {
+    icon: '🎮',
+    title: 'Modo Arcade',
+    text: 'Jogue minigames avulsos, sem tabuleiro: Meteoro, Dino Runner, Memória, Match-3, Dragões e o Quiz Lara World. Supere os seus recordes!'
+  },
+  {
+    icon: '👥',
+    title: 'Prepare os jogadores',
+    text: 'Escolha nomes e personagens: Lara, Léo, Dino ou Byte. Você pode jogar com outra pessoa no mesmo aparelho ou contra a Máquina.',
+    note: 'No Jogo Rápido, você também escolhe o mundo da partida.'
+  },
+  {
+    icon: '🎲',
+    title: 'Descubra quem começa',
     text: 'Antes da partida, os jogadores rolam o dado. Quem tirar o maior número começa.',
     note: 'Na aventura há um único sorteio: o vencedor começa os mundos 1, 3 e 5; o outro participante começa os mundos 2 e 4.'
   },
   {
-    icon: '\uD83C\uDFB2',
-    title: 'Role o dado',
-    text: 'Na sua vez, toque em "Jogar Dado". Seu personagem avançará pelo tabuleiro.'
+    icon: '🏃',
+    title: 'Role o dado e avance',
+    text: 'Na sua vez, toque em "Jogar Dado". Seu personagem avança casa por casa pelo caminho.',
+    note: 'No celular, o botão "Jogar Dado" fica fixo na parte de baixo da tela.'
   },
   {
-    icon: '\uD83D\uDDFA\uFE0F',
-    title: 'Conheça as casas',
+    icon: '❓',
+    title: 'Casas especiais e desafios',
     text: 'Cada casa pode trazer um evento diferente:',
     items: [
-      '\u2753 Desafio',
-      '\u23E9 Avançar',
-      '\u23EA Voltar',
-      '\uD83C\uDFB2 Jogar novamente',
-      '\u23F8\uFE0F Pular uma rodada',
-      '\uD83D\uDD04 Trocar de posição',
-      '\uD83E\uDDE9 \uD83C\uDFC3 \uD83D\uDE80 \uD83C\uDFAF \uD83D\uDC09 Minigames',
-      '\uD83D\uDC51 Chegada'
-    ]
+      '❓ Desafio',
+      '⏩ Avançar',
+      '⏪ Voltar',
+      '🎲 Jogar novamente',
+      '⏸️ Pular uma rodada',
+      '🔄 Trocar de posição',
+      '🏆 Chegada'
+    ],
+    note: 'Responda as perguntas educativas. No Modo Aventura, cada resposta correta vale 10 pontos e até 2 acertos pontuam por participante em cada mundo.'
   },
   {
-    icon: '\u2753',
-    title: 'Complete desafios',
-    text: 'Responda perguntas educativas. No Modo Aventura, cada resposta correta vale 10 pontos e até 2 acertos pontuam por participante em cada mundo.',
-    note: 'Resposta incorreta vale zero ponto na aventura.'
+    icon: '🏆',
+    title: 'Minigames e recompensas',
+    text: 'Algumas casas abrem minigames. Vencendo, você ganha recompensas no tabuleiro.',
+    note: 'No Modo Aventura, uma vitória vale 20 pontos e até 1 minigame pontua por participante em cada mundo. No Arcade, os minigames são avulsos.'
   },
   {
-    icon: '\uD83C\uDFAE',
-    title: 'Jogue os minigames',
-    text: 'Algumas casas abrem minigames. No Modo Aventura, uma vitória vale 20 pontos e até 1 minigame pontua por participante em cada mundo.',
-    note: 'No Arcade, os minigames são avulsos. Derrotas não retiram pontos da aventura.'
-  },
-  {
-    icon: '\uD83C\uDFC6',
-    title: 'Conclua o mundo',
-    text: 'O primeiro jogador a alcançar a casa 20 vence o mundo. No Modo Aventura, a vitória vale 30 pontos e o mapa mostra o placar antes da próxima etapa.'
-  },
-  {
-    icon: '\uD83D\uDDFA\uFE0F',
-    title: 'Complete a aventura',
-    text: 'Termine os cinco mundos para concluir a campanha. Quem tiver mais pontos vence a aventura; em caso de igualdade, o resultado é empate.',
-    note: 'Zerar o Lara World significa concluir os cinco mundos e terminar com a maior pontuação.'
+    icon: '👑',
+    title: 'Vitória e recomeço',
+    text: 'O primeiro a chegar na casa 20 vence o mundo. Na tela de vitória, jogue novamente ou volte ao menu.',
+    note: 'No Modo Aventura, vencer um mundo vale 30 pontos e o mapa mostra o placar antes da próxima etapa. Use o botão de som no topo para ligar ou desligar o áudio.'
   }
 ];
 

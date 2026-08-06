@@ -27,6 +27,8 @@
   position: relative;
   width: 92%;
   max-width: 480px;
+  max-height: 85vh;
+  overflow-y: auto;
   background: rgba(255, 255, 255, 0.92);
   border-radius: 18px;
   border: 1.5px solid rgba(200, 170, 140, 0.35);
@@ -240,7 +242,7 @@
 @media (max-width: 600px) {
   .tutorial-card {
     width: 96%;
-    padding: 18px 14px 14px;
+    padding: 18px 14px calc(14px + env(safe-area-inset-bottom));
     border-radius: 14px;
   }
 

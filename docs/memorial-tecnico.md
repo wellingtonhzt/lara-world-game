@@ -30,6 +30,34 @@ A arquitetura segue exatamente os padrões do Arcade:
 
 ---
 
+## Revisão — Telas "Como Jogar" e "Sobre" (v0.46.0-preview)
+
+### Objetivo
+
+Revisar integralmente o conteúdo das telas acessíveis pelos botões "📖 Como Jogar" e "ℹ️ Sobre" do menu inicial, que haviam sido criadas antes das evoluções recentes (Sprint 5 e 6). Tarefa de conteúdo, organização e UX — sem novos modos, sem alteração de gameplay ou regras, sem nova versão.
+
+### Diagnóstico
+
+- **Tutorial (9 passos)**: não cobria retorno ao menu, áudio, controles (mouse/teclado/toque), recordes do Arcade, Quiz Lara World nem os personagens oficiais; repetia o tema de vitória em passos separados
+- **Sobre**: listava "5 minigames temáticos" (hoje são 6), sem mencionar Quiz, personagens, áudio, desktop/tablet/celular, Docker/Nginx, GitHub nem propósito educativo
+- **UX**: card do tutorial sem `max-height`/scroll (passos longos estouravam em viewport baixa), sem reset de scroll ao reabrir e sem `safe-area-inset-bottom`
+
+### Alterações
+
+- `src/tutorial/tutorial-data.js`: reorganizado em **11 passos** (Bem-vindo, Escolha o modo, Jogo Rápido, Modo Aventura, Modo Arcade, Prepare os jogadores, Descubra quem começa, Role o dado e avance, Casas especiais e desafios, Minigames e recompensas, Vitória e recomeço), preservando as strings validadas por `tests/about-tutorial.mjs` (modos, pontuação da aventura 10/20/30, fluxo da campanha, sessão atual, 1,3,5 / 2,4, mais pontos vence)
+- `src/tutorial/tutorial-screen.js`: rolagem do card zerada a cada passo (`_cardEl.scrollTop = 0`)
+- `src/tutorial/tutorial.css`: card com `max-height: 85vh` + `overflow-y: auto` e `env(safe-area-inset-bottom)` no mobile
+- `src/about/about-screen.js`: nova estrutura com seções de Apresentação, O que você encontra no jogo, Modos de jogo, Conteúdo educativo, Tecnologia e desenvolvimento, Status do projeto (com sublista "Em desenvolvimento") e Créditos; mantém `features` (com Modo Aventura) e `devItems` (sem Modo Aventura) exigidos pelo teste; rolagem zerada ao abrir
+- `src/about/about.css`: novo rótulo `.about-subtitle` e `env(safe-area-inset-bottom)` no mobile
+
+### Validação
+
+- `tests/about-tutorial.mjs` — 7 testes aprovados (botões, listeners, conteúdo do tutorial, versão dinâmica do Sobre)
+- `node --check`, `scripts/check-version.mjs` e `git diff --check` aprovados em `v0.46.0-preview`
+- Nenhuma alteração em tabuleiro, Arcade, Quiz, Aventura, áudio, minigames, Question Engine ou perfis
+
+---
+
 ## Sprint 5 — Perfis Arcade dos minigames (v0.45.0-preview)
 
 ### Objetivo e impacto

@@ -13,6 +13,7 @@
 - [x] Sons reutilizados (`challengeOpen`, `correctAnswer`, `wrongAnswer`, `buttonClick`), teclado 1/2/3 + Enter, `aria-live` e responsividade
 - [x] Testes: `tests/quiz-lara-arcade.mjs` (30 testes) + suítes existentes sem regressões
 - [x] Tabuleiro, Question Engine e demais minigames inalterados
+- [x] Revisão das telas "Como Jogar" (11 passos) e "Sobre" (novas seções), refletindo os 6 minigames, o Quiz, os personagens e as 228 perguntas
 - [ ] Deploy da demo e validação
 
 ### v0.45.0-preview — Sprint 5: Perfis Arcade dos minigames ✅

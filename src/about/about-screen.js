@@ -8,6 +8,7 @@ import { APP_VERSION } from '../version.js';
 console.log('[ABOUT] módulo carregado');
 
 let _overlayEl = null;
+let _cardEl = null;
 let _closeBtn = null;
 let _versionEl = null;
 let _initialized = false;
@@ -31,6 +32,22 @@ function _updateVersion() {
   if (_versionEl) {
     _versionEl.textContent = 'Versão ' + APP_VERSION;
   }
+}
+
+function _createSection(heading, items) {
+  var section = document.createElement('div');
+  section.className = 'about-section';
+  var h3 = document.createElement('h3');
+  h3.textContent = heading;
+  section.appendChild(h3);
+  var ul = document.createElement('ul');
+  items.forEach(function (item) {
+    var li = document.createElement('li');
+    li.textContent = item;
+    ul.appendChild(li);
+  });
+  section.appendChild(ul);
+  return section;
 }
 
 function _renderContent() {
@@ -65,78 +82,79 @@ function _renderContent() {
   h3Pres.textContent = 'Apresentação';
   sectionPresentation.appendChild(h3Pres);
   var pPres = document.createElement('p');
-  pPres.textContent = 'Lara World é um jogo de trilha infantil para navegador, com cinco mundos temáticos, desafios educativos e minigames. Você pode disputar uma partida rápida, percorrer uma campanha completa no Modo Aventura ou jogar minigames avulsos no Arcade, sozinho contra a Máquina ou com outra pessoa no mesmo dispositivo.';
+  pPres.textContent = 'Lara World é um jogo de trilha infantil para navegador, feito para aprender brincando. Percorra cinco mundos temáticos, responda perguntas educativas e jogue minigames, sozinho contra a Máquina ou com outra pessoa no mesmo dispositivo.';
   sectionPresentation.appendChild(pPres);
   card.appendChild(sectionPresentation);
 
-  var sectionFeatures = document.createElement('div');
-  sectionFeatures.className = 'about-section';
-  var h3Feat = document.createElement('h3');
-  h3Feat.textContent = 'Recursos Atuais';
-  sectionFeatures.appendChild(h3Feat);
-  var ulFeat = document.createElement('ul');
   var features = [
     '5 mundos temáticos',
-    'Jogo Rápido',
-    'Modo Aventura com campanha e pontuação acumulada',
-    'Modo Arcade',
-    'Multiplayer local',
-    'Single Player contra a máquina',
-    '228 desafios educativos em 9 categorias',
-    '5 minigames temáticos',
-    'Estatísticas do Modo Arcade'
+    'Personagens Lara, Léo, Dino e Byte',
+    'Casas especiais e desafios educativos',
+    '6 minigames, incluindo o Quiz Lara World',
+    '3 modos de jogo: Jogo Rápido, Modo Aventura e Modo Arcade',
+    'Áudio e efeitos sonoros',
+    'Multiplayer local, humano contra humano ou contra a Máquina',
+    'Funciona em desktop, tablet e celular'
   ];
-  features.forEach(function (f) {
-    var li = document.createElement('li');
-    li.textContent = f;
-    ulFeat.appendChild(li);
-  });
-  sectionFeatures.appendChild(ulFeat);
-  card.appendChild(sectionFeatures);
+  card.appendChild(_createSection('O que você encontra no jogo', features));
 
-  var sectionDev = document.createElement('div');
-  sectionDev.className = 'about-section';
-  var h3Dev = document.createElement('h3');
-  h3Dev.textContent = 'Em Desenvolvimento';
-  sectionDev.appendChild(h3Dev);
-  var ulDev = document.createElement('ul');
+  var modes = [
+    'Jogo Rápido: uma partida em um mundo escolhido',
+    'Modo Aventura: campanha pelos cinco mundos com pontos acumulados',
+    'Modo Arcade: minigames avulsos, com recordes'
+  ];
+  card.appendChild(_createSection('Modos de jogo', modes));
+
+  var educativeItems = [
+    '228 perguntas educativas em 9 categorias',
+    'Matemática, Português, Animais, Espaço, Natureza, Dinossauros, Lógica, Cores e Formas e Conhecimentos Gerais',
+    'Quiz Lara World: teste seus conhecimentos no Arcade'
+  ];
+  card.appendChild(_createSection('Conteúdo educativo', educativeItems));
+
+  var techItems = [
+    'Tecnologias: HTML, CSS e JavaScript',
+    'Docker e Nginx para publicação',
+    'Código versionado no GitHub',
+    'Desenvolvimento assistido por inteligência artificial',
+    'Projeto independente, criado para aprender brincando'
+  ];
+  card.appendChild(_createSection('Tecnologia e desenvolvimento', techItems));
+
+  var sectionStatus = document.createElement('div');
+  sectionStatus.className = 'about-section';
+  var h3Status = document.createElement('h3');
+  h3Status.textContent = 'Status do projeto';
+  sectionStatus.appendChild(h3Status);
+  var pStatus = document.createElement('p');
+  pStatus.textContent = 'O Lara World está em versão preview e ganha novidades a cada atualização.';
+  sectionStatus.appendChild(pStatus);
+  var subtitle = document.createElement('div');
+  subtitle.className = 'about-subtitle';
+  subtitle.textContent = 'Em desenvolvimento';
+  sectionStatus.appendChild(subtitle);
   var devItems = [
     'Salvar e continuar a campanha',
     'Histórico de aventuras e ranking',
     'Temas musicais por mundo',
-    'Novos mundos',
-    'Novos minigames',
-    'Expansão do banco de perguntas',
-    'Melhorias de acessibilidade',
-    'Novos sistemas de progressão'
+    'Novos mundos e minigames',
+    'Expansão do banco de perguntas'
   ];
+  var ulDev = document.createElement('ul');
   devItems.forEach(function (d) {
     var li = document.createElement('li');
     li.textContent = d;
     ulDev.appendChild(li);
   });
-  sectionDev.appendChild(ulDev);
-  card.appendChild(sectionDev);
+  sectionStatus.appendChild(ulDev);
+  card.appendChild(sectionStatus);
 
-  var sectionCredits = document.createElement('div');
-  sectionCredits.className = 'about-section';
-  var h3Credits = document.createElement('h3');
-  h3Credits.textContent = 'Desenvolvimento';
-  sectionCredits.appendChild(h3Credits);
-  var ulCredits = document.createElement('ul');
   var creditsItems = [
     'Desenvolvido por Wellington Lima',
-    'Desenvolvimento assistido por inteligência artificial',
-    'Projeto independente',
-    'HTML5, CSS3, JavaScript Vanilla e Canvas API'
+    'Feito com amor para Lara Silva ❤️',
+    'Projeto pessoal e educativo'
   ];
-  creditsItems.forEach(function (c) {
-    var li = document.createElement('li');
-    li.textContent = c;
-    ulCredits.appendChild(li);
-  });
-  sectionCredits.appendChild(ulCredits);
-  card.appendChild(sectionCredits);
+  card.appendChild(_createSection('Créditos', creditsItems));
 
   var backBtn = document.createElement('button');
   backBtn.className = 'about-back-btn';
@@ -145,6 +163,7 @@ function _renderContent() {
 
   _overlayEl.appendChild(card);
 
+  _cardEl = card;
   _closeBtn = card.querySelector('.about-close-btn');
   if (_closeBtn) {
     _closeBtn.addEventListener('click', function () {
@@ -180,6 +199,9 @@ export function showAboutScreen() {
   console.log('[ABOUT] tela aberta');
   if (!_overlayEl) return;
   _lastFocusedElement = document.activeElement;
+  if (_cardEl) {
+    _cardEl.scrollTop = 0;
+  }
   _overlayEl.classList.remove('hidden');
   document.body.style.overflow = 'hidden';
   requestAnimationFrame(function () {

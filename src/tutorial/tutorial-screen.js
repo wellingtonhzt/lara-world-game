@@ -8,6 +8,7 @@ import { TUTORIAL_STEPS, TUTORIAL_SEEN_KEY } from './tutorial-data.js';
 console.log('[TUTORIAL] módulo carregado');
 
 let _overlayEl = null;
+let _cardEl = null;
 let _contentEl = null;
 let _dotsContainer = null;
 let _prevBtn = null;
@@ -44,6 +45,10 @@ function _updateView() {
 
   var step = TUTORIAL_STEPS[_currentStep];
   if (!step) return;
+
+  if (_cardEl) {
+    _cardEl.scrollTop = 0;
+  }
 
   if (_stepCounterEl) {
     _stepCounterEl.textContent = (_currentStep + 1) + ' de ' + TUTORIAL_STEPS.length;
@@ -186,6 +191,7 @@ function _buildDOM() {
   _overlayEl.appendChild(card);
 
   _contentEl = content;
+  _cardEl = card;
   _dotsContainer = dots;
   _prevBtn = prev;
   _nextBtn = next;

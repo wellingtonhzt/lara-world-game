@@ -17,6 +17,10 @@
 - **`src/minigames/engine/loader.js`**: import do `quiz-lara` registrado — a galeria do Arcade passa a listar 6 minigames via `listMinigames()`
 - **`src/arcade/arcade-card.js`**: `CARD_METRICS['quiz-lara']` com métricas de score, precisão e melhor sequência
 - **`src/minigames/engine/minigame-host.js`**: `formatArcadeStat` suporta `'percent'`
+- **Revisão das telas "Como Jogar" e "Sobre"**: tutorial reorganizado em 11 passos (modos, personagens, sorteio, dado, casas, desafios, minigames, vitória, recordes, áudio e controles); Sobre com seções de apresentação, o que você encontra no jogo, modos, conteúdo educativo, tecnologia, status e créditos, refletindo os 6 minigames, o Quiz, os 4 personagens e as 228 perguntas em 9 categorias
+- **`src/tutorial/tutorial.css`**: card com `max-height` e scroll interno, `env(safe-area-inset-bottom)` no mobile
+- **`src/about/about.css`**: rótulo de subseção e `env(safe-area-inset-bottom)` no mobile
+- **`src/tutorial/tutorial-screen.js` / `src/about/about-screen.js`**: rolagem zerada ao abrir e ao trocar de passo
 - **Versionamento**: `APP_VERSION`, cache-busting de CSS/JS, rodapé e documentação sincronizados em `v0.46.0-preview`
 
 ### Notas

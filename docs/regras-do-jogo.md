@@ -15,8 +15,8 @@ Ao abrir o jogo, a **Tela Inicial** é exibida com cinco opções:
 - **⚡ Jogo Rápido** — inicia uma partida no modo Single Player (Humano vs Máquina) com configuração simplificada (apenas nome e sprite do Jogador 1)
 - **🎮 Modo Arcade** — abre a galeria de minigames para jogar qualquer minigame registrado de forma avulsa, sem tabuleiro
 - **🗺️ Modo Aventura** — inicia a campanha contínua pelos cinco mundos; integra a release `v0.41.0-preview`
-- **📖 Como Jogar** — abre um tutorial interativo com 9 passos explicando os modos, controles, pontuação e regras do jogo
-- **ℹ️ Sobre** — exibe informações sobre o jogo, recursos atuais, em desenvolvimento e créditos
+- **📖 Como Jogar** — abre um tutorial interativo com 11 passos explicando os modos, personagens, sorteio, dado, casas especiais, desafios, minigames, vitória, recordes, áudio e controles
+- **ℹ️ Sobre** — exibe apresentação, o que você encontra no jogo, modos disponíveis, conteúdo educativo, tecnologia e desenvolvimento, status do projeto e créditos
 
 Clique em **"⚡ Jogo Rápido"** para acessar o modal de configuração e começar a jogar.
 

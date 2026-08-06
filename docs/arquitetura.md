@@ -86,12 +86,12 @@ lara-world/
 │   ├── about/             # Tela "Sobre o Lara World"
 │   │   ├── index.js             # Barrel re-exports
 │   │   ├── about-screen.js      # Lógica: initAboutScreen, showAboutScreen, hideAboutScreen
-│   │   └── about.css            # Glass card hero, overlay z-index 950, responsivo
-│   ├── tutorial/          # Tutorial "Como Jogar" (9 passos)
+│   │   └── about.css            # Glass card hero, overlay z-index 3000, responsivo
+│   ├── tutorial/          # Tutorial "Como Jogar" (11 passos)
 │   │   ├── index.js             # Barrel re-exports
-│   │   ├── tutorial-data.js     # Dados dos 9 passos (icon, title, text)
+│   │   ├── tutorial-data.js     # Dados dos 11 passos (icon, title, text, note, items)
 │   │   ├── tutorial-screen.js   # Lógica: init, show, hide, hasSeen, reset, navegação
-│   │   └── tutorial.css         # Glass card hero, overlay z-index 960, dots, nav, responsivo
+│   │   └── tutorial.css         # Glass card hero, overlay z-index 3010, dots, nav, responsivo
 │   ├── assets/          # Recursos visuais do jogo
 │   │   ├── ui/          # Assets da Hero Screen (menu inicial)
 │   │   │   ├── logo-lara-world.webp  # Logo oficial do Lara World — exibido na Hero Screen
